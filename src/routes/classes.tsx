@@ -2,13 +2,14 @@
  * Classes & Streams register with capacity utilisation.
  * @module routes/classes
  */
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import Card from "@mui/material/Card";
 import Chip from "@mui/material/Chip";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
+import Button from "@mui/material/Button";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
@@ -47,6 +48,7 @@ function ClassesPage() {
                     <TableCell>Class Teacher</TableCell>
                     <TableCell>Room</TableCell>
                     <TableCell sx={{ minWidth: 200 }}>Capacity</TableCell>
+                    <TableCell />
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -64,6 +66,9 @@ function ClassesPage() {
                             <span>{pct}%</span>
                           </Box>
                           <LinearProgress variant="determinate" value={Math.min(pct, 100)} color={pct >= 100 ? "error" : pct >= 85 ? "warning" : "success"} sx={{ height: 7, borderRadius: 4 }} />
+                        </TableCell>
+                        <TableCell align="right">
+                          <Button size="small" component={Link} to={`/classes/${c.id}`}>View</Button>
                         </TableCell>
                       </TableRow>
                     );
