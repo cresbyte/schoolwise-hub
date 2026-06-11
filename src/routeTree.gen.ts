@@ -12,8 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TimetableRouteImport } from './routes/timetable'
 import { Route as SubjectsRouteImport } from './routes/subjects'
 import { Route as StudentsRouteImport } from './routes/students'
+import { Route as StaffRouteImport } from './routes/staff'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ReportCardsRouteImport } from './routes/report-cards'
+import { Route as PortalRouteImport } from './routes/portal'
+import { Route as PayrollRouteImport } from './routes/payroll'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ExamsRouteImport } from './routes/exams'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -25,8 +28,10 @@ import { Route as StudentsIdRouteImport } from './routes/students.$id'
 import { Route as StaffLeaveRouteImport } from './routes/staff.leave'
 import { Route as SettingsUsersRouteImport } from './routes/settings.users'
 import { Route as ReportsNemisRouteImport } from './routes/reports.nemis'
+import { Route as ReportsAuditRouteImport } from './routes/reports.audit'
 import { Route as ReportsAcademicRouteImport } from './routes/reports.academic'
 import { Route as FeesStructuresRouteImport } from './routes/fees.structures'
+import { Route as FeesOutstandingRouteImport } from './routes/fees.outstanding'
 import { Route as FeesCollectionRouteImport } from './routes/fees.collection'
 
 const TimetableRoute = TimetableRouteImport.update({
@@ -44,6 +49,11 @@ const StudentsRoute = StudentsRouteImport.update({
   path: '/students',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StaffRoute = StaffRouteImport.update({
+  id: '/staff',
+  path: '/staff',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -52,6 +62,16 @@ const SettingsRoute = SettingsRouteImport.update({
 const ReportCardsRoute = ReportCardsRouteImport.update({
   id: '/report-cards',
   path: '/report-cards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalRoute = PortalRouteImport.update({
+  id: '/portal',
+  path: '/portal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PayrollRoute = PayrollRouteImport.update({
+  id: '/payroll',
+  path: '/payroll',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -95,9 +115,9 @@ const StudentsIdRoute = StudentsIdRouteImport.update({
   getParentRoute: () => StudentsRoute,
 } as any)
 const StaffLeaveRoute = StaffLeaveRouteImport.update({
-  id: '/staff/leave',
-  path: '/staff/leave',
-  getParentRoute: () => rootRouteImport,
+  id: '/leave',
+  path: '/leave',
+  getParentRoute: () => StaffRoute,
 } as any)
 const SettingsUsersRoute = SettingsUsersRouteImport.update({
   id: '/users',
@@ -109,6 +129,11 @@ const ReportsNemisRoute = ReportsNemisRouteImport.update({
   path: '/reports/nemis',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReportsAuditRoute = ReportsAuditRouteImport.update({
+  id: '/reports/audit',
+  path: '/reports/audit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ReportsAcademicRoute = ReportsAcademicRouteImport.update({
   id: '/reports/academic',
   path: '/reports/academic',
@@ -117,6 +142,11 @@ const ReportsAcademicRoute = ReportsAcademicRouteImport.update({
 const FeesStructuresRoute = FeesStructuresRouteImport.update({
   id: '/fees/structures',
   path: '/fees/structures',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeesOutstandingRoute = FeesOutstandingRouteImport.update({
+  id: '/fees/outstanding',
+  path: '/fees/outstanding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FeesCollectionRoute = FeesCollectionRouteImport.update({
@@ -132,14 +162,19 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/exams': typeof ExamsRoute
   '/login': typeof LoginRoute
+  '/payroll': typeof PayrollRoute
+  '/portal': typeof PortalRoute
   '/report-cards': typeof ReportCardsRoute
   '/settings': typeof SettingsRouteWithChildren
+  '/staff': typeof StaffRouteWithChildren
   '/students': typeof StudentsRouteWithChildren
   '/subjects': typeof SubjectsRoute
   '/timetable': typeof TimetableRoute
   '/fees/collection': typeof FeesCollectionRoute
+  '/fees/outstanding': typeof FeesOutstandingRoute
   '/fees/structures': typeof FeesStructuresRoute
   '/reports/academic': typeof ReportsAcademicRoute
+  '/reports/audit': typeof ReportsAuditRoute
   '/reports/nemis': typeof ReportsNemisRoute
   '/settings/users': typeof SettingsUsersRoute
   '/staff/leave': typeof StaffLeaveRoute
@@ -153,14 +188,19 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/exams': typeof ExamsRoute
   '/login': typeof LoginRoute
+  '/payroll': typeof PayrollRoute
+  '/portal': typeof PortalRoute
   '/report-cards': typeof ReportCardsRoute
   '/settings': typeof SettingsRouteWithChildren
+  '/staff': typeof StaffRouteWithChildren
   '/students': typeof StudentsRouteWithChildren
   '/subjects': typeof SubjectsRoute
   '/timetable': typeof TimetableRoute
   '/fees/collection': typeof FeesCollectionRoute
+  '/fees/outstanding': typeof FeesOutstandingRoute
   '/fees/structures': typeof FeesStructuresRoute
   '/reports/academic': typeof ReportsAcademicRoute
+  '/reports/audit': typeof ReportsAuditRoute
   '/reports/nemis': typeof ReportsNemisRoute
   '/settings/users': typeof SettingsUsersRoute
   '/staff/leave': typeof StaffLeaveRoute
@@ -175,14 +215,19 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/exams': typeof ExamsRoute
   '/login': typeof LoginRoute
+  '/payroll': typeof PayrollRoute
+  '/portal': typeof PortalRoute
   '/report-cards': typeof ReportCardsRoute
   '/settings': typeof SettingsRouteWithChildren
+  '/staff': typeof StaffRouteWithChildren
   '/students': typeof StudentsRouteWithChildren
   '/subjects': typeof SubjectsRoute
   '/timetable': typeof TimetableRoute
   '/fees/collection': typeof FeesCollectionRoute
+  '/fees/outstanding': typeof FeesOutstandingRoute
   '/fees/structures': typeof FeesStructuresRoute
   '/reports/academic': typeof ReportsAcademicRoute
+  '/reports/audit': typeof ReportsAuditRoute
   '/reports/nemis': typeof ReportsNemisRoute
   '/settings/users': typeof SettingsUsersRoute
   '/staff/leave': typeof StaffLeaveRoute
@@ -198,14 +243,19 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/exams'
     | '/login'
+    | '/payroll'
+    | '/portal'
     | '/report-cards'
     | '/settings'
+    | '/staff'
     | '/students'
     | '/subjects'
     | '/timetable'
     | '/fees/collection'
+    | '/fees/outstanding'
     | '/fees/structures'
     | '/reports/academic'
+    | '/reports/audit'
     | '/reports/nemis'
     | '/settings/users'
     | '/staff/leave'
@@ -219,14 +269,19 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/exams'
     | '/login'
+    | '/payroll'
+    | '/portal'
     | '/report-cards'
     | '/settings'
+    | '/staff'
     | '/students'
     | '/subjects'
     | '/timetable'
     | '/fees/collection'
+    | '/fees/outstanding'
     | '/fees/structures'
     | '/reports/academic'
+    | '/reports/audit'
     | '/reports/nemis'
     | '/settings/users'
     | '/staff/leave'
@@ -240,14 +295,19 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/exams'
     | '/login'
+    | '/payroll'
+    | '/portal'
     | '/report-cards'
     | '/settings'
+    | '/staff'
     | '/students'
     | '/subjects'
     | '/timetable'
     | '/fees/collection'
+    | '/fees/outstanding'
     | '/fees/structures'
     | '/reports/academic'
+    | '/reports/audit'
     | '/reports/nemis'
     | '/settings/users'
     | '/staff/leave'
@@ -262,16 +322,20 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   ExamsRoute: typeof ExamsRoute
   LoginRoute: typeof LoginRoute
+  PayrollRoute: typeof PayrollRoute
+  PortalRoute: typeof PortalRoute
   ReportCardsRoute: typeof ReportCardsRoute
   SettingsRoute: typeof SettingsRouteWithChildren
+  StaffRoute: typeof StaffRouteWithChildren
   StudentsRoute: typeof StudentsRouteWithChildren
   SubjectsRoute: typeof SubjectsRoute
   TimetableRoute: typeof TimetableRoute
   FeesCollectionRoute: typeof FeesCollectionRoute
+  FeesOutstandingRoute: typeof FeesOutstandingRoute
   FeesStructuresRoute: typeof FeesStructuresRoute
   ReportsAcademicRoute: typeof ReportsAcademicRoute
+  ReportsAuditRoute: typeof ReportsAuditRoute
   ReportsNemisRoute: typeof ReportsNemisRoute
-  StaffLeaveRoute: typeof StaffLeaveRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -297,6 +361,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/staff': {
+      id: '/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof StaffRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -309,6 +380,20 @@ declare module '@tanstack/react-router' {
       path: '/report-cards'
       fullPath: '/report-cards'
       preLoaderRoute: typeof ReportCardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal': {
+      id: '/portal'
+      path: '/portal'
+      fullPath: '/portal'
+      preLoaderRoute: typeof PortalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payroll': {
+      id: '/payroll'
+      path: '/payroll'
+      fullPath: '/payroll'
+      preLoaderRoute: typeof PayrollRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -369,10 +454,10 @@ declare module '@tanstack/react-router' {
     }
     '/staff/leave': {
       id: '/staff/leave'
-      path: '/staff/leave'
+      path: '/leave'
       fullPath: '/staff/leave'
       preLoaderRoute: typeof StaffLeaveRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof StaffRoute
     }
     '/settings/users': {
       id: '/settings/users'
@@ -388,6 +473,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReportsNemisRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reports/audit': {
+      id: '/reports/audit'
+      path: '/reports/audit'
+      fullPath: '/reports/audit'
+      preLoaderRoute: typeof ReportsAuditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reports/academic': {
       id: '/reports/academic'
       path: '/reports/academic'
@@ -400,6 +492,13 @@ declare module '@tanstack/react-router' {
       path: '/fees/structures'
       fullPath: '/fees/structures'
       preLoaderRoute: typeof FeesStructuresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fees/outstanding': {
+      id: '/fees/outstanding'
+      path: '/fees/outstanding'
+      fullPath: '/fees/outstanding'
+      preLoaderRoute: typeof FeesOutstandingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/fees/collection': {
@@ -424,6 +523,16 @@ const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
   SettingsRouteChildren,
 )
 
+interface StaffRouteChildren {
+  StaffLeaveRoute: typeof StaffLeaveRoute
+}
+
+const StaffRouteChildren: StaffRouteChildren = {
+  StaffLeaveRoute: StaffLeaveRoute,
+}
+
+const StaffRouteWithChildren = StaffRoute._addFileChildren(StaffRouteChildren)
+
 interface StudentsRouteChildren {
   StudentsIdRoute: typeof StudentsIdRoute
   StudentsNewRoute: typeof StudentsNewRoute
@@ -445,16 +554,20 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   ExamsRoute: ExamsRoute,
   LoginRoute: LoginRoute,
+  PayrollRoute: PayrollRoute,
+  PortalRoute: PortalRoute,
   ReportCardsRoute: ReportCardsRoute,
   SettingsRoute: SettingsRouteWithChildren,
+  StaffRoute: StaffRouteWithChildren,
   StudentsRoute: StudentsRouteWithChildren,
   SubjectsRoute: SubjectsRoute,
   TimetableRoute: TimetableRoute,
   FeesCollectionRoute: FeesCollectionRoute,
+  FeesOutstandingRoute: FeesOutstandingRoute,
   FeesStructuresRoute: FeesStructuresRoute,
   ReportsAcademicRoute: ReportsAcademicRoute,
+  ReportsAuditRoute: ReportsAuditRoute,
   ReportsNemisRoute: ReportsNemisRoute,
-  StaffLeaveRoute: StaffLeaveRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
