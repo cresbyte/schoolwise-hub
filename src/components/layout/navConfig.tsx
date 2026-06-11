@@ -51,7 +51,7 @@ export const NAV_GROUPS: NavGroup[] = [
     heading: "Academics",
     items: [
       { label: "Subjects", to: "/subjects", icon: <MenuBookIcon />, permission: "classes.view" },
-      { label: "Examinations", to: "/exams", icon: <AssignmentIcon />, permission: "exams.view" },
+      { label: "Examinations", to: "/exams", icon: <AssignmentIcon />, permission: "exams.marks" },
       { label: "Report Cards", to: "/report-cards", icon: <DescriptionIcon />, permission: "exams.view" },
       { label: "Timetable", to: "/timetable", icon: <ScheduleIcon />, permission: "timetable.view" },
     ],
