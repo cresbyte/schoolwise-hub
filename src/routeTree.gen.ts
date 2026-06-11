@@ -15,6 +15,7 @@ import { Route as StudentsRouteImport } from './routes/students'
 import { Route as StaffRouteImport } from './routes/staff'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ReportCardsRouteImport } from './routes/report-cards'
+import { Route as PortalRouteImport } from './routes/portal'
 import { Route as PayrollRouteImport } from './routes/payroll'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ExamsRouteImport } from './routes/exams'
@@ -61,6 +62,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const ReportCardsRoute = ReportCardsRouteImport.update({
   id: '/report-cards',
   path: '/report-cards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalRoute = PortalRouteImport.update({
+  id: '/portal',
+  path: '/portal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PayrollRoute = PayrollRouteImport.update({
@@ -157,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/exams': typeof ExamsRoute
   '/login': typeof LoginRoute
   '/payroll': typeof PayrollRoute
+  '/portal': typeof PortalRoute
   '/report-cards': typeof ReportCardsRoute
   '/settings': typeof SettingsRouteWithChildren
   '/staff': typeof StaffRouteWithChildren
@@ -182,6 +189,7 @@ export interface FileRoutesByTo {
   '/exams': typeof ExamsRoute
   '/login': typeof LoginRoute
   '/payroll': typeof PayrollRoute
+  '/portal': typeof PortalRoute
   '/report-cards': typeof ReportCardsRoute
   '/settings': typeof SettingsRouteWithChildren
   '/staff': typeof StaffRouteWithChildren
@@ -208,6 +216,7 @@ export interface FileRoutesById {
   '/exams': typeof ExamsRoute
   '/login': typeof LoginRoute
   '/payroll': typeof PayrollRoute
+  '/portal': typeof PortalRoute
   '/report-cards': typeof ReportCardsRoute
   '/settings': typeof SettingsRouteWithChildren
   '/staff': typeof StaffRouteWithChildren
@@ -235,6 +244,7 @@ export interface FileRouteTypes {
     | '/exams'
     | '/login'
     | '/payroll'
+    | '/portal'
     | '/report-cards'
     | '/settings'
     | '/staff'
@@ -260,6 +270,7 @@ export interface FileRouteTypes {
     | '/exams'
     | '/login'
     | '/payroll'
+    | '/portal'
     | '/report-cards'
     | '/settings'
     | '/staff'
@@ -285,6 +296,7 @@ export interface FileRouteTypes {
     | '/exams'
     | '/login'
     | '/payroll'
+    | '/portal'
     | '/report-cards'
     | '/settings'
     | '/staff'
@@ -311,6 +323,7 @@ export interface RootRouteChildren {
   ExamsRoute: typeof ExamsRoute
   LoginRoute: typeof LoginRoute
   PayrollRoute: typeof PayrollRoute
+  PortalRoute: typeof PortalRoute
   ReportCardsRoute: typeof ReportCardsRoute
   SettingsRoute: typeof SettingsRouteWithChildren
   StaffRoute: typeof StaffRouteWithChildren
@@ -367,6 +380,13 @@ declare module '@tanstack/react-router' {
       path: '/report-cards'
       fullPath: '/report-cards'
       preLoaderRoute: typeof ReportCardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal': {
+      id: '/portal'
+      path: '/portal'
+      fullPath: '/portal'
+      preLoaderRoute: typeof PortalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/payroll': {
@@ -535,6 +555,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExamsRoute: ExamsRoute,
   LoginRoute: LoginRoute,
   PayrollRoute: PayrollRoute,
+  PortalRoute: PortalRoute,
   ReportCardsRoute: ReportCardsRoute,
   SettingsRoute: SettingsRouteWithChildren,
   StaffRoute: StaffRouteWithChildren,
