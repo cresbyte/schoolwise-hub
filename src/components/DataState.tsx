@@ -66,7 +66,7 @@ export function DataState<T>({
   }
   if (data == null || (isEmpty && isEmpty(data))) {
     return (
-      <Stack alignItems="center" spacing={1.5} sx={{ py: 8, color: "text.secondary" }}>
+      <Stack spacing={1.5} sx={{ alignItems: "center", py: 8, color: "text.secondary" }}>
         <InboxIcon sx={{ fontSize: 56, opacity: 0.4 }} />
         <Typography variant="body1">{emptyMessage}</Typography>
         {emptyAction}
