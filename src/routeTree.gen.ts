@@ -14,6 +14,7 @@ import { Route as SubjectsRouteImport } from './routes/subjects'
 import { Route as StudentsRouteImport } from './routes/students'
 import { Route as StaffRouteImport } from './routes/staff'
 import { Route as ReportCardsRouteImport } from './routes/report-cards'
+import { Route as PayrollRouteImport } from './routes/payroll'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ExamsRouteImport } from './routes/exams'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -21,6 +22,7 @@ import { Route as ClassesRouteImport } from './routes/classes'
 import { Route as AttendanceRouteImport } from './routes/attendance'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StudentsIdRouteImport } from './routes/students.$id'
+import { Route as StaffLeaveRouteImport } from './routes/staff.leave'
 import { Route as FeesStructuresRouteImport } from './routes/fees.structures'
 import { Route as FeesOutstandingRouteImport } from './routes/fees.outstanding'
 import { Route as FeesCollectionRouteImport } from './routes/fees.collection'
@@ -48,6 +50,11 @@ const StaffRoute = StaffRouteImport.update({
 const ReportCardsRoute = ReportCardsRouteImport.update({
   id: '/report-cards',
   path: '/report-cards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PayrollRoute = PayrollRouteImport.update({
+  id: '/payroll',
+  path: '/payroll',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -85,6 +92,11 @@ const StudentsIdRoute = StudentsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => StudentsRoute,
 } as any)
+const StaffLeaveRoute = StaffLeaveRouteImport.update({
+  id: '/leave',
+  path: '/leave',
+  getParentRoute: () => StaffRoute,
+} as any)
 const FeesStructuresRoute = FeesStructuresRouteImport.update({
   id: '/fees/structures',
   path: '/fees/structures',
@@ -108,14 +120,16 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/exams': typeof ExamsRoute
   '/login': typeof LoginRoute
+  '/payroll': typeof PayrollRoute
   '/report-cards': typeof ReportCardsRoute
-  '/staff': typeof StaffRoute
+  '/staff': typeof StaffRouteWithChildren
   '/students': typeof StudentsRouteWithChildren
   '/subjects': typeof SubjectsRoute
   '/timetable': typeof TimetableRoute
   '/fees/collection': typeof FeesCollectionRoute
   '/fees/outstanding': typeof FeesOutstandingRoute
   '/fees/structures': typeof FeesStructuresRoute
+  '/staff/leave': typeof StaffLeaveRoute
   '/students/$id': typeof StudentsIdRoute
 }
 export interface FileRoutesByTo {
@@ -125,14 +139,16 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/exams': typeof ExamsRoute
   '/login': typeof LoginRoute
+  '/payroll': typeof PayrollRoute
   '/report-cards': typeof ReportCardsRoute
-  '/staff': typeof StaffRoute
+  '/staff': typeof StaffRouteWithChildren
   '/students': typeof StudentsRouteWithChildren
   '/subjects': typeof SubjectsRoute
   '/timetable': typeof TimetableRoute
   '/fees/collection': typeof FeesCollectionRoute
   '/fees/outstanding': typeof FeesOutstandingRoute
   '/fees/structures': typeof FeesStructuresRoute
+  '/staff/leave': typeof StaffLeaveRoute
   '/students/$id': typeof StudentsIdRoute
 }
 export interface FileRoutesById {
@@ -143,14 +159,16 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/exams': typeof ExamsRoute
   '/login': typeof LoginRoute
+  '/payroll': typeof PayrollRoute
   '/report-cards': typeof ReportCardsRoute
-  '/staff': typeof StaffRoute
+  '/staff': typeof StaffRouteWithChildren
   '/students': typeof StudentsRouteWithChildren
   '/subjects': typeof SubjectsRoute
   '/timetable': typeof TimetableRoute
   '/fees/collection': typeof FeesCollectionRoute
   '/fees/outstanding': typeof FeesOutstandingRoute
   '/fees/structures': typeof FeesStructuresRoute
+  '/staff/leave': typeof StaffLeaveRoute
   '/students/$id': typeof StudentsIdRoute
 }
 export interface FileRouteTypes {
@@ -162,6 +180,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/exams'
     | '/login'
+    | '/payroll'
     | '/report-cards'
     | '/staff'
     | '/students'
@@ -170,6 +189,7 @@ export interface FileRouteTypes {
     | '/fees/collection'
     | '/fees/outstanding'
     | '/fees/structures'
+    | '/staff/leave'
     | '/students/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -179,6 +199,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/exams'
     | '/login'
+    | '/payroll'
     | '/report-cards'
     | '/staff'
     | '/students'
@@ -187,6 +208,7 @@ export interface FileRouteTypes {
     | '/fees/collection'
     | '/fees/outstanding'
     | '/fees/structures'
+    | '/staff/leave'
     | '/students/$id'
   id:
     | '__root__'
@@ -196,6 +218,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/exams'
     | '/login'
+    | '/payroll'
     | '/report-cards'
     | '/staff'
     | '/students'
@@ -204,6 +227,7 @@ export interface FileRouteTypes {
     | '/fees/collection'
     | '/fees/outstanding'
     | '/fees/structures'
+    | '/staff/leave'
     | '/students/$id'
   fileRoutesById: FileRoutesById
 }
@@ -214,8 +238,9 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   ExamsRoute: typeof ExamsRoute
   LoginRoute: typeof LoginRoute
+  PayrollRoute: typeof PayrollRoute
   ReportCardsRoute: typeof ReportCardsRoute
-  StaffRoute: typeof StaffRoute
+  StaffRoute: typeof StaffRouteWithChildren
   StudentsRoute: typeof StudentsRouteWithChildren
   SubjectsRoute: typeof SubjectsRoute
   TimetableRoute: typeof TimetableRoute
@@ -259,6 +284,13 @@ declare module '@tanstack/react-router' {
       path: '/report-cards'
       fullPath: '/report-cards'
       preLoaderRoute: typeof ReportCardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payroll': {
+      id: '/payroll'
+      path: '/payroll'
+      fullPath: '/payroll'
+      preLoaderRoute: typeof PayrollRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -310,6 +342,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentsIdRouteImport
       parentRoute: typeof StudentsRoute
     }
+    '/staff/leave': {
+      id: '/staff/leave'
+      path: '/leave'
+      fullPath: '/staff/leave'
+      preLoaderRoute: typeof StaffLeaveRouteImport
+      parentRoute: typeof StaffRoute
+    }
     '/fees/structures': {
       id: '/fees/structures'
       path: '/fees/structures'
@@ -334,6 +373,16 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface StaffRouteChildren {
+  StaffLeaveRoute: typeof StaffLeaveRoute
+}
+
+const StaffRouteChildren: StaffRouteChildren = {
+  StaffLeaveRoute: StaffLeaveRoute,
+}
+
+const StaffRouteWithChildren = StaffRoute._addFileChildren(StaffRouteChildren)
+
 interface StudentsRouteChildren {
   StudentsIdRoute: typeof StudentsIdRoute
 }
@@ -353,8 +402,9 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   ExamsRoute: ExamsRoute,
   LoginRoute: LoginRoute,
+  PayrollRoute: PayrollRoute,
   ReportCardsRoute: ReportCardsRoute,
-  StaffRoute: StaffRoute,
+  StaffRoute: StaffRouteWithChildren,
   StudentsRoute: StudentsRouteWithChildren,
   SubjectsRoute: SubjectsRoute,
   TimetableRoute: TimetableRoute,
