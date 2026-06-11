@@ -572,7 +572,6 @@ export async function getKNEC7Best(classId: string, examId: string): Promise<any
   const reportCards = students.filter((s) => s.classId === classId).map((s) => buildReportCard(s.id, examId));
   const result = reportCards.map((rc) => {
     const sorted = [...rc.subjects].sort((a, b) => b.marks - a.marks).slice(0, 7);
-    const points = sorted.reduce((s, x) => s + (require ? 0 : 0) + 0, 0);
     return { studentName: rc.studentName, subjects: sorted, best7Total: sorted.reduce((s, x) => s + x.marks, 0) };
   });
   result.sort((a, b) => b.best7Total - a.best7Total);
