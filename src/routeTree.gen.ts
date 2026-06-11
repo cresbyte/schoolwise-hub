@@ -23,6 +23,9 @@ import { Route as AttendanceRouteImport } from './routes/attendance'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StudentsIdRouteImport } from './routes/students.$id'
 import { Route as StaffLeaveRouteImport } from './routes/staff.leave'
+import { Route as ReportsNemisRouteImport } from './routes/reports.nemis'
+import { Route as ReportsAuditRouteImport } from './routes/reports.audit'
+import { Route as ReportsAcademicRouteImport } from './routes/reports.academic'
 import { Route as FeesStructuresRouteImport } from './routes/fees.structures'
 import { Route as FeesOutstandingRouteImport } from './routes/fees.outstanding'
 import { Route as FeesCollectionRouteImport } from './routes/fees.collection'
@@ -97,6 +100,21 @@ const StaffLeaveRoute = StaffLeaveRouteImport.update({
   path: '/leave',
   getParentRoute: () => StaffRoute,
 } as any)
+const ReportsNemisRoute = ReportsNemisRouteImport.update({
+  id: '/reports/nemis',
+  path: '/reports/nemis',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsAuditRoute = ReportsAuditRouteImport.update({
+  id: '/reports/audit',
+  path: '/reports/audit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsAcademicRoute = ReportsAcademicRouteImport.update({
+  id: '/reports/academic',
+  path: '/reports/academic',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FeesStructuresRoute = FeesStructuresRouteImport.update({
   id: '/fees/structures',
   path: '/fees/structures',
@@ -129,6 +147,9 @@ export interface FileRoutesByFullPath {
   '/fees/collection': typeof FeesCollectionRoute
   '/fees/outstanding': typeof FeesOutstandingRoute
   '/fees/structures': typeof FeesStructuresRoute
+  '/reports/academic': typeof ReportsAcademicRoute
+  '/reports/audit': typeof ReportsAuditRoute
+  '/reports/nemis': typeof ReportsNemisRoute
   '/staff/leave': typeof StaffLeaveRoute
   '/students/$id': typeof StudentsIdRoute
 }
@@ -148,6 +169,9 @@ export interface FileRoutesByTo {
   '/fees/collection': typeof FeesCollectionRoute
   '/fees/outstanding': typeof FeesOutstandingRoute
   '/fees/structures': typeof FeesStructuresRoute
+  '/reports/academic': typeof ReportsAcademicRoute
+  '/reports/audit': typeof ReportsAuditRoute
+  '/reports/nemis': typeof ReportsNemisRoute
   '/staff/leave': typeof StaffLeaveRoute
   '/students/$id': typeof StudentsIdRoute
 }
@@ -168,6 +192,9 @@ export interface FileRoutesById {
   '/fees/collection': typeof FeesCollectionRoute
   '/fees/outstanding': typeof FeesOutstandingRoute
   '/fees/structures': typeof FeesStructuresRoute
+  '/reports/academic': typeof ReportsAcademicRoute
+  '/reports/audit': typeof ReportsAuditRoute
+  '/reports/nemis': typeof ReportsNemisRoute
   '/staff/leave': typeof StaffLeaveRoute
   '/students/$id': typeof StudentsIdRoute
 }
@@ -189,6 +216,9 @@ export interface FileRouteTypes {
     | '/fees/collection'
     | '/fees/outstanding'
     | '/fees/structures'
+    | '/reports/academic'
+    | '/reports/audit'
+    | '/reports/nemis'
     | '/staff/leave'
     | '/students/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -208,6 +238,9 @@ export interface FileRouteTypes {
     | '/fees/collection'
     | '/fees/outstanding'
     | '/fees/structures'
+    | '/reports/academic'
+    | '/reports/audit'
+    | '/reports/nemis'
     | '/staff/leave'
     | '/students/$id'
   id:
@@ -227,6 +260,9 @@ export interface FileRouteTypes {
     | '/fees/collection'
     | '/fees/outstanding'
     | '/fees/structures'
+    | '/reports/academic'
+    | '/reports/audit'
+    | '/reports/nemis'
     | '/staff/leave'
     | '/students/$id'
   fileRoutesById: FileRoutesById
@@ -247,6 +283,9 @@ export interface RootRouteChildren {
   FeesCollectionRoute: typeof FeesCollectionRoute
   FeesOutstandingRoute: typeof FeesOutstandingRoute
   FeesStructuresRoute: typeof FeesStructuresRoute
+  ReportsAcademicRoute: typeof ReportsAcademicRoute
+  ReportsAuditRoute: typeof ReportsAuditRoute
+  ReportsNemisRoute: typeof ReportsNemisRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -349,6 +388,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StaffLeaveRouteImport
       parentRoute: typeof StaffRoute
     }
+    '/reports/nemis': {
+      id: '/reports/nemis'
+      path: '/reports/nemis'
+      fullPath: '/reports/nemis'
+      preLoaderRoute: typeof ReportsNemisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports/audit': {
+      id: '/reports/audit'
+      path: '/reports/audit'
+      fullPath: '/reports/audit'
+      preLoaderRoute: typeof ReportsAuditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports/academic': {
+      id: '/reports/academic'
+      path: '/reports/academic'
+      fullPath: '/reports/academic'
+      preLoaderRoute: typeof ReportsAcademicRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/fees/structures': {
       id: '/fees/structures'
       path: '/fees/structures'
@@ -411,6 +471,9 @@ const rootRouteChildren: RootRouteChildren = {
   FeesCollectionRoute: FeesCollectionRoute,
   FeesOutstandingRoute: FeesOutstandingRoute,
   FeesStructuresRoute: FeesStructuresRoute,
+  ReportsAcademicRoute: ReportsAcademicRoute,
+  ReportsAuditRoute: ReportsAuditRoute,
+  ReportsNemisRoute: ReportsNemisRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
