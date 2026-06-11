@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SubjectsRouteImport } from './routes/subjects'
 import { Route as StudentsRouteImport } from './routes/students'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -16,6 +17,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as StudentsNewRouteImport } from './routes/students.new'
 import { Route as StudentsIdRouteImport } from './routes/students.$id'
 
+const SubjectsRoute = SubjectsRouteImport.update({
+  id: '/subjects',
+  path: '/subjects',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StudentsRoute = StudentsRouteImport.update({
   id: '/students',
   path: '/students',
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/students': typeof StudentsRouteWithChildren
+  '/subjects': typeof SubjectsRoute
   '/students/$id': typeof StudentsIdRoute
   '/students/new': typeof StudentsNewRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/students': typeof StudentsRouteWithChildren
+  '/subjects': typeof SubjectsRoute
   '/students/$id': typeof StudentsIdRoute
   '/students/new': typeof StudentsNewRoute
 }
@@ -69,6 +77,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/students': typeof StudentsRouteWithChildren
+  '/subjects': typeof SubjectsRoute
   '/students/$id': typeof StudentsIdRoute
   '/students/new': typeof StudentsNewRoute
 }
@@ -79,6 +88,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/students'
+    | '/subjects'
     | '/students/$id'
     | '/students/new'
   fileRoutesByTo: FileRoutesByTo
@@ -87,6 +97,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/students'
+    | '/subjects'
     | '/students/$id'
     | '/students/new'
   id:
@@ -95,6 +106,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/students'
+    | '/subjects'
     | '/students/$id'
     | '/students/new'
   fileRoutesById: FileRoutesById
@@ -104,10 +116,18 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
   StudentsRoute: typeof StudentsRouteWithChildren
+  SubjectsRoute: typeof SubjectsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/subjects': {
+      id: '/subjects'
+      path: '/subjects'
+      fullPath: '/subjects'
+      preLoaderRoute: typeof SubjectsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/students': {
       id: '/students'
       path: '/students'
@@ -172,6 +192,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
   StudentsRoute: StudentsRouteWithChildren,
+  SubjectsRoute: SubjectsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
