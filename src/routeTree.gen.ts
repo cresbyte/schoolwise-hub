@@ -9,9 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TimetableRouteImport } from './routes/timetable'
 import { Route as SubjectsRouteImport } from './routes/subjects'
 import { Route as StudentsRouteImport } from './routes/students'
 import { Route as StaffRouteImport } from './routes/staff'
+import { Route as ReportCardsRouteImport } from './routes/report-cards'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ExamsRouteImport } from './routes/exams'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -23,6 +25,11 @@ import { Route as FeesStructuresRouteImport } from './routes/fees.structures'
 import { Route as FeesOutstandingRouteImport } from './routes/fees.outstanding'
 import { Route as FeesCollectionRouteImport } from './routes/fees.collection'
 
+const TimetableRoute = TimetableRouteImport.update({
+  id: '/timetable',
+  path: '/timetable',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SubjectsRoute = SubjectsRouteImport.update({
   id: '/subjects',
   path: '/subjects',
@@ -36,6 +43,11 @@ const StudentsRoute = StudentsRouteImport.update({
 const StaffRoute = StaffRouteImport.update({
   id: '/staff',
   path: '/staff',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportCardsRoute = ReportCardsRouteImport.update({
+  id: '/report-cards',
+  path: '/report-cards',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -96,9 +108,11 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/exams': typeof ExamsRoute
   '/login': typeof LoginRoute
+  '/report-cards': typeof ReportCardsRoute
   '/staff': typeof StaffRoute
   '/students': typeof StudentsRouteWithChildren
   '/subjects': typeof SubjectsRoute
+  '/timetable': typeof TimetableRoute
   '/fees/collection': typeof FeesCollectionRoute
   '/fees/outstanding': typeof FeesOutstandingRoute
   '/fees/structures': typeof FeesStructuresRoute
@@ -111,9 +125,11 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/exams': typeof ExamsRoute
   '/login': typeof LoginRoute
+  '/report-cards': typeof ReportCardsRoute
   '/staff': typeof StaffRoute
   '/students': typeof StudentsRouteWithChildren
   '/subjects': typeof SubjectsRoute
+  '/timetable': typeof TimetableRoute
   '/fees/collection': typeof FeesCollectionRoute
   '/fees/outstanding': typeof FeesOutstandingRoute
   '/fees/structures': typeof FeesStructuresRoute
@@ -127,9 +143,11 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/exams': typeof ExamsRoute
   '/login': typeof LoginRoute
+  '/report-cards': typeof ReportCardsRoute
   '/staff': typeof StaffRoute
   '/students': typeof StudentsRouteWithChildren
   '/subjects': typeof SubjectsRoute
+  '/timetable': typeof TimetableRoute
   '/fees/collection': typeof FeesCollectionRoute
   '/fees/outstanding': typeof FeesOutstandingRoute
   '/fees/structures': typeof FeesStructuresRoute
@@ -144,9 +162,11 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/exams'
     | '/login'
+    | '/report-cards'
     | '/staff'
     | '/students'
     | '/subjects'
+    | '/timetable'
     | '/fees/collection'
     | '/fees/outstanding'
     | '/fees/structures'
@@ -159,9 +179,11 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/exams'
     | '/login'
+    | '/report-cards'
     | '/staff'
     | '/students'
     | '/subjects'
+    | '/timetable'
     | '/fees/collection'
     | '/fees/outstanding'
     | '/fees/structures'
@@ -174,9 +196,11 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/exams'
     | '/login'
+    | '/report-cards'
     | '/staff'
     | '/students'
     | '/subjects'
+    | '/timetable'
     | '/fees/collection'
     | '/fees/outstanding'
     | '/fees/structures'
@@ -190,9 +214,11 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   ExamsRoute: typeof ExamsRoute
   LoginRoute: typeof LoginRoute
+  ReportCardsRoute: typeof ReportCardsRoute
   StaffRoute: typeof StaffRoute
   StudentsRoute: typeof StudentsRouteWithChildren
   SubjectsRoute: typeof SubjectsRoute
+  TimetableRoute: typeof TimetableRoute
   FeesCollectionRoute: typeof FeesCollectionRoute
   FeesOutstandingRoute: typeof FeesOutstandingRoute
   FeesStructuresRoute: typeof FeesStructuresRoute
@@ -200,6 +226,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/timetable': {
+      id: '/timetable'
+      path: '/timetable'
+      fullPath: '/timetable'
+      preLoaderRoute: typeof TimetableRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/subjects': {
       id: '/subjects'
       path: '/subjects'
@@ -219,6 +252,13 @@ declare module '@tanstack/react-router' {
       path: '/staff'
       fullPath: '/staff'
       preLoaderRoute: typeof StaffRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/report-cards': {
+      id: '/report-cards'
+      path: '/report-cards'
+      fullPath: '/report-cards'
+      preLoaderRoute: typeof ReportCardsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -313,9 +353,11 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   ExamsRoute: ExamsRoute,
   LoginRoute: LoginRoute,
+  ReportCardsRoute: ReportCardsRoute,
   StaffRoute: StaffRoute,
   StudentsRoute: StudentsRouteWithChildren,
   SubjectsRoute: SubjectsRoute,
+  TimetableRoute: TimetableRoute,
   FeesCollectionRoute: FeesCollectionRoute,
   FeesOutstandingRoute: FeesOutstandingRoute,
   FeesStructuresRoute: FeesStructuresRoute,
