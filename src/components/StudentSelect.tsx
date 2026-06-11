@@ -4,6 +4,7 @@
  */
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import { useStudents } from "@/hooks/domain";
 import type { Student } from "@/lib/types";
 import { formatKES } from "@/lib/utils";
@@ -31,9 +32,9 @@ export function StudentSelect({ value, onChange, label = "Search student" }: Stu
             <div style={{ fontWeight: 600 }}>
               {o.firstName} {o.lastName}
             </div>
-            <div style={{ fontSize: 12, color: "#5a6776" }}>
+            <Typography variant="caption" color="text.secondary">
               {o.admissionNumber} · {o.className} · Bal: {formatKES(o.feeBalance)}
-            </div>
+            </Typography>
           </div>
         </li>
       )}

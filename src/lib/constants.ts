@@ -14,6 +14,9 @@ import type {
   UserRole,
 } from "./types";
 
+export const HEADING_FONT = "'Merriweather', Georgia, serif";
+export const BODY_FONT = "'Outfit', system-ui, -apple-system, sans-serif";
+
 export const GRADE_LEVELS: GradeLevel[] = [
   "PP1",
   "PP2",

@@ -4,9 +4,10 @@
  */
 import type { ReactNode } from "react";
 import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { alpha, useTheme } from "@mui/material/styles";
+import { TOKENS } from "@/theme/theme";
 
 interface StatCardProps {
   icon: ReactNode;
@@ -16,37 +17,55 @@ interface StatCardProps {
   footer?: ReactNode;
 }
 
-/** Compact KPI card. */
-export function StatCard({ icon, value, label, color = "#1565C0", footer }: StatCardProps) {
+/** Compact KPI card with left accent border and icon circle. */
+export function StatCard({ icon, value, label, color, footer }: StatCardProps) {
+  const theme = useTheme();
+  const accentColor = color ?? theme.palette.primary.main;
+
   return (
-    <Card sx={{ height: "100%" }}>
-      <CardContent>
-        <Box sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
-          <Box>
-            <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
-              {label}
-            </Typography>
-            <Typography variant="h5" sx={{ mt: 0.5, fontWeight: 700 }}>
-              {value}
-            </Typography>
-          </Box>
-          <Box
-            sx={{
-              width: 44,
-              height: 44,
-              borderRadius: 2,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              bgcolor: `${color}1A`,
-              color,
-            }}
-          >
-            {icon}
-          </Box>
-        </Box>
-        {footer && <Box sx={{ mt: 1.5 }}>{footer}</Box>}
-      </CardContent>
+    <Card
+      sx={{
+        height: "100%",
+        borderLeft: `4px solid ${accentColor}`,
+        p: 3,
+        display: "flex",
+        alignItems: "center",
+        gap: 2,
+      }}
+    >
+      <Box
+        sx={{
+          width: 52,
+          height: 52,
+          borderRadius: TOKENS.radius.lg,
+          backgroundColor: alpha(accentColor, 0.1),
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexShrink: 0,
+          color: accentColor,
+          "& .MuiSvgIcon-root": { fontSize: 26 },
+        }}
+      >
+        {icon}
+      </Box>
+      <Box>
+        <Typography variant="h4" sx={{ fontWeight: 700, color: "text.primary", lineHeight: 1.2 }}>
+          {value}
+        </Typography>
+        <Typography
+          variant="caption"
+          sx={{
+            textTransform: "uppercase",
+            letterSpacing: "0.08em",
+            color: "text.secondary",
+            fontWeight: 600,
+          }}
+        >
+          {label}
+        </Typography>
+        {footer && <Box sx={{ mt: 1 }}>{footer}</Box>}
+      </Box>
     </Card>
   );
 }

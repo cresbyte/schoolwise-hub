@@ -41,12 +41,15 @@ export function PortalLayout({ children }: { children: ReactNode }) {
 
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
-      <AppBar position="sticky" color="inherit" sx={{ bgcolor: "#fff" }} className="no-print">
+      <AppBar position="sticky" color="inherit" className="no-print">
         <Toolbar>
           <SchoolIcon sx={{ color: "primary.main", mr: 1 }} />
           <Box>
             <Typography variant="h6" sx={{ fontWeight: 800, color: "primary.main", lineHeight: 1.1 }}>
-              Schule<span style={{ color: "#F57F17" }}>Smart</span>
+              Schule
+              <Box component="span" sx={{ color: "secondary.main" }}>
+                Smart
+              </Box>
             </Typography>
             <Typography variant="caption" color="text.secondary">
               {school.name}

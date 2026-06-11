@@ -22,7 +22,8 @@ import { Route as ExamsRouteImport } from './routes/exams'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ClassesRouteImport } from './routes/classes'
 import { Route as AttendanceRouteImport } from './routes/attendance'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as WebsiteRouteRouteImport } from './routes/_website/route'
+import { Route as WebsiteIndexRouteImport } from './routes/_website/index'
 import { Route as StudentsNewRouteImport } from './routes/students.new'
 import { Route as StudentsIdRouteImport } from './routes/students.$id'
 import { Route as StaffLeaveRouteImport } from './routes/staff.leave'
@@ -36,6 +37,19 @@ import { Route as FeesOutstandingRouteImport } from './routes/fees.outstanding'
 import { Route as FeesCollectionRouteImport } from './routes/fees.collection'
 import { Route as ExamsIdRouteImport } from './routes/exams.$id'
 import { Route as ClassesIdRouteImport } from './routes/classes.$id'
+import { Route as WebsiteTermsRouteImport } from './routes/_website/terms'
+import { Route as WebsiteSchoolLifeRouteImport } from './routes/_website/school-life'
+import { Route as WebsitePrivacyRouteImport } from './routes/_website/privacy'
+import { Route as WebsiteParentsRouteImport } from './routes/_website/parents'
+import { Route as WebsiteOurStaffRouteImport } from './routes/_website/our-staff'
+import { Route as WebsiteNewsRouteImport } from './routes/_website/news'
+import { Route as WebsiteGalleryRouteImport } from './routes/_website/gallery'
+import { Route as WebsiteContactRouteImport } from './routes/_website/contact'
+import { Route as WebsiteAdmissionsRouteImport } from './routes/_website/admissions'
+import { Route as WebsiteAcademicsRouteImport } from './routes/_website/academics'
+import { Route as WebsiteAboutRouteImport } from './routes/_website/about'
+import { Route as WebsiteNewsSlugRouteImport } from './routes/_website/news.$slug'
+import { Route as WebsiteAdmissionsApplyRouteImport } from './routes/_website/admissions.apply'
 
 const TimetableRoute = TimetableRouteImport.update({
   id: '/timetable',
@@ -102,10 +116,14 @@ const AttendanceRoute = AttendanceRouteImport.update({
   path: '/attendance',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const WebsiteRouteRoute = WebsiteRouteRouteImport.update({
+  id: '/_website',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WebsiteIndexRoute = WebsiteIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => WebsiteRouteRoute,
 } as any)
 const StudentsNewRoute = StudentsNewRouteImport.update({
   id: '/new',
@@ -172,9 +190,74 @@ const ClassesIdRoute = ClassesIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => ClassesRoute,
 } as any)
+const WebsiteTermsRoute = WebsiteTermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => WebsiteRouteRoute,
+} as any)
+const WebsiteSchoolLifeRoute = WebsiteSchoolLifeRouteImport.update({
+  id: '/school-life',
+  path: '/school-life',
+  getParentRoute: () => WebsiteRouteRoute,
+} as any)
+const WebsitePrivacyRoute = WebsitePrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => WebsiteRouteRoute,
+} as any)
+const WebsiteParentsRoute = WebsiteParentsRouteImport.update({
+  id: '/parents',
+  path: '/parents',
+  getParentRoute: () => WebsiteRouteRoute,
+} as any)
+const WebsiteOurStaffRoute = WebsiteOurStaffRouteImport.update({
+  id: '/our-staff',
+  path: '/our-staff',
+  getParentRoute: () => WebsiteRouteRoute,
+} as any)
+const WebsiteNewsRoute = WebsiteNewsRouteImport.update({
+  id: '/news',
+  path: '/news',
+  getParentRoute: () => WebsiteRouteRoute,
+} as any)
+const WebsiteGalleryRoute = WebsiteGalleryRouteImport.update({
+  id: '/gallery',
+  path: '/gallery',
+  getParentRoute: () => WebsiteRouteRoute,
+} as any)
+const WebsiteContactRoute = WebsiteContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => WebsiteRouteRoute,
+} as any)
+const WebsiteAdmissionsRoute = WebsiteAdmissionsRouteImport.update({
+  id: '/admissions',
+  path: '/admissions',
+  getParentRoute: () => WebsiteRouteRoute,
+} as any)
+const WebsiteAcademicsRoute = WebsiteAcademicsRouteImport.update({
+  id: '/academics',
+  path: '/academics',
+  getParentRoute: () => WebsiteRouteRoute,
+} as any)
+const WebsiteAboutRoute = WebsiteAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => WebsiteRouteRoute,
+} as any)
+const WebsiteNewsSlugRoute = WebsiteNewsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => WebsiteNewsRoute,
+} as any)
+const WebsiteAdmissionsApplyRoute = WebsiteAdmissionsApplyRouteImport.update({
+  id: '/apply',
+  path: '/apply',
+  getParentRoute: () => WebsiteAdmissionsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof WebsiteIndexRoute
   '/attendance': typeof AttendanceRoute
   '/classes': typeof ClassesRouteWithChildren
   '/dashboard': typeof DashboardRoute
@@ -188,6 +271,17 @@ export interface FileRoutesByFullPath {
   '/students': typeof StudentsRouteWithChildren
   '/subjects': typeof SubjectsRoute
   '/timetable': typeof TimetableRoute
+  '/about': typeof WebsiteAboutRoute
+  '/academics': typeof WebsiteAcademicsRoute
+  '/admissions': typeof WebsiteAdmissionsRouteWithChildren
+  '/contact': typeof WebsiteContactRoute
+  '/gallery': typeof WebsiteGalleryRoute
+  '/news': typeof WebsiteNewsRouteWithChildren
+  '/our-staff': typeof WebsiteOurStaffRoute
+  '/parents': typeof WebsiteParentsRoute
+  '/privacy': typeof WebsitePrivacyRoute
+  '/school-life': typeof WebsiteSchoolLifeRoute
+  '/terms': typeof WebsiteTermsRoute
   '/classes/$id': typeof ClassesIdRoute
   '/exams/$id': typeof ExamsIdRoute
   '/fees/collection': typeof FeesCollectionRoute
@@ -201,9 +295,10 @@ export interface FileRoutesByFullPath {
   '/staff/leave': typeof StaffLeaveRoute
   '/students/$id': typeof StudentsIdRoute
   '/students/new': typeof StudentsNewRoute
+  '/admissions/apply': typeof WebsiteAdmissionsApplyRoute
+  '/news/$slug': typeof WebsiteNewsSlugRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '/attendance': typeof AttendanceRoute
   '/classes': typeof ClassesRouteWithChildren
   '/dashboard': typeof DashboardRoute
@@ -217,6 +312,17 @@ export interface FileRoutesByTo {
   '/students': typeof StudentsRouteWithChildren
   '/subjects': typeof SubjectsRoute
   '/timetable': typeof TimetableRoute
+  '/about': typeof WebsiteAboutRoute
+  '/academics': typeof WebsiteAcademicsRoute
+  '/admissions': typeof WebsiteAdmissionsRouteWithChildren
+  '/contact': typeof WebsiteContactRoute
+  '/gallery': typeof WebsiteGalleryRoute
+  '/news': typeof WebsiteNewsRouteWithChildren
+  '/our-staff': typeof WebsiteOurStaffRoute
+  '/parents': typeof WebsiteParentsRoute
+  '/privacy': typeof WebsitePrivacyRoute
+  '/school-life': typeof WebsiteSchoolLifeRoute
+  '/terms': typeof WebsiteTermsRoute
   '/classes/$id': typeof ClassesIdRoute
   '/exams/$id': typeof ExamsIdRoute
   '/fees/collection': typeof FeesCollectionRoute
@@ -230,10 +336,13 @@ export interface FileRoutesByTo {
   '/staff/leave': typeof StaffLeaveRoute
   '/students/$id': typeof StudentsIdRoute
   '/students/new': typeof StudentsNewRoute
+  '/': typeof WebsiteIndexRoute
+  '/admissions/apply': typeof WebsiteAdmissionsApplyRoute
+  '/news/$slug': typeof WebsiteNewsSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_website': typeof WebsiteRouteRouteWithChildren
   '/attendance': typeof AttendanceRoute
   '/classes': typeof ClassesRouteWithChildren
   '/dashboard': typeof DashboardRoute
@@ -247,6 +356,17 @@ export interface FileRoutesById {
   '/students': typeof StudentsRouteWithChildren
   '/subjects': typeof SubjectsRoute
   '/timetable': typeof TimetableRoute
+  '/_website/about': typeof WebsiteAboutRoute
+  '/_website/academics': typeof WebsiteAcademicsRoute
+  '/_website/admissions': typeof WebsiteAdmissionsRouteWithChildren
+  '/_website/contact': typeof WebsiteContactRoute
+  '/_website/gallery': typeof WebsiteGalleryRoute
+  '/_website/news': typeof WebsiteNewsRouteWithChildren
+  '/_website/our-staff': typeof WebsiteOurStaffRoute
+  '/_website/parents': typeof WebsiteParentsRoute
+  '/_website/privacy': typeof WebsitePrivacyRoute
+  '/_website/school-life': typeof WebsiteSchoolLifeRoute
+  '/_website/terms': typeof WebsiteTermsRoute
   '/classes/$id': typeof ClassesIdRoute
   '/exams/$id': typeof ExamsIdRoute
   '/fees/collection': typeof FeesCollectionRoute
@@ -260,6 +380,9 @@ export interface FileRoutesById {
   '/staff/leave': typeof StaffLeaveRoute
   '/students/$id': typeof StudentsIdRoute
   '/students/new': typeof StudentsNewRoute
+  '/_website/': typeof WebsiteIndexRoute
+  '/_website/admissions/apply': typeof WebsiteAdmissionsApplyRoute
+  '/_website/news/$slug': typeof WebsiteNewsSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -278,6 +401,17 @@ export interface FileRouteTypes {
     | '/students'
     | '/subjects'
     | '/timetable'
+    | '/about'
+    | '/academics'
+    | '/admissions'
+    | '/contact'
+    | '/gallery'
+    | '/news'
+    | '/our-staff'
+    | '/parents'
+    | '/privacy'
+    | '/school-life'
+    | '/terms'
     | '/classes/$id'
     | '/exams/$id'
     | '/fees/collection'
@@ -291,9 +425,10 @@ export interface FileRouteTypes {
     | '/staff/leave'
     | '/students/$id'
     | '/students/new'
+    | '/admissions/apply'
+    | '/news/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/attendance'
     | '/classes'
     | '/dashboard'
@@ -307,6 +442,17 @@ export interface FileRouteTypes {
     | '/students'
     | '/subjects'
     | '/timetable'
+    | '/about'
+    | '/academics'
+    | '/admissions'
+    | '/contact'
+    | '/gallery'
+    | '/news'
+    | '/our-staff'
+    | '/parents'
+    | '/privacy'
+    | '/school-life'
+    | '/terms'
     | '/classes/$id'
     | '/exams/$id'
     | '/fees/collection'
@@ -320,9 +466,12 @@ export interface FileRouteTypes {
     | '/staff/leave'
     | '/students/$id'
     | '/students/new'
+    | '/'
+    | '/admissions/apply'
+    | '/news/$slug'
   id:
     | '__root__'
-    | '/'
+    | '/_website'
     | '/attendance'
     | '/classes'
     | '/dashboard'
@@ -336,6 +485,17 @@ export interface FileRouteTypes {
     | '/students'
     | '/subjects'
     | '/timetable'
+    | '/_website/about'
+    | '/_website/academics'
+    | '/_website/admissions'
+    | '/_website/contact'
+    | '/_website/gallery'
+    | '/_website/news'
+    | '/_website/our-staff'
+    | '/_website/parents'
+    | '/_website/privacy'
+    | '/_website/school-life'
+    | '/_website/terms'
     | '/classes/$id'
     | '/exams/$id'
     | '/fees/collection'
@@ -349,10 +509,13 @@ export interface FileRouteTypes {
     | '/staff/leave'
     | '/students/$id'
     | '/students/new'
+    | '/_website/'
+    | '/_website/admissions/apply'
+    | '/_website/news/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  WebsiteRouteRoute: typeof WebsiteRouteRouteWithChildren
   AttendanceRoute: typeof AttendanceRoute
   ClassesRoute: typeof ClassesRouteWithChildren
   DashboardRoute: typeof DashboardRoute
@@ -467,12 +630,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AttendanceRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/_website': {
+      id: '/_website'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof WebsiteRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_website/': {
+      id: '/_website/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof WebsiteIndexRouteImport
+      parentRoute: typeof WebsiteRouteRoute
     }
     '/students/new': {
       id: '/students/new'
@@ -565,8 +735,156 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClassesIdRouteImport
       parentRoute: typeof ClassesRoute
     }
+    '/_website/terms': {
+      id: '/_website/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof WebsiteTermsRouteImport
+      parentRoute: typeof WebsiteRouteRoute
+    }
+    '/_website/school-life': {
+      id: '/_website/school-life'
+      path: '/school-life'
+      fullPath: '/school-life'
+      preLoaderRoute: typeof WebsiteSchoolLifeRouteImport
+      parentRoute: typeof WebsiteRouteRoute
+    }
+    '/_website/privacy': {
+      id: '/_website/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof WebsitePrivacyRouteImport
+      parentRoute: typeof WebsiteRouteRoute
+    }
+    '/_website/parents': {
+      id: '/_website/parents'
+      path: '/parents'
+      fullPath: '/parents'
+      preLoaderRoute: typeof WebsiteParentsRouteImport
+      parentRoute: typeof WebsiteRouteRoute
+    }
+    '/_website/our-staff': {
+      id: '/_website/our-staff'
+      path: '/our-staff'
+      fullPath: '/our-staff'
+      preLoaderRoute: typeof WebsiteOurStaffRouteImport
+      parentRoute: typeof WebsiteRouteRoute
+    }
+    '/_website/news': {
+      id: '/_website/news'
+      path: '/news'
+      fullPath: '/news'
+      preLoaderRoute: typeof WebsiteNewsRouteImport
+      parentRoute: typeof WebsiteRouteRoute
+    }
+    '/_website/gallery': {
+      id: '/_website/gallery'
+      path: '/gallery'
+      fullPath: '/gallery'
+      preLoaderRoute: typeof WebsiteGalleryRouteImport
+      parentRoute: typeof WebsiteRouteRoute
+    }
+    '/_website/contact': {
+      id: '/_website/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof WebsiteContactRouteImport
+      parentRoute: typeof WebsiteRouteRoute
+    }
+    '/_website/admissions': {
+      id: '/_website/admissions'
+      path: '/admissions'
+      fullPath: '/admissions'
+      preLoaderRoute: typeof WebsiteAdmissionsRouteImport
+      parentRoute: typeof WebsiteRouteRoute
+    }
+    '/_website/academics': {
+      id: '/_website/academics'
+      path: '/academics'
+      fullPath: '/academics'
+      preLoaderRoute: typeof WebsiteAcademicsRouteImport
+      parentRoute: typeof WebsiteRouteRoute
+    }
+    '/_website/about': {
+      id: '/_website/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof WebsiteAboutRouteImport
+      parentRoute: typeof WebsiteRouteRoute
+    }
+    '/_website/news/$slug': {
+      id: '/_website/news/$slug'
+      path: '/$slug'
+      fullPath: '/news/$slug'
+      preLoaderRoute: typeof WebsiteNewsSlugRouteImport
+      parentRoute: typeof WebsiteNewsRoute
+    }
+    '/_website/admissions/apply': {
+      id: '/_website/admissions/apply'
+      path: '/apply'
+      fullPath: '/admissions/apply'
+      preLoaderRoute: typeof WebsiteAdmissionsApplyRouteImport
+      parentRoute: typeof WebsiteAdmissionsRoute
+    }
   }
 }
+
+interface WebsiteAdmissionsRouteChildren {
+  WebsiteAdmissionsApplyRoute: typeof WebsiteAdmissionsApplyRoute
+}
+
+const WebsiteAdmissionsRouteChildren: WebsiteAdmissionsRouteChildren = {
+  WebsiteAdmissionsApplyRoute: WebsiteAdmissionsApplyRoute,
+}
+
+const WebsiteAdmissionsRouteWithChildren =
+  WebsiteAdmissionsRoute._addFileChildren(WebsiteAdmissionsRouteChildren)
+
+interface WebsiteNewsRouteChildren {
+  WebsiteNewsSlugRoute: typeof WebsiteNewsSlugRoute
+}
+
+const WebsiteNewsRouteChildren: WebsiteNewsRouteChildren = {
+  WebsiteNewsSlugRoute: WebsiteNewsSlugRoute,
+}
+
+const WebsiteNewsRouteWithChildren = WebsiteNewsRoute._addFileChildren(
+  WebsiteNewsRouteChildren,
+)
+
+interface WebsiteRouteRouteChildren {
+  WebsiteAboutRoute: typeof WebsiteAboutRoute
+  WebsiteAcademicsRoute: typeof WebsiteAcademicsRoute
+  WebsiteAdmissionsRoute: typeof WebsiteAdmissionsRouteWithChildren
+  WebsiteContactRoute: typeof WebsiteContactRoute
+  WebsiteGalleryRoute: typeof WebsiteGalleryRoute
+  WebsiteNewsRoute: typeof WebsiteNewsRouteWithChildren
+  WebsiteOurStaffRoute: typeof WebsiteOurStaffRoute
+  WebsiteParentsRoute: typeof WebsiteParentsRoute
+  WebsitePrivacyRoute: typeof WebsitePrivacyRoute
+  WebsiteSchoolLifeRoute: typeof WebsiteSchoolLifeRoute
+  WebsiteTermsRoute: typeof WebsiteTermsRoute
+  WebsiteIndexRoute: typeof WebsiteIndexRoute
+}
+
+const WebsiteRouteRouteChildren: WebsiteRouteRouteChildren = {
+  WebsiteAboutRoute: WebsiteAboutRoute,
+  WebsiteAcademicsRoute: WebsiteAcademicsRoute,
+  WebsiteAdmissionsRoute: WebsiteAdmissionsRouteWithChildren,
+  WebsiteContactRoute: WebsiteContactRoute,
+  WebsiteGalleryRoute: WebsiteGalleryRoute,
+  WebsiteNewsRoute: WebsiteNewsRouteWithChildren,
+  WebsiteOurStaffRoute: WebsiteOurStaffRoute,
+  WebsiteParentsRoute: WebsiteParentsRoute,
+  WebsitePrivacyRoute: WebsitePrivacyRoute,
+  WebsiteSchoolLifeRoute: WebsiteSchoolLifeRoute,
+  WebsiteTermsRoute: WebsiteTermsRoute,
+  WebsiteIndexRoute: WebsiteIndexRoute,
+}
+
+const WebsiteRouteRouteWithChildren = WebsiteRouteRoute._addFileChildren(
+  WebsiteRouteRouteChildren,
+)
 
 interface ClassesRouteChildren {
   ClassesIdRoute: typeof ClassesIdRoute
@@ -628,7 +946,7 @@ const StudentsRouteWithChildren = StudentsRoute._addFileChildren(
 )
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  WebsiteRouteRoute: WebsiteRouteRouteWithChildren,
   AttendanceRoute: AttendanceRoute,
   ClassesRoute: ClassesRouteWithChildren,
   DashboardRoute: DashboardRoute,

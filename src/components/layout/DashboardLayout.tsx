@@ -23,7 +23,6 @@ import MenuItem from "@mui/material/MenuItem";
 import Divider from "@mui/material/Divider";
 import CircularProgress from "@mui/material/CircularProgress";
 import MenuIcon from "@mui/icons-material/Menu";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PersonIcon from "@mui/icons-material/Person";
 import LockResetIcon from "@mui/icons-material/LockReset";
@@ -70,7 +69,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
         position="fixed"
         color="inherit"
         className="no-print"
-        sx={{ zIndex: (t) => t.zIndex.drawer + 1, bgcolor: "#fff" }}
+        sx={{ zIndex: (t) => t.zIndex.drawer + 1 }}
       >
         <Toolbar>
           <IconButton edge="start" onClick={() => setOpen((o) => !o)} sx={{ mr: 1 }}>
@@ -78,7 +77,10 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
           </IconButton>
           <SchoolIcon sx={{ color: "primary.main", mr: 1 }} />
           <Typography variant="h6" sx={{ fontWeight: 800, color: "primary.main" }}>
-            Schule<span style={{ color: "#F57F17" }}>Smart</span>
+            Schule
+            <Box component="span" sx={{ color: "secondary.main" }}>
+              Smart
+            </Box>
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           <Chip label="Term 2, 2024" color="primary" variant="outlined" size="small" sx={{ mr: 1, fontWeight: 600 }} />
@@ -125,11 +127,26 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
             width,
             overflowX: "hidden",
             transition: "width .2s",
-            borderRight: "1px solid #e6e9ef",
           },
         }}
       >
         <Toolbar />
+        <Box className="sidebar-logo-area" sx={{ display: "flex", alignItems: "center", gap: 1, justifyContent: open ? "flex-start" : "center" }}>
+          <SchoolIcon sx={{ color: "secondary.main", fontSize: 28 }} />
+          {open && (
+            <Box>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "common.white", lineHeight: 1.2 }}>
+                Schule
+                <Box component="span" sx={{ color: "secondary.main" }}>
+                  Smart
+                </Box>
+              </Typography>
+              <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.7)" }}>
+                School Management
+              </Typography>
+            </Box>
+          )}
+        </Box>
         <Box sx={{ overflowY: "auto", py: 1 }}>
           {NAV_GROUPS.map((group) => {
             const items = group.items.filter((i) => !i.permission || hasPermission(i.permission));
@@ -137,10 +154,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
             return (
               <List key={group.heading} dense sx={{ px: 1 }}>
                 {open && (
-                  <Typography
-                    variant="caption"
-                    sx={{ px: 1.5, color: "text.secondary", fontWeight: 700, letterSpacing: 0.6, textTransform: "uppercase" }}
-                  >
+                  <Typography component="div" className="sidebar-section-label">
                     {group.heading}
                   </Typography>
                 )}
@@ -153,12 +167,8 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                       to={item.to}
                       selected={active}
                       sx={{
-                        borderRadius: 2,
-                        mb: 0.25,
                         minHeight: 44,
                         justifyContent: open ? "flex-start" : "center",
-                        "&.Mui-selected": { bgcolor: "primary.main", color: "#fff", "&:hover": { bgcolor: "primary.dark" } },
-                        "&.Mui-selected .MuiListItemIcon-root": { color: "#fff" },
                       }}
                     >
                       <ListItemIcon sx={{ minWidth: open ? 38 : 0, justifyContent: "center" }}>{item.icon}</ListItemIcon>
@@ -175,7 +185,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
 
       <Box component="main" sx={{ flexGrow: 1, width: `calc(100% - ${width}px)` }}>
         <Toolbar className="no-print" />
-        <Box sx={{ p: { xs: 2, md: 3 } }}>{children}</Box>
+        <Box className="system-page">{children}</Box>
       </Box>
     </Box>
   );

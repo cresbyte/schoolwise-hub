@@ -15,15 +15,17 @@ import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import CircleIcon from "@mui/icons-material/Circle";
+import { alpha } from "@mui/material/styles";
 import * as api from "@/lib/mockApi";
 import { useAsync } from "@/hooks/useAsync";
 import { timeAgo } from "@/lib/utils";
+import { TOKENS } from "@/theme/theme";
 
 const TYPE_COLOR: Record<string, string> = {
-  info: "#1565C0",
-  success: "#2E7D32",
-  warning: "#EF6C00",
-  error: "#C62828",
+  info: TOKENS.color.info,
+  success: TOKENS.color.success,
+  warning: TOKENS.color.warning,
+  error: TOKENS.color.error,
 };
 
 /** Notification bell dropdown. */
@@ -64,7 +66,13 @@ export function NotificationBell() {
         <Divider />
         <List dense disablePadding>
           {items.slice(0, 10).map((n) => (
-            <ListItem key={n.id} sx={{ alignItems: "flex-start", bgcolor: n.read ? "transparent" : "#1565C00A" }}>
+            <ListItem
+              key={n.id}
+              sx={{
+                alignItems: "flex-start",
+                bgcolor: n.read ? "transparent" : alpha(TOKENS.color.info, 0.04),
+              }}
+            >
               <CircleIcon sx={{ fontSize: 10, color: TYPE_COLOR[n.type], mt: 0.8, mr: 1 }} />
               <ListItemText
                 primary={n.title}

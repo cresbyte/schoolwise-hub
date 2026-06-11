@@ -14,7 +14,7 @@ export function Letterhead({ title }: { title?: string }) {
   return (
     <Box sx={{ mb: 2 }}>
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-        <Box sx={{ width: 56, height: 56, borderRadius: "50%", bgcolor: "primary.main", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Box sx={{ width: 56, height: 56, borderRadius: "50%", bgcolor: "primary.main", color: "common.white", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <SchoolIcon fontSize="large" />
         </Box>
         <Box sx={{ flex: 1 }}>
