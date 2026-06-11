@@ -142,3 +142,16 @@
     color: var(--color-foreground);
   }
 }
+
+/* ===== SchuleSmart print styles ===== */
+@media print {
+  .no-print { display: none !important; }
+  .MuiAppBar-root, .MuiDrawer-root { display: none !important; }
+  main { width: 100% !important; }
+  body { background: #fff !important; }
+  .print-area { box-shadow: none !important; }
+  .page-break { page-break-after: always; }
+}
+@media screen {
+  .print-only { display: none; }
+}

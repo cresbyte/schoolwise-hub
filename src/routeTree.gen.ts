@@ -9,38 +9,428 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TimetableRouteImport } from './routes/timetable'
+import { Route as SubjectsRouteImport } from './routes/subjects'
+import { Route as StudentsRouteImport } from './routes/students'
+import { Route as StaffRouteImport } from './routes/staff'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ReportCardsRouteImport } from './routes/report-cards'
+import { Route as PortalRouteImport } from './routes/portal'
+import { Route as PayrollRouteImport } from './routes/payroll'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as ExamsRouteImport } from './routes/exams'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ClassesRouteImport } from './routes/classes'
+import { Route as AttendanceRouteImport } from './routes/attendance'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StudentsNewRouteImport } from './routes/students.new'
+import { Route as StudentsIdRouteImport } from './routes/students.$id'
+import { Route as StaffLeaveRouteImport } from './routes/staff.leave'
+import { Route as SettingsUsersRouteImport } from './routes/settings.users'
+import { Route as ReportsNemisRouteImport } from './routes/reports.nemis'
+import { Route as ReportsAuditRouteImport } from './routes/reports.audit'
+import { Route as ReportsAcademicRouteImport } from './routes/reports.academic'
+import { Route as FeesStructuresRouteImport } from './routes/fees.structures'
+import { Route as FeesOutstandingRouteImport } from './routes/fees.outstanding'
+import { Route as FeesCollectionRouteImport } from './routes/fees.collection'
 
+const TimetableRoute = TimetableRouteImport.update({
+  id: '/timetable',
+  path: '/timetable',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SubjectsRoute = SubjectsRouteImport.update({
+  id: '/subjects',
+  path: '/subjects',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentsRoute = StudentsRouteImport.update({
+  id: '/students',
+  path: '/students',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StaffRoute = StaffRouteImport.update({
+  id: '/staff',
+  path: '/staff',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportCardsRoute = ReportCardsRouteImport.update({
+  id: '/report-cards',
+  path: '/report-cards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalRoute = PortalRouteImport.update({
+  id: '/portal',
+  path: '/portal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PayrollRoute = PayrollRouteImport.update({
+  id: '/payroll',
+  path: '/payroll',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExamsRoute = ExamsRouteImport.update({
+  id: '/exams',
+  path: '/exams',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClassesRoute = ClassesRouteImport.update({
+  id: '/classes',
+  path: '/classes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AttendanceRoute = AttendanceRouteImport.update({
+  id: '/attendance',
+  path: '/attendance',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StudentsNewRoute = StudentsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => StudentsRoute,
+} as any)
+const StudentsIdRoute = StudentsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => StudentsRoute,
+} as any)
+const StaffLeaveRoute = StaffLeaveRouteImport.update({
+  id: '/leave',
+  path: '/leave',
+  getParentRoute: () => StaffRoute,
+} as any)
+const SettingsUsersRoute = SettingsUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const ReportsNemisRoute = ReportsNemisRouteImport.update({
+  id: '/reports/nemis',
+  path: '/reports/nemis',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsAuditRoute = ReportsAuditRouteImport.update({
+  id: '/reports/audit',
+  path: '/reports/audit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsAcademicRoute = ReportsAcademicRouteImport.update({
+  id: '/reports/academic',
+  path: '/reports/academic',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeesStructuresRoute = FeesStructuresRouteImport.update({
+  id: '/fees/structures',
+  path: '/fees/structures',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeesOutstandingRoute = FeesOutstandingRouteImport.update({
+  id: '/fees/outstanding',
+  path: '/fees/outstanding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeesCollectionRoute = FeesCollectionRouteImport.update({
+  id: '/fees/collection',
+  path: '/fees/collection',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/attendance': typeof AttendanceRoute
+  '/classes': typeof ClassesRoute
+  '/dashboard': typeof DashboardRoute
+  '/exams': typeof ExamsRoute
+  '/login': typeof LoginRoute
+  '/payroll': typeof PayrollRoute
+  '/portal': typeof PortalRoute
+  '/report-cards': typeof ReportCardsRoute
+  '/settings': typeof SettingsRouteWithChildren
+  '/staff': typeof StaffRouteWithChildren
+  '/students': typeof StudentsRouteWithChildren
+  '/subjects': typeof SubjectsRoute
+  '/timetable': typeof TimetableRoute
+  '/fees/collection': typeof FeesCollectionRoute
+  '/fees/outstanding': typeof FeesOutstandingRoute
+  '/fees/structures': typeof FeesStructuresRoute
+  '/reports/academic': typeof ReportsAcademicRoute
+  '/reports/audit': typeof ReportsAuditRoute
+  '/reports/nemis': typeof ReportsNemisRoute
+  '/settings/users': typeof SettingsUsersRoute
+  '/staff/leave': typeof StaffLeaveRoute
+  '/students/$id': typeof StudentsIdRoute
+  '/students/new': typeof StudentsNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/attendance': typeof AttendanceRoute
+  '/classes': typeof ClassesRoute
+  '/dashboard': typeof DashboardRoute
+  '/exams': typeof ExamsRoute
+  '/login': typeof LoginRoute
+  '/payroll': typeof PayrollRoute
+  '/portal': typeof PortalRoute
+  '/report-cards': typeof ReportCardsRoute
+  '/settings': typeof SettingsRouteWithChildren
+  '/staff': typeof StaffRouteWithChildren
+  '/students': typeof StudentsRouteWithChildren
+  '/subjects': typeof SubjectsRoute
+  '/timetable': typeof TimetableRoute
+  '/fees/collection': typeof FeesCollectionRoute
+  '/fees/outstanding': typeof FeesOutstandingRoute
+  '/fees/structures': typeof FeesStructuresRoute
+  '/reports/academic': typeof ReportsAcademicRoute
+  '/reports/audit': typeof ReportsAuditRoute
+  '/reports/nemis': typeof ReportsNemisRoute
+  '/settings/users': typeof SettingsUsersRoute
+  '/staff/leave': typeof StaffLeaveRoute
+  '/students/$id': typeof StudentsIdRoute
+  '/students/new': typeof StudentsNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/attendance': typeof AttendanceRoute
+  '/classes': typeof ClassesRoute
+  '/dashboard': typeof DashboardRoute
+  '/exams': typeof ExamsRoute
+  '/login': typeof LoginRoute
+  '/payroll': typeof PayrollRoute
+  '/portal': typeof PortalRoute
+  '/report-cards': typeof ReportCardsRoute
+  '/settings': typeof SettingsRouteWithChildren
+  '/staff': typeof StaffRouteWithChildren
+  '/students': typeof StudentsRouteWithChildren
+  '/subjects': typeof SubjectsRoute
+  '/timetable': typeof TimetableRoute
+  '/fees/collection': typeof FeesCollectionRoute
+  '/fees/outstanding': typeof FeesOutstandingRoute
+  '/fees/structures': typeof FeesStructuresRoute
+  '/reports/academic': typeof ReportsAcademicRoute
+  '/reports/audit': typeof ReportsAuditRoute
+  '/reports/nemis': typeof ReportsNemisRoute
+  '/settings/users': typeof SettingsUsersRoute
+  '/staff/leave': typeof StaffLeaveRoute
+  '/students/$id': typeof StudentsIdRoute
+  '/students/new': typeof StudentsNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/attendance'
+    | '/classes'
+    | '/dashboard'
+    | '/exams'
+    | '/login'
+    | '/payroll'
+    | '/portal'
+    | '/report-cards'
+    | '/settings'
+    | '/staff'
+    | '/students'
+    | '/subjects'
+    | '/timetable'
+    | '/fees/collection'
+    | '/fees/outstanding'
+    | '/fees/structures'
+    | '/reports/academic'
+    | '/reports/audit'
+    | '/reports/nemis'
+    | '/settings/users'
+    | '/staff/leave'
+    | '/students/$id'
+    | '/students/new'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/attendance'
+    | '/classes'
+    | '/dashboard'
+    | '/exams'
+    | '/login'
+    | '/payroll'
+    | '/portal'
+    | '/report-cards'
+    | '/settings'
+    | '/staff'
+    | '/students'
+    | '/subjects'
+    | '/timetable'
+    | '/fees/collection'
+    | '/fees/outstanding'
+    | '/fees/structures'
+    | '/reports/academic'
+    | '/reports/audit'
+    | '/reports/nemis'
+    | '/settings/users'
+    | '/staff/leave'
+    | '/students/$id'
+    | '/students/new'
+  id:
+    | '__root__'
+    | '/'
+    | '/attendance'
+    | '/classes'
+    | '/dashboard'
+    | '/exams'
+    | '/login'
+    | '/payroll'
+    | '/portal'
+    | '/report-cards'
+    | '/settings'
+    | '/staff'
+    | '/students'
+    | '/subjects'
+    | '/timetable'
+    | '/fees/collection'
+    | '/fees/outstanding'
+    | '/fees/structures'
+    | '/reports/academic'
+    | '/reports/audit'
+    | '/reports/nemis'
+    | '/settings/users'
+    | '/staff/leave'
+    | '/students/$id'
+    | '/students/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AttendanceRoute: typeof AttendanceRoute
+  ClassesRoute: typeof ClassesRoute
+  DashboardRoute: typeof DashboardRoute
+  ExamsRoute: typeof ExamsRoute
+  LoginRoute: typeof LoginRoute
+  PayrollRoute: typeof PayrollRoute
+  PortalRoute: typeof PortalRoute
+  ReportCardsRoute: typeof ReportCardsRoute
+  SettingsRoute: typeof SettingsRouteWithChildren
+  StaffRoute: typeof StaffRouteWithChildren
+  StudentsRoute: typeof StudentsRouteWithChildren
+  SubjectsRoute: typeof SubjectsRoute
+  TimetableRoute: typeof TimetableRoute
+  FeesCollectionRoute: typeof FeesCollectionRoute
+  FeesOutstandingRoute: typeof FeesOutstandingRoute
+  FeesStructuresRoute: typeof FeesStructuresRoute
+  ReportsAcademicRoute: typeof ReportsAcademicRoute
+  ReportsAuditRoute: typeof ReportsAuditRoute
+  ReportsNemisRoute: typeof ReportsNemisRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/timetable': {
+      id: '/timetable'
+      path: '/timetable'
+      fullPath: '/timetable'
+      preLoaderRoute: typeof TimetableRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/subjects': {
+      id: '/subjects'
+      path: '/subjects'
+      fullPath: '/subjects'
+      preLoaderRoute: typeof SubjectsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/students': {
+      id: '/students'
+      path: '/students'
+      fullPath: '/students'
+      preLoaderRoute: typeof StudentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/staff': {
+      id: '/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof StaffRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/report-cards': {
+      id: '/report-cards'
+      path: '/report-cards'
+      fullPath: '/report-cards'
+      preLoaderRoute: typeof ReportCardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal': {
+      id: '/portal'
+      path: '/portal'
+      fullPath: '/portal'
+      preLoaderRoute: typeof PortalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payroll': {
+      id: '/payroll'
+      path: '/payroll'
+      fullPath: '/payroll'
+      preLoaderRoute: typeof PayrollRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/exams': {
+      id: '/exams'
+      path: '/exams'
+      fullPath: '/exams'
+      preLoaderRoute: typeof ExamsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/classes': {
+      id: '/classes'
+      path: '/classes'
+      fullPath: '/classes'
+      preLoaderRoute: typeof ClassesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/attendance': {
+      id: '/attendance'
+      path: '/attendance'
+      fullPath: '/attendance'
+      preLoaderRoute: typeof AttendanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +438,136 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/students/new': {
+      id: '/students/new'
+      path: '/new'
+      fullPath: '/students/new'
+      preLoaderRoute: typeof StudentsNewRouteImport
+      parentRoute: typeof StudentsRoute
+    }
+    '/students/$id': {
+      id: '/students/$id'
+      path: '/$id'
+      fullPath: '/students/$id'
+      preLoaderRoute: typeof StudentsIdRouteImport
+      parentRoute: typeof StudentsRoute
+    }
+    '/staff/leave': {
+      id: '/staff/leave'
+      path: '/leave'
+      fullPath: '/staff/leave'
+      preLoaderRoute: typeof StaffLeaveRouteImport
+      parentRoute: typeof StaffRoute
+    }
+    '/settings/users': {
+      id: '/settings/users'
+      path: '/users'
+      fullPath: '/settings/users'
+      preLoaderRoute: typeof SettingsUsersRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/reports/nemis': {
+      id: '/reports/nemis'
+      path: '/reports/nemis'
+      fullPath: '/reports/nemis'
+      preLoaderRoute: typeof ReportsNemisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports/audit': {
+      id: '/reports/audit'
+      path: '/reports/audit'
+      fullPath: '/reports/audit'
+      preLoaderRoute: typeof ReportsAuditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports/academic': {
+      id: '/reports/academic'
+      path: '/reports/academic'
+      fullPath: '/reports/academic'
+      preLoaderRoute: typeof ReportsAcademicRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fees/structures': {
+      id: '/fees/structures'
+      path: '/fees/structures'
+      fullPath: '/fees/structures'
+      preLoaderRoute: typeof FeesStructuresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fees/outstanding': {
+      id: '/fees/outstanding'
+      path: '/fees/outstanding'
+      fullPath: '/fees/outstanding'
+      preLoaderRoute: typeof FeesOutstandingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fees/collection': {
+      id: '/fees/collection'
+      path: '/fees/collection'
+      fullPath: '/fees/collection'
+      preLoaderRoute: typeof FeesCollectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface SettingsRouteChildren {
+  SettingsUsersRoute: typeof SettingsUsersRoute
+}
+
+const SettingsRouteChildren: SettingsRouteChildren = {
+  SettingsUsersRoute: SettingsUsersRoute,
+}
+
+const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
+  SettingsRouteChildren,
+)
+
+interface StaffRouteChildren {
+  StaffLeaveRoute: typeof StaffLeaveRoute
+}
+
+const StaffRouteChildren: StaffRouteChildren = {
+  StaffLeaveRoute: StaffLeaveRoute,
+}
+
+const StaffRouteWithChildren = StaffRoute._addFileChildren(StaffRouteChildren)
+
+interface StudentsRouteChildren {
+  StudentsIdRoute: typeof StudentsIdRoute
+  StudentsNewRoute: typeof StudentsNewRoute
+}
+
+const StudentsRouteChildren: StudentsRouteChildren = {
+  StudentsIdRoute: StudentsIdRoute,
+  StudentsNewRoute: StudentsNewRoute,
+}
+
+const StudentsRouteWithChildren = StudentsRoute._addFileChildren(
+  StudentsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AttendanceRoute: AttendanceRoute,
+  ClassesRoute: ClassesRoute,
+  DashboardRoute: DashboardRoute,
+  ExamsRoute: ExamsRoute,
+  LoginRoute: LoginRoute,
+  PayrollRoute: PayrollRoute,
+  PortalRoute: PortalRoute,
+  ReportCardsRoute: ReportCardsRoute,
+  SettingsRoute: SettingsRouteWithChildren,
+  StaffRoute: StaffRouteWithChildren,
+  StudentsRoute: StudentsRouteWithChildren,
+  SubjectsRoute: SubjectsRoute,
+  TimetableRoute: TimetableRoute,
+  FeesCollectionRoute: FeesCollectionRoute,
+  FeesOutstandingRoute: FeesOutstandingRoute,
+  FeesStructuresRoute: FeesStructuresRoute,
+  ReportsAcademicRoute: ReportsAcademicRoute,
+  ReportsAuditRoute: ReportsAuditRoute,
+  ReportsNemisRoute: ReportsNemisRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
