@@ -13,6 +13,7 @@ import { Route as TimetableRouteImport } from './routes/timetable'
 import { Route as SubjectsRouteImport } from './routes/subjects'
 import { Route as StudentsRouteImport } from './routes/students'
 import { Route as StaffRouteImport } from './routes/staff'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ReportCardsRouteImport } from './routes/report-cards'
 import { Route as PayrollRouteImport } from './routes/payroll'
 import { Route as LoginRouteImport } from './routes/login'
@@ -23,6 +24,7 @@ import { Route as AttendanceRouteImport } from './routes/attendance'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StudentsIdRouteImport } from './routes/students.$id'
 import { Route as StaffLeaveRouteImport } from './routes/staff.leave'
+import { Route as SettingsUsersRouteImport } from './routes/settings.users'
 import { Route as ReportsNemisRouteImport } from './routes/reports.nemis'
 import { Route as ReportsAuditRouteImport } from './routes/reports.audit'
 import { Route as ReportsAcademicRouteImport } from './routes/reports.academic'
@@ -48,6 +50,11 @@ const StudentsRoute = StudentsRouteImport.update({
 const StaffRoute = StaffRouteImport.update({
   id: '/staff',
   path: '/staff',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReportCardsRoute = ReportCardsRouteImport.update({
@@ -100,6 +107,11 @@ const StaffLeaveRoute = StaffLeaveRouteImport.update({
   path: '/leave',
   getParentRoute: () => StaffRoute,
 } as any)
+const SettingsUsersRoute = SettingsUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const ReportsNemisRoute = ReportsNemisRouteImport.update({
   id: '/reports/nemis',
   path: '/reports/nemis',
@@ -140,6 +152,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/payroll': typeof PayrollRoute
   '/report-cards': typeof ReportCardsRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/staff': typeof StaffRouteWithChildren
   '/students': typeof StudentsRouteWithChildren
   '/subjects': typeof SubjectsRoute
@@ -150,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/reports/academic': typeof ReportsAcademicRoute
   '/reports/audit': typeof ReportsAuditRoute
   '/reports/nemis': typeof ReportsNemisRoute
+  '/settings/users': typeof SettingsUsersRoute
   '/staff/leave': typeof StaffLeaveRoute
   '/students/$id': typeof StudentsIdRoute
 }
@@ -162,6 +176,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/payroll': typeof PayrollRoute
   '/report-cards': typeof ReportCardsRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/staff': typeof StaffRouteWithChildren
   '/students': typeof StudentsRouteWithChildren
   '/subjects': typeof SubjectsRoute
@@ -172,6 +187,7 @@ export interface FileRoutesByTo {
   '/reports/academic': typeof ReportsAcademicRoute
   '/reports/audit': typeof ReportsAuditRoute
   '/reports/nemis': typeof ReportsNemisRoute
+  '/settings/users': typeof SettingsUsersRoute
   '/staff/leave': typeof StaffLeaveRoute
   '/students/$id': typeof StudentsIdRoute
 }
@@ -185,6 +201,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/payroll': typeof PayrollRoute
   '/report-cards': typeof ReportCardsRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/staff': typeof StaffRouteWithChildren
   '/students': typeof StudentsRouteWithChildren
   '/subjects': typeof SubjectsRoute
@@ -195,6 +212,7 @@ export interface FileRoutesById {
   '/reports/academic': typeof ReportsAcademicRoute
   '/reports/audit': typeof ReportsAuditRoute
   '/reports/nemis': typeof ReportsNemisRoute
+  '/settings/users': typeof SettingsUsersRoute
   '/staff/leave': typeof StaffLeaveRoute
   '/students/$id': typeof StudentsIdRoute
 }
@@ -209,6 +227,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/payroll'
     | '/report-cards'
+    | '/settings'
     | '/staff'
     | '/students'
     | '/subjects'
@@ -219,6 +238,7 @@ export interface FileRouteTypes {
     | '/reports/academic'
     | '/reports/audit'
     | '/reports/nemis'
+    | '/settings/users'
     | '/staff/leave'
     | '/students/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -231,6 +251,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/payroll'
     | '/report-cards'
+    | '/settings'
     | '/staff'
     | '/students'
     | '/subjects'
@@ -241,6 +262,7 @@ export interface FileRouteTypes {
     | '/reports/academic'
     | '/reports/audit'
     | '/reports/nemis'
+    | '/settings/users'
     | '/staff/leave'
     | '/students/$id'
   id:
@@ -253,6 +275,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/payroll'
     | '/report-cards'
+    | '/settings'
     | '/staff'
     | '/students'
     | '/subjects'
@@ -263,6 +286,7 @@ export interface FileRouteTypes {
     | '/reports/academic'
     | '/reports/audit'
     | '/reports/nemis'
+    | '/settings/users'
     | '/staff/leave'
     | '/students/$id'
   fileRoutesById: FileRoutesById
@@ -276,6 +300,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PayrollRoute: typeof PayrollRoute
   ReportCardsRoute: typeof ReportCardsRoute
+  SettingsRoute: typeof SettingsRouteWithChildren
   StaffRoute: typeof StaffRouteWithChildren
   StudentsRoute: typeof StudentsRouteWithChildren
   SubjectsRoute: typeof SubjectsRoute
@@ -316,6 +341,13 @@ declare module '@tanstack/react-router' {
       path: '/staff'
       fullPath: '/staff'
       preLoaderRoute: typeof StaffRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/report-cards': {
@@ -388,6 +420,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StaffLeaveRouteImport
       parentRoute: typeof StaffRoute
     }
+    '/settings/users': {
+      id: '/settings/users'
+      path: '/users'
+      fullPath: '/settings/users'
+      preLoaderRoute: typeof SettingsUsersRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/reports/nemis': {
       id: '/reports/nemis'
       path: '/reports/nemis'
@@ -433,6 +472,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface SettingsRouteChildren {
+  SettingsUsersRoute: typeof SettingsUsersRoute
+}
+
+const SettingsRouteChildren: SettingsRouteChildren = {
+  SettingsUsersRoute: SettingsUsersRoute,
+}
+
+const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
+  SettingsRouteChildren,
+)
+
 interface StaffRouteChildren {
   StaffLeaveRoute: typeof StaffLeaveRoute
 }
@@ -464,6 +515,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PayrollRoute: PayrollRoute,
   ReportCardsRoute: ReportCardsRoute,
+  SettingsRoute: SettingsRouteWithChildren,
   StaffRoute: StaffRouteWithChildren,
   StudentsRoute: StudentsRouteWithChildren,
   SubjectsRoute: SubjectsRoute,
@@ -478,3 +530,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
