@@ -19,6 +19,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as StudentsIdRouteImport } from './routes/students.$id'
 import { Route as FeesStructuresRouteImport } from './routes/fees.structures'
 import { Route as FeesOutstandingRouteImport } from './routes/fees.outstanding'
+import { Route as FeesCollectionRouteImport } from './routes/fees.collection'
 
 const SubjectsRoute = SubjectsRouteImport.update({
   id: '/subjects',
@@ -70,6 +71,11 @@ const FeesOutstandingRoute = FeesOutstandingRouteImport.update({
   path: '/fees/outstanding',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FeesCollectionRoute = FeesCollectionRouteImport.update({
+  id: '/fees/collection',
+  path: '/fees/collection',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/staff': typeof StaffRoute
   '/students': typeof StudentsRouteWithChildren
   '/subjects': typeof SubjectsRoute
+  '/fees/collection': typeof FeesCollectionRoute
   '/fees/outstanding': typeof FeesOutstandingRoute
   '/fees/structures': typeof FeesStructuresRoute
   '/students/$id': typeof StudentsIdRoute
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/staff': typeof StaffRoute
   '/students': typeof StudentsRouteWithChildren
   '/subjects': typeof SubjectsRoute
+  '/fees/collection': typeof FeesCollectionRoute
   '/fees/outstanding': typeof FeesOutstandingRoute
   '/fees/structures': typeof FeesStructuresRoute
   '/students/$id': typeof StudentsIdRoute
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   '/staff': typeof StaffRoute
   '/students': typeof StudentsRouteWithChildren
   '/subjects': typeof SubjectsRoute
+  '/fees/collection': typeof FeesCollectionRoute
   '/fees/outstanding': typeof FeesOutstandingRoute
   '/fees/structures': typeof FeesStructuresRoute
   '/students/$id': typeof StudentsIdRoute
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
     | '/staff'
     | '/students'
     | '/subjects'
+    | '/fees/collection'
     | '/fees/outstanding'
     | '/fees/structures'
     | '/students/$id'
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/staff'
     | '/students'
     | '/subjects'
+    | '/fees/collection'
     | '/fees/outstanding'
     | '/fees/structures'
     | '/students/$id'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/staff'
     | '/students'
     | '/subjects'
+    | '/fees/collection'
     | '/fees/outstanding'
     | '/fees/structures'
     | '/students/$id'
@@ -155,6 +167,7 @@ export interface RootRouteChildren {
   StaffRoute: typeof StaffRoute
   StudentsRoute: typeof StudentsRouteWithChildren
   SubjectsRoute: typeof SubjectsRoute
+  FeesCollectionRoute: typeof FeesCollectionRoute
   FeesOutstandingRoute: typeof FeesOutstandingRoute
   FeesStructuresRoute: typeof FeesStructuresRoute
 }
@@ -231,6 +244,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FeesOutstandingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/fees/collection': {
+      id: '/fees/collection'
+      path: '/fees/collection'
+      fullPath: '/fees/collection'
+      preLoaderRoute: typeof FeesCollectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -254,6 +274,7 @@ const rootRouteChildren: RootRouteChildren = {
   StaffRoute: StaffRoute,
   StudentsRoute: StudentsRouteWithChildren,
   SubjectsRoute: SubjectsRoute,
+  FeesCollectionRoute: FeesCollectionRoute,
   FeesOutstandingRoute: FeesOutstandingRoute,
   FeesStructuresRoute: FeesStructuresRoute,
 }
