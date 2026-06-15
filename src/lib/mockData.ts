@@ -1,5 +1,5 @@
 /**
- * Realistic mock data for SchuleSmart (Greenfield Private Academy, Nakuru).
+ * Realistic mock data for ShuleSmart (Greenfield Private Academy, Nakuru).
  * Data is generated deterministically at module load.
  * @module mockData
  */

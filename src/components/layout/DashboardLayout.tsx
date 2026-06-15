@@ -4,7 +4,8 @@
  * @module DashboardLayout
  */
 import { useEffect, useState, type ReactNode } from "react";
-import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import Box from "@mui/material/Box";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -39,18 +40,20 @@ const RAIL = 68;
 /** Authenticated app shell with sidebar and app bar. */
 export function DashboardLayout({ children }: { children: ReactNode }) {
   const { user, isAuthenticated, isLoading, logout, hasPermission } = useAuth();
-  const navigate = useNavigate();
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const router = useRouter();
+  const pathname = usePathname();
   const [open, setOpen] = useState(true);
   const [anchor, setAnchor] = useState<null | HTMLElement>(null);
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) navigate({ to: "/login" });
-  }, [isLoading, isAuthenticated, navigate]);
+    if (!isLoading && !isAuthenticated) router.push("/login");
+  }, [isLoading, isAuthenticated, router]);
 
   if (isLoading || !isAuthenticated || !user) {
     return (
-      <Box sx={{ display: "flex", height: "100vh", alignItems: "center", justifyContent: "center" }}>
+      <Box
+        sx={{ display: "flex", height: "100vh", alignItems: "center", justifyContent: "center" }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -60,7 +63,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
 
   const handleLogout = async () => {
     await logout();
-    navigate({ to: "/login" });
+    router.push("/login");
   };
 
   return (
@@ -77,13 +80,19 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
           </IconButton>
           <SchoolIcon sx={{ color: "primary.main", mr: 1 }} />
           <Typography variant="h6" sx={{ fontWeight: 800, color: "primary.main" }}>
-            Schule
+            Shule
             <Box component="span" sx={{ color: "secondary.main" }}>
               Smart
             </Box>
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
-          <Chip label="Term 2, 2024" color="primary" variant="outlined" size="small" sx={{ mr: 1, fontWeight: 600 }} />
+          <Chip
+            label="Term 2, 2024"
+            color="primary"
+            variant="outlined"
+            size="small"
+            sx={{ mr: 1, fontWeight: 600 }}
+          />
           <NotificationBell />
           <Box
             sx={{ display: "flex", alignItems: "center", gap: 1, ml: 1, cursor: "pointer" }}
@@ -103,14 +112,23 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
           </Box>
           <Menu anchorEl={anchor} open={!!anchor} onClose={() => setAnchor(null)}>
             <MenuItem onClick={() => setAnchor(null)}>
-              <ListItemIcon><PersonIcon fontSize="small" /></ListItemIcon> Profile
+              <ListItemIcon>
+                <PersonIcon fontSize="small" />
+              </ListItemIcon>{" "}
+              Profile
             </MenuItem>
             <MenuItem onClick={() => setAnchor(null)}>
-              <ListItemIcon><LockResetIcon fontSize="small" /></ListItemIcon> Change Password
+              <ListItemIcon>
+                <LockResetIcon fontSize="small" />
+              </ListItemIcon>{" "}
+              Change Password
             </MenuItem>
             <Divider />
             <MenuItem onClick={handleLogout}>
-              <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon> Logout
+              <ListItemIcon>
+                <LogoutIcon fontSize="small" />
+              </ListItemIcon>{" "}
+              Logout
             </MenuItem>
           </Menu>
         </Toolbar>
@@ -131,12 +149,23 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
         }}
       >
         <Toolbar />
-        <Box className="sidebar-logo-area" sx={{ display: "flex", alignItems: "center", gap: 1, justifyContent: open ? "flex-start" : "center" }}>
+        <Box
+          className="sidebar-logo-area"
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            justifyContent: open ? "flex-start" : "center",
+          }}
+        >
           <SchoolIcon sx={{ color: "secondary.main", fontSize: 28 }} />
           {open && (
             <Box>
-              <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "common.white", lineHeight: 1.2 }}>
-                Schule
+              <Typography
+                variant="subtitle2"
+                sx={{ fontWeight: 700, color: "common.white", lineHeight: 1.2 }}
+              >
+                Shule
                 <Box component="span" sx={{ color: "secondary.main" }}>
                   Smart
                 </Box>
@@ -159,23 +188,38 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                   </Typography>
                 )}
                 {items.map((item) => {
-                  const active = pathname === item.to || (item.to !== "/dashboard" && pathname.startsWith(item.to));
+                  const active =
+                    pathname === item.to ||
+                    (item.to !== "/dashboard" && pathname.startsWith(item.to));
                   const btn = (
                     <ListItemButton
                       key={item.to}
                       component={Link}
-                      to={item.to}
+                      href={item.to}
                       selected={active}
                       sx={{
                         minHeight: 44,
                         justifyContent: open ? "flex-start" : "center",
                       }}
                     >
-                      <ListItemIcon sx={{ minWidth: open ? 38 : 0, justifyContent: "center" }}>{item.icon}</ListItemIcon>
-                      {open && <ListItemText primary={item.label} slotProps={{ primary: { sx: { fontWeight: 600, fontSize: 14 } } }} />}
+                      <ListItemIcon sx={{ minWidth: open ? 38 : 0, justifyContent: "center" }}>
+                        {item.icon}
+                      </ListItemIcon>
+                      {open && (
+                        <ListItemText
+                          primary={item.label}
+                          slotProps={{ primary: { sx: { fontWeight: 600, fontSize: 14 } } }}
+                        />
+                      )}
                     </ListItemButton>
                   );
-                  return open ? btn : <Tooltip key={item.to} title={item.label} placement="right">{btn}</Tooltip>;
+                  return open ? (
+                    btn
+                  ) : (
+                    <Tooltip key={item.to} title={item.label} placement="right">
+                      {btn}
+                    </Tooltip>
+                  );
                 })}
               </List>
             );

@@ -6,17 +6,16 @@ import { useState } from "react";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import Link from "@mui/material/Link";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
+import Stack from "@mui/material/Stack";
 import SchoolIcon from "@mui/icons-material/School";
 import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import { Link as RouterLink } from "@tanstack/react-router";
+import NextLink from "next/link";
 import { HEADING_FONT, SCHOOL, WEBSITE_COLORS } from "@/lib/website/constants";
-import { Stack } from "@mui/material";
 
 const QUICK_LINKS = [
   { label: "About Us", href: "/about" },
@@ -28,6 +27,21 @@ const QUICK_LINKS = [
   { label: "Our Staff", href: "/our-staff" },
   { label: "Parent Resources", href: "/parents" },
 ];
+
+const footerLinkSx = {
+  color: "rgba(255,255,255,0.75)",
+  fontSize: 14,
+  textDecoration: "none",
+  display: "block",
+  "&:hover": { color: "#fff" },
+} as const;
+
+const bottomLinkSx = {
+  color: "rgba(255,255,255,0.5)",
+  fontSize: 12,
+  textDecoration: "none",
+  "&:hover": { color: "rgba(255,255,255,0.85)" },
+} as const;
 
 /**
  * Site-wide footer with identity, links, contact, and newsletter.
@@ -49,11 +63,17 @@ export function WebsiteFooter() {
             gap: 4,
           }}
         >
+          {/* Brand */}
           <Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
               <SchoolIcon sx={{ color: WEBSITE_COLORS.secondary, fontSize: 32 }} />
               <Typography
-                sx={{ fontFamily: HEADING_FONT, fontWeight: 700, color: "common.white", fontSize: 18 }}
+                sx={{
+                  fontFamily: HEADING_FONT,
+                  fontWeight: 700,
+                  color: "common.white",
+                  fontSize: 18,
+                }}
               >
                 {SCHOOL.name}
               </Typography>
@@ -70,32 +90,27 @@ export function WebsiteFooter() {
             </Typography>
           </Box>
 
+          {/* Quick Links */}
           <Box>
-            <Typography sx={{ fontFamily: HEADING_FONT, fontWeight: 700, color: "common.white", mb: 2 }}>
+            <Typography
+              sx={{ fontFamily: HEADING_FONT, fontWeight: 700, color: "common.white", mb: 2 }}
+            >
               Quick Links
             </Typography>
-            <Stack spacing={0.5}>
-            {QUICK_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                component={RouterLink}
-                to={link.href}
-                underline="hover"
-                display="block"
-                sx={{
-                  color: "rgba(255,255,255,0.75)",
-                  mb: 1,
-                  fontSize: 14,
-                  "&:hover": { color: "common.white" },
-                }}
-              >
-                {link.label}
-              </Link>
-            ))}</Stack>
+            <Stack spacing={0.75}>
+              {QUICK_LINKS.map((link) => (
+                <Box key={link.href} component={NextLink} href={link.href} sx={footerLinkSx}>
+                  {link.label}
+                </Box>
+              ))}
+            </Stack>
           </Box>
 
+          {/* Contact */}
           <Box>
-            <Typography sx={{ fontFamily: HEADING_FONT, fontWeight: 700, color: "common.white", mb: 2 }}>
+            <Typography
+              sx={{ fontFamily: HEADING_FONT, fontWeight: 700, color: "common.white", mb: 2 }}
+            >
               Contact Us
             </Typography>
             <Box sx={{ display: "flex", gap: 1, mb: 1.5, alignItems: "flex-start" }}>
@@ -106,26 +121,31 @@ export function WebsiteFooter() {
             </Box>
             <Box sx={{ display: "flex", gap: 1, mb: 1.5, alignItems: "center" }}>
               <PhoneIcon sx={{ fontSize: 18, color: WEBSITE_COLORS.secondary }} />
-              <Link
+              <Box
+                component="a"
                 href={`tel:+${SCHOOL.phoneRaw}`}
-                sx={{ color: "rgba(255,255,255,0.75)", fontSize: 14 }}
+                sx={{ color: "rgba(255,255,255,0.75)", fontSize: 14, textDecoration: "none" }}
               >
                 {SCHOOL.phone}
-              </Link>
+              </Box>
             </Box>
             <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
               <EmailIcon sx={{ fontSize: 18, color: WEBSITE_COLORS.secondary }} />
-              <Link
+              <Box
+                component="a"
                 href={`mailto:${SCHOOL.email}`}
-                sx={{ color: "rgba(255,255,255,0.75)", fontSize: 14 }}
+                sx={{ color: "rgba(255,255,255,0.75)", fontSize: 14, textDecoration: "none" }}
               >
                 {SCHOOL.email}
-              </Link>
+              </Box>
             </Box>
           </Box>
 
+          {/* Newsletter */}
           <Box>
-            <Typography sx={{ fontFamily: HEADING_FONT, fontWeight: 700, color: "common.white", mb: 2 }}>
+            <Typography
+              sx={{ fontFamily: HEADING_FONT, fontWeight: 700, color: "common.white", mb: 2 }}
+            >
               Newsletter
             </Typography>
             <Typography variant="body2" sx={{ mb: 2 }}>
@@ -138,7 +158,7 @@ export function WebsiteFooter() {
             ) : (
               <Box
                 component="form"
-                onSubmit={(e) => {
+                onSubmit={(e: React.FormEvent) => {
                   e.preventDefault();
                   setSubscribed(true);
                 }}
@@ -183,25 +203,15 @@ export function WebsiteFooter() {
             © {new Date().getFullYear()} {SCHOOL.name}. All rights reserved.
           </Typography>
           <Box sx={{ display: "flex", gap: 2 }}>
-            <Link
-              component={RouterLink}
-              to="/privacy"
-              variant="caption"
-              sx={{ color: "rgba(255,255,255,0.5)" }}
-            >
+            <Box component={NextLink} href="/privacy" sx={bottomLinkSx}>
               Privacy Policy
-            </Link>
-            <Link
-              component={RouterLink}
-              to="/terms"
-              variant="caption"
-              sx={{ color: "rgba(255,255,255,0.5)" }}
-            >
+            </Box>
+            <Box component={NextLink} href="/terms" sx={bottomLinkSx}>
               Terms of Use
-            </Link>
+            </Box>
           </Box>
           <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.4)" }}>
-            Powered by SchuleSmart
+            Powered by ShuleSmart
           </Typography>
         </Box>
       </Container>

@@ -8,7 +8,7 @@ import CardActionArea from "@mui/material/CardActionArea";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 import Box from "@mui/material/Box";
-import { Link as RouterLink } from "@tanstack/react-router";
+import Link from "next/link";
 import { ImagePlaceholder } from "./ImagePlaceholder";
 import type { NewsArticle } from "@/lib/website/data";
 
@@ -26,9 +26,8 @@ export function NewsCard({ article, compact = false }: NewsCardProps) {
   return (
     <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
       <CardActionArea
-        component={RouterLink}
-        to="/news/$slug"
-        params={{ slug: article.slug }}
+        LinkComponent={Link}
+        href={`/news/${article.slug}`}
         sx={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "stretch" }}
       >
         <ImagePlaceholder

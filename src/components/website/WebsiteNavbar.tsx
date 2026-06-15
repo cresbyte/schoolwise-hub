@@ -27,7 +27,8 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SchoolIcon from "@mui/icons-material/School";
 import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
-import { Link as RouterLink, useRouterState } from "@tanstack/react-router";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { SCHOOL } from "@/lib/website/constants";
 
 interface NavLink {
@@ -113,7 +114,7 @@ const navLinkSx = {
  * Sticky navbar with top info bar, desktop dropdown menus and mobile drawer.
  */
 export function WebsiteNavbar() {
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [menuAnchors, setMenuAnchors] = useState<Record<string, HTMLElement | null>>({});
 
@@ -199,8 +200,8 @@ export function WebsiteNavbar() {
             </IconButton>
 
             <Box
-              component={RouterLink}
-              to="/"
+              component={Link}
+              href="/"
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -270,16 +271,16 @@ export function WebsiteNavbar() {
                 </Box>
               ))}
               <Button
-                component={RouterLink}
-                to="/news"
+                component={Link}
+                href="/news"
                 className={pathname.startsWith("/news") ? "active" : undefined}
                 sx={navLinkSx}
               >
                 News & Events
               </Button>
               <Button
-                component={RouterLink}
-                to="/contact"
+                component={Link}
+                href="/contact"
                 className={pathname === "/contact" ? "active" : undefined}
                 sx={navLinkSx}
               >
@@ -289,8 +290,8 @@ export function WebsiteNavbar() {
 
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, ml: "auto" }}>
               <Button
-                component={RouterLink}
-                to="/login"
+                component={Link}
+                href="/login"
                 variant="outlined"
                 size="small"
                 sx={{
@@ -304,8 +305,8 @@ export function WebsiteNavbar() {
                 Parent Portal
               </Button>
               <Button
-                component={RouterLink}
-                to="/admissions/apply"
+                component={Link}
+                href="/admissions/apply"
                 variant="contained"
                 color="secondary"
                 size="small"
@@ -336,8 +337,8 @@ export function WebsiteNavbar() {
           <Divider />
           <List>
             <ListItemButton
-              component={RouterLink}
-              to="/"
+              component={Link}
+              href="/"
               selected={pathname === "/"}
               onClick={() => setDrawerOpen(false)}
             >
@@ -346,7 +347,7 @@ export function WebsiteNavbar() {
             {NAV_GROUPS.map((group) => (
               <Accordion key={group.label} disableGutters elevation={0}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography fontWeight={600}>{group.label}</Typography>
+                  <Typography sx={{ fontWeight: 600 }}>{group.label}</Typography>
                 </AccordionSummary>
                 <AccordionDetails sx={{ pt: 0 }}>
                   {group.links.map((link) => (
@@ -359,33 +360,33 @@ export function WebsiteNavbar() {
                     >
                       <ListItemText
                         primary={link.label}
-                        primaryTypographyProps={{ fontSize: 14 }}
+                        slotProps={{ primary: { style: { fontSize: 14 } } }}
                       />
                     </ListItemButton>
                   ))}
                 </AccordionDetails>
               </Accordion>
             ))}
-            <ListItemButton component={RouterLink} to="/news" onClick={() => setDrawerOpen(false)}>
+            <ListItemButton component={Link} href="/news" onClick={() => setDrawerOpen(false)}>
               <ListItemText primary="News & Events" />
             </ListItemButton>
             <ListItemButton
-              component={RouterLink}
-              to="/contact"
+              component={Link}
+              href="/contact"
               onClick={() => setDrawerOpen(false)}
             >
               <ListItemText primary="Contact" />
             </ListItemButton>
             <ListItemButton
-              component={RouterLink}
-              to="/parents"
+              component={Link}
+              href="/parents"
               onClick={() => setDrawerOpen(false)}
             >
               <ListItemText primary="Parent Resources" />
             </ListItemButton>
             <ListItemButton
-              component={RouterLink}
-              to="/our-staff"
+              component={Link}
+              href="/our-staff"
               onClick={() => setDrawerOpen(false)}
             >
               <ListItemText primary="Our Staff" />
@@ -394,8 +395,8 @@ export function WebsiteNavbar() {
           <Divider />
           <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 1 }}>
             <Button
-              component={RouterLink}
-              to="/login"
+              component={Link}
+              href="/login"
               variant="outlined"
               fullWidth
               onClick={() => setDrawerOpen(false)}
@@ -403,8 +404,8 @@ export function WebsiteNavbar() {
               Parent Portal
             </Button>
             <Button
-              component={RouterLink}
-              to="/admissions/apply"
+              component={Link}
+              href="/admissions/apply"
               variant="contained"
               color="secondary"
               fullWidth

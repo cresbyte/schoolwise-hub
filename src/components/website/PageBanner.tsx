@@ -6,8 +6,7 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
-import Link from "@mui/material/Link";
-import { Link as RouterLink } from "@tanstack/react-router";
+import NextLink from "next/link";
 import { WEBSITE_COLORS } from "@/lib/website/constants";
 
 /** Props for {@link PageBanner}. */
@@ -56,15 +55,19 @@ export function PageBanner({
           >
             {crumbs.map((c, i) =>
               c.href ? (
-                <Link
+                <Box
                   key={i}
-                  component={RouterLink}
-                  to={c.href}
-                  underline="hover"
-                  sx={{ color: "rgba(255,255,255,0.85)", fontSize: 14 }}
+                  component={NextLink}
+                  href={c.href}
+                  sx={{
+                    color: "rgba(255,255,255,0.85)",
+                    fontSize: 14,
+                    textDecoration: "none",
+                    "&:hover": { textDecoration: "underline" },
+                  }}
                 >
                   {c.label}
-                </Link>
+                </Box>
               ) : (
                 <Typography key={i} sx={{ color: "common.white", fontSize: 14 }}>
                   {c.label}

@@ -10,7 +10,7 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { Link as RouterLink } from "@tanstack/react-router";
+import Link from "next/link";
 import { HERO_SLIDES } from "@/lib/website/data";
 
 const INTERVAL_MS = 5000;
@@ -84,8 +84,8 @@ export function HeroSection() {
               {s.subtitle}
             </Typography>
             <Button
-              component={RouterLink}
-              to={s.cta.href}
+              LinkComponent={Link}
+              href={s.cta.href}
               variant="contained"
               size="large"
               sx={{

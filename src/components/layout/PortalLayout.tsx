@@ -3,7 +3,7 @@
  * @module PortalLayout
  */
 import { useEffect, type ReactNode } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { useRouter } from "next/navigation";
 import Box from "@mui/material/Box";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -20,15 +20,17 @@ import { school } from "@/lib/mockData";
 /** Layout shell for the parent portal. */
 export function PortalLayout({ children }: { children: ReactNode }) {
   const { user, isAuthenticated, isLoading, logout } = useAuth();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) navigate({ to: "/login" });
-  }, [isLoading, isAuthenticated, navigate]);
+    if (!isLoading && !isAuthenticated) router.push("/login");
+  }, [isLoading, isAuthenticated, router]);
 
   if (isLoading || !user) {
     return (
-      <Box sx={{ display: "flex", height: "100vh", alignItems: "center", justifyContent: "center" }}>
+      <Box
+        sx={{ display: "flex", height: "100vh", alignItems: "center", justifyContent: "center" }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -36,7 +38,7 @@ export function PortalLayout({ children }: { children: ReactNode }) {
 
   const handleLogout = async () => {
     await logout();
-    navigate({ to: "/login" });
+    router.push("/login");
   };
 
   return (
@@ -45,8 +47,11 @@ export function PortalLayout({ children }: { children: ReactNode }) {
         <Toolbar>
           <SchoolIcon sx={{ color: "primary.main", mr: 1 }} />
           <Box>
-            <Typography variant="h6" sx={{ fontWeight: 800, color: "primary.main", lineHeight: 1.1 }}>
-              Schule
+            <Typography
+              variant="h6"
+              sx={{ fontWeight: 800, color: "primary.main", lineHeight: 1.1 }}
+            >
+              Shule
               <Box component="span" sx={{ color: "secondary.main" }}>
                 Smart
               </Box>
@@ -59,7 +64,10 @@ export function PortalLayout({ children }: { children: ReactNode }) {
           <Avatar sx={{ width: 32, height: 32, bgcolor: "secondary.main", fontSize: 13, mr: 1 }}>
             {getInitials(user.name)}
           </Avatar>
-          <Typography variant="body2" sx={{ fontWeight: 600, mr: 2, display: { xs: "none", sm: "block" } }}>
+          <Typography
+            variant="body2"
+            sx={{ fontWeight: 600, mr: 2, display: { xs: "none", sm: "block" } }}
+          >
             {user.name}
           </Typography>
           <Button startIcon={<LogoutIcon />} onClick={handleLogout} size="small">

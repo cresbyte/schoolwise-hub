@@ -1,5 +1,5 @@
 /**
- * SchuleSmart central MUI theme.
+ * ShuleSmart central MUI theme.
  * ALL design decisions live here. Edit this file to retheme the
  * entire application — zero inline styles required elsewhere.
  */
@@ -393,7 +393,7 @@ const theme = createTheme({
         disableElevation: true,
       },
       styleOverrides: {
-        root: {
+        root: ({ ownerState }: any) => ({
           fontFamily: TOKENS.font.family.body,
           fontWeight: TOKENS.font.weight.semibold,
           fontSize: TOKENS.font.size.sm,
@@ -402,54 +402,46 @@ const theme = createTheme({
           borderRadius: TOKENS.radius.md,
           transition: TOKENS.transition.base,
           padding: "8px 20px",
-        },
-        sizeLarge: {
-          fontSize: TOKENS.font.size.base,
-          padding: "12px 28px",
-        },
-        sizeSmall: {
-          fontSize: TOKENS.font.size.xs,
-          padding: "5px 14px",
-        },
-        contained: {
-          boxShadow: TOKENS.shadow.xs,
-          "&:hover": {
-            boxShadow: TOKENS.shadow.sm,
-            transform: "translateY(-1px)",
-          },
-          "&:active": {
-            transform: "translateY(0)",
-          },
-        },
-        containedPrimary: {
-          background: `linear-gradient(135deg, ${TOKENS.color.primary} 0%, ${TOKENS.color.primaryLight} 100%)`,
-          "&:hover": {
-            background: `linear-gradient(135deg, ${TOKENS.color.primaryDark} 0%, ${TOKENS.color.primary} 100%)`,
-          },
-        },
-        containedSecondary: {
-          background: `linear-gradient(135deg, ${TOKENS.color.secondary} 0%, ${TOKENS.color.secondaryLight} 100%)`,
-          color: TOKENS.color.white,
-          "&:hover": {
-            background: `linear-gradient(135deg, ${TOKENS.color.secondaryDark} 0%, ${TOKENS.color.secondary} 100%)`,
-          },
-        },
-        outlined: {
-          borderWidth: "1.5px",
-          "&:hover": { borderWidth: "1.5px" },
-        },
-        outlinedPrimary: {
-          borderColor: TOKENS.color.primary,
-          color: TOKENS.color.primary,
-          "&:hover": {
-            backgroundColor: TOKENS.color.primarySubtle,
-          },
-        },
-        text: {
-          "&:hover": {
-            backgroundColor: TOKENS.color.primarySubtle,
-          },
-        },
+          ...(ownerState.variant === 'contained' && {
+            boxShadow: TOKENS.shadow.xs,
+            "&:hover": {
+              boxShadow: TOKENS.shadow.sm,
+              transform: "translateY(-1px)",
+            },
+            "&:active": {
+              transform: "translateY(0)",
+            },
+          }),
+          ...(ownerState.variant === 'contained' && ownerState.color === 'primary' && {
+            background: `linear-gradient(135deg, ${TOKENS.color.primary} 0%, ${TOKENS.color.primaryLight} 100%)`,
+            "&:hover": {
+              background: `linear-gradient(135deg, ${TOKENS.color.primaryDark} 0%, ${TOKENS.color.primary} 100%)`,
+            },
+          }),
+          ...(ownerState.variant === 'contained' && ownerState.color === 'secondary' && {
+            background: `linear-gradient(135deg, ${TOKENS.color.secondary} 0%, ${TOKENS.color.secondaryLight} 100%)`,
+            color: TOKENS.color.white,
+            "&:hover": {
+              background: `linear-gradient(135deg, ${TOKENS.color.secondaryDark} 0%, ${TOKENS.color.secondary} 100%)`,
+            },
+          }),
+          ...(ownerState.variant === 'outlined' && {
+            borderWidth: "1.5px",
+            "&:hover": { borderWidth: "1.5px" },
+          }),
+          ...(ownerState.variant === 'outlined' && ownerState.color === 'primary' && {
+            borderColor: TOKENS.color.primary,
+            color: TOKENS.color.primary,
+            "&:hover": {
+              backgroundColor: TOKENS.color.primarySubtle,
+            },
+          }),
+          ...(ownerState.variant === 'text' && {
+            "&:hover": {
+              backgroundColor: TOKENS.color.primarySubtle,
+            },
+          }),
+        }),
       },
     },
 
@@ -515,38 +507,38 @@ const theme = createTheme({
 
     MuiChip: {
       styleOverrides: {
-        root: {
+        root: ({ ownerState }: any) => ({
           fontFamily: TOKENS.font.family.body,
           fontWeight: TOKENS.font.weight.medium,
           fontSize: TOKENS.font.size.xs,
           letterSpacing: TOKENS.font.letterSpacing.wide,
           borderRadius: TOKENS.radius.full,
           height: "24px",
-        },
-        colorPrimary: {
-          backgroundColor: TOKENS.color.primarySubtle,
-          color: TOKENS.color.primary,
-          "&.MuiChip-filled": {
-            backgroundColor: TOKENS.color.primary,
-            color: TOKENS.color.white,
-          },
-        },
-        colorSecondary: {
-          backgroundColor: TOKENS.color.secondarySubtle,
-          color: TOKENS.color.secondaryDark,
-        },
-        colorSuccess: {
-          backgroundColor: TOKENS.color.accentSubtle,
-          color: TOKENS.color.accent,
-        },
-        colorWarning: {
-          backgroundColor: TOKENS.color.warningSubtle,
-          color: TOKENS.color.warning,
-        },
-        colorError: {
-          backgroundColor: TOKENS.color.errorSubtle,
-          color: TOKENS.color.error,
-        },
+          ...(ownerState.color === 'primary' && {
+            backgroundColor: TOKENS.color.primarySubtle,
+            color: TOKENS.color.primary,
+            ...(ownerState.variant === 'filled' && {
+              backgroundColor: TOKENS.color.primary,
+              color: TOKENS.color.white,
+            }),
+          }),
+          ...(ownerState.color === 'secondary' && {
+            backgroundColor: TOKENS.color.secondarySubtle,
+            color: TOKENS.color.secondaryDark,
+          }),
+          ...(ownerState.color === 'success' && {
+            backgroundColor: TOKENS.color.accentSubtle,
+            color: TOKENS.color.accent,
+          }),
+          ...(ownerState.color === 'warning' && {
+            backgroundColor: TOKENS.color.warningSubtle,
+            color: TOKENS.color.warning,
+          }),
+          ...(ownerState.color === 'error' && {
+            backgroundColor: TOKENS.color.errorSubtle,
+            color: TOKENS.color.error,
+          }),
+        }),
       },
     },
 
@@ -746,33 +738,33 @@ const theme = createTheme({
 
     MuiAlert: {
       styleOverrides: {
-        root: {
+        root: ({ ownerState }: any) => ({
           fontFamily: TOKENS.font.family.body,
           fontSize: TOKENS.font.size.sm,
           borderRadius: TOKENS.radius.md,
           padding: "10px 16px",
           border: "1px solid",
-        },
-        standardSuccess: {
-          backgroundColor: TOKENS.color.accentSubtle,
-          borderColor: TOKENS.color.accent,
-          color: TOKENS.color.accent,
-        },
-        standardWarning: {
-          backgroundColor: TOKENS.color.warningSubtle,
-          borderColor: TOKENS.color.warning,
-          color: TOKENS.color.warning,
-        },
-        standardError: {
-          backgroundColor: TOKENS.color.errorSubtle,
-          borderColor: TOKENS.color.error,
-          color: TOKENS.color.error,
-        },
-        standardInfo: {
-          backgroundColor: TOKENS.color.primarySubtle,
-          borderColor: TOKENS.color.primary,
-          color: TOKENS.color.primary,
-        },
+          ...(ownerState.variant === 'standard' && ownerState.severity === 'success' && {
+            backgroundColor: TOKENS.color.accentSubtle,
+            borderColor: TOKENS.color.accent,
+            color: TOKENS.color.accent,
+          }),
+          ...(ownerState.variant === 'standard' && ownerState.severity === 'warning' && {
+            backgroundColor: TOKENS.color.warningSubtle,
+            borderColor: TOKENS.color.warning,
+            color: TOKENS.color.warning,
+          }),
+          ...(ownerState.variant === 'standard' && ownerState.severity === 'error' && {
+            backgroundColor: TOKENS.color.errorSubtle,
+            borderColor: TOKENS.color.error,
+            color: TOKENS.color.error,
+          }),
+          ...(ownerState.variant === 'standard' && ownerState.severity === 'info' && {
+            backgroundColor: TOKENS.color.primarySubtle,
+            borderColor: TOKENS.color.primary,
+            color: TOKENS.color.primary,
+          }),
+        }),
         message: {
           fontWeight: TOKENS.font.weight.medium,
         },
@@ -781,16 +773,16 @@ const theme = createTheme({
 
     MuiAvatar: {
       styleOverrides: {
-        root: {
+        root: ({ ownerState }: any) => ({
           fontFamily: TOKENS.font.family.body,
           fontWeight: TOKENS.font.weight.semibold,
           fontSize: TOKENS.font.size.sm,
           backgroundColor: TOKENS.color.primary,
-        },
-        colorDefault: {
-          backgroundColor: TOKENS.color.primarySubtle,
-          color: TOKENS.color.primary,
-        },
+          ...(ownerState.color === 'default' && {
+            backgroundColor: TOKENS.color.primarySubtle,
+            color: TOKENS.color.primary,
+          }),
+        }),
       },
     },
 

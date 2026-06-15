@@ -1,5 +1,5 @@
 /**
- * Named constants and label maps for SchuleSmart.
+ * Named constants and label maps for ShuleSmart.
  * @module constants
  */
 import type {

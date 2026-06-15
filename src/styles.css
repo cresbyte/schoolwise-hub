@@ -1,6 +1,7 @@
-@import "tailwindcss" source(none);
+@import "tailwindcss";
+@import "../node_modules/tw-animate-css/dist/tw-animate.css";
 @source "../src";
-@import "tw-animate-css";
+
 
 @custom-variant dark (&:is(.dark *));
 
@@ -147,7 +148,7 @@
   }
 }
 
-/* ===== SchuleSmart Global Styles (Kabarak-inspired) ===== */
+/* ===== ShuleSmart Global Styles (Kabarak-inspired) ===== */
 
 *, *::before, *::after { box-sizing: border-box; }
 

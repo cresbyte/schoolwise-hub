@@ -2,12 +2,20 @@
  * Authentication context with mock localStorage-backed session and RBAC.
  * @module AuthContext
  */
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import type { User, UserRole } from "@/lib/types";
 import { PERMISSIONS } from "@/lib/constants";
 import * as api from "@/lib/mockApi";
 
-const STORAGE_KEY = "schulesmart_user";
+const STORAGE_KEY = "ShuleSmart_user";
 
 interface AuthContextValue {
   user: User | null;
@@ -63,7 +71,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const hasRole = useCallback((role: UserRole) => user?.role === role, [user]);
-  const hasAnyRole = useCallback((roles: UserRole[]) => !!user && roles.includes(user.role), [user]);
+  const hasAnyRole = useCallback(
+    (roles: UserRole[]) => !!user && roles.includes(user.role),
+    [user],
+  );
 
   const value = useMemo(
     () => ({

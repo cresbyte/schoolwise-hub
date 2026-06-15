@@ -256,7 +256,7 @@ Our boarding section remains a cornerstone of the Greenfield experience. With st
 
 Community engagement remains central to our ethos. Last month, our Environmental Club partnered with Nakuru Municipality on a tree-planting initiative along the Njoro River, reinforcing our commitment to environmental stewardship. The Inter-House Athletics Championships drew families from across the county, showcasing the talent and sportsmanship of our learners.
 
-Parents appreciate our transparent fee policies and convenient M-Pesa payment options. The SchuleSmart parent portal provides real-time access to fee statements, attendance records, and academic reports — keeping families connected to their children's progress.
+Parents appreciate our transparent fee policies and convenient M-Pesa payment options. The ShuleSmart parent portal provides real-time access to fee statements, attendance records, and academic reports — keeping families connected to their children's progress.
 
 As we look ahead to Term 3, we invite prospective families to attend our Open Day on 15 July. Tours will include our ICT centre, dormitories, and newly refurbished art studio. Admissions for limited spaces in Form 1 and Grade 4 are now open.
 
@@ -337,7 +337,7 @@ export const NEWS_ARTICLES: NewsArticle[] = [
   ),
   mkArticle(
     "parent-portal-launch",
-    "SchuleSmart Parent Portal Now Live",
+    "ShuleSmart Parent Portal Now Live",
     "Parents can now view fees, attendance, and report cards online via the new portal.",
     "Announcements",
     "2024-04-15",
@@ -533,7 +533,7 @@ export const PARENT_DOWNLOADS: DownloadItem[] = [
   {
     id: "d6",
     title: "Portal User Guide",
-    description: "Step-by-step SchuleSmart portal instructions.",
+    description: "Step-by-step ShuleSmart portal instructions.",
     fileType: "PDF",
     size: "1.8 MB",
   },

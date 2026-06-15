@@ -1,5 +1,5 @@
 /**
- * Core domain types for SchuleSmart — Kenyan School Management System.
+ * Core domain types for ShuleSmart — Kenyan School Management System.
  * @module types
  */
 
