@@ -40,7 +40,7 @@ const TIMELINE = [
     desc: "Opened state-of-the-art boarding facilities for learners from across the Rift Valley.",
   },
   {
-    year: "2024",
+    year: "2026",
     title: "ShuleSmart Partnership",
     desc: "Integrated digital school management for seamless parent communication and administration.",
   },

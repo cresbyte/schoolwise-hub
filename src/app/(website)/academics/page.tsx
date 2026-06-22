@@ -126,7 +126,7 @@ export default function AcademicsPage() {
               </BarChart>
             </ResponsiveContainer>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 2, textAlign: "center" }}>
-              Greenfield's 2024 mean score of 8.2 places us among the top private schools in Nakuru
+              Greenfield's 2026 mean score of 8.2 places us among the top private schools in Nakuru
               County.
             </Typography>
           </CardContent>
@@ -144,7 +144,7 @@ export default function AcademicsPage() {
             gap: 2,
           }}
         >
-          <SectionHeading title="Academic Calendar 2024" align="left" />
+          <SectionHeading title="Academic Calendar 2026" align="left" />
           <Button
             startIcon={<PrintIcon />}
             variant="outlined"
@@ -159,7 +159,7 @@ export default function AcademicsPage() {
             <Typography variant="h5" sx={{ fontFamily: HEADING_FONT, fontWeight: 700 }}>
               {SCHOOL.name}
             </Typography>
-            <Typography variant="body2">Academic Calendar 2024</Typography>
+            <Typography variant="body2">Academic Calendar 2026</Typography>
           </Box>
           <Table>
             <TableHead>

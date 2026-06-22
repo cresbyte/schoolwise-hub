@@ -51,7 +51,7 @@ const MONTHS = ["January", "February", "March", "April", "May", "June", "July", 
 function PayrollContent() {
   const { showNotification } = useNotification();
   const [month, setMonth] = useState(6);
-  const year = 2024;
+  const year = 2026;
   const [payslip, setPayslip] = useState<PayrollRecord | null>(null);
   const [busy, setBusy] = useState(false);
   const payroll = useAsync(() => api.getPayroll(month, year), [month]);

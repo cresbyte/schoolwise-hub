@@ -26,8 +26,8 @@ const TOKENS = {
     neutral900: "#0F1923",
     neutral800: "#1C2B3A",
     neutral700: "#2D3F52",
-    neutral600: "#4A6178",
-    neutral500: "#6B83A0",
+    neutral600: "#3A4F66",
+    neutral500: "#546E8A",
     neutral400: "#9AB0C8",
     neutral300: "#C8D7E5",
     neutral200: "#E4EDF5",
@@ -652,10 +652,9 @@ const theme = createTheme({
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          backgroundColor: TOKENS.color.primary,
-          color: TOKENS.color.white,
-          borderRight: "none",
-          boxShadow: TOKENS.shadow.xl,
+          backgroundColor: TOKENS.color.white,
+          color: TOKENS.color.neutral800,
+          borderRight: `1px solid ${TOKENS.color.borderLight}`,
         },
       },
     },
@@ -667,10 +666,11 @@ const theme = createTheme({
           margin: "2px 8px",
           padding: "8px 12px",
           transition: TOKENS.transition.base,
-          color: "rgba(255,255,255,0.75)",
+          color: TOKENS.color.neutral600,
           "& .MuiListItemIcon-root": {
-            color: "rgba(255,255,255,0.60)",
+            color: TOKENS.color.neutral400,
             minWidth: "36px",
+            transition: TOKENS.transition.base,
           },
           "& .MuiListItemText-primary": {
             fontFamily: TOKENS.font.family.body,
@@ -678,20 +678,23 @@ const theme = createTheme({
             fontSize: TOKENS.font.size.sm,
           },
           "&:hover": {
-            backgroundColor: "rgba(255,255,255,0.10)",
-            color: TOKENS.color.white,
+            backgroundColor: TOKENS.color.primarySubtle,
+            color: TOKENS.color.primary,
             "& .MuiListItemIcon-root": {
-              color: TOKENS.color.white,
+              color: TOKENS.color.primary,
             },
           },
           "&.Mui-selected": {
-            backgroundColor: TOKENS.color.secondary,
-            color: TOKENS.color.white,
+            backgroundColor: TOKENS.color.primarySubtle,
+            color: TOKENS.color.primary,
             "& .MuiListItemIcon-root": {
-              color: TOKENS.color.white,
+              color: TOKENS.color.primary,
+            },
+            "& .MuiListItemText-primary": {
+              fontWeight: TOKENS.font.weight.semibold,
             },
             "&:hover": {
-              backgroundColor: TOKENS.color.secondaryDark,
+              backgroundColor: TOKENS.color.primarySubtle,
             },
           },
         },

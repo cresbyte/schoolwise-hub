@@ -18,12 +18,18 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import IconButton from "@mui/material/IconButton";
 import DownloadIcon from "@mui/icons-material/Download";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import EditIcon from "@mui/icons-material/Edit";
+import AddIcon from "@mui/icons-material/Add";
+import { useRouter } from "next/navigation";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PageHeader } from "@/components/PageHeader";
 import { DataState } from "@/components/DataState";
 import { SearchInput } from "@/components/SearchInput";
 import { StatusChip } from "@/components/StatusChip";
+import { RoleGuard } from "@/components/RoleGuard";
 import { useStaff } from "@/hooks/domain";
 import { formatKES, getInitials } from "@/lib/utils";
 import { exportToCSV } from "@/lib/utils";
@@ -39,6 +45,7 @@ export default function StaffPage() {
 
 /** Staff list content. */
 function StaffContent() {
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
   const { data, loading, error, refetch } = useStaff({ search, status });
@@ -55,7 +62,14 @@ function StaffContent() {
       <PageHeader
         title="Staff"
         subtitle={<Chip size="small" label={`${list.length} staff`} />}
-        actions={<Button startIcon={<DownloadIcon />} variant="outlined" onClick={handleExport}>Export</Button>}
+        actions={
+          <>
+            <Button startIcon={<DownloadIcon />} variant="outlined" onClick={handleExport}>Export</Button>
+            <RoleGuard permission="staff.*">
+              <Button startIcon={<AddIcon />} variant="contained" onClick={() => router.push("/staff/new")}>Add Staff</Button>
+            </RoleGuard>
+          </>
+        }
       />
       <Card sx={{ p: 2, mb: 2 }}>
         <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
@@ -83,6 +97,7 @@ function StaffContent() {
                     <TableCell>Phone</TableCell>
                     <TableCell align="right">Basic Salary</TableCell>
                     <TableCell>Status</TableCell>
+                    <TableCell align="right">Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -101,6 +116,10 @@ function StaffContent() {
                       <TableCell>{s.phone}</TableCell>
                       <TableCell align="right">{formatKES(s.basicSalary)}</TableCell>
                       <TableCell><StatusChip status={s.status} /></TableCell>
+                      <TableCell align="right">
+                        <IconButton size="small" onClick={() => router.push(`/staff/${s.id}`)}><VisibilityIcon fontSize="small" /></IconButton>
+                        <IconButton size="small" onClick={() => router.push(`/staff/${s.id}/edit`)}><EditIcon fontSize="small" /></IconButton>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

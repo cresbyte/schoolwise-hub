@@ -26,46 +26,72 @@ export function StatCard({ icon, value, label, color, footer }: StatCardProps) {
     <Card
       sx={{
         height: "100%",
-        borderLeft: `4px solid ${accentColor}`,
-        p: 3,
+        p: 2.5,
         display: "flex",
-        alignItems: "center",
+        flexDirection: "column",
         gap: 2,
+        position: "relative",
+        overflow: "hidden",
+        border: "none",
+        boxShadow: TOKENS.shadow.sm,
+        "&:hover": {
+          boxShadow: TOKENS.shadow.md,
+          transform: "translateY(-2px)",
+        },
+        transition: TOKENS.transition.base,
       }}
     >
-      <Box
-        sx={{
-          width: 52,
-          height: 52,
-          borderRadius: TOKENS.radius.lg,
-          backgroundColor: alpha(accentColor, 0.1),
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexShrink: 0,
-          color: accentColor,
-          "& .MuiSvgIcon-root": { fontSize: 26 },
-        }}
-      >
-        {icon}
-      </Box>
-      <Box>
-        <Typography variant="h4" sx={{ fontWeight: 700, color: "text.primary", lineHeight: 1.2 }}>
-          {value}
-        </Typography>
-        <Typography
-          variant="caption"
+      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <Box
           sx={{
-            textTransform: "uppercase",
-            letterSpacing: "0.08em",
-            color: "text.secondary",
-            fontWeight: 600,
+            width: 48,
+            height: 48,
+            borderRadius: TOKENS.radius.md,
+            background: `linear-gradient(135deg, ${alpha(accentColor, 0.1)} 0%, ${alpha(
+              accentColor,
+              0.2
+            )} 100%)`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: accentColor,
+            "& .MuiSvgIcon-root": { fontSize: 24 },
           }}
         >
-          {label}
-        </Typography>
-        {footer && <Box sx={{ mt: 1 }}>{footer}</Box>}
+          {icon}
+        </Box>
+        <Box sx={{ textAlign: "right" }}>
+          <Typography
+            variant="caption"
+            sx={{
+              textTransform: "uppercase",
+              letterSpacing: "0.1em",
+              color: "text.secondary",
+              fontWeight: 700,
+              fontSize: 10,
+              display: "block",
+              mb: 0.5,
+            }}
+          >
+            {label}
+          </Typography>
+          <Typography variant="h5" sx={{ fontWeight: 800, color: "text.primary", lineHeight: 1 }}>
+            {value}
+          </Typography>
+        </Box>
       </Box>
+      {footer && (
+        <Box
+          sx={{
+            pt: 1.5,
+            borderTop: `1px solid ${TOKENS.color.borderLight}`,
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          {footer}
+        </Box>
+      )}
     </Card>
   );
 }

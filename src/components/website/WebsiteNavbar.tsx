@@ -137,9 +137,9 @@ export function WebsiteNavbar() {
           alignItems: "center",
         }}
       >
-        <Container maxWidth="lg" sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <Container maxWidth="xl" sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.7)", fontSize: 12 }}>
-            Term 2, 2024 is ongoing
+            Term 2, 2026 is ongoing
           </Typography>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Box
@@ -188,7 +188,7 @@ export function WebsiteNavbar() {
           borderBottom: "none",
         }}
       >
-        <Container maxWidth="lg">
+        <Container maxWidth="xl">
           <Toolbar disableGutters sx={{ minHeight: { xs: 64, md: 72 }, gap: 1 }}>
             <IconButton
               edge="start"

@@ -13,10 +13,14 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import AddIcon from "@mui/icons-material/Add";
+import { useRouter } from "next/navigation";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PageHeader } from "@/components/PageHeader";
 import { DataState } from "@/components/DataState";
 import { StatusChip } from "@/components/StatusChip";
+import { RoleGuard } from "@/components/RoleGuard";
 import { useAsync } from "@/hooks/useAsync";
 import * as api from "@/lib/mockApi";
 import { formatKES } from "@/lib/utils";
@@ -31,12 +35,23 @@ export default function FeeStructuresPage() {
 
 /** Fee structures content. */
 function FeeStructuresContent() {
+  const router = useRouter();
   const [term, setTerm] = useState("2");
-  const { data, loading, error, refetch } = useAsync(() => api.getFeeStructures({ year: 2024, term: Number(term) }), [term]);
+  const { data, loading, error, refetch } = useAsync(() => api.getFeeStructures({ year: 2026, term: Number(term) }), [term]);
   const list = data ?? [];
   return (
     <>
-      <PageHeader title="Fee Structures" subtitle="Greenfield Private Academy · 2024" />
+      <PageHeader
+        title="Fee Structures"
+        subtitle="Greenfield Private Academy · 2026"
+        actions={
+          <RoleGuard permission="finance.*">
+            <Button variant="contained" startIcon={<AddIcon />} onClick={() => router.push("/fees/structures/new")}>
+              Add Structure
+            </Button>
+          </RoleGuard>
+        }
+      />
       <Card sx={{ p: 2, mb: 2 }}>
         <TextField select size="small" label="Term" value={term} onChange={(e) => setTerm(e.target.value)} sx={{ width: 150 }}>
           <MenuItem value="1">Term 1</MenuItem>

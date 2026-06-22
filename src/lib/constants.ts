@@ -146,4 +146,4 @@ export const ROLE_HOME: Record<UserRole, string> = {
   parent: "/portal",
 };
 
-export const DAYS_OF_WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"] as const;
+export const DAYS_OF_WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] as const;

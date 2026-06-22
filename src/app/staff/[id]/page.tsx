@@ -247,7 +247,7 @@ const MONTHS = ["January", "February", "March", "April", "May", "June", "July", 
 
 function PayrollTab({ staffId, staffName, staffNumber }: { staffId: string; staffName: string; staffNumber: string }) {
   const [month, setMonth] = useState(6);
-  const [year] = useState(2024);
+  const [year] = useState(2026);
   const [p9Open, setP9Open] = useState(false);
   const payslip = useAsync(() => api.getStaffPayslip(staffId, month, year).catch(() => null), [staffId, month, year]);
   const p9 = useAsync(() => (p9Open ? api.getP9Certificate(staffId, year) : Promise.resolve(null)), [staffId, year, p9Open]);

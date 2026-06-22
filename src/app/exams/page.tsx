@@ -22,8 +22,10 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
+import AddIcon from "@mui/icons-material/Add";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PageHeader } from "@/components/PageHeader";
 import { DataState } from "@/components/DataState";
@@ -49,12 +51,23 @@ export default function ExamsPage() {
 
 /** Examinations page content. */
 function ExamsContent() {
+  const router = useRouter();
   const { data, loading, error, refetch } = useExams();
   const [marksFor, setMarksFor] = useState<Exam | null>(null);
   const list = data ?? [];
   return (
     <>
-      <PageHeader title="Examinations" subtitle={<Chip size="small" label={`${list.length} exams`} />} />
+      <PageHeader
+        title="Examinations"
+        subtitle={<Chip size="small" label={`${list.length} exams`} />}
+        actions={
+          <RoleGuard permission="exams.*">
+            <Button variant="contained" startIcon={<AddIcon />} onClick={() => router.push("/exams/new")}>
+              Create Exam
+            </Button>
+          </RoleGuard>
+        }
+      />
       <Card>
         <DataState loading={loading} error={error} data={list} onRetry={refetch} isEmpty={(d) => d.length === 0}>
           {() => (

@@ -54,8 +54,8 @@ export function SectionHeading({ overline, title, subtitle, align = "center" }: 
       {subtitle && (
         <Typography
           variant="body1"
-          color="text.secondary"
-          sx={{ maxWidth: 600, mx: isCenter ? "auto" : 0 }}
+          color="text.primary"
+          sx={{ maxWidth: 600, mx: isCenter ? "auto" : 0, fontWeight: 500, opacity: 0.85 }}
         >
           {subtitle}
         </Typography>

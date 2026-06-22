@@ -260,7 +260,7 @@ export default function HomePage() {
           Begin Your Greenfield Journey
         </Typography>
         <Typography sx={{ mb: 3, opacity: 0.9, maxWidth: 560, mx: "auto" }}>
-          Limited spaces available for Term 3, 2024. Apply today and join a community committed to
+          Limited spaces available for Term 3, 2026. Apply today and join a community committed to
           excellence.
         </Typography>
         <Button

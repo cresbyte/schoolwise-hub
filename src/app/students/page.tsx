@@ -25,6 +25,7 @@ import AddIcon from "@mui/icons-material/Add";
 import DownloadIcon from "@mui/icons-material/Download";
 import PrintIcon from "@mui/icons-material/Print";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import EditIcon from "@mui/icons-material/Edit";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
@@ -167,6 +168,11 @@ function StudentsContent() {
                           <Tooltip title="View">
                             <IconButton size="small" onClick={() => router.push(`/students/${s.id}`)}>
                               <VisibilityIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Edit">
+                            <IconButton size="small" onClick={() => router.push(`/students/${s.id}/edit`)}>
+                              <EditIcon fontSize="small" />
                             </IconButton>
                           </Tooltip>
                         </TableCell>

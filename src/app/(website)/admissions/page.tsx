@@ -79,7 +79,7 @@ export default function AdmissionsPage() {
       </SectionWrapper>
 
       <SectionWrapper id="spaces" alt>
-        <SectionHeading title="Available Spaces — Term 3, 2024" />
+        <SectionHeading title="Available Spaces — Term 3, 2026" />
         <Table>
           <TableHead>
             <TableRow>
@@ -106,7 +106,7 @@ export default function AdmissionsPage() {
 
       <SectionWrapper id="fees">
         <SectionHeading
-          title="Fee Structure 2024"
+          title="Fee Structure 2026"
           subtitle="Per term. Pay via M-Pesa Paybill 522533."
         />
         <Tabs value={feeTab} onChange={(_, v) => setFeeTab(v)} sx={{ mb: 2 }}>

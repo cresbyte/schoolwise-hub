@@ -130,7 +130,7 @@ function ResultsTab({ studentId, curriculum }: { studentId: string; curriculum: 
 }
 
 function AttendanceTab({ studentId }: { studentId: string }) {
-  const att = useAsync(() => api.getStudentAttendance(studentId, "2024-05-01", "2024-08-31"), [studentId]);
+  const att = useAsync(() => api.getStudentAttendance(studentId, "2026-05-01", "2026-08-31"), [studentId]);
   return (
     <DataState loading={att.loading} error={att.error} data={att.data} onRetry={att.refetch} isEmpty={(d) => d.length === 0} emptyMessage="No attendance records">
       {(records) => {

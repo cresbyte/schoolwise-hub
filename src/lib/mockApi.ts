@@ -113,6 +113,10 @@ export async function updateStudent(id: string, data: Partial<Student>): Promise
   students = students.map((s) => (s.id === id ? { ...s, ...data } : s));
   return delay(clone(students.find((s) => s.id === id)!));
 }
+export async function updateStudentAvatar(id: string, photo: string): Promise<Student> {
+  students = students.map((s) => (s.id === id ? { ...s, photo } : s));
+  return delay(clone(students.find((s) => s.id === id)!));
+}
 export async function transferStudent(id: string, data: { reason?: string }): Promise<Student> {
   students = students.map((s) => (s.id === id ? { ...s, status: "transferred_out" } : s));
   return delay(clone(students.find((s) => s.id === id)!));
@@ -269,7 +273,7 @@ function buildReportCard(studentId: string, examId: string): ReportCard {
     className: student.className,
     curriculum: student.curriculum,
     term: 2,
-    year: 2024,
+    year: 2026,
     examId,
     subjects: subjectsRc,
     totalMarks,
@@ -279,8 +283,8 @@ function buildReportCard(studentId: string, examId: string): ReportCard {
     classTeacherComment: average >= 70 ? "Excellent performance. Keep it up!" : average >= 50 ? "Good effort. Aim higher next term." : "Needs to work harder. More focus required.",
     principalComment: average >= 70 ? "A commendable result." : "Strive for improvement.",
     attendance: { daysPresent: 58, daysAbsent: 2, totalDays: 60 },
-    nextTermBegins: "2024-09-02",
-    closingDate: "2024-08-09",
+    nextTermBegins: "2026-09-02",
+    closingDate: "2026-08-09",
   };
 }
 
@@ -297,8 +301,18 @@ export async function getStudentReportCard(studentId: string, examId: string): P
 export async function getAttendance(classId: string, date: string): Promise<AttendanceRecord[]> {
   return delay(clone(attendance.filter((a) => a.classId === classId && a.date === date)));
 }
+export async function getAttendanceRange(classId: string, startDate: string, endDate: string): Promise<AttendanceRecord[]> {
+  return delay(clone(attendance.filter((a) => a.classId === classId && a.date >= startDate && a.date <= endDate)));
+}
 export async function saveAttendance(classId: string, date: string, records: AttendanceRecord[]): Promise<{ saved: number }> {
   attendance = attendance.filter((a) => !(a.classId === classId && a.date === date));
+  attendance.push(...records);
+  return delay({ saved: records.length });
+}
+export async function saveAttendanceBulk(records: AttendanceRecord[]): Promise<{ saved: number }> {
+  // Replace each record by id if exists, or append
+  const ids = new Set(records.map((r) => r.id));
+  attendance = attendance.filter((a) => !ids.has(a.id));
   attendance.push(...records);
   return delay({ saved: records.length });
 }
@@ -341,14 +355,14 @@ function invoiceFor(student: Student): FeeInvoice {
   const paid = Math.max(0, total - student.feeBalance);
   return {
     id: "inv-" + student.id,
-    invoiceNumber: `INV-2024-T2-${student.admissionNumber.slice(-5)}`,
+    invoiceNumber: `INV-2026-T2-${student.admissionNumber.slice(-5)}`,
     studentId: student.id,
     studentName: `${student.firstName} ${student.lastName}`,
     admissionNumber: student.admissionNumber,
     className: student.className,
     feeStructureId: "fs-1",
     term: 2,
-    year: 2024,
+    year: 2026,
     items: [
       { name: "Tuition", amount: charged - 3000 },
       { name: "Activity Fee", amount: 1500 },
@@ -359,8 +373,8 @@ function invoiceFor(student: Student): FeeInvoice {
     totalPaid: paid,
     balance: student.feeBalance,
     status: student.feeBalance <= 0 ? (student.feeBalance < 0 ? "overpaid" : "paid") : paid > 0 ? "partial" : "unpaid",
-    dueDate: "2024-05-31",
-    issuedDate: "2024-05-06",
+    dueDate: "2026-05-31",
+    issuedDate: "2026-05-06",
   };
 }
 export async function getStudentInvoice(studentId: string): Promise<FeeInvoice> {
@@ -378,13 +392,13 @@ export async function recordPayment(data: Partial<FeePayment>): Promise<FeePayme
   const student = students.find((s) => s.id === data.studentId)!;
   const pay: FeePayment = {
     id: "pay-" + Date.now(),
-    receiptNumber: `RCP-2024-${String(900 + payments.length).padStart(5, "0")}`,
+    receiptNumber: `RCP-2026-${String(900 + payments.length).padStart(5, "0")}`,
     studentId: student.id,
     studentName: `${student.firstName} ${student.lastName}`,
     admissionNumber: student.admissionNumber,
     className: student.className,
     term: 2,
-    year: 2024,
+    year: 2026,
     amount: data.amount ?? 0,
     paymentMethod: data.paymentMethod ?? "cash",
     mpesaCode: data.mpesaCode,
@@ -494,6 +508,14 @@ export async function getStaffPayslip(staffId: string, month: number, year: numb
   if (!p) throw new Error("Payslip not found");
   return delay(clone(p));
 }
+export async function getStaffPayrollHistory(staffId: string): Promise<PayrollRecord[]> {
+  return delay(clone(payroll.filter((p) => p.staffId === staffId).sort((a, b) => (b.year * 12 + b.month) - (a.year * 12 + a.month))));
+}
+export async function updateStaffAvatar(staffId: string, photo: string): Promise<Staff> {
+  staff = staff.map((s) => (s.id === staffId ? { ...s, photo } : s));
+  users = users.map((u) => (u.staffId === staffId ? { ...u, avatar: photo } : u));
+  return delay(clone(staff.find((s) => s.id === staffId)!));
+}
 export async function getP9Certificate(staffId: string, year: number): Promise<any> {
   const s = staff.find((x) => x.id === staffId)!;
   const c = computePayroll(s.basicSalary, s.houseAllowance, s.transportAllowance, s.otherAllowances);
@@ -547,8 +569,8 @@ export async function getSchoolPerformanceTrend(): Promise<any> {
     { term: "T1 2023", average: 58, highest: 88, lowest: 31 },
     { term: "T2 2023", average: 61, highest: 91, lowest: 33 },
     { term: "T3 2023", average: 64, highest: 92, lowest: 35 },
-    { term: "T1 2024", average: 66, highest: 94, lowest: 38 },
-    { term: "T2 2024", average: 68, highest: 95, lowest: 40 },
+    { term: "T1 2026", average: 66, highest: 94, lowest: 38 },
+    { term: "T2 2026", average: 68, highest: 95, lowest: 40 },
   ]);
 }
 export async function getClassPerformanceReport(classId: string, examId: string): Promise<any> {

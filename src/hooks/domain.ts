@@ -17,9 +17,12 @@ export function useStudent(id: string) {
 export function useClasses() {
   return useAsync(() => api.getClasses(), []);
 }
-/** Fetch staff with optional filters. */
 export function useStaff(filters?: Parameters<typeof api.getStaff>[0]) {
   return useAsync(() => api.getStaff(filters), [JSON.stringify(filters)]);
+}
+/** Fetch a single staff member by id. */
+export function useStaffMember(id: string) {
+  return useAsync(() => api.getStaffById(id), [id]);
 }
 /** Fetch fee collection summary. */
 export function useFees() {

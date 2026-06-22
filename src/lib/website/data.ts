@@ -74,7 +74,7 @@ export const HERO_SLIDES = [
   },
   {
     id: "3",
-    title: "Admissions Open — Term 3, 2024",
+    title: "Admissions Open — Term 3, 2026",
     subtitle: "Join a community of learners shaping Kenya's future",
     image: WEBSITE_IMAGES.sports,
     imageAlt: "Students participating in school sports day activities",
@@ -131,24 +131,24 @@ export const KCSE_RESULTS = [
   { year: "2021", mean: 7.8 },
   { year: "2022", mean: 8.0 },
   { year: "2023", mean: 8.1 },
-  { year: "2024", mean: 8.2 },
+  { year: "2026", mean: 8.2 },
 ];
 
 /** Academic calendar events. */
 export const ACADEMIC_CALENDAR = [
   {
     term: "Term 1",
-    dates: "8 Jan – 5 Apr 2024",
+    dates: "8 Jan – 5 Apr 2026",
     events: ["Opening Day", "Mid-Term Break", "End of Term Exams"],
   },
   {
     term: "Term 2",
-    dates: "6 May – 9 Aug 2024",
+    dates: "6 May – 9 Aug 2026",
     events: ["Sports Day", "Career Day", "Mock Exams (Form 4)"],
   },
   {
     term: "Term 3",
-    dates: "2 Sep – 25 Nov 2024",
+    dates: "2 Sep – 25 Nov 2026",
     events: ["KCSE Exams", "Grade 6 Assessment", "Prize Giving"],
   },
 ];
@@ -186,28 +186,28 @@ export const UPCOMING_EVENTS: UpcomingEvent[] = [
   {
     id: "e1",
     title: "Open Day & Campus Tour",
-    date: "15 Jul 2024",
+    date: "15 Jul 2026",
     time: "9:00 AM",
     location: "Main Hall",
   },
   {
     id: "e2",
     title: "Inter-House Athletics",
-    date: "22 Jul 2024",
+    date: "22 Jul 2026",
     time: "8:00 AM",
     location: "Sports Ground",
   },
   {
     id: "e3",
     title: "Parent-Teacher Conference",
-    date: "3 Aug 2024",
+    date: "3 Aug 2026",
     time: "2:00 PM",
     location: "Classrooms",
   },
   {
     id: "e4",
     title: "Music & Drama Festival",
-    date: "10 Aug 2024",
+    date: "10 Aug 2026",
     time: "10:00 AM",
     location: "Amphitheatre",
   },
@@ -288,19 +288,19 @@ function mkArticle(
 /** Twelve news articles for listing and detail pages. */
 export const NEWS_ARTICLES: NewsArticle[] = [
   mkArticle(
-    "greenfield-kcse-2024-results",
-    "Greenfield Celebrates Strong KCSE 2024 Performance",
+    "greenfield-kcse-2026-results",
+    "Greenfield Celebrates Strong KCSE 2026 Performance",
     "Our Form 4 class achieved a mean score of 8.2, with 12 students earning straight A grades.",
     "Achievements",
-    "2024-05-20",
+    "2026-05-20",
     WEBSITE_IMAGES.classroom,
   ),
   mkArticle(
-    "open-day-july-2024",
-    "Open Day & Campus Tour — 15 July 2024",
+    "open-day-july-2026",
+    "Open Day & Campus Tour — 15 July 2026",
     "Prospective families are invited to tour our facilities and meet our leadership team.",
     "Events",
-    "2024-06-01",
+    "2026-06-01",
     WEBSITE_IMAGES.campusBanner,
   ),
   mkArticle(
@@ -308,7 +308,7 @@ export const NEWS_ARTICLES: NewsArticle[] = [
     "Grade 6 Learners Excel in National Assessment",
     "Our inaugural CBC cohort demonstrated outstanding performance in the June national assessment.",
     "Achievements",
-    "2024-06-05",
+    "2026-06-05",
     WEBSITE_IMAGES.classroom,
   ),
   mkArticle(
@@ -316,15 +316,15 @@ export const NEWS_ARTICLES: NewsArticle[] = [
     "State-of-the-Art Science Lab Officially Opened",
     "The new laboratory will enhance practical learning for Form 3 and Form 4 sciences.",
     "News",
-    "2024-05-15",
+    "2026-05-15",
     WEBSITE_IMAGES.classroom,
   ),
   mkArticle(
     "inter-house-athletics",
-    "Inter-House Athletics Championships 2024",
+    "Inter-House Athletics Championships 2026",
     "Blue House emerged victorious in a thrilling day of track and field events.",
     "Events",
-    "2024-05-10",
+    "2026-05-10",
     WEBSITE_IMAGES.sports,
   ),
   mkArticle(
@@ -332,7 +332,7 @@ export const NEWS_ARTICLES: NewsArticle[] = [
     "Debate Team Wins Nakuru County Championship",
     "Greenfield debaters will represent the county at the national finals in Nairobi.",
     "Achievements",
-    "2024-04-28",
+    "2026-04-28",
     WEBSITE_IMAGES.classroom,
   ),
   mkArticle(
@@ -340,7 +340,7 @@ export const NEWS_ARTICLES: NewsArticle[] = [
     "ShuleSmart Parent Portal Now Live",
     "Parents can now view fees, attendance, and report cards online via the new portal.",
     "Announcements",
-    "2024-04-15",
+    "2026-04-15",
     WEBSITE_IMAGES.library,
   ),
   mkArticle(
@@ -348,7 +348,7 @@ export const NEWS_ARTICLES: NewsArticle[] = [
     "Annual Music & Drama Festival Set for August",
     "Learners are rehearsing for the highly anticipated cultural showcase.",
     "Events",
-    "2024-04-01",
+    "2026-04-01",
     WEBSITE_IMAGES.sports,
   ),
   mkArticle(
@@ -356,15 +356,15 @@ export const NEWS_ARTICLES: NewsArticle[] = [
     "Environmental Club Plants 500 Trees",
     "Learners partnered with Nakuru Municipality on a reforestation project.",
     "News",
-    "2024-03-20",
+    "2026-03-20",
     WEBSITE_IMAGES.campusBanner,
   ),
   mkArticle(
-    "scholarship-programme-2024",
+    "scholarship-programme-2026",
     "Merit Scholarship Programme Announced",
     "Five full scholarships available for outstanding KCPE candidates joining Form 1.",
     "Announcements",
-    "2024-03-10",
+    "2026-03-10",
     WEBSITE_IMAGES.classroom,
   ),
   mkArticle(
@@ -372,7 +372,7 @@ export const NEWS_ARTICLES: NewsArticle[] = [
     "Teachers Complete CBC Training Workshop",
     "All Junior School teachers certified in the latest KICD curriculum guidelines.",
     "News",
-    "2024-02-28",
+    "2026-02-28",
     WEBSITE_IMAGES.principal,
   ),
   mkArticle(
@@ -380,7 +380,7 @@ export const NEWS_ARTICLES: NewsArticle[] = [
     "Boarding Wing Renovation Complete",
     "Modern dormitories with improved study areas now welcome returning boarders.",
     "News",
-    "2024-02-15",
+    "2026-02-15",
     WEBSITE_IMAGES.campusBanner,
   ),
 ];
@@ -497,14 +497,14 @@ export const PARENT_FAQS: FaqItem[] = [
 export const PARENT_DOWNLOADS: DownloadItem[] = [
   {
     id: "d1",
-    title: "Parent Handbook 2024",
+    title: "Parent Handbook 2026",
     description: "Policies, procedures, and important dates.",
     fileType: "PDF",
     size: "2.4 MB",
   },
   {
     id: "d2",
-    title: "Fee Structure 2024",
+    title: "Fee Structure 2026",
     description: "Day and boarding fees by grade level.",
     fileType: "PDF",
     size: "890 KB",

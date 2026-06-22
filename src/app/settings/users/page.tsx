@@ -15,6 +15,9 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import Button from "@mui/material/Button";
+import AddIcon from "@mui/icons-material/Add";
+import { useRouter } from "next/navigation";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PageHeader } from "@/components/PageHeader";
 import { DataState } from "@/components/DataState";
@@ -34,6 +37,7 @@ export default function UsersSettingsPage() {
 
 /** User management content. */
 function UsersContent() {
+  const router = useRouter();
   const { showNotification } = useNotification();
   const { data, loading, error, refetch, setData } = useAsync(() => api.getUsers(), []);
   const list = data ?? [];
@@ -46,7 +50,15 @@ function UsersContent() {
 
   return (
     <>
-      <PageHeader title="User Management" subtitle={`${list.length} system users`} />
+      <PageHeader
+        title="User Management"
+        subtitle={`${list.length} system users`}
+        actions={
+          <Button variant="contained" startIcon={<AddIcon />} onClick={() => router.push("/settings/users/new")}>
+            Add User
+          </Button>
+        }
+      />
       <Card>
         <DataState loading={loading} error={error} data={list} onRetry={refetch} isEmpty={(d) => d.length === 0}>
           {() => (

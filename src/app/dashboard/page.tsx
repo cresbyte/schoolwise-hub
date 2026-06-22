@@ -88,9 +88,9 @@ function DashboardContent() {
 
   return (
     <>
-      <PageHeader title="Dashboard" subtitle="Greenfield Private Academy · Term 2, 2024" />
+      <PageHeader title="Dashboard" subtitle="Greenfield Private Academy · Term 2, 2026" />
 
-      <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", lg: "repeat(5, 1fr)" }, mb: 3 }}>
+      <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" }, mb: 3 }}>
         <StatCard
           icon={<PeopleIcon />}
           label="Total Students"

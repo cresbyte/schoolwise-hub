@@ -1,119 +1,275 @@
 "use client";
 
 /**
- * Daily attendance register per class.
+ * Advanced Weekly Attendance Matrix.
+ * Grouped by Term and Week for efficiency.
  * @module attendance/page
  */
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
+import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import ToggleButton from "@mui/material/ToggleButton";
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
+import TimerIcon from "@mui/icons-material/Timer";
+import InfoIcon from "@mui/icons-material/Info";
+import SaveIcon from "@mui/icons-material/Save";
+import FlashOnIcon from "@mui/icons-material/FlashOn";
+
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PageHeader } from "@/components/PageHeader";
 import { ClassSelect } from "@/components/ClassSelect";
+import { DataState } from "@/components/DataState";
 import { useAsync } from "@/hooks/useAsync";
 import { useNotification } from "@/context/NotificationContext";
 import * as api from "@/lib/mockApi";
-import type { AttendanceRecord, AttendanceStatus } from "@/lib/types";
+import { formatDate, getWeeksInRange, getDaysInWeek } from "@/lib/utils";
+import type { AttendanceRecord, AttendanceStatus, Student } from "@/lib/types";
+
+const STATUS_CONFIG: Record<AttendanceStatus, { icon: any; color: string; label: string; shortcut: string }> = {
+  present: { icon: <CheckCircleIcon fontSize="small" />, color: "#2E7D32", label: "Present", shortcut: "P" },
+  absent: { icon: <CancelIcon fontSize="small" />, color: "#C62828", label: "Absent", shortcut: "A" },
+  late: { icon: <TimerIcon fontSize="small" />, color: "#EF6C00", label: "Late", shortcut: "L" },
+  excused: { icon: <InfoIcon fontSize="small" />, color: "#1565C0", label: "Excused", shortcut: "E" },
+};
 
 export default function AttendancePage() {
+  const settings = useAsync(() => api.getSchoolSettings(), []);
+  
   return (
     <DashboardLayout>
-      <AttendanceContent />
+      <PageHeader title="Attendance Register" subtitle="Weekly matrix view for efficient recording" />
+      <DataState loading={settings.loading} error={settings.error} data={settings.data}>
+        {(s) => <AttendanceMatrix settings={s} />}
+      </DataState>
     </DashboardLayout>
   );
 }
 
-const STATUSES: { value: AttendanceStatus; label: string; color: string }[] = [
-  { value: "present", label: "Present", color: "#2E7D32" },
-  { value: "absent", label: "Absent", color: "#C62828" },
-  { value: "late", label: "Late", color: "#EF6C00" },
-  { value: "excused", label: "Excused", color: "#1565C0" },
-];
-
-/** Attendance register content. */
-function AttendanceContent() {
+function AttendanceMatrix({ settings }: { settings: any }) {
   const { showNotification } = useNotification();
   const [classId, setClassId] = useState("");
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
-  const [records, setRecords] = useState<Record<string, AttendanceStatus>>({});
+  const [selectedWeekIdx, setSelectedWeekIdx] = useState(0);
   const [saving, setSaving] = useState(false);
+
+  // Calculate available weeks in the current term
+  const weeks = useMemo(() => {
+    return getWeeksInRange(new Date(settings.termStartDate), new Date(settings.termEndDate));
+  }, [settings.termStartDate, settings.termEndDate]);
+
+  const currentWeek = weeks[selectedWeekIdx] || weeks[0];
+  const days = useMemo(() => getDaysInWeek(currentWeek.start), [currentWeek]);
+
+  // Fetch students and existing attendance
   const students = useAsync(() => (classId ? api.getStudentsByClass(classId) : Promise.resolve([])), [classId]);
-  const list = students.data ?? [];
+  const existingAttendance = useAsync(
+    () => (classId ? api.getAttendanceRange(classId, days[0].toISOString().slice(0,10), days[6].toISOString().slice(0,10)) : Promise.resolve([])),
+    [classId, days]
+  );
+
+  // State for the grid: [studentId][dateString] = status
+  const [grid, setGrid] = useState<Record<string, Record<string, AttendanceStatus>>>({});
 
   useEffect(() => {
-    setRecords(Object.fromEntries(list.map((s) => [s.id, "present" as AttendanceStatus])));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [students.data, date]);
+    if (students.data && existingAttendance.data) {
+      const initialGrid: any = {};
+      students.data.forEach((s: Student) => {
+        initialGrid[s.id] = {};
+        days.forEach(d => {
+          const iso = d.toISOString().slice(0, 10);
+          const found = existingAttendance.data.find((a: AttendanceRecord) => a.studentId === s.id && a.date === iso);
+          initialGrid[s.id][iso] = found ? found.status : "present"; // Default to present for efficiency
+        });
+      });
+      setGrid(initialGrid);
+    }
+  }, [students.data, existingAttendance.data, days]);
 
-  const setStatus = (id: string, status: AttendanceStatus) => setRecords((p) => ({ ...p, [id]: status }));
-  const counts = STATUSES.map((s) => ({ ...s, count: Object.values(records).filter((v) => v === s.value).length }));
-
-  const save = async () => {
-    if (!classId) return;
-    setSaving(true);
-    const payload: AttendanceRecord[] = list.map((s) => ({
-      id: `att-${s.id}-${date}`, studentId: s.id, studentName: `${s.firstName} ${s.lastName}`, classId,
-      date, status: records[s.id] ?? "present", recordedBy: "Class Teacher", recordedAt: new Date().toISOString(),
-      parentNotified: records[s.id] === "absent",
-    }));
-    await api.saveAttendance(classId, date, payload);
-    setSaving(false);
-    showNotification(`Attendance saved for ${list.length} students`, "success");
+  const toggleStatus = (studentId: string, date: string) => {
+    const statuses: AttendanceStatus[] = ["present", "absent", "late", "excused"];
+    setGrid(prev => {
+      const current = prev[studentId]?.[date] || "present";
+      const nextIdx = (statuses.indexOf(current) + 1) % statuses.length;
+      return {
+        ...prev,
+        [studentId]: { ...prev[studentId], [date]: statuses[nextIdx] }
+      };
+    });
   };
 
+  const markAllDay = (dateString: string, status: AttendanceStatus) => {
+    setGrid(prev => {
+      const next = { ...prev };
+      Object.keys(next).forEach(sid => {
+        next[sid] = { ...next[sid], [dateString]: status };
+      });
+      return next;
+    });
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    const records: AttendanceRecord[] = [];
+    const studentList = students.data || [];
+    
+    studentList.forEach((s: Student) => {
+      days.forEach(d => {
+        const iso = d.toISOString().slice(0, 10);
+        records.push({
+          id: `att-${s.id}-${iso}`,
+          studentId: s.id,
+          studentName: `${s.firstName} ${s.lastName}`,
+          classId,
+          date: iso,
+          status: grid[s.id]?.[iso] || "present",
+          recordedBy: "Staff Member",
+          recordedAt: new Date().toISOString(),
+          parentNotified: grid[s.id]?.[iso] === "absent",
+        });
+      });
+    });
+
+    await api.saveAttendanceBulk(records);
+    setSaving(false);
+    showNotification("Weekly attendance saved successfully", "success");
+    existingAttendance.refetch();
+  };
+
+  const isHoliday = (date: Date) => date.getDay() === 0 || date.getDay() === 6; // Sunday/Saturday as weekend visually
+
   return (
-    <>
-      <PageHeader title="Attendance" subtitle="Mark daily class attendance" />
-      <Card sx={{ p: 2, mb: 2 }}>
-        <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap", alignItems: "center" }}>
-          <ClassSelect value={classId} onChange={setClassId} allOption={false} label="Select Class" />
-          <TextField type="date" size="small" label="Date" value={date} onChange={(e) => setDate(e.target.value)} slotProps={{ inputLabel: { shrink: true } }} />
-          {classId && counts.map((c) => <Chip key={c.value} size="small" label={`${c.label}: ${c.count}`} sx={{ bgcolor: `${c.color}19`, color: c.color, fontWeight: 600 }} />)}
+    <Box>
+      <Card sx={{ mb: 3 }}>
+        <CardContent sx={{ display: "flex", gap: 2, flexWrap: "wrap", alignItems: "center", justifyContent: "space-between" }}>
+          <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", alignItems: "center" }}>
+            <ClassSelect value={classId} onChange={setClassId} allOption={false} label="Select Class" />
+            <TextField
+              select
+              size="small"
+              label="Select Week"
+              value={selectedWeekIdx}
+              onChange={(e) => setSelectedWeekIdx(Number(e.target.value))}
+              sx={{ minWidth: 250 }}
+            >
+              {weeks.map((w, i) => (
+                <MenuItem key={i} value={i}>
+                  Week {i + 1}: {w.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
+          <Box>
+            <Button
+              variant="contained"
+              startIcon={<SaveIcon />}
+              onClick={handleSave}
+              disabled={!classId || saving || students.loading}
+            >
+              {saving ? "Saving..." : "Save All Changes"}
+            </Button>
+          </Box>
+        </CardContent>
+      </Card>
+
+      {!classId ? (
+        <Card sx={{ p: 4, textAlign: "center", bgcolor: "action.hover" }}>
+          <Typography color="text.secondary">Please select a class to start recording attendance.</Typography>
+        </Card>
+      ) : (
+        <DataState loading={students.loading || existingAttendance.loading} data={students.data}>
+          {(studentList: Student[]) => (
+            <TableContainer component={Card} sx={{ border: 1, borderColor: "divider" }}>
+              <Table size="small">
+                <TableHead>
+                  <TableRow sx={{ bgcolor: "action.hover" }}>
+                    <TableCell sx={{ minWidth: 200, fontWeight: 800, borderRight: 1, borderColor: "divider" }}>Student Name</TableCell>
+                    {days.map((d, i) => {
+                      const iso = d.toISOString().slice(0, 10);
+                      const holiday = isHoliday(d);
+                      return (
+                        <TableCell key={i} align="center" sx={{ borderRight: 1, borderColor: "divider", p: 1, bgcolor: holiday ? "rgba(0,0,0,0.02)" : "inherit" }}>
+                          <Typography variant="caption" sx={{ fontWeight: 700, display: "block" }}>{d.toLocaleDateString('en-US', { weekday: 'short' })}</Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 800 }}>{d.getDate()}</Typography>
+                          <Box sx={{ mt: 1 }}>
+                            <Tooltip title={`Mark all ${iso} as Present`}>
+                              <IconButton size="small" onClick={() => markAllDay(iso, "present")}><FlashOnIcon fontSize="small" sx={{ color: "success.main", fontSize: 16 }} /></IconButton>
+                            </Tooltip>
+                          </Box>
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {studentList.map((s) => (
+                    <TableRow key={s.id} hover>
+                      <TableCell sx={{ fontWeight: 600, borderRight: 1, borderColor: "divider" }}>
+                        <Typography variant="body2" sx={{ fontWeight: 700 }}>{s.firstName} {s.lastName}</Typography>
+                        <Typography variant="caption" color="text.secondary">{s.admissionNumber}</Typography>
+                      </TableCell>
+                      {days.map((d, i) => {
+                        const iso = d.toISOString().slice(0, 10);
+                        const status = grid[s.id]?.[iso] || "present";
+                        const config = STATUS_CONFIG[status];
+                        return (
+                          <TableCell 
+                            key={i} 
+                            align="center" 
+                            onClick={() => toggleStatus(s.id, iso)}
+                            sx={{ 
+                              cursor: "pointer", 
+                              borderRight: 1, 
+                              borderColor: "divider",
+                              bgcolor: status === "present" ? "transparent" : `${config.color}08`,
+                              transition: "background 0.2s",
+                              "&:hover": { bgcolor: "action.hover" }
+                            }}
+                          >
+                            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                              <Box sx={{ color: config.color }}>{config.icon}</Box>
+                              <Typography variant="caption" sx={{ fontWeight: 900, fontSize: 10, color: config.color }}>{config.shortcut}</Typography>
+                            </Box>
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </DataState>
+      )}
+
+      <Card sx={{ mt: 3, p: 2 }}>
+        <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 700 }}>Legend & Shortcuts</Typography>
+        <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
+          {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
+            <Box key={key} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Box sx={{ color: cfg.color, display: "flex" }}>{cfg.icon}</Box>
+              <Typography variant="body2">{cfg.label} ({cfg.shortcut})</Typography>
+            </Box>
+          ))}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, ml: "auto" }}>
+            <FlashOnIcon fontSize="small" sx={{ color: "success.main" }} />
+            <Typography variant="body2" color="text.secondary">Bulk Mark Day as Present</Typography>
+          </Box>
         </Box>
       </Card>
-      {!classId ? (
-        <Card><CardContent><Typography variant="body2" color="text.secondary">Select a class to take attendance.</Typography></CardContent></Card>
-      ) : (
-        <Card>
-          <CardContent>
-            <Table size="small">
-              <TableHead><TableRow><TableCell>Adm.</TableCell><TableCell>Student</TableCell><TableCell>Status</TableCell></TableRow></TableHead>
-              <TableBody>
-                {list.map((s: any) => (
-                  <TableRow key={s.id}>
-                    <TableCell sx={{ fontFamily: "monospace", fontSize: 12 }}>{s.admissionNumber}</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>{s.firstName} {s.lastName}</TableCell>
-                    <TableCell>
-                      <ToggleButtonGroup size="small" exclusive value={records[s.id] ?? "present"} onChange={(_, v) => v && setStatus(s.id, v)}>
-                        {STATUSES.map((st) => (
-                          <ToggleButton key={st.value} value={st.value} sx={{ "&.Mui-selected": { bgcolor: `${st.color}22`, color: st.color, fontWeight: 700 } }}>
-                            {st.label}
-                          </ToggleButton>
-                        ))}
-                      </ToggleButtonGroup>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
-              <Button variant="contained" onClick={save} disabled={saving}>{saving ? "Saving…" : "Save Attendance"}</Button>
-            </Box>
-          </CardContent>
-        </Card>
-      )}
-    </>
+    </Box>
   );
 }

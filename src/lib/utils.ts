@@ -110,7 +110,7 @@ export function getCBCRating(marks: number): "EE" | "ME" | "AE" | "BE" {
   return "BE";
 }
 
-/** Compute monthly PAYE using Kenya 2024 progressive bands (after reliefs). */
+/** Compute monthly PAYE using Kenya 2026 progressive bands (after reliefs). */
 export function calculatePAYE(taxablePay: number): number {
   let tax = 0;
   const bands = [
@@ -230,6 +230,11 @@ export function numberToWords(num: number): string {
   return result + " Shillings Only";
 }
 
+export const MONTH_NAMES = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
 /** Export an array of objects to a downloaded CSV file (client-side, no library). */
 export function exportToCSV<T extends Record<string, unknown>>(
   data: T[],
@@ -252,4 +257,36 @@ export function exportToCSV<T extends Record<string, unknown>>(
   link.download = filename.endsWith(".csv") ? filename : `${filename}.csv`;
   link.click();
   URL.revokeObjectURL(url);
+}
+
+/** Get all weeks (Monday-Sunday) between two dates. */
+export function getWeeksInRange(startDate: Date, endDate: Date): { start: Date; end: Date; label: string }[] {
+  const weeks = [];
+  let current = new Date(startDate);
+  // Rewind to Monday
+  const day = current.getDay();
+  const diff = current.getDate() - day + (day === 0 ? -6 : 1);
+  current.setDate(diff);
+
+  while (current <= endDate) {
+    const weekStart = new Date(current);
+    const weekEnd = new Date(current);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+    weeks.push({
+      start: weekStart,
+      end: weekEnd,
+      label: `${formatDate(weekStart)} - ${formatDate(weekEnd)}`,
+    });
+    current.setDate(current.getDate() + 7);
+  }
+  return weeks;
+}
+
+/** Get all 7 days of a specific week starting from a given date. */
+export function getDaysInWeek(weekStart: Date): Date[] {
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(weekStart);
+    d.setDate(d.getDate() + i);
+    return d;
+  });
 }

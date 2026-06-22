@@ -12,13 +12,20 @@ import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
+import Button from "@mui/material/Button";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import IconButton from "@mui/material/IconButton";
+import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useRouter } from "next/navigation";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PageHeader } from "@/components/PageHeader";
 import { DataState } from "@/components/DataState";
+import { RoleGuard } from "@/components/RoleGuard";
 import { useAsync } from "@/hooks/useAsync";
 import * as api from "@/lib/mockApi";
 import { CURRICULUM_LABELS } from "@/lib/constants";
@@ -33,6 +40,7 @@ export default function SubjectsPage() {
 
 /** Subject catalogue content. */
 function SubjectsContent() {
+  const router = useRouter();
   const [curriculum, setCurriculum] = useState("");
   const { data, loading, error, refetch } = useAsync(
     () => api.getSubjects(curriculum ? { curriculum } : undefined),
@@ -41,7 +49,17 @@ function SubjectsContent() {
   const list = data ?? [];
   return (
     <>
-      <PageHeader title="Subjects" subtitle={<Chip size="small" label={`${list.length} subjects`} />} />
+      <PageHeader
+        title="Subjects"
+        subtitle={<Chip size="small" label={`${list.length} subjects`} />}
+        actions={
+          <RoleGuard permission="classes.*">
+            <Button startIcon={<AddIcon />} variant="contained" onClick={() => router.push("/subjects/new")}>
+              Add Subject
+            </Button>
+          </RoleGuard>
+        }
+      />
       <Card sx={{ p: 2, mb: 2 }}>
         <Box sx={{ display: "flex", gap: 1.5 }}>
           <TextField select size="small" label="Curriculum" value={curriculum} onChange={(e) => setCurriculum(e.target.value)} sx={{ width: 180 }}>
@@ -63,6 +81,7 @@ function SubjectsContent() {
                     <TableCell>Curriculum</TableCell>
                     <TableCell>Learning Area</TableCell>
                     <TableCell>Type</TableCell>
+                    <TableCell align="right">Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -74,6 +93,9 @@ function SubjectsContent() {
                       <TableCell>{s.learningArea ?? "—"}</TableCell>
                       <TableCell>
                         <Chip size="small" label={s.isCore ? "Core" : "Optional"} color={s.isCore ? "primary" : "default"} variant={s.isCore ? "filled" : "outlined"} />
+                      </TableCell>
+                      <TableCell align="right">
+                        <IconButton size="small" onClick={() => {}} title="Edit"><EditIcon fontSize="small" /></IconButton>
                       </TableCell>
                     </TableRow>
                   ))}

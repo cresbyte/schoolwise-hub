@@ -387,7 +387,7 @@ export interface LeaveRequest {
 export interface TimetableSlot {
   id: string;
   classId: string;
-  day: "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday";
+  day: "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday";
   periodNumber: number;
   startTime: string;
   endTime: string;

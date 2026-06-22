@@ -1,10 +1,10 @@
 "use client";
 
 /**
- * Student admission wizard (multi-step, React Hook Form + Zod).
- * @module students/new/page
+ * Edit student information wizard.
+ * @module students/[id]/edit/page
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -18,22 +18,15 @@ import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Typography from "@mui/material/Typography";
-import { useRouter } from "next/navigation";
+import CircularProgress from "@mui/material/CircularProgress";
+import { useParams, useRouter } from "next/navigation";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PageHeader } from "@/components/PageHeader";
-import { useClasses } from "@/hooks/domain";
+import { DataState } from "@/components/DataState";
+import { useClasses, useStudent } from "@/hooks/domain";
 import { useNotification } from "@/context/NotificationContext";
 import * as api from "@/lib/mockApi";
 import type { Student } from "@/lib/types";
-
-export default function NewStudentPage() {
-  return (
-    <DashboardLayout>
-      <PageHeader title="Add Student" subtitle="Register a new student" />
-      <AdmissionWizard />
-    </DashboardLayout>
-  );
-}
 
 const schema = z.object({
   firstName: z.string().min(2, "Required"),
@@ -43,7 +36,6 @@ const schema = z.object({
   dateOfBirth: z.string().min(1, "Required"),
   birthCertNumber: z.string().optional(),
   homeLocation: z.string().min(2, "Required"),
-  photo: z.string().optional(),
   classId: z.string().min(1, "Select a class"),
   boardingStatus: z.enum(["day", "boarding", "part_boarding"]),
   admissionDate: z.string().min(1, "Required"),
@@ -61,20 +53,46 @@ const STEP_FIELDS: (keyof FormValues)[][] = [
   ["fatherName", "motherName", "primaryContactName", "primaryContactPhone"],
 ];
 
-/** Admission wizard form content. */
-function AdmissionWizard() {
+export default function EditStudentPage() {
+  const params = useParams();
+  const id = params.id as string;
+  const { data: student, loading, error, refetch } = useStudent(id);
+
+  return (
+    <DashboardLayout>
+      <PageHeader title="Edit Student" subtitle={student ? `Updating ${student.firstName} ${student.lastName}` : "Updating student information"} />
+      <DataState loading={loading} error={error} data={student} onRetry={refetch}>
+        {(s: Student) => <EditWizard student={s} />}
+      </DataState>
+    </DashboardLayout>
+  );
+}
+
+/** Edit wizard form content. */
+function EditWizard({ student }: { student: Student }) {
   const router = useRouter();
   const { showNotification } = useNotification();
   const classes = useClasses();
   const [step, setStep] = useState(0);
 
-  const { control, handleSubmit, trigger, formState: { errors, isSubmitting } } = useForm<FormValues>({
+  const { control, handleSubmit, trigger, reset, formState: { errors, isSubmitting } } = useForm<FormValues>({
     resolver: zodResolver(schema),
     mode: "onTouched",
     defaultValues: {
-      firstName: "", lastName: "", otherName: "", gender: "Male", dateOfBirth: "", birthCertNumber: "",
-      homeLocation: "", classId: "", boardingStatus: "day", admissionDate: new Date().toISOString().slice(0, 10),
-      fatherName: "", motherName: "", primaryContactName: "", primaryContactPhone: "",
+      firstName: student.firstName,
+      lastName: student.lastName,
+      otherName: student.otherName || "",
+      gender: student.gender as any,
+      dateOfBirth: student.dateOfBirth,
+      birthCertNumber: student.birthCertNumber || "",
+      homeLocation: student.homeLocation,
+      classId: student.classId,
+      boardingStatus: student.boardingStatus as any,
+      admissionDate: student.admissionDate,
+      fatherName: student.parent.fatherName || "",
+      motherName: student.parent.motherName || "",
+      primaryContactName: student.parent.primaryContactName,
+      primaryContactPhone: student.parent.primaryContactPhone,
     },
   });
 
@@ -84,18 +102,31 @@ function AdmissionWizard() {
 
   const onSubmit = handleSubmit(async (v) => {
     const cls = (classes.data ?? []).find((c) => c.id === v.classId);
-    const payload = {
-      admissionNumber: `ADM-2026-${String(Math.floor(1000 + Math.random() * 9000))}`,
-      firstName: v.firstName, lastName: v.lastName, otherName: v.otherName, gender: v.gender,
-      dateOfBirth: v.dateOfBirth, birthCertNumber: v.birthCertNumber, classId: v.classId,
-      className: cls?.name ?? "", gradeLevel: cls?.gradeLevel ?? "Grade 1", curriculum: cls?.curriculum ?? "CBC",
-      admissionDate: v.admissionDate, status: "active", homeLocation: v.homeLocation,
-      boardingStatus: v.boardingStatus, feeBalance: 0,
-      parent: { fatherName: v.fatherName, motherName: v.motherName, primaryContactName: v.primaryContactName, primaryContactPhone: v.primaryContactPhone },
-    } as unknown as Student;
-    await api.createStudent(payload);
-    showNotification(`${v.firstName} ${v.lastName} admitted successfully`, "success");
-    router.push("/students");
+    const payload: Partial<Student> = {
+      firstName: v.firstName,
+      lastName: v.lastName,
+      otherName: v.otherName,
+      gender: v.gender,
+      dateOfBirth: v.dateOfBirth,
+      birthCertNumber: v.birthCertNumber,
+      classId: v.classId,
+      className: cls?.name ?? student.className,
+      gradeLevel: cls?.gradeLevel ?? student.gradeLevel,
+      curriculum: cls?.curriculum ?? student.curriculum,
+      admissionDate: v.admissionDate,
+      homeLocation: v.homeLocation,
+      boardingStatus: v.boardingStatus as any,
+      parent: {
+        ...student.parent,
+        fatherName: v.fatherName,
+        motherName: v.motherName,
+        primaryContactName: v.primaryContactName,
+        primaryContactPhone: v.primaryContactPhone,
+      },
+    };
+    await api.updateStudent(student.id, payload);
+    showNotification(`Student information updated successfully`, "success");
+    router.push(`/students/${student.id}`);
   });
 
   return (
@@ -107,31 +138,6 @@ function AdmissionWizard() {
 
         {step === 0 && (
           <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" } }}>
-            <Box sx={{ gridColumn: "1 / -1", display: "flex", gap: 2, alignItems: "center" }}>
-              <Controller
-                name="photo"
-                control={control}
-                render={({ field }) => (
-                  <>
-                    <Avatar src={field.value} sx={{ width: 64, height: 64 }} />
-                    <Button variant="outlined" size="small" component="label">
-                      Choose Photo
-                      <input 
-                        type="file" 
-                        hidden 
-                        accept="image/*" 
-                        onChange={() => {
-                          // Simulate photo upload with a random student image
-                          const randomId = Math.floor(Math.random() * 70) + 1;
-                          field.onChange(`https://i.pravatar.cc/150?u=std-${randomId}`);
-                        }} 
-                      />
-                    </Button>
-                    {field.value && <Button size="small" color="error" onClick={() => field.onChange("")}>Remove</Button>}
-                  </>
-                )}
-              />
-            </Box>
             <Controller name="firstName" control={control} render={({ field }) => <TextField {...field} label="First Name" size="small" error={!!errors.firstName} helperText={errors.firstName?.message} />} />
             <Controller name="lastName" control={control} render={({ field }) => <TextField {...field} label="Last Name" size="small" error={!!errors.lastName} helperText={errors.lastName?.message} />} />
             <Controller name="otherName" control={control} render={({ field }) => <TextField {...field} label="Other Name" size="small" />} />
@@ -170,16 +176,15 @@ function AdmissionWizard() {
         )}
 
         <Box sx={{ mt: 4, display: "flex", justifyContent: "space-between" }}>
-          <Button onClick={() => (step === 0 ? router.push("/students") : setStep((s) => s - 1))}>
+          <Button onClick={() => (step === 0 ? router.push(`/students/${student.id}`) : setStep((s) => s - 1))}>
             {step === 0 ? "Cancel" : "Back"}
           </Button>
           {step < STEPS.length - 1 ? (
             <Button variant="contained" onClick={next}>Next</Button>
           ) : (
-            <Button type="submit" variant="contained" disabled={isSubmitting}>{isSubmitting ? "Admitting…" : "Admit Student"}</Button>
+            <Button type="submit" variant="contained" disabled={isSubmitting}>{isSubmitting ? "Saving…" : "Save Changes"}</Button>
           )}
         </Box>
-        {step === STEPS.length - 1 && <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 1 }}>An admission number will be generated automatically.</Typography>}
       </CardContent>
     </Card>
   );

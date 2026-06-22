@@ -87,7 +87,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           <Chip
-            label="Term 2, 2024"
+            label="Term 2, 2026"
             color="primary"
             variant="outlined"
             size="small"
@@ -111,7 +111,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
             </Box>
           </Box>
           <Menu anchorEl={anchor} open={!!anchor} onClose={() => setAnchor(null)}>
-            <MenuItem onClick={() => setAnchor(null)}>
+            <MenuItem onClick={() => { setAnchor(null); router.push("/profile"); }}>
               <ListItemIcon>
                 <PersonIcon fontSize="small" />
               </ListItemIcon>{" "}
@@ -149,33 +149,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
         }}
       >
         <Toolbar />
-        <Box
-          className="sidebar-logo-area"
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1,
-            justifyContent: open ? "flex-start" : "center",
-          }}
-        >
-          <SchoolIcon sx={{ color: "secondary.main", fontSize: 28 }} />
-          {open && (
-            <Box>
-              <Typography
-                variant="subtitle2"
-                sx={{ fontWeight: 700, color: "common.white", lineHeight: 1.2 }}
-              >
-                Shule
-                <Box component="span" sx={{ color: "secondary.main" }}>
-                  Smart
-                </Box>
-              </Typography>
-              <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.7)" }}>
-                School Management
-              </Typography>
-            </Box>
-          )}
-        </Box>
+
         <Box sx={{ overflowY: "auto", py: 1 }}>
           {NAV_GROUPS.map((group) => {
             const items = group.items.filter((i) => !i.permission || hasPermission(i.permission));
