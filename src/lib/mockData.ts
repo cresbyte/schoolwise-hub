@@ -24,6 +24,8 @@ import type {
   TimetableSlot,
   User,
   Curriculum,
+  SchoolMessage,
+  ParentReply,
 } from "./types";
 import { computePayroll, getCBCRating, getGrade } from "./utils";
 import { DAYS_OF_WEEK } from "./constants";
@@ -289,6 +291,21 @@ const EIGHT_SUBJECTS: Array<[string, string, string]> = [
 ];
 
 export const subjects: Subject[] = [
+  { 
+    id: "sub-math", 
+    name: "Mathematics", 
+    code: "MAT", 
+    curriculum: "844", 
+    gradeLevel: ["Grade 7", "Grade 8", "Grade 9"], 
+    isCore: true,
+    gradingSystem: [
+      { grade: "A", min: 80, max: 100, color: "#2e7d32", comment: "Excellent" },
+      { grade: "B", min: 65, max: 79, color: "#4caf50", comment: "Very Good" },
+      { grade: "C", min: 50, max: 64, color: "#fb8c00", comment: "Good" },
+      { grade: "D", min: 35, max: 49, color: "#e64a19", comment: "Fair" },
+      { grade: "F", min: 0, max: 34, color: "#c62828", comment: "Poor" },
+    ]
+  },
   ...CBC_SUBJECTS.map(([name, code, area], i) => ({
     id: `sub-cbc-${i}`,
     name,
@@ -311,17 +328,35 @@ export const subjects: Subject[] = [
 
 export const classSubjects: ClassSubject[] = (() => {
   const list: ClassSubject[] = [];
+  const teacherFor = (clsId: string, subName: string): Staff => {
+    // Feature 4A: Deterministic assignments
+    if (subName === "Mathematics") return staff.find((s) => s.id === "stf-3")!;
+    if (subName === "English") return staff.find((s) => s.id === "stf-4")!;
+    if (subName === "Physics" || subName === "Chemistry") return staff.find((s) => s.id === "stf-5")!;
+    if (subName === "Biology") return staff.find((s) => s.id === "stf-9")!;
+    if (subName.includes("C.R.E") || subName.includes("Religious Education")) return staff.find((s) => s.id === "stf-12")!;
+
+    // CBC Class teacher assignments
+    const cls = classes.find((c) => c.id === clsId)!;
+    if (cls.curriculum === "CBC" && cls.classTeacherId) {
+      return staff.find((s) => s.id === cls.classTeacherId)!;
+    }
+
+    return pick(staff);
+  };
+
   for (const cls of classes) {
     const subs = subjects.filter((s) => s.curriculum === cls.curriculum);
     for (const s of subs) {
+      const teacher = teacherFor(cls.id, s.name);
       list.push({
         id: `cs-${cls.id}-${s.id}`,
         classId: cls.id,
         subjectId: s.id,
         subjectName: s.name,
-        teacherId: pick(staff).id,
-        teacherName: pick(staff).firstName + " " + pick(staff).lastName,
-        periodsPerWeek: randInt(3, 6),
+        teacherId: teacher.id,
+        teacherName: `${teacher.firstName} ${teacher.lastName}`,
+        periodsPerWeek: s.name === "Mathematics" || s.name === "English" ? 6 : randInt(3, 5),
       });
     }
   }
@@ -341,6 +376,13 @@ export const examMarks: ExamMark[] = (() => {
       const subs = subjects.filter((s) => s.curriculum === student.curriculum);
       for (const sub of subs) {
         const marks = randInt(30, 95);
+        const comments = [
+          "Shows great understanding of the topic.",
+          "Needs more practice on calculations.",
+          "Excellent grasp of concepts.",
+          "Improvement noted this term.",
+          "Should participate more in class.",
+        ];
         list.push({
           id: `mk-${exam.id}-${student.id}-${sub.id}`,
           examId: exam.id,
@@ -353,6 +395,7 @@ export const examMarks: ExamMark[] = (() => {
           marks,
           cbcRating: student.curriculum === "CBC" ? getCBCRating(marks) : undefined,
           grade: getGrade(marks),
+          teacherComment: rand() > 0.4 ? pick(comments) : undefined,
           enteredBy: "Mr. John Mutua Kivuva",
           enteredAt: exam.endDate + "T16:00:00Z",
         });
@@ -563,6 +606,150 @@ export const notifications: AppNotification[] = [
   { id: "ntf-3", title: "Student Absent", message: "Brian Odhiambo (Form 2 A) was marked absent today.", type: "warning", read: false, createdAt: "2026-06-10T08:35:00Z" },
   { id: "ntf-4", title: "Low Fee Balance Alert", message: "8 students have a fee balance above KES 10,000.", type: "error", read: true, createdAt: "2026-06-08T07:00:00Z" },
   { id: "ntf-5", title: "Payroll Ready", message: "June 2026 payroll draft is ready for review.", type: "info", read: true, createdAt: "2026-06-07T10:00:00Z" },
+  { id: "ntf-6", title: "Parent Replies", message: "2 parent replies awaiting review.", type: "info", read: false, createdAt: "2026-06-12T08:00:00Z" },
+  { id: "ntf-7", title: "Urgent Message", message: "Urgent message sent to all parents regarding school closure.", type: "success", read: false, createdAt: "2026-06-12T09:00:00Z" },
+];
+
+export const schoolMessages: SchoolMessage[] = [
+  {
+    id: "msg-1",
+    subject: "Term 2 Closing Date",
+    body: "Dear parents, please note that the school will close for Term 2 on August 9th, 2026.",
+    channel: "announcement",
+    recipientType: "all_parents",
+    sentBy: "Daniel Njoroge",
+    sentById: "stf-1",
+    sentAt: "2026-06-10T10:00:00Z",
+    status: "sent",
+    priority: "normal",
+  },
+  {
+    id: "msg-2",
+    subject: "Sports Day Notice",
+    body: "All students are required to have their sports gear ready for the upcoming Sports Day on June 25th.",
+    channel: "announcement",
+    recipientType: "all_parents",
+    sentBy: "Daniel Njoroge",
+    sentById: "stf-1",
+    sentAt: "2026-06-11T09:00:00Z",
+    status: "sent",
+    priority: "normal",
+    attachmentLabel: "Sports_Day_Schedule.pdf",
+  },
+  {
+    id: "msg-3",
+    subject: "Form 2A: Mathematics Exam rescheduled",
+    body: "The Mathematics mid-term for Form 2A has been moved to Thursday morning.",
+    channel: "circular",
+    recipientType: "class_parents",
+    classId: "cls-7",
+    className: "Form 2 A",
+    sentBy: "John Kivuva",
+    sentById: "stf-3",
+    sentAt: "2026-06-12T08:30:00Z",
+    status: "sent",
+    priority: "normal",
+  },
+  {
+    id: "msg-4",
+    subject: "Fee Reminder - Brian Odhiambo",
+    body: "Dear parent, this is a friendly reminder to clear the outstanding fee balance of KES 12,500 for Brian.",
+    channel: "direct",
+    recipientType: "individual_parent",
+    studentId: "std-2",
+    studentName: "Brian Odhiambo",
+    parentName: "Mr. Stephen Kamau",
+    sentBy: "Agnes Kariuki",
+    sentById: "stf-6",
+    sentAt: "2026-06-12T10:00:00Z",
+    status: "sent",
+    priority: "normal",
+  },
+  {
+    id: "msg-5",
+    subject: "Absence Follow-up - Amina Kamau",
+    body: "Amina was not in school today. Please let us know if everything is okay.",
+    channel: "direct",
+    recipientType: "individual_parent",
+    studentId: "std-1",
+    studentName: "Amina Kamau",
+    parentName: "Mr. Stephen Kamau",
+    sentBy: "Rose Owino",
+    sentById: "stf-8",
+    sentAt: "2026-06-12T11:00:00Z",
+    status: "sent",
+    priority: "normal",
+  },
+  {
+    id: "msg-6",
+    subject: "Early Closure Tomorrow",
+    body: "Please note that the school will close at 12:30 PM tomorrow due to a scheduled staff meeting.",
+    channel: "sms_alert",
+    recipientType: "all_parents",
+    sentBy: "Daniel Njoroge",
+    sentById: "stf-1",
+    sentAt: "2026-06-12T14:00:00Z",
+    status: "sent",
+    priority: "urgent",
+  },
+  {
+    id: "msg-7",
+    subject: "Academic Performance Discussion",
+    body: "I would like to discuss Christine's progress in Physics. Please book a time to see me.",
+    channel: "direct",
+    recipientType: "individual_parent",
+    studentId: "std-3",
+    studentName: "Christine Mwangi",
+    sentBy: "Samuel Otieno",
+    sentById: "stf-5",
+    sentAt: "2026-06-12T15:00:00Z",
+    status: "sent",
+    priority: "normal",
+  },
+  {
+    id: "msg-8",
+    subject: "Holiday Assignment",
+    body: "English holiday assignment for Grade 6 has been posted on the portal.",
+    channel: "circular",
+    recipientType: "class_parents",
+    classId: "cls-4",
+    className: "Grade 6 A",
+    sentBy: "Faith Kosgei",
+    sentById: "stf-4",
+    sentAt: "2026-06-12T16:00:00Z",
+    status: "sent",
+    priority: "normal",
+  },
+];
+
+export const parentReplies: ParentReply[] = [
+  {
+    id: "rep-1",
+    messageId: "msg-4",
+    parentName: "Mr. Stephen Kamau",
+    studentName: "Brian Odhiambo",
+    body: "Thank you for the reminder. I will clear the balance by Friday.",
+    sentAt: "2026-06-12T12:00:00Z",
+    readByStaff: false,
+  },
+  {
+    id: "rep-2",
+    messageId: "msg-5",
+    parentName: "Mr. Stephen Kamau",
+    studentName: "Amina Kamau",
+    body: "Amina had a slight fever this morning. She should be back tomorrow.",
+    sentAt: "2026-06-12T13:00:00Z",
+    readByStaff: false,
+  },
+  {
+    id: "rep-3",
+    messageId: "msg-7",
+    parentName: "Mrs. Lucy Mwangi",
+    studentName: "Christine Mwangi",
+    body: "I will be available on Monday at 4:00 PM. Does that work for you?",
+    sentAt: "2026-06-12T17:00:00Z",
+    readByStaff: true,
+  },
 ];
 
 export const auditLogs: AuditLog[] = [

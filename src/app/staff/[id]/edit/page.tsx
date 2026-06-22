@@ -14,6 +14,8 @@ import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import Autocomplete from "@mui/material/Autocomplete";
+import Chip from "@mui/material/Chip";
 import Divider from "@mui/material/Divider";
 import { useParams, useRouter } from "next/navigation";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
@@ -21,6 +23,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { DataState } from "@/components/DataState";
 import { useStaffMember } from "@/hooks/domain";
 import { useNotification } from "@/context/NotificationContext";
+import { useAsync } from "@/hooks/useAsync";
 import * as api from "@/lib/mockApi";
 import { CONTRACT_TYPES } from "@/lib/constants";
 import type { Staff } from "@/lib/types";
@@ -48,6 +51,7 @@ const schema = z.object({
   nextOfKinRelationship: z.string().min(2, "Required"),
   nextOfKinPhone: z.string().regex(/^(07|01)\d{8}$/, "Use format 07XXXXXXXX"),
   status: z.enum(["active", "on_leave", "suspended", "terminated"]),
+  subjectsTeaching: z.array(z.string()),
 });
 type FormValues = z.infer<typeof schema>;
 
@@ -95,8 +99,12 @@ function EditStaffForm({ staff }: { staff: Staff }) {
       nextOfKinRelationship: staff.nextOfKin.relationship,
       nextOfKinPhone: staff.nextOfKin.phone,
       status: staff.status,
+      subjectsTeaching: staff.subjectsTeaching || [],
     },
   });
+
+  const subjects = useAsync(() => api.getSubjects(), []);
+  const designations = useAsync(() => api.getDesignations(staff.id), [staff.id]);
 
   const onSubmit = handleSubmit(async (v) => {
     const payload: Partial<Staff> = {
@@ -116,6 +124,7 @@ function EditStaffForm({ staff }: { staff: Staff }) {
       dateJoined: v.dateJoined,
       status: v.status as any,
       basicSalary: v.basicSalary,
+      subjectsTeaching: v.subjectsTeaching,
       houseAllowance: v.houseAllowance,
       transportAllowance: v.transportAllowance,
       otherAllowances: v.otherAllowances,
@@ -156,8 +165,38 @@ function EditStaffForm({ staff }: { staff: Staff }) {
               {CONTRACT_TYPES.map((c) => <MenuItem key={c.value} value={c.value}>{c.label}</MenuItem>)}
             </TextField>
           )} />
-          <Controller name="designation" control={control} render={({ field }) => <TextField {...field} label="Designation" size="small" error={!!errors.designation} helperText={errors.designation?.message} />} />
+          <Controller name="designation" control={control} render={({ field }) => (
+            <TextField {...field} select label="Designation" size="small" error={!!errors.designation} helperText={errors.designation?.message}>
+              {(designations.data || []).map((d) => (
+                <MenuItem key={d.label} value={d.label} disabled={d.isTaken}>
+                  {d.label} {d.isTaken ? "(Assigned)" : ""}
+                </MenuItem>
+              ))}
+              {/* Allow free text if none of the above match, though unique ones are usually controlled */}
+              {!designations.data?.some(d => d.label === field.value) && <MenuItem value={field.value}>{field.value}</MenuItem>}
+            </TextField>
+          )} />
           <Controller name="department" control={control} render={({ field }) => <TextField {...field} label="Department" size="small" />} />
+          
+          <Box sx={{ gridColumn: { lg: "span 3" } }}>
+            <Controller
+              name="subjectsTeaching"
+              control={control}
+              render={({ field }) => (
+                <Autocomplete
+                  multiple
+                  id="subjects-teaching"
+                  options={subjects.data || []}
+                  getOptionLabel={(option: any) => `${option.name} (${option.code})`}
+                  value={(subjects.data || []).filter((s: any) => field.value?.includes(s.id))}
+                  onChange={(_, val) => field.onChange(val.map((v: any) => v.id))}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Subjects Teaching" placeholder="Select subjects..." size="small" />
+                  )}
+                />
+              )}
+            />
+          </Box>
           <Controller name="dateJoined" control={control} render={({ field }) => <TextField {...field} type="date" label="Date Joined" size="small" slotProps={{ inputLabel: { shrink: true } }} error={!!errors.dateJoined} helperText={errors.dateJoined?.message} />} />
           <Controller name="status" control={control} render={({ field }) => (
             <TextField {...field} select label="Work Status" size="small">

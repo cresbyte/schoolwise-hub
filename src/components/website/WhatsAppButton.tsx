@@ -4,7 +4,7 @@
  */
 import Fab from "@mui/material/Fab";
 import Tooltip from "@mui/material/Tooltip";
-import { SCHOOL, WEBSITE_COLORS } from "@/lib/website/constants";
+import { WEBSITE_COLORS, getSchoolInfo } from "@/lib/website/constants";
 
 /** WhatsApp icon as inline SVG for brand colour control. */
 function WhatsAppIcon() {
@@ -19,6 +19,7 @@ function WhatsAppIcon() {
  * Fixed WhatsApp FAB linking to the school's WhatsApp number.
  */
 export function WhatsAppButton() {
+  const SCHOOL = getSchoolInfo();
   return (
     <Tooltip title="Chat on WhatsApp" placement="left">
       <Fab

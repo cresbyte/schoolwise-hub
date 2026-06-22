@@ -86,6 +86,15 @@ function SettingsForm({ school }: { school: School }) {
           <TextField label="Term Start" size="small" type="date" slotProps={{ inputLabel: { shrink: true } }} {...register("termStartDate")} />
           <TextField label="Term End" size="small" type="date" slotProps={{ inputLabel: { shrink: true } }} {...register("termEndDate")} />
         </Box>
+        <Divider sx={{ my: 3 }} />
+        <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>Principal Report Card Comments</Typography>
+        <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2 }}>These templates are used to auto-fill principal comments on report cards based on performance levels.</Typography>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <TextField label="Excellent (80%+)" size="small" fullWidth multiline rows={2} {...register("config.comments.excellent" as any)} />
+          <TextField label="Good (60-79%)" size="small" fullWidth multiline rows={2} {...register("config.comments.good" as any)} />
+          <TextField label="Average (40-59%)" size="small" fullWidth multiline rows={2} {...register("config.comments.average" as any)} />
+          <TextField label="Below Average (<40%)" size="small" fullWidth multiline rows={2} {...register("config.comments.belowAverage" as any)} />
+        </Box>
         <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end", gap: 1 }}>
           <Button onClick={() => reset(school)} disabled={!isDirty}>Reset</Button>
           <Button type="submit" variant="contained" disabled={isSubmitting || !isDirty}>{isSubmitting ? "Saving…" : "Save Changes"}</Button>

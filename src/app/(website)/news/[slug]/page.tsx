@@ -13,19 +13,20 @@ import { PageBanner } from "@/components/website/PageBanner";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
 import { NewsCard } from "@/components/website/NewsCard";
 import { ImagePlaceholder } from "@/components/website/ImagePlaceholder";
-import { NEWS_ARTICLES } from "@/lib/website/data";
+import { getNewsArticles } from "@/lib/website/data";
 
 /** Single news article with related posts. */
 export default function NewsArticlePage() {
   const params = useParams();
   const slug = params.slug as string;
-  const article = NEWS_ARTICLES.find((a) => a.slug === slug);
+  const articles = getNewsArticles();
+  const article = articles.find((a) => a.slug === slug);
 
   if (!article) {
     notFound();
   }
 
-  const related = NEWS_ARTICLES.filter(
+  const related = articles.filter(
     (a) => a.slug !== article.slug && a.category === article.category,
   ).slice(0, 3);
 

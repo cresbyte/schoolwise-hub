@@ -13,20 +13,20 @@ import InboxIcon from "@mui/icons-material/Inbox";
 
 interface DataStateProps<T> {
   loading: boolean;
-  error: Error | null;
+  error?: Error | null;
   data: T | null | undefined;
   onRetry?: () => void;
   isEmpty?: (data: T) => boolean;
   emptyMessage?: string;
   emptyAction?: ReactNode;
   skeleton?: ReactNode;
-  children: (data: T) => ReactNode;
+  children: ReactNode | ((data: T) => ReactNode);
 }
 
 /** Generic state-machine wrapper for data-fetching UI. */
 export function DataState<T>({
   loading,
-  error,
+  error = null,
   data,
   onRetry,
   isEmpty,
@@ -64,7 +64,7 @@ export function DataState<T>({
       </Alert>
     );
   }
-  if (data == null || (isEmpty && isEmpty(data))) {
+  if (data == null || (isEmpty && isEmpty(data)) || (Array.isArray(data) && data.length === 0)) {
     return (
       <Stack spacing={1.5} sx={{ alignItems: "center", py: 8, color: "text.secondary" }}>
         <InboxIcon sx={{ fontSize: 56, opacity: 0.4 }} />
@@ -73,7 +73,7 @@ export function DataState<T>({
       </Stack>
     );
   }
-  return <>{children(data)}</>;
+  return <>{typeof children === "function" ? (children as any)(data) : children}</>;
 }
 
 export default DataState;

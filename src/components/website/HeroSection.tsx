@@ -11,26 +11,27 @@ import IconButton from "@mui/material/IconButton";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Link from "next/link";
-import { HERO_SLIDES } from "@/lib/website/data";
+import { getHeroSlides } from "@/lib/website/data";
 
 const INTERVAL_MS = 5000;
 
 /**
- * Full-viewport hero carousel with three slides and auto-play.
+ * Full-viewport hero carousel with slides loaded from the CMS store.
  */
 export function HeroSection() {
+  const slides = getHeroSlides();
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setIndex((i) => (i + 1) % HERO_SLIDES.length);
+      setIndex((i) => (i + 1) % slides.length);
     }, INTERVAL_MS);
     return () => clearInterval(timer);
-  }, []);
+  }, [slides.length]);
 
   return (
     <Box sx={{ position: "relative", minHeight: { xs: 420, md: 560 }, overflow: "hidden" }}>
-      {HERO_SLIDES.map((s, i) => (
+      {slides.map((s, i) => (
         <Box
           key={s.id}
           sx={{
@@ -104,7 +105,7 @@ export function HeroSection() {
 
       <IconButton
         aria-label="Previous slide"
-        onClick={() => setIndex((i) => (i - 1 + HERO_SLIDES.length) % HERO_SLIDES.length)}
+        onClick={() => setIndex((i) => (i - 1 + slides.length) % slides.length)}
         sx={{
           position: "absolute",
           left: 16,
@@ -119,7 +120,7 @@ export function HeroSection() {
       </IconButton>
       <IconButton
         aria-label="Next slide"
-        onClick={() => setIndex((i) => (i + 1) % HERO_SLIDES.length)}
+        onClick={() => setIndex((i) => (i + 1) % slides.length)}
         sx={{
           position: "absolute",
           right: 16,
@@ -144,7 +145,7 @@ export function HeroSection() {
           zIndex: 1,
         }}
       >
-        {HERO_SLIDES.map((_, i) => (
+        {slides.map((_, i) => (
           <Box
             key={i}
             onClick={() => setIndex(i)}

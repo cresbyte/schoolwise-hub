@@ -24,12 +24,12 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import SchoolIcon from "@mui/icons-material/School";
+import { Logo } from "@/components/common/Logo";
 import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SCHOOL } from "@/lib/website/constants";
+import { getSchoolInfo } from "@/lib/website/constants";
 
 interface NavLink {
   label: string;
@@ -114,6 +114,7 @@ const navLinkSx = {
  * Sticky navbar with top info bar, desktop dropdown menus and mobile drawer.
  */
 export function WebsiteNavbar() {
+  const SCHOOL = getSchoolInfo();
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [menuAnchors, setMenuAnchors] = useState<Record<string, HTMLElement | null>>({});
@@ -211,7 +212,7 @@ export function WebsiteNavbar() {
                 flexShrink: 0,
               }}
             >
-              <SchoolIcon sx={{ color: "secondary.main", fontSize: 36, mr: 1 }} />
+              <Logo size={40} variant="light" withText={false} sx={{ mr: 1.5 }} />
               <Box>
                 <Typography
                   sx={{

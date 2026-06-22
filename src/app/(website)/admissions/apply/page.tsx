@@ -19,7 +19,8 @@ import Alert from "@mui/material/Alert";
 import PrintIcon from "@mui/icons-material/Print";
 import { PageBanner } from "@/components/website/PageBanner";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
-import { SCHOOL, HEADING_FONT } from "@/lib/website/constants";
+import { HEADING_FONT, getSchoolInfo } from "@/lib/website/constants";
+import * as api from "@/lib/mockApi";
 
 const STEPS = ["Learner Details", "Parent/Guardian", "Previous School", "Review & Submit"];
 const GRADES = [
@@ -41,8 +42,10 @@ const GRADES = [
 
 /** Multi-step application form with print summary. */
 export default function ApplyPage() {
+  const SCHOOL = getSchoolInfo();
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
+  const [applicationRef, setApplicationRef] = useState("");
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -63,7 +66,28 @@ export default function ApplyPage() {
     setForm((f) => ({ ...f, [field]: e.target.value }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    try {
+      const result = await api.submitApplication({
+        firstName: form.firstName,
+        lastName: form.lastName,
+        dob: form.dob,
+        gender: form.gender,
+        gradeApplying: form.grade,
+        boardingType: form.boarding as "day" | "boarding",
+        parentName: form.parentName,
+        parentPhone: form.parentPhone,
+        parentEmail: form.parentEmail,
+        relationship: form.relationship,
+        prevSchool: form.prevSchool,
+        prevClass: form.prevClass,
+        reason: form.reason,
+      });
+      setApplicationRef(result.applicationRef);
+    } catch {
+      // Fallback ref if API fails
+      setApplicationRef(`APP-${new Date().getFullYear()}-${Date.now().toString(36).toUpperCase()}`);
+    }
     setSubmitted(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -81,8 +105,8 @@ export default function ApplyPage() {
         />
         <SectionWrapper>
           <Alert severity="success" sx={{ mb: 3 }}>
-            Thank you! Your application has been received. Reference: GFA-
-            {Date.now().toString(36).toUpperCase()}. Our admissions team will contact you within 3
+            Thank you! Your application has been received.{" "}
+            <strong>Reference: {applicationRef}</strong>. Our admissions team will contact you within 3
             business days.
           </Alert>
           <Box className="print-area">

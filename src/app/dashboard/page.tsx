@@ -26,6 +26,7 @@ import AssignmentIcon from "@mui/icons-material/Assignment";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import DescriptionIcon from "@mui/icons-material/Description";
+import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import { useRouter } from "next/navigation";
 import {
   Bar,
@@ -209,7 +210,7 @@ function DashboardContent() {
             <DataState loading={fees.loading} error={fees.error} data={fees.data} onRetry={fees.refetch}>
               {(data: any) => (
                 <Stack spacing={1.5}>
-                  {data.byClass.map((c: any) => (
+                  {(data.byClass || []).map((c: any) => (
                     <Box key={c.classId}>
                       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
                         <Typography variant="body2" sx={{ fontWeight: 600 }}>{c.className}</Typography>
@@ -232,30 +233,66 @@ function DashboardContent() {
         </Card>
       </Box>
 
+      <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", lg: "1fr 1fr" }, mb: 3 }}>
+        <CommunicationWidget />
+        <Card>
+           <CardContent>
+             <Typography variant="h6" sx={{ mb: 2 }}>Quick Actions</Typography>
+             <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
+               <Button variant="contained" startIcon={<PaymentsIcon />} onClick={() => router.push("/fees/collection")}>
+                 Record Fee Payment
+               </Button>
+               <Button variant="outlined" startIcon={<EventAvailableIcon />} onClick={() => router.push("/attendance")}>
+                 Take Attendance
+               </Button>
+               <Button variant="outlined" startIcon={<QuestionAnswerIcon />} onClick={() => router.push("/messages")}>
+                 Send Message
+               </Button>
+               <Button variant="outlined" startIcon={<DescriptionIcon />} onClick={() => router.push("/report-cards")}>
+                 Generate Report Cards
+               </Button>
+             </Box>
+           </CardContent>
+        </Card>
+      </Box>
+
       <Stack spacing={1.5} sx={{ mb: 3 }}>
         <Alert severity="warning">8 students have a fee balance above KES 10,000.00.</Alert>
         {nextExam && <Alert severity="info">{nextExam.name} starts in {daysToExam} days.</Alert>}
       </Stack>
-
-      <Card>
-        <CardContent>
-          <Typography variant="h6" sx={{ mb: 2 }}>Quick Actions</Typography>
-          <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
-            <Button variant="contained" startIcon={<PaymentsIcon />} onClick={() => router.push("/fees/collection")}>
-              Record Fee Payment
-            </Button>
-            <Button variant="outlined" startIcon={<EventAvailableIcon />} onClick={() => router.push("/attendance")}>
-              Take Attendance
-            </Button>
-            <Button variant="outlined" startIcon={<EditNoteIcon />} onClick={() => router.push("/exams")}>
-              Enter Exam Marks
-            </Button>
-            <Button variant="outlined" startIcon={<DescriptionIcon />} onClick={() => router.push("/report-cards")}>
-              Generate Report Cards
-            </Button>
-          </Box>
-        </CardContent>
-      </Card>
     </>
+  );
+}
+
+function CommunicationWidget() {
+  const router = useRouter();
+  const { data: repliesRes = [] } = useAsync(() => api.getParentReplies(), []);
+  const replies = repliesRes || [];
+  const unreadCount = replies.filter((r: any) => !r.readByStaff).length;
+
+  return (
+    <Card sx={{ height: "100%" }}>
+      <CardContent>
+        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
+          <Typography variant="h6">Communication Overview</Typography>
+          {unreadCount > 0 && <Chip label={`${unreadCount} New Replies`} color="error" size="small" />}
+        </Box>
+        <Stack spacing={1.5}>
+          {(replies || []).slice(0, 3).map((r: any) => (
+            <Box key={r.id} sx={{ p: 1.5, bgcolor: !r.readByStaff ? "action.hover" : "transparent", borderRadius: 1, border: 1, borderColor: "divider" }}>
+              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>{r.parentName}</Typography>
+                <Typography variant="caption" color="text.secondary">{formatDate(r.sentAt)}</Typography>
+              </Box>
+              <Typography variant="body2" color="text.secondary" sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {r.body}
+              </Typography>
+            </Box>
+          ))}
+          {replies.length === 0 && <Typography variant="body2" color="text.secondary" sx={{ py: 3, textAlign: "center" }}>No recent replies</Typography>}
+          <Button fullWidth variant="outlined" sx={{ mt: 1 }} onClick={() => router.push("/messages")}>Go to Communication Center</Button>
+        </Stack>
+      </CardContent>
+    </Card>
   );
 }

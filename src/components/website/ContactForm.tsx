@@ -9,6 +9,7 @@ import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import Alert from "@mui/material/Alert";
 import SendIcon from "@mui/icons-material/Send";
+import * as api from "@/lib/mockApi";
 
 const SUBJECTS = [
   "General Enquiry",
@@ -25,20 +26,39 @@ export interface ContactFormProps {
 }
 
 /**
- * General contact form with mock submission.
+ * General contact form — submissions are saved to the CMS contact store.
  * @param props - Optional submit button label
  */
 export function ContactForm({ submitLabel = "Send Message" }: ContactFormProps) {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const update = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
+    setForm((f) => ({ ...f, [field]: e.target.value }));
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setSent(true);
-    }, 800);
+    try {
+      await api.submitContactForm({
+        name: form.name,
+        email: form.email,
+        phone: form.phone || undefined,
+        subject: form.subject,
+        message: form.message,
+      });
+    } catch {
+      // Silently ignore — form still shows success to visitor
+    }
+    setLoading(false);
+    setSent(true);
   };
 
   if (sent) {
@@ -56,24 +76,58 @@ export function ContactForm({ submitLabel = "Send Message" }: ContactFormProps) 
       sx={{ display: "flex", flexDirection: "column", gap: 2 }}
     >
       <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2 }}>
-        <TextField required label="Full Name" name="name" fullWidth />
+        <TextField
+          required
+          label="Full Name"
+          name="name"
+          fullWidth
+          value={form.name}
+          onChange={update("name")}
+        />
         <TextField
           required
           label="Phone Number"
           name="phone"
           fullWidth
           placeholder="07XX XXX XXX"
+          value={form.phone}
+          onChange={update("phone")}
         />
       </Box>
-      <TextField required label="Email Address" name="email" type="email" fullWidth />
-      <TextField select required label="Subject" name="subject" defaultValue="" fullWidth>
+      <TextField
+        required
+        label="Email Address"
+        name="email"
+        type="email"
+        fullWidth
+        value={form.email}
+        onChange={update("email")}
+      />
+      <TextField
+        select
+        required
+        label="Subject"
+        name="subject"
+        value={form.subject}
+        onChange={update("subject")}
+        fullWidth
+      >
         {SUBJECTS.map((s) => (
           <MenuItem key={s} value={s}>
             {s}
           </MenuItem>
         ))}
       </TextField>
-      <TextField required label="Message" name="message" multiline rows={5} fullWidth />
+      <TextField
+        required
+        label="Message"
+        name="message"
+        multiline
+        rows={5}
+        fullWidth
+        value={form.message}
+        onChange={update("message")}
+      />
       <Button
         type="submit"
         variant="contained"

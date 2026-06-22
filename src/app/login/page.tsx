@@ -20,8 +20,8 @@ import Divider from "@mui/material/Divider";
 import CircularProgress from "@mui/material/CircularProgress";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import SchoolIcon from "@mui/icons-material/School";
 import InfoIcon from "@mui/icons-material/Info";
+import { Logo } from "@/components/common/Logo";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useAuth } from "@/context/AuthContext";
 import { ROLE_HOME } from "@/lib/constants";
@@ -85,23 +85,8 @@ export default function LoginPage() {
       <Card sx={{ width: "100%", maxWidth: 420, borderRadius: 3 }}>
         <CardContent sx={{ p: 4 }}>
           <Stack spacing={1} sx={{ alignItems: "center", mb: 3 }}>
-            <Box
-              sx={{
-                width: 56,
-                height: 56,
-                borderRadius: "50%",
-                bgcolor: "primary.main",
-                color: "#fff",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <SchoolIcon fontSize="large" />
-            </Box>
-            <Typography variant="h5" sx={{ fontWeight: 800 }}>
-              Shule<span style={{ color: "#F57F17" }}>Smart</span>
-            </Typography>
+            <Logo size={64} withText={false} />
+            <Logo size={0} withText={true} textStyle={{ fontSize: "1.75rem" }} />
             <Typography variant="body2" color="text.secondary">
               School Management System · Sign in
             </Typography>

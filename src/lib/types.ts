@@ -142,6 +142,14 @@ export interface Student {
   feeBalance: number;
 }
 
+export interface GradeRule {
+  grade: string;
+  min: number;
+  max: number;
+  color: string;
+  comment?: string;
+}
+
 export interface Subject {
   id: string;
   name: string;
@@ -150,6 +158,7 @@ export interface Subject {
   gradeLevel: GradeLevel[];
   isCore: boolean;
   learningArea?: string;
+  gradingSystem?: GradeRule[];
 }
 
 export interface ClassSubject {
@@ -224,6 +233,7 @@ export interface ExamMark {
   marks: number | null;
   cbcRating?: CBCRating;
   grade?: string;
+  color?: string;
   points?: number;
   teacherComment?: string;
   enteredBy: string;
@@ -247,6 +257,7 @@ export interface ReportCard {
     teacherComment?: string;
     outOf: number;
     position?: number;
+    color?: string;
   }>;
   totalMarks: number;
   average: number;
@@ -254,6 +265,8 @@ export interface ReportCard {
   classSize: number;
   classTeacherComment: string;
   principalComment: string;
+  averageGrade?: string;
+  averageGradeColor?: string;
   attendance: {
     daysPresent: number;
     daysAbsent: number;
@@ -418,4 +431,43 @@ export interface AuditLog {
   details: string;
   ipAddress: string;
   timestamp: string;
+}
+
+export type MessageChannel = "announcement" | "circular" | "direct" | "sms_alert";
+export type MessageStatus = "draft" | "sent" | "read";
+export type MessageRecipientType =
+  | "all_parents"
+  | "class_parents"
+  | "individual_parent"
+  | "all_staff"
+  | "specific_staff";
+
+export interface SchoolMessage {
+  id: string;
+  subject: string;
+  body: string;
+  channel: MessageChannel;
+  recipientType: MessageRecipientType;
+  classId?: string; // if class_parents
+  className?: string;
+  studentId?: string; // if individual_parent
+  studentName?: string;
+  parentName?: string;
+  sentBy: string; // staff name
+  sentById: string;
+  sentAt: string;
+  status: MessageStatus;
+  readAt?: string;
+  priority: "normal" | "urgent";
+  attachmentLabel?: string; // e.g. "Term 2 Schedule.pdf" (display only, no real file)
+}
+
+export interface ParentReply {
+  id: string;
+  messageId: string;
+  parentName: string;
+  studentName: string;
+  body: string;
+  sentAt: string;
+  readByStaff: boolean;
 }

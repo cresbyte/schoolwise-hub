@@ -27,12 +27,12 @@ import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PersonIcon from "@mui/icons-material/Person";
 import LockResetIcon from "@mui/icons-material/LockReset";
-import SchoolIcon from "@mui/icons-material/School";
+import { ROLE_LABELS } from "@/lib/constants";
+import { Logo } from "@/components/common/Logo";
 import { useAuth } from "@/context/AuthContext";
 import { NAV_GROUPS } from "./navConfig";
 import { NotificationBell } from "./NotificationBell";
 import { getInitials } from "@/lib/utils";
-import { ROLE_LABELS } from "@/lib/constants";
 
 const FULL = 248;
 const RAIL = 68;
@@ -78,13 +78,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
           <IconButton edge="start" onClick={() => setOpen((o) => !o)} sx={{ mr: 1 }}>
             <MenuIcon />
           </IconButton>
-          <SchoolIcon sx={{ color: "primary.main", mr: 1 }} />
-          <Typography variant="h6" sx={{ fontWeight: 800, color: "primary.main" }}>
-            Shule
-            <Box component="span" sx={{ color: "secondary.main" }}>
-              Smart
-            </Box>
-          </Typography>
+          <Logo size={32} />
           <Box sx={{ flexGrow: 1 }} />
           <Chip
             label="Term 2, 2026"

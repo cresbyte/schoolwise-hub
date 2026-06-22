@@ -13,6 +13,7 @@ import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
+import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -87,12 +88,13 @@ function AttendanceMatrix({ settings }: { settings: any }) {
   useEffect(() => {
     if (students.data && existingAttendance.data) {
       const initialGrid: any = {};
+      const attData = existingAttendance.data || [];
       students.data.forEach((s: Student) => {
         initialGrid[s.id] = {};
         days.forEach(d => {
           const iso = d.toISOString().slice(0, 10);
-          const found = existingAttendance.data.find((a: AttendanceRecord) => a.studentId === s.id && a.date === iso);
-          initialGrid[s.id][iso] = found ? found.status : "present"; // Default to present for efficiency
+          const found = attData.find((a: AttendanceRecord) => a.studentId === s.id && a.date === iso);
+          initialGrid[s.id][iso] = found ? found.status : "present"; 
         });
       });
       setGrid(initialGrid);
@@ -172,7 +174,10 @@ function AttendanceMatrix({ settings }: { settings: any }) {
               ))}
             </TextField>
           </Box>
-          <Box>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+             <Alert severity="info" icon={<InfoIcon fontSize="small" />} sx={{ py: 0, '& .MuiAlert-message': { py: 0.5 } }}>
+               Parents are auto-notified of absences
+             </Alert>
             <Button
               variant="contained"
               startIcon={<SaveIcon />}
@@ -190,7 +195,7 @@ function AttendanceMatrix({ settings }: { settings: any }) {
           <Typography color="text.secondary">Please select a class to start recording attendance.</Typography>
         </Card>
       ) : (
-        <DataState loading={students.loading || existingAttendance.loading} data={students.data}>
+        <DataState loading={students.loading || existingAttendance.loading} error={students.error || existingAttendance.error} data={students.data}>
           {(studentList: Student[]) => (
             <TableContainer component={Card} sx={{ border: 1, borderColor: "divider" }}>
               <Table size="small">

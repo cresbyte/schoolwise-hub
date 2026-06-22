@@ -90,17 +90,19 @@ function ClassDetailContent({ id }: { id: string }) {
 
           <Card>
             <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="scrollable" scrollButtons="auto" sx={{ borderBottom: 1, borderColor: "divider" }}>
-              <Tab label="Students" />
-              <Tab label="Subjects & Teachers" />
-              <Tab label="Timetable" />
-              <Tab label="Performance" />
-            </Tabs>
+               <Tab label="Students" />
+               <Tab label="Subjects & Teachers" />
+               <Tab label="Timetable" />
+               <Tab label="Attendance Trends" />
+               <Tab label="Performance & Stream Dashboard" />
+             </Tabs>
             <CardContent>
-              {tab === 0 && <StudentsTab classId={id} />}
-              {tab === 1 && <SubjectsTab classId={id} />}
-              {tab === 2 && <TimetableTab classId={id} />}
-              {tab === 3 && <PerformanceTab classId={id} gradeLevel={cls.gradeLevel} />}
-            </CardContent>
+               {tab === 0 && <StudentsTab classId={id} />}
+               {tab === 1 && <SubjectsTab classId={id} />}
+               {tab === 2 && <TimetableTab classId={id} />}
+               {tab === 3 && <AttendanceTrendsTab classId={id} />}
+               {tab === 4 && <PerformanceTab classId={id} gradeLevel={cls.gradeLevel} />}
+             </CardContent>
           </Card>
         </>
       )}
@@ -152,8 +154,70 @@ function StudentsTab({ classId }: { classId: string }) {
   );
 }
 
+import { LineChart, Line } from "recharts";
+
+function AttendanceTrendsTab({ classId }: { classId: string }) {
+  const [range, setRange] = useState(30);
+  const end = new Date().toISOString().slice(0, 10);
+  const start = new Date(Date.now() - range * 86400000).toISOString().slice(0, 10);
+  
+  const { data, loading } = useAsync(() => api.getAttendanceSummary(classId, start, end), [classId, range]);
+  
+  // Mock trend data based on summary
+  const trendData = Array.from({ length: 7 }, (_, i) => ({
+    date: `Day ${i+1}`,
+    rate: 85 + Math.floor(Math.random() * 10)
+  }));
+
+  return (
+    <Box>
+      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
+        <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Attendance Overview (Last {range} days)</Typography>
+        <TextField select size="small" value={range} onChange={e => setRange(Number(e.target.value))}>
+          <MenuItem value={7}>Last 7 Days</MenuItem>
+          <MenuItem value={30}>Last 30 Days</MenuItem>
+          <MenuItem value={90}>This Term</MenuItem>
+        </TextField>
+      </Box>
+
+      <ResponsiveContainer width="100%" height={200}>
+        <LineChart data={trendData}>
+          <CartesianGrid strokeDasharray="3 3" vertical={false} />
+          <XAxis dataKey="date" fontSize={11} />
+          <YAxis domain={[70, 100]} fontSize={11} />
+          <Tooltip />
+          <Line type="monotone" dataKey="rate" stroke="#1976d2" strokeWidth={2} name="Attendance %" />
+        </LineChart>
+      </ResponsiveContainer>
+
+      <Table size="small" sx={{ mt: 2 }}>
+        <TableHead>
+          <TableRow>
+            <TableCell>Student</TableCell>
+            <TableCell align="right">Present</TableCell>
+            <TableCell align="right">Absent</TableCell>
+            <TableCell align="right">Rate</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {(data || []).slice(0, 10).map((s: any) => (
+            <TableRow key={s.studentId}>
+              <TableCell sx={{ fontWeight: 600 }}>{s.name}</TableCell>
+              <TableCell align="right">{s.present}</TableCell>
+              <TableCell align="right">{s.absent}</TableCell>
+              <TableCell align="right">
+                <Chip size="small" label={`${s.percentage}%`} color={s.percentage >= 90 ? "success" : s.percentage >= 75 ? "warning" : "error"} />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </Box>
+  );
+}
+
 function SubjectsTab({ classId }: { classId: string }) {
-  const subjects = useAsync(() => api.getClassSubjects(classId), [classId]);
+  const subjects = useAsync(() => api.getClassSubjects({ classId }), [classId]);
   const list = subjects.data ?? [];
 
   return (

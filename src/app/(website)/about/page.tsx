@@ -14,7 +14,7 @@ import { PageBanner } from "@/components/website/PageBanner";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
 import { SectionHeading } from "@/components/website/SectionHeading";
 import { ImagePlaceholder } from "@/components/website/ImagePlaceholder";
-import { SCHOOL, HEADING_FONT, WEBSITE_IMAGES } from "@/lib/website/constants";
+import { HEADING_FONT, WEBSITE_IMAGES, getSchoolInfo } from "@/lib/website/constants";
 import { staff as staffData } from "@/lib/mockData";
 import { STAFF_QUALIFICATIONS } from "@/lib/website/data";
 
@@ -91,6 +91,7 @@ const FACILITIES = [
 
 /** About Us page with anchor sections. */
 export default function AboutPage() {
+  const SCHOOL = getSchoolInfo();
   return (
     <>
       <PageBanner

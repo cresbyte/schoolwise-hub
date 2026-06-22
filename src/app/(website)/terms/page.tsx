@@ -7,10 +7,11 @@
 import Typography from "@mui/material/Typography";
 import { PageBanner } from "@/components/website/PageBanner";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
-import { SCHOOL } from "@/lib/website/constants";
+import { getSchoolInfo } from "@/lib/website/constants";
 
 /** Terms of use placeholder content. */
 export default function TermsPage() {
+  const SCHOOL = getSchoolInfo();
   return (
     <>
       <PageBanner

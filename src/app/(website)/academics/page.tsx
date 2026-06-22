@@ -22,11 +22,12 @@ import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxi
 import { PageBanner } from "@/components/website/PageBanner";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
 import { SectionHeading } from "@/components/website/SectionHeading";
-import { SCHOOL, HEADING_FONT } from "@/lib/website/constants";
+import { HEADING_FONT, getSchoolInfo } from "@/lib/website/constants";
 import { KCSE_RESULTS, ACADEMIC_CALENDAR } from "@/lib/website/data";
 
 /** Academics page with curriculum tabs and results chart. */
 export default function AcademicsPage() {
+  const SCHOOL = getSchoolInfo();
   const [tab, setTab] = useState(0);
 
   return (

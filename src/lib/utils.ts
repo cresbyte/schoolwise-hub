@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { GradeRule, Subject } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -81,6 +82,32 @@ export function getGrade(marks: number): string {
   if (marks >= 35) return "D";
   if (marks >= 30) return "D-";
   return "E";
+}
+
+/** Get grade based on custom subject grading system, falling back to default. */
+export function getSubjectGrade(marks: number, subject?: Subject): { grade: string; color?: string } {
+  if (subject?.gradingSystem && subject.gradingSystem.length > 0) {
+    const rule = subject.gradingSystem.find(r => marks >= r.min && marks <= r.max);
+    if (rule) return { grade: rule.grade, color: rule.color };
+  }
+  return { grade: getGrade(marks) };
+}
+
+/** Get color for a grade, checking custom subject rules first. */
+export function getGradeColor(grade: string, subject?: Subject): string {
+  if (subject?.gradingSystem) {
+    const rule = subject.gradingSystem.find(r => r.grade === grade);
+    if (rule) return rule.color;
+  }
+  // Default colors
+  const defaultMap: Record<string, string> = {
+    "A": "#2e7d32", "A-": "#4caf50",
+    "B+": "#8bc34a", "B": "#9c27b0", "B-": "#ba68c8",
+    "C+": "#ff9800", "C": "#fb8c00", "C-": "#f57c00",
+    "D+": "#e64a19", "D": "#d84315", "D-": "#bf360c",
+    "E": "#c62828"
+  };
+  return defaultMap[grade] || "#757575";
 }
 
 /** KCSE points for a letter grade. */

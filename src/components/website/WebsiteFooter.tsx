@@ -10,12 +10,12 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
-import SchoolIcon from "@mui/icons-material/School";
+import { Logo } from "@/components/common/Logo";
 import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import NextLink from "next/link";
-import { HEADING_FONT, SCHOOL, WEBSITE_COLORS } from "@/lib/website/constants";
+import { HEADING_FONT, WEBSITE_COLORS, getSchoolInfo } from "@/lib/website/constants";
 
 const QUICK_LINKS = [
   { label: "About Us", href: "/about" },
@@ -47,6 +47,7 @@ const bottomLinkSx = {
  * Site-wide footer with identity, links, contact, and newsletter.
  */
 export function WebsiteFooter() {
+  const SCHOOL = getSchoolInfo();
   const [subscribed, setSubscribed] = useState(false);
 
   return (
@@ -66,7 +67,7 @@ export function WebsiteFooter() {
           {/* Brand */}
           <Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
-              <SchoolIcon sx={{ color: WEBSITE_COLORS.secondary, fontSize: 32 }} />
+              <Logo size={40} variant="light" withText={false} />
               <Typography
                 sx={{
                   fontFamily: HEADING_FONT,

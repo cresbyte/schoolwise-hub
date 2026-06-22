@@ -15,37 +15,38 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { PageBanner } from "@/components/website/PageBanner";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
 import { ContactForm } from "@/components/website/ContactForm";
-import { SCHOOL, HEADING_FONT } from "@/lib/website/constants";
-
-const DIRECTORY = [
-  {
-    role: "Principal's Office",
-    name: SCHOOL.principal,
-    phone: SCHOOL.phone,
-    email: "principal@greenfieldacademy.ac.ke",
-  },
-  {
-    role: "Admissions",
-    name: "Admissions Team",
-    phone: SCHOOL.phone,
-    email: SCHOOL.admissionsEmail,
-  },
-  {
-    role: "Accounts & Fees",
-    name: "Ms. Agnes Kariuki",
-    phone: "0733 456 789",
-    email: "accounts@greenfieldacademy.ac.ke",
-  },
-  {
-    role: "Boarding Office",
-    name: "Mr. Joseph Mutua",
-    phone: "0711 234 567",
-    email: "deputy@greenfieldacademy.ac.ke",
-  },
-];
+import { HEADING_FONT, getSchoolInfo } from "@/lib/website/constants";
 
 /** Contact page with form and directory. */
 export default function ContactPage() {
+  const SCHOOL = getSchoolInfo();
+  
+  const DIRECTORY = [
+    {
+      role: "Principal's Office",
+      name: SCHOOL.principal,
+      phone: SCHOOL.phone,
+      email: "principal@greenfieldacademy.ac.ke",
+    },
+    {
+      role: "Admissions",
+      name: "Admissions Team",
+      phone: SCHOOL.phone,
+      email: SCHOOL.admissionsEmail,
+    },
+    {
+      role: "Accounts & Fees",
+      name: "Ms. Agnes Kariuki",
+      phone: "0733 456 789",
+      email: "accounts@greenfieldacademy.ac.ke",
+    },
+    {
+      role: "Boarding Office",
+      name: "Mr. Joseph Mutua",
+      phone: "0711 234 567",
+      email: "deputy@greenfieldacademy.ac.ke",
+    },
+  ];
   return (
     <>
       <PageBanner

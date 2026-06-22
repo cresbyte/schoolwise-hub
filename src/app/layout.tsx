@@ -16,6 +16,10 @@ export const metadata: Metadata = {
     card: "summary",
     site: "@Lovable",
   },
+  icons: {
+    icon: "/school-logo.png",
+    apple: "/school-logo.png",
+  },
 };
 
 export const viewport: Viewport = {

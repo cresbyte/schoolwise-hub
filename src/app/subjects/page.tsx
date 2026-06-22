@@ -95,7 +95,7 @@ function SubjectsContent() {
                         <Chip size="small" label={s.isCore ? "Core" : "Optional"} color={s.isCore ? "primary" : "default"} variant={s.isCore ? "filled" : "outlined"} />
                       </TableCell>
                       <TableCell align="right">
-                        <IconButton size="small" onClick={() => {}} title="Edit"><EditIcon fontSize="small" /></IconButton>
+                        <IconButton size="small" onClick={() => router.push(`/subjects/${s.id}`)} title="Settings"><EditIcon fontSize="small" /></IconButton>
                       </TableCell>
                     </TableRow>
                   ))}

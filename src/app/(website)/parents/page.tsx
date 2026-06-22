@@ -17,7 +17,7 @@ import { SectionHeading } from "@/components/website/SectionHeading";
 import { FAQAccordion } from "@/components/website/FAQAccordion";
 import { DownloadButton } from "@/components/website/DownloadButton";
 import { HEADING_FONT } from "@/lib/website/constants";
-import { PARENT_FAQS, PARENT_DOWNLOADS } from "@/lib/website/data";
+import { getFaqItems, getDownloadItems } from "@/lib/website/data";
 
 const QUICK_LINKS = [
   { title: "Parent Portal", desc: "View fees, attendance, and report cards", href: "/login" },
@@ -70,7 +70,7 @@ export default function ParentsPage() {
       <SectionWrapper alt>
         <SectionHeading title="Downloads" />
         <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 2 }}>
-          {PARENT_DOWNLOADS.map((doc: any) => (
+          {getDownloadItems().map((doc: any) => (
             <Card key={doc.id}>
               <CardContent
                 sx={{
@@ -145,7 +145,7 @@ export default function ParentsPage() {
 
       <SectionWrapper alt>
         <SectionHeading title="Frequently Asked Questions" />
-        <FAQAccordion items={PARENT_FAQS} />
+        <FAQAccordion items={getFaqItems()} />
       </SectionWrapper>
     </>
   );

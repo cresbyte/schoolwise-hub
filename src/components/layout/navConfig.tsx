@@ -22,6 +22,15 @@ import DownloadIcon from "@mui/icons-material/Download";
 import HistoryIcon from "@mui/icons-material/History";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
+import MessageIcon from "@mui/icons-material/Message";
+import LanguageIcon from "@mui/icons-material/Language";
+import ArticleIcon from "@mui/icons-material/Article";
+import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
+import FormatQuoteIcon from "@mui/icons-material/FormatQuote";
+import HomeIcon from "@mui/icons-material/Home";
+import InfoIcon from "@mui/icons-material/Info";
+import MailIcon from "@mui/icons-material/Mail";
 
 export interface NavItem {
   label: string;
@@ -51,10 +60,15 @@ export const NAV_GROUPS: NavGroup[] = [
     heading: "Academics",
     items: [
       { label: "Subjects", to: "/subjects", icon: <MenuBookIcon />, permission: "classes.view" },
+      { label: "Teacher Assignments", to: "/subjects/assignments", icon: <AssignmentIndIcon />, permission: "classes.view" },
       { label: "Examinations", to: "/exams", icon: <AssignmentIcon />, permission: "exams.marks" },
       { label: "Report Cards", to: "/report-cards", icon: <DescriptionIcon />, permission: "exams.view" },
       { label: "Timetable", to: "/timetable", icon: <ScheduleIcon />, permission: "timetable.view" },
     ],
+  },
+  {
+    heading: "Communication",
+    items: [{ label: "Messages", to: "/messages", icon: <MessageIcon />, permission: "reports.view" }],
   },
   {
     heading: "Finance",
@@ -78,6 +92,19 @@ export const NAV_GROUPS: NavGroup[] = [
       { label: "Academic Reports", to: "/reports/academic", icon: <BarChartIcon />, permission: "reports.view" },
       { label: "NEMIS Export", to: "/reports/nemis", icon: <DownloadIcon />, permission: "reports.view" },
       { label: "Audit Trail", to: "/reports/audit", icon: <HistoryIcon />, permission: "reports.view" },
+    ],
+  },
+  {
+    heading: "Website",
+    items: [
+      { label: "Overview", to: "/website-cms", icon: <LanguageIcon />, permission: "settings.view" },
+      { label: "News & Events", to: "/website-cms/news", icon: <ArticleIcon />, permission: "settings.view" },
+      { label: "Gallery", to: "/website-cms/gallery", icon: <PhotoLibraryIcon />, permission: "settings.view" },
+      { label: "Applications", to: "/website-cms/applications", icon: <SchoolIcon />, permission: "settings.view" },
+      { label: "Contact Messages", to: "/website-cms/contacts", icon: <MailIcon />, permission: "settings.view" },
+      { label: "Testimonials", to: "/website-cms/testimonials", icon: <FormatQuoteIcon />, permission: "settings.edit" },
+      { label: "Homepage Content", to: "/website-cms/homepage", icon: <HomeIcon />, permission: "settings.edit" },
+      { label: "School Info", to: "/website-cms/school-info", icon: <InfoIcon />, permission: "settings.edit" },
     ],
   },
   {

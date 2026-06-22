@@ -24,7 +24,13 @@ export const SCHOOL = {
   principal: "Mr. Daniel Kamau Njoroge",
   founded: 2008,
   ogImage: "/og-greenfield.jpg",
-} as const;
+};
+
+/** Mutable copy of school identity — mutated by the CMS school-info editor. */
+let _schoolInfo = { ...SCHOOL };
+export type SchoolInfo = typeof _schoolInfo;
+export const getSchoolInfo = (): SchoolInfo => ({ ..._schoolInfo });
+export const setSchoolInfo = (patch: Partial<SchoolInfo>) => { _schoolInfo = { ..._schoolInfo, ...patch }; };
 
 export const HEADING_FONT = "'Merriweather', Georgia, serif";
 export const BODY_FONT = "'Outfit', system-ui, -apple-system, sans-serif";

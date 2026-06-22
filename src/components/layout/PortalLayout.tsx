@@ -11,16 +11,26 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import CircularProgress from "@mui/material/CircularProgress";
-import SchoolIcon from "@mui/icons-material/School";
 import LogoutIcon from "@mui/icons-material/Logout";
+import Badge from "@mui/material/Badge";
+import MailIcon from "@mui/icons-material/Mail";
+import { Logo } from "@/components/common/Logo";
 import { useAuth } from "@/context/AuthContext";
+import { useAsync } from "@/hooks/useAsync";
+import * as api from "@/lib/mockApi";
 import { getInitials } from "@/lib/utils";
 import { school } from "@/lib/mockData";
 
 /** Layout shell for the parent portal. */
 export function PortalLayout({ children }: { children: ReactNode }) {
-  const { user, isAuthenticated, isLoading, logout } = useAuth();
-  const router = useRouter();
+   const { user, isAuthenticated, isLoading, logout } = useAuth();
+   const router = useRouter();
+ 
+   const studentId = user?.studentId || "std-1";
+   const { data: messagesRes = [] } = useAsync(() => api.getMessages({ studentId }), [studentId]);
+   const messages = messagesRes || [];
+   // In a real app, unread count would come from a different endpoint or filter
+   const unreadCount = messages.length > 0 ? 1 : 0; 
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) router.push("/login");
@@ -45,25 +55,19 @@ export function PortalLayout({ children }: { children: ReactNode }) {
     <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
       <AppBar position="sticky" color="inherit" className="no-print">
         <Toolbar>
-          <SchoolIcon sx={{ color: "primary.main", mr: 1 }} />
           <Box>
-            <Typography
-              variant="h6"
-              sx={{ fontWeight: 800, color: "primary.main", lineHeight: 1.1 }}
-            >
-              Shule
-              <Box component="span" sx={{ color: "secondary.main" }}>
-                Smart
-              </Box>
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
+            <Logo size={32} />
+            <Typography variant="caption" color="text.secondary" sx={{ ml: 6, display: "block", mt: -0.5 }}>
               {school.name}
             </Typography>
           </Box>
-          <Box sx={{ flexGrow: 1 }} />
-          <Avatar sx={{ width: 32, height: 32, bgcolor: "secondary.main", fontSize: 13, mr: 1 }}>
-            {getInitials(user.name)}
-          </Avatar>
+           <Box sx={{ flexGrow: 1 }} />
+           <Badge badgeContent={unreadCount} color="error" variant="dot" sx={{ mr: 2 }}>
+             <MailIcon color="action" />
+           </Badge>
+           <Avatar sx={{ width: 32, height: 32, bgcolor: "secondary.main", fontSize: 13, mr: 1 }}>
+             {getInitials(user.name)}
+           </Avatar>
           <Typography
             variant="body2"
             sx={{ fontWeight: 600, mr: 2, display: { xs: "none", sm: "block" } }}

@@ -97,14 +97,16 @@ function StaffDetailContent({ id }: { id: string }) {
             <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="scrollable" scrollButtons="auto" sx={{ borderBottom: 1, borderColor: "divider" }}>
               <Tab label="Personal Info" />
               <Tab label="Teaching Load" />
+              <Tab label="Timetable" />
               <Tab label="Leave History" />
               <Tab label="Payroll History" />
             </Tabs>
             <CardContent>
               {tab === 0 && <PersonalTab s={s} />}
-              {tab === 1 && <TeachingTab staffId={s.id} />}
-              {tab === 2 && <LeaveTab staffId={s.id} />}
-              {tab === 3 && <PayrollTab staffId={s.id} staffName={`${s.firstName} ${s.lastName}`} staffNumber={s.staffNumber} />}
+              {tab === 1 && <TeachingLoadTab staffId={s.id} />}
+              {tab === 2 && <TimetableTab staffId={s.id} />}
+              {tab === 3 && <LeaveTab staffId={s.id} />}
+              {tab === 4 && <PayrollTab staffId={s.id} staffName={`${s.firstName} ${s.lastName}`} staffNumber={s.staffNumber} />}
             </CardContent>
           </Card>
         </>
@@ -137,20 +139,70 @@ function PersonalTab({ s }: { s: Staff }) {
       </Box>
       <Divider sx={{ my: 2 }} />
       <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1.5 }}>Contact & Next of Kin</Typography>
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(4, 1fr)" }, gap: 2 }}>
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(4, 1fr)" }, gap: 2, mb: 3 }}>
         <Field label="Phone" value={s.phone} />
         <Field label="Email" value={s.email} />
         <Field label="Next of Kin" value={s.nextOfKin?.name} />
         <Field label="Next of Kin Phone" value={s.nextOfKin?.phone} />
       </Box>
+      
+      {s.subjectsTeaching && s.subjectsTeaching.length > 0 && (
+        <>
+          <Divider sx={{ my: 2 }} />
+          <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1.5 }}>Specializations / Subjects</Typography>
+          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+            {s.subjectsTeaching.map((subId) => (
+              <Chip key={subId} label={db.subjects.find(sub => sub.id === subId)?.name || subId} size="small" variant="outlined" color="primary" />
+            ))}
+          </Box>
+        </>
+      )}
     </Box>
   );
 }
 
-function TeachingTab({ staffId }: { staffId: string }) {
+function TeachingLoadTab({ staffId }: { staffId: string }) {
+  const { data, loading, error, refetch } = useAsync(() => api.getTeacherLoad(staffId), [staffId]);
+  const assignments = data?.classSubjects ?? [];
+  const totalPeriods = data?.totalPeriods ?? 0;
+  const classesCount = new Set(assignments.map(a => a.classId)).size;
+
+  return (
+    <DataState loading={loading} error={error} data={assignments} onRetry={refetch} isEmpty={(d) => d.length === 0} emptyMessage="No subject assignments yet">
+      {() => (
+        <Box>
+          <Alert severity="info" sx={{ mb: 2 }}>
+            Teaching {assignments.length} subjects across {classesCount} classes ({totalPeriods} periods/week total)
+          </Alert>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>Class</TableCell>
+                <TableCell>Subject</TableCell>
+                <TableCell>Periods/Week</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {assignments.map((a: any) => (
+                <TableRow key={a.id} hover>
+                  <TableCell sx={{ fontWeight: 600 }}>{classes.find((c: any) => c.id === a.classId)?.name || a.classId}</TableCell>
+                  <TableCell>{a.subjectName}</TableCell>
+                  <TableCell>{a.periodsPerWeek} periods</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Box>
+      )}
+    </DataState>
+  );
+}
+
+const classes = clone(db.classes); // We need classes for names
+
+function TimetableTab({ staffId }: { staffId: string }) {
   const timetable = useAsync(() => api.getTeacherTimetable(staffId), [staffId]);
   const list = timetable.data ?? [];
-
   const classIds = [...new Set(list.map((s) => s.classId))];
 
   return (
@@ -185,6 +237,9 @@ function TeachingTab({ staffId }: { staffId: string }) {
     </DataState>
   );
 }
+
+import * as db from "@/lib/mockData";
+import { clone } from "@/lib/mockApi";
 
 function LeaveTab({ staffId }: { staffId: string }) {
   const { showNotification } = useNotification();

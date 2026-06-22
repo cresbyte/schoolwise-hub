@@ -17,9 +17,9 @@ function colorFor(grade: string): string {
 }
 
 /** Render a letter grade as a colored chip. */
-export function GradeChip({ grade, label }: { grade?: string; label?: string }) {
+export function GradeChip({ grade, label, color: customColor }: { grade?: string; label?: string; color?: string }) {
   if (!grade) return <span>—</span>;
-  const color = colorFor(grade);
+  const color = customColor ?? colorFor(grade);
   return (
     <Chip
       label={label ?? grade}

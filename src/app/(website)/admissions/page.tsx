@@ -24,8 +24,8 @@ import Link from "next/link";
 import { PageBanner } from "@/components/website/PageBanner";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
 import { SectionHeading } from "@/components/website/SectionHeading";
-import { SCHOOL, HEADING_FONT } from "@/lib/website/constants";
-import { ADMISSION_SPACES, FEE_STRUCTURE } from "@/lib/website/data";
+import { HEADING_FONT, getSchoolInfo } from "@/lib/website/constants";
+import { getAdmissionSpaces, getFeeStructure } from "@/lib/website/data";
 import { formatKES } from "@/lib/utils";
 
 const STEPS = [
@@ -37,8 +37,10 @@ const STEPS = [
 
 /** Admissions information page content. */
 export default function AdmissionsPage() {
+  const SCHOOL = getSchoolInfo();
   const [feeTab, setFeeTab] = useState(0);
-  const fees = feeTab === 0 ? FEE_STRUCTURE.day : FEE_STRUCTURE.boarding;
+  const feeStructure = getFeeStructure();
+  const fees = feeTab === 0 ? feeStructure.day : feeStructure.boarding;
 
   return (
     <>
@@ -93,7 +95,7 @@ export default function AdmissionsPage() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {ADMISSION_SPACES.map((row: any) => (
+            {getAdmissionSpaces().map((row: any) => (
               <TableRow key={row.grade}>
                 <TableCell>{row.grade}</TableCell>
                 <TableCell align="right">{row.day}</TableCell>

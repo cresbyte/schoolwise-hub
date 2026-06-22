@@ -21,8 +21,16 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import Stack from "@mui/material/Stack";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+import ChatIcon from "@mui/icons-material/Chat";
+import SendIcon from "@mui/icons-material/Send";
 import { PortalLayout } from "@/components/layout/PortalLayout";
 import { DataState } from "@/components/DataState";
 import { StatCard } from "@/components/StatCard";
@@ -31,6 +39,7 @@ import { CBCRatingChip } from "@/components/CBCRatingChip";
 import { useStudent } from "@/hooks/domain";
 import { useAsync } from "@/hooks/useAsync";
 import { useAuth } from "@/context/AuthContext";
+import { useNotification } from "@/context/NotificationContext";
 import * as api from "@/lib/mockApi";
 import { formatKES, formatDate, getInitials } from "@/lib/utils";
 import type { Student } from "@/lib/types";
@@ -79,11 +88,13 @@ function PortalContent() {
               <Tab label="Results" />
               <Tab label="Attendance" />
               <Tab label="Fees" />
+              <Tab label="Messages" />
             </Tabs>
             <CardContent>
               {tab === 0 && <ResultsTab studentId={s.id} curriculum={s.curriculum} />}
               {tab === 1 && <AttendanceTab studentId={s.id} />}
               {tab === 2 && <FeesTab studentId={s.id} />}
+              {tab === 3 && <MessagesTab studentId={s.id} />}
             </CardContent>
           </Card>
         </>
@@ -182,5 +193,70 @@ function FeesTab({ studentId }: { studentId: string }) {
         </>
       )}
     </DataState>
+  );
+}
+
+function MessagesTab({ studentId }: { studentId: string }) {
+  const { showNotification } = useNotification();
+  const { data: messages = [], loading, refetch } = useAsync(() => api.getMessages({ studentId }), [studentId]);
+  const [replyTo, setReplyTo] = useState<any>(null);
+  const [replyBody, setReplyBody] = useState("");
+
+  const handleReply = async () => {
+    if (!replyBody.trim()) return;
+    await api.sendParentReply({
+      messageId: replyTo.id,
+      studentName: "Daniel Junior", 
+      parentName: "Daniel Njoroge", 
+      body: replyBody
+    });
+    showNotification("Reply sent to school office", "success");
+    setReplyTo(null);
+    setReplyBody("");
+    refetch();
+  };
+
+  return (
+    <Box>
+      <DataState loading={loading} error={null} data={messages} isEmpty={(d) => d.length === 0} emptyMessage="No messages from school">
+        {() => (
+          <Stack spacing={2}>
+            {(messages || []).map((m: any) => (
+              <Card key={m.id} variant="outlined">
+                <CardContent>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+                    <Typography variant="subtitle2" color="primary">{m.channel.replace('_', ' ').toUpperCase()}</Typography>
+                    <Typography variant="caption" color="text.secondary">{formatDate(m.sentAt)}</Typography>
+                  </Box>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>{m.subject}</Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1, mb: 2 }}>{m.body}</Typography>
+                  <Button variant="outlined" size="small" startIcon={<ChatIcon />} onClick={() => setReplyTo(m)}>Reply</Button>
+                </CardContent>
+              </Card>
+            ))}
+          </Stack>
+        )}
+      </DataState>
+
+      <Dialog open={!!replyTo} onClose={() => setReplyTo(null)} fullWidth maxWidth="xs">
+        <DialogTitle>Reply to Office</DialogTitle>
+        <DialogContent sx={{ pt: 1 }}>
+          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 1 }}>Re: {replyTo?.subject}</Typography>
+          <TextField 
+            label="Your Message" 
+            fullWidth 
+            multiline 
+            rows={4} 
+            size="small" 
+            value={replyBody} 
+            onChange={e => setReplyBody(e.target.value)} 
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setReplyTo(null)}>Cancel</Button>
+          <Button variant="contained" startIcon={<SendIcon />} onClick={handleReply} disabled={!replyBody.trim()}>Send Reply</Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
 }

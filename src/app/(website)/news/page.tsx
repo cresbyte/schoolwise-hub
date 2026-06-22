@@ -15,15 +15,16 @@ import { PageBanner } from "@/components/website/PageBanner";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
 import { NewsCard } from "@/components/website/NewsCard";
 import { HEADING_FONT } from "@/lib/website/constants";
-import { NEWS_ARTICLES, UPCOMING_EVENTS } from "@/lib/website/data";
+import { getNewsArticles, getUpcomingEvents } from "@/lib/website/data";
 
 const PER_PAGE = 6;
 
 /** News listing with pagination content. */
 export default function NewsPage() {
   const [page, setPage] = useState(1);
-  const totalPages = Math.ceil(NEWS_ARTICLES.length / PER_PAGE);
-  const articles = NEWS_ARTICLES.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+  const articles = getNewsArticles();
+  const totalPages = Math.ceil(articles.length / PER_PAGE);
+  const pageArticles = articles.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
   return (
     <>
@@ -43,7 +44,7 @@ export default function NewsPage() {
                 mb: 3,
               }}
             >
-              {articles.map((a: any) => (
+              {pageArticles.map((a: any) => (
                 <NewsCard key={a.slug} article={a} />
               ))}
             </Box>
@@ -75,7 +76,7 @@ export default function NewsPage() {
                 <Typography variant="h6" sx={{ fontFamily: HEADING_FONT, fontWeight: 700, mb: 2 }}>
                   Upcoming Events
                 </Typography>
-                {UPCOMING_EVENTS.map((ev) => (
+                {getUpcomingEvents().map((ev) => (
                   <Box key={ev.id} sx={{ mb: 2 }}>
                     <Typography variant="caption" color="primary" sx={{ fontWeight: 700 }}>
                       {ev.date}

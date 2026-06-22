@@ -14,11 +14,14 @@ import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import Autocomplete from "@mui/material/Autocomplete";
+import Chip from "@mui/material/Chip";
 import Divider from "@mui/material/Divider";
 import { useRouter } from "next/navigation";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PageHeader } from "@/components/PageHeader";
 import { useNotification } from "@/context/NotificationContext";
+import { useAsync } from "@/hooks/useAsync";
 import * as api from "@/lib/mockApi";
 import { CONTRACT_TYPES } from "@/lib/constants";
 import type { Staff } from "@/lib/types";
@@ -45,6 +48,7 @@ const schema = z.object({
   nextOfKinName: z.string().min(2, "Required"),
   nextOfKinRelationship: z.string().min(2, "Required"),
   nextOfKinPhone: z.string().regex(/^(07|01)\d{8}$/, "Use format 07XXXXXXXX"),
+  subjectsTeaching: z.array(z.string()),
 });
 type FormValues = z.infer<typeof schema>;
 
@@ -62,8 +66,12 @@ export default function NewStaffPage() {
       houseAllowance: 0,
       transportAllowance: 0,
       otherAllowances: 0,
+      subjectsTeaching: [],
     },
   });
+
+  const subjects = useAsync(() => api.getSubjects(), []);
+  const designations = useAsync(() => api.getDesignations(), []);
 
   const onSubmit = handleSubmit(async (v) => {
     const payload: Staff = {
@@ -85,6 +93,7 @@ export default function NewStaffPage() {
       dateJoined: v.dateJoined,
       status: "active",
       basicSalary: v.basicSalary,
+      subjectsTeaching: v.subjectsTeaching,
       houseAllowance: v.houseAllowance,
       transportAllowance: v.transportAllowance,
       otherAllowances: v.otherAllowances,
@@ -126,8 +135,35 @@ export default function NewStaffPage() {
                 {CONTRACT_TYPES.map((c) => <MenuItem key={c.value} value={c.value}>{c.label}</MenuItem>)}
               </TextField>
             )} />
-            <Controller name="designation" control={control} render={({ field }) => <TextField {...field} label="Designation" size="small" error={!!errors.designation} helperText={errors.designation?.message} />} />
+            <Controller name="designation" control={control} render={({ field }) => (
+              <TextField {...field} select label="Designation" size="small" error={!!errors.designation} helperText={errors.designation?.message}>
+                {(designations.data || []).map((d: any) => (
+                  <MenuItem key={d.label} value={d.label} disabled={d.isTaken}>
+                    {d.label} {d.isTaken ? "(Assigned)" : ""}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )} />
             <Controller name="department" control={control} render={({ field }) => <TextField {...field} label="Department" size="small" />} />
+            
+            <Box sx={{ gridColumn: { lg: "span 3" } }}>
+              <Controller
+                name="subjectsTeaching"
+                control={control}
+                render={({ field }) => (
+                  <Autocomplete
+                    multiple
+                    options={subjects.data || []}
+                    getOptionLabel={(option: any) => `${option.name} (${option.code})`}
+                    value={(subjects.data || []).filter((s: any) => field.value?.includes(s.id))}
+                    onChange={(_, val) => field.onChange(val.map((v: any) => v.id))}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Subjects Teaching" placeholder="Select subjects..." size="small" />
+                    )}
+                  />
+                )}
+              />
+            </Box>
             <Controller name="dateJoined" control={control} render={({ field }) => <TextField {...field} type="date" label="Date Joined" size="small" slotProps={{ inputLabel: { shrink: true } }} error={!!errors.dateJoined} helperText={errors.dateJoined?.message} />} />
           </Box>
 

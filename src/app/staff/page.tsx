@@ -19,6 +19,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
 import DownloadIcon from "@mui/icons-material/Download";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
@@ -31,9 +32,11 @@ import { SearchInput } from "@/components/SearchInput";
 import { StatusChip } from "@/components/StatusChip";
 import { RoleGuard } from "@/components/RoleGuard";
 import { useStaff } from "@/hooks/domain";
-import { formatKES, getInitials } from "@/lib/utils";
-import { exportToCSV } from "@/lib/utils";
+import { useAsync } from "@/hooks/useAsync";
+import * as api from "@/lib/mockApi";
+import { formatKES, getInitials, exportToCSV } from "@/lib/utils";
 import { CONTRACT_TYPES } from "@/lib/constants";
+import type { Staff } from "@/lib/types";
 
 export default function StaffPage() {
   return (
@@ -92,8 +95,7 @@ function StaffContent() {
                     <TableCell>Staff No.</TableCell>
                     <TableCell>Name</TableCell>
                     <TableCell>Designation</TableCell>
-                    <TableCell>Department</TableCell>
-                    <TableCell>Contract</TableCell>
+                    <TableCell>Role / Subjects</TableCell>
                     <TableCell>Phone</TableCell>
                     <TableCell align="right">Basic Salary</TableCell>
                     <TableCell>Status</TableCell>
@@ -111,8 +113,13 @@ function StaffContent() {
                         </Box>
                       </TableCell>
                       <TableCell>{s.designation}</TableCell>
-                      <TableCell>{s.department ?? "—"}</TableCell>
-                      <TableCell><Chip size="small" variant="outlined" label={CONTRACT_TYPES.find((c) => c.value === s.contractType)?.label ?? s.contractType} /></TableCell>
+                      <TableCell>
+                        <Box sx={{ display: "flex", gap: 0.5, flexWrap: "wrap", maxWidth: 200 }}>
+                           <RoleGuard permission="classes.view">
+                             <StaffSubjectChips staff={s} />
+                           </RoleGuard>
+                        </Box>
+                      </TableCell>
                       <TableCell>{s.phone}</TableCell>
                       <TableCell align="right">{formatKES(s.basicSalary)}</TableCell>
                       <TableCell><StatusChip status={s.status} /></TableCell>
@@ -128,6 +135,26 @@ function StaffContent() {
           )}
         </DataState>
       </Card>
+    </>
+  );
+}
+
+function StaffSubjectChips({ staff }: { staff: Staff }) {
+  const subjects = useAsync(() => api.getSubjects(), []);
+  const allSubs = subjects.data || [];
+  const teaching = staff.subjectsTeaching || [];
+  
+  if (teaching.length === 0) return <Typography variant="caption" color="text.secondary">No specializations</Typography>;
+  
+  return (
+    <>
+      {teaching.slice(0, 3).map((subId) => {
+        const sub = allSubs.find(s => s.id === subId);
+        return <Chip key={subId} size="small" label={sub?.name || subId} sx={{ fontSize: 10, height: 20 }} color="primary" variant="outlined" />;
+      })}
+      {teaching.length > 3 && (
+        <Chip size="small" label={`+${teaching.length - 3}`} sx={{ fontSize: 10, height: 20 }} />
+      )}
     </>
   );
 }

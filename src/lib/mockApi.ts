@@ -25,14 +25,40 @@ import type {
   Subject,
   TimetableSlot,
   User,
+  SchoolMessage,
+  ParentReply,
 } from "./types";
-import { computePayroll, getCBCRating, getGrade } from "./utils";
+import type {
+  NewsArticle,
+  GalleryItem,
+  Testimonial,
+  UpcomingEvent,
+  HeroSlide,
+  ContactSubmission,
+  ApplicationSubmission,
+  SchoolStat,
+  WhyChooseUsItem,
+} from "./website/data";
+import {
+  getNewsArticles, setNewsArticles,
+  getGalleryItems, setGalleryItems,
+  getTestimonials, setTestimonials,
+  getUpcomingEvents, setUpcomingEvents,
+  getHeroSlides, setHeroSlides,
+  getContactSubmissions as getRawContactSubmissions, setContactSubmissions,
+  getApplicationSubmissions, setApplicationSubmissions,
+  getSchoolStats, setSchoolStats,
+  getWhyChooseUs, setWhyChooseUs,
+} from "./website/data";
+import type { SchoolInfo } from "./website/constants";
+import { getSchoolInfo, setSchoolInfo } from "./website/constants";
+import { computePayroll, getCBCRating, getGrade, getGradeColor, getSubjectGrade } from "./utils";
 
 const DELAY = 800;
 function delay<T>(value: T): Promise<T> {
   return new Promise((resolve) => setTimeout(() => resolve(value), DELAY));
 }
-function clone<T>(v: T): T {
+export function clone<T>(v: T): T {
   return JSON.parse(JSON.stringify(v));
 }
 
@@ -51,7 +77,15 @@ let users = clone(db.users);
 let school = clone(db.school);
 let notifications = clone(db.notifications);
 const subjects = clone(db.subjects);
-const classSubjects = clone(db.classSubjects);
+let classSubjects = clone(db.classSubjects);
+let schoolMessages = clone(db.schoolMessages);
+let parentReplies = clone(db.parentReplies);
+
+const classTeacherCommentStore = new Map<string, string>();
+let principalCommentTemplates = {
+  strong: "A commendable result. Keep up the excellent work.",
+  average: "Strive for improvement. We believe in your potential.",
+};
 
 // ---- Auth ----
 export async function login(phone: string, password: string): Promise<{ user: User; token: string }> {
@@ -146,8 +180,42 @@ export async function updateClass(id: string, data: Partial<ClassRoom>): Promise
   classes = classes.map((c) => (c.id === id ? { ...c, ...data } : c));
   return delay(clone(classes.find((c) => c.id === id)!));
 }
-export async function getClassSubjects(classId: string): Promise<ClassSubject[]> {
-  return delay(clone(classSubjects.filter((cs) => cs.classId === classId)));
+export async function getClassSubjects(filters?: {
+  classId?: string;
+  teacherId?: string;
+  subjectId?: string;
+}): Promise<ClassSubject[]> {
+  let list = classSubjects;
+  if (filters?.classId) list = list.filter((cs) => cs.classId === filters.classId);
+  if (filters?.teacherId) list = list.filter((cs) => cs.teacherId === filters.teacherId);
+  if (filters?.subjectId) list = list.filter((cs) => cs.subjectId === filters.subjectId);
+  return delay(clone(list));
+}
+export async function updateClassSubject(id: string, patch: Partial<ClassSubject>): Promise<ClassSubject> {
+  const idx = classSubjects.findIndex((cs) => cs.id === id);
+  if (idx === -1) throw new Error("Assignment not found");
+  const teacher = patch.teacherId ? staff.find((s) => s.id === patch.teacherId) : null;
+  classSubjects[idx] = {
+    ...classSubjects[idx],
+    ...patch,
+    teacherName: teacher ? `${teacher.firstName} ${teacher.lastName}` : classSubjects[idx].teacherName,
+  };
+  return delay(clone(classSubjects[idx]));
+}
+export async function createClassSubject(data: Omit<ClassSubject, "id">): Promise<ClassSubject> {
+  const teacher = data.teacherId ? staff.find((s) => s.id === data.teacherId) : null;
+  const cs: ClassSubject = {
+    ...data,
+    id: "cs-" + Date.now(),
+    teacherName: teacher ? `${teacher.firstName} ${teacher.lastName}` : data.teacherName,
+  };
+  classSubjects.push(cs);
+  return delay(clone(cs));
+}
+export async function getTeacherLoad(staffId: string): Promise<{ classSubjects: ClassSubject[]; totalPeriods: number }> {
+  const load = classSubjects.filter((cs) => cs.teacherId === staffId);
+  const totalPeriods = load.reduce((s, cs) => s + cs.periodsPerWeek, 0);
+  return delay({ classSubjects: clone(load), totalPeriods });
 }
 export async function assignTeacherToSubject(classId: string, subjectId: string, teacherId: string): Promise<ClassSubject> {
   const cs = classSubjects.find((x) => x.classId === classId && x.subjectId === subjectId)!;
@@ -169,6 +237,17 @@ export async function createSubject(data: Subject): Promise<Subject> {
   subjects.push(sub);
   return delay(clone(sub));
 }
+export async function getSubjectById(id: string): Promise<Subject> {
+  const s = subjects.find(x => x.id === id);
+  if (!s) throw new Error("Subject not found");
+  return delay(clone(s));
+}
+export async function updateSubject(id: string, data: Partial<Subject>): Promise<Subject> {
+  const idx = subjects.findIndex(s => s.id === id);
+  if (idx === -1) throw new Error("Subject not found");
+  subjects[idx] = { ...subjects[idx], ...data };
+  return delay(clone(subjects[idx]));
+}
 
 // ---- Staff ----
 export async function getStaff(filters?: { status?: string; department?: string; search?: string }): Promise<Staff[]> {
@@ -187,11 +266,57 @@ export async function getStaffById(id: string): Promise<Staff> {
   return delay(clone(s));
 }
 export async function createStaff(data: Staff): Promise<Staff> {
-  const s = { ...data, id: "stf-" + (staff.length + 1) };
+  const s: Staff = { ...data, id: "stf-" + (staff.length + 1) };
+  
+  // Sync Class Teacher status
+  const classSuffix = " Class Teacher";
+  if (s.designation.endsWith(classSuffix)) {
+    const className = s.designation.replace(classSuffix, "");
+    const classRoom = classes.find(c => c.name === className);
+    if (classRoom) {
+      classRoom.classTeacherId = s.id;
+      classRoom.classTeacherName = `${s.firstName} ${s.lastName}`;
+    }
+  }
+
   staff = [...staff, s];
   return delay(clone(s));
 }
 export async function updateStaff(id: string, data: Partial<Staff>): Promise<Staff> {
+  const oldStaff = staff.find(s => s.id === id);
+  
+  // Sync Class Teacher status if designation changes
+  if (data.designation && oldStaff && data.designation !== oldStaff.designation) {
+    const classSuffix = " Class Teacher";
+    
+    // Clear old class assignment if it was a Class Teacher role
+    if (oldStaff.designation.endsWith(classSuffix)) {
+      const oldClassName = oldStaff.designation.replace(classSuffix, "");
+      const oldClass = classes.find(c => c.name === oldClassName);
+      if (oldClass && oldClass.classTeacherId === id) {
+        oldClass.classTeacherId = undefined;
+        oldClass.classTeacherName = undefined;
+      }
+    }
+
+    // Set new class assignment if it's a Class Teacher role
+    if (data.designation.endsWith(classSuffix)) {
+      const newClassName = data.designation.replace(classSuffix, "");
+      const newClass = classes.find(c => c.name === newClassName);
+      if (newClass) {
+        // If someone else was the teacher, clear their designation (to maintain uniqueness)
+        if (newClass.classTeacherId && newClass.classTeacherId !== id) {
+          const otherTeacher = staff.find(s => s.id === newClass.classTeacherId);
+          if (otherTeacher) {
+            otherTeacher.designation = "Teacher"; // Fallback
+          }
+        }
+        newClass.classTeacherId = id;
+        newClass.classTeacherName = `${data.firstName || oldStaff.firstName} ${data.lastName || oldStaff.lastName}`;
+      }
+    }
+  }
+
   staff = staff.map((s) => (s.id === id ? { ...s, ...data } : s));
   return delay(clone(staff.find((s) => s.id === id)!));
 }
@@ -211,6 +336,102 @@ export async function updateLeaveStatus(id: string, status: LeaveStatus, notes?:
     l.id === id ? { ...l, status, reviewNotes: notes, reviewedOn: new Date().toISOString(), reviewedBy: "Admin" } : l,
   );
   return delay(clone(leaveRequests.find((l) => l.id === id)!));
+}
+
+export async function getDesignations(staffId?: string): Promise<{ label: string; isUnique: boolean; isTaken: boolean }[]> {
+  const standard = [
+    { label: "Principal", isUnique: true, isTaken: false },
+    { label: "Deputy Principal", isUnique: true, isTaken: false },
+    { label: "Accountant", isUnique: false, isTaken: false },
+    { label: "Secretary", isUnique: false, isTaken: false },
+    { label: "Mathematics Teacher", isUnique: false, isTaken: false },
+    { label: "English Teacher", isUnique: false, isTaken: false },
+    { label: "Kiswahili Teacher", isUnique: false, isTaken: false },
+    { label: "Science Teacher", isUnique: false, isTaken: false },
+    { label: "Teacher", isUnique: false, isTaken: false },
+  ];
+
+  const classRoles = classes.map(c => {
+    const label = `${c.name} Class Teacher`;
+    const takenBy = staff.find(s => s.designation === label);
+    return {
+      label,
+      isUnique: true,
+      isTaken: takenBy ? takenBy.id !== staffId : false
+    };
+  });
+
+  // Mark standard unique roles as taken if they are
+  standard.forEach(s => {
+    if (s.isUnique) {
+      const takenBy = staff.find(st => st.designation === s.label);
+      s.isTaken = takenBy ? takenBy.id !== staffId : false;
+    }
+  });
+
+  return delay([...standard, ...classRoles]);
+}
+
+// ---- Messaging ----
+export async function getMessages(filters?: {
+  recipientType?: string;
+  classId?: string;
+  studentId?: string;
+  status?: string;
+}): Promise<SchoolMessage[]> {
+  let list = schoolMessages;
+  if (filters?.recipientType) list = list.filter((m) => m.recipientType === filters.recipientType);
+  if (filters?.classId) list = list.filter((m) => m.classId === filters.classId);
+  if (filters?.studentId) list = list.filter((m) => m.studentId === filters.studentId);
+  if (filters?.status) list = list.filter((m) => m.status === filters.status);
+  return delay(clone(list).sort((a, b) => b.sentAt.localeCompare(a.sentAt)));
+}
+export async function getParentMessages(studentId: string): Promise<SchoolMessage[]> {
+  const student = students.find((s) => s.id === studentId);
+  if (!student) return delay([]);
+  const list = schoolMessages.filter(
+    (m) =>
+      m.recipientType === "all_parents" ||
+      (m.recipientType === "class_parents" && m.classId === student.classId) ||
+      (m.recipientType === "individual_parent" && m.studentId === studentId),
+  );
+  return delay(clone(list).sort((a, b) => b.sentAt.localeCompare(a.sentAt)));
+}
+export async function sendMessage(data: Omit<SchoolMessage, "id" | "sentAt" | "status">): Promise<SchoolMessage> {
+  const msg: SchoolMessage = {
+    ...data,
+    id: "msg-" + Date.now(),
+    sentAt: new Date().toISOString(),
+    status: "sent",
+  };
+  schoolMessages.push(msg);
+  return delay(clone(msg));
+}
+export async function getParentReplies(filters?: { messageId?: string; readByStaff?: boolean }): Promise<ParentReply[]> {
+  let list = parentReplies;
+  if (filters?.messageId) list = list.filter((r) => r.messageId === filters.messageId);
+  if (filters?.readByStaff !== undefined) list = list.filter((r) => r.readByStaff === filters.readByStaff);
+  return delay(clone(list).sort((a, b) => b.sentAt.localeCompare(a.sentAt)));
+}
+export async function sendParentReply(data: Omit<ParentReply, "id" | "sentAt" | "readByStaff">): Promise<ParentReply> {
+  const reply: ParentReply = {
+    ...data,
+    id: "rep-" + Date.now(),
+    sentAt: new Date().toISOString(),
+    readByStaff: false,
+  };
+  parentReplies.push(reply);
+  return delay(clone(reply));
+}
+export async function markMessageRead(id: string): Promise<void> {
+  const idx = schoolMessages.findIndex((m) => m.id === id);
+  if (idx !== -1) schoolMessages[idx].status = "read";
+  return delay(undefined);
+}
+export async function markReplyRead(id: string): Promise<void> {
+  const idx = parentReplies.findIndex((r) => r.id === id);
+  if (idx !== -1) parentReplies[idx].readByStaff = true;
+  return delay(undefined);
 }
 
 // ---- Exams & Marks ----
@@ -245,19 +466,42 @@ export async function publishExamResults(examId: string): Promise<Exam> {
   return delay(clone(exams.find((e) => e.id === examId)!));
 }
 
+
+
+export async function saveClassTeacherComments(
+  examId: string,
+  classId: string,
+  comments: { studentId: string; comment: string }[],
+): Promise<void> {
+  for (const item of comments) {
+    classTeacherCommentStore.set(`${examId}:${classId}:${item.studentId}`, item.comment);
+  }
+  return delay(undefined);
+}
+export async function savePrincipalCommentTemplates(strong: string, average: string): Promise<void> {
+  principalCommentTemplates = { strong, average };
+  return delay(undefined);
+}
+
 function buildReportCard(studentId: string, examId: string): ReportCard {
   const student = students.find((s) => s.id === studentId)!;
   const marks = examMarks.filter((m) => m.examId === examId && m.studentId === studentId);
-  const subjectsRc = marks.map((m) => ({
-    subjectName: m.subjectName,
-    marks: m.marks ?? 0,
-    grade: m.grade ?? getGrade(m.marks ?? 0),
-    cbcRating: m.cbcRating ?? (student.curriculum === "CBC" ? getCBCRating(m.marks ?? 0) : undefined),
-    teacherComment: m.teacherComment,
-    outOf: 100,
-  }));
+  const subjectsRc = marks.map((m) => {
+    const subject = subjects.find(s => s.id === m.subjectId);
+    const { grade, color } = getSubjectGrade(m.marks ?? 0, subject);
+    return {
+      subjectName: m.subjectName,
+      marks: m.marks ?? 0,
+      grade: m.grade || grade,
+      color: color || getGradeColor(m.grade || grade, subject),
+      cbcRating: m.cbcRating ?? (student.curriculum === "CBC" ? getCBCRating(m.marks ?? 0) : undefined),
+      teacherComment: m.teacherComment,
+      outOf: 100,
+    };
+  });
   const totalMarks = subjectsRc.reduce((s, x) => s + x.marks, 0);
   const average = subjectsRc.length ? Math.round(totalMarks / subjectsRc.length) : 0;
+  const { grade: avgGrade, color: avgColor } = getSubjectGrade(average);
   const classmates = students.filter((s) => s.classId === student.classId);
   const ranks = classmates
     .map((c) => {
@@ -266,6 +510,15 @@ function buildReportCard(studentId: string, examId: string): ReportCard {
     })
     .sort((a, b) => b.total - a.total);
   const position = ranks.findIndex((r) => r.id === studentId) + 1;
+
+  const savedComment = classTeacherCommentStore.get(`${examId}:${student.classId}:${studentId}`);
+  const defaultComment =
+    average >= 70
+      ? "Excellent performance. Keep it up!"
+      : average >= 50
+        ? "Good effort. Aim higher next term."
+        : "Needs to work harder. More focus required.";
+
   return {
     studentId,
     studentName: `${student.firstName} ${student.lastName}`,
@@ -280,8 +533,10 @@ function buildReportCard(studentId: string, examId: string): ReportCard {
     average,
     position,
     classSize: classmates.length,
-    classTeacherComment: average >= 70 ? "Excellent performance. Keep it up!" : average >= 50 ? "Good effort. Aim higher next term." : "Needs to work harder. More focus required.",
-    principalComment: average >= 70 ? "A commendable result." : "Strive for improvement.",
+    averageGrade: avgGrade,
+    averageGradeColor: avgColor,
+    classTeacherComment: savedComment || defaultComment,
+    principalComment: average >= 70 ? principalCommentTemplates.strong : principalCommentTemplates.average,
     attendance: { daysPresent: 58, daysAbsent: 2, totalDays: 60 },
     nextTermBegins: "2026-09-02",
     closingDate: "2026-08-09",
@@ -307,6 +562,27 @@ export async function getAttendanceRange(classId: string, startDate: string, end
 export async function saveAttendance(classId: string, date: string, records: AttendanceRecord[]): Promise<{ saved: number }> {
   attendance = attendance.filter((a) => !(a.classId === classId && a.date === date));
   attendance.push(...records);
+
+  // Feature 3B: Auto-notification for absences
+  const absences = records.filter((r) => r.status === "absent");
+  for (const r of absences) {
+    const student = students.find((s) => s.id === r.studentId);
+    if (student) {
+      sendMessage({
+        subject: "Absence Alert",
+        body: `Dear ${student.parent.primaryContactName}, ${student.firstName} was marked absent on ${date}. Please contact the school if this is unexpected.`,
+        channel: "sms_alert",
+        recipientType: "individual_parent",
+        studentId: student.id,
+        studentName: `${student.firstName} ${student.lastName}`,
+        parentName: student.parent.primaryContactName,
+        sentBy: "Attendance System",
+        sentById: "system",
+        priority: "normal",
+      });
+    }
+  }
+
   return delay({ saved: records.length });
 }
 export async function saveAttendanceBulk(records: AttendanceRecord[]): Promise<{ saved: number }> {
@@ -631,3 +907,225 @@ export async function markNotificationRead(id: string): Promise<void> {
   notifications = notifications.map((n) => (n.id === id ? { ...n, read: true } : n));
   return delay(undefined);
 }
+
+// ---- CMS Website ----
+
+const CMS_DELAY = 300;
+function cmsDelay<T>(value: T): Promise<T> {
+  return new Promise((resolve) => setTimeout(() => resolve(value), CMS_DELAY));
+}
+function slugify(title: string): string {
+  return title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+function genId(): string {
+  return "cms-" + Date.now();
+}
+
+// ---- CMS: News Articles ----
+export async function getCmsNews(): Promise<NewsArticle[]> {
+  return cmsDelay(clone(getNewsArticles()));
+}
+export async function createNewsArticle(data: Omit<NewsArticle, "slug">): Promise<NewsArticle> {
+  const article: NewsArticle = { ...data, slug: slugify(data.title) };
+  setNewsArticles([article, ...getNewsArticles()]);
+  return cmsDelay(clone(article));
+}
+export async function updateNewsArticle(slug: string, patch: Partial<NewsArticle>): Promise<NewsArticle> {
+  const articles = getNewsArticles();
+  const updated = articles.map((a) =>
+    a.slug === slug ? { ...a, ...patch, slug: patch.title ? slugify(patch.title) : a.slug } : a
+  );
+  setNewsArticles(updated);
+  const newSlug = patch.title ? slugify(patch.title) : slug;
+  return cmsDelay(clone(updated.find((a) => a.slug === newSlug)!));
+}
+export async function deleteNewsArticle(slug: string): Promise<void> {
+  setNewsArticles(getNewsArticles().filter((a) => a.slug !== slug));
+  return cmsDelay(undefined);
+}
+
+// ---- CMS: Gallery ----
+export async function getCmsGallery(): Promise<GalleryItem[]> {
+  return cmsDelay(clone(getGalleryItems()));
+}
+export async function createGalleryItem(data: Omit<GalleryItem, "id">): Promise<GalleryItem> {
+  const item: GalleryItem = { ...data, id: genId() };
+  setGalleryItems([item, ...getGalleryItems()]);
+  return cmsDelay(clone(item));
+}
+export async function updateGalleryItem(id: string, patch: Partial<GalleryItem>): Promise<GalleryItem> {
+  const items = getGalleryItems();
+  const updated = items.map((g) => (g.id === id ? { ...g, ...patch } : g));
+  setGalleryItems(updated);
+  return cmsDelay(clone(updated.find((g) => g.id === id)!));
+}
+export async function deleteGalleryItem(id: string): Promise<void> {
+  setGalleryItems(getGalleryItems().filter((g) => g.id !== id));
+  return cmsDelay(undefined);
+}
+
+// ---- CMS: Testimonials ----
+export async function getCmsTestimonials(): Promise<Testimonial[]> {
+  return cmsDelay(clone(getTestimonials()));
+}
+export async function createTestimonial(data: Omit<Testimonial, "id">): Promise<Testimonial> {
+  const item: Testimonial = { ...data, id: genId() };
+  setTestimonials([...getTestimonials(), item]);
+  return cmsDelay(clone(item));
+}
+export async function updateTestimonial(id: string, patch: Partial<Testimonial>): Promise<Testimonial> {
+  const list = getTestimonials();
+  const updated = list.map((t) => (t.id === id ? { ...t, ...patch } : t));
+  setTestimonials(updated);
+  return cmsDelay(clone(updated.find((t) => t.id === id)!));
+}
+export async function deleteTestimonial(id: string): Promise<void> {
+  setTestimonials(getTestimonials().filter((t) => t.id !== id));
+  return cmsDelay(undefined);
+}
+
+// ---- CMS: Events ----
+export async function getCmsEvents(): Promise<UpcomingEvent[]> {
+  return cmsDelay(clone(getUpcomingEvents()));
+}
+export async function createEvent(data: Omit<UpcomingEvent, "id">): Promise<UpcomingEvent> {
+  const item: UpcomingEvent = { ...data, id: genId() };
+  setUpcomingEvents([...getUpcomingEvents(), item]);
+  return cmsDelay(clone(item));
+}
+export async function updateEvent(id: string, patch: Partial<UpcomingEvent>): Promise<UpcomingEvent> {
+  const list = getUpcomingEvents();
+  const updated = list.map((e) => (e.id === id ? { ...e, ...patch } : e));
+  setUpcomingEvents(updated);
+  return cmsDelay(clone(updated.find((e) => e.id === id)!));
+}
+export async function deleteEvent(id: string): Promise<void> {
+  setUpcomingEvents(getUpcomingEvents().filter((e) => e.id !== id));
+  return cmsDelay(undefined);
+}
+
+// ---- CMS: Hero Slides ----
+export async function getCmsHeroSlides(): Promise<HeroSlide[]> {
+  return cmsDelay(clone(getHeroSlides()));
+}
+export async function updateHeroSlide(id: string, patch: Partial<HeroSlide>): Promise<void> {
+  setHeroSlides(getHeroSlides().map((s) => (s.id === id ? { ...s, ...patch } : s)));
+  return cmsDelay(undefined);
+}
+export async function reorderHeroSlides(orderedIds: string[]): Promise<void> {
+  const slides = getHeroSlides();
+  const reordered = orderedIds.map((id) => slides.find((s) => s.id === id)!).filter(Boolean) as HeroSlide[];
+  setHeroSlides(reordered);
+  return cmsDelay(undefined);
+}
+
+// ---- CMS: Contact Submissions ----
+export async function getContactSubmissions(status?: string): Promise<ContactSubmission[]> {
+  const list = getRawContactSubmissions();
+  return cmsDelay(clone(status && status !== "all" ? list.filter((c) => c.status === status) : list));
+}
+export async function updateContactStatus(
+  id: string,
+  status: ContactSubmission["status"],
+  replyNote?: string
+): Promise<ContactSubmission> {
+  const list = getRawContactSubmissions();
+  const updated = list.map((c) =>
+    c.id === id
+      ? {
+          ...c,
+          status,
+          ...(replyNote ? { replyNote } : {}),
+          ...(status === "replied" ? { repliedAt: new Date().toISOString() } : {}),
+        }
+      : c
+  );
+  setContactSubmissions(updated);
+  return cmsDelay(clone(updated.find((c) => c.id === id)!));
+}
+export async function deleteContactSubmission(id: string): Promise<void> {
+  setContactSubmissions(getRawContactSubmissions().filter((c) => c.id !== id));
+  return cmsDelay(undefined);
+}
+export async function submitContactForm(data: {
+  name: string;
+  email: string;
+  phone?: string;
+  subject: string;
+  message: string;
+}): Promise<ContactSubmission> {
+  const submission: ContactSubmission = {
+    ...data,
+    id: genId(),
+    submittedAt: new Date().toISOString(),
+    status: "unread",
+  };
+  setContactSubmissions([submission, ...getRawContactSubmissions()]);
+  return cmsDelay(clone(submission));
+}
+
+// ---- CMS: Applications ----
+export async function getApplications(status?: string): Promise<ApplicationSubmission[]> {
+  const list = getApplicationSubmissions();
+  return cmsDelay(clone(status && status !== "all" ? list.filter((a) => a.status === status) : list));
+}
+export async function updateApplicationStatus(
+  id: string,
+  status: ApplicationSubmission["status"],
+  notes?: string,
+  interviewDate?: string
+): Promise<ApplicationSubmission> {
+  const updated = getApplicationSubmissions().map((a) =>
+    a.id === id
+      ? {
+          ...a,
+          status,
+          ...(notes ? { notes } : {}),
+          ...(interviewDate ? { interviewDate } : {}),
+        }
+      : a
+  );
+  setApplicationSubmissions(updated);
+  return cmsDelay(clone(updated.find((a) => a.id === id)!));
+}
+export async function submitApplication(
+  data: Omit<ApplicationSubmission, "id" | "applicationRef" | "submittedAt" | "status">
+): Promise<ApplicationSubmission> {
+  const year = new Date().getFullYear();
+  const ref = `APP-${year}-${String(Math.floor(Math.random() * 9000) + 1000)}`;
+  const submission: ApplicationSubmission = {
+    ...data,
+    id: genId(),
+    applicationRef: ref,
+    submittedAt: new Date().toISOString(),
+    status: "pending",
+  };
+  setApplicationSubmissions([submission, ...getApplicationSubmissions()]);
+  return cmsDelay(clone(submission));
+}
+
+// ---- CMS: School Info ----
+export async function getCmsSchoolInfo(): Promise<SchoolInfo> {
+  return cmsDelay(clone(getSchoolInfo()));
+}
+export async function updateSchoolInfo(patch: Partial<SchoolInfo>): Promise<SchoolInfo> {
+  setSchoolInfo(patch);
+  return cmsDelay(clone(getSchoolInfo()));
+}
+
+// ---- CMS: Stats & Features ----
+export async function getCmsSchoolStats(): Promise<SchoolStat[]> {
+  return cmsDelay(clone(getSchoolStats()));
+}
+export async function updateSchoolStats(data: SchoolStat[]): Promise<void> {
+  setSchoolStats(data);
+  return cmsDelay(undefined);
+}
+export async function getCmsWhyChooseUs(): Promise<WhyChooseUsItem[]> {
+  return cmsDelay(clone(getWhyChooseUs()));
+}
+export async function updateWhyChooseUs(data: WhyChooseUsItem[]): Promise<void> {
+  setWhyChooseUs(data);
+  return cmsDelay(undefined);
+}
+

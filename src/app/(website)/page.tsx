@@ -31,14 +31,14 @@ import { NewsCard } from "@/components/website/NewsCard";
 import { TestimonialCarousel } from "@/components/website/TestimonialCarousel";
 import { GalleryGrid } from "@/components/website/GalleryGrid";
 import { ImagePlaceholder } from "@/components/website/ImagePlaceholder";
-import { SCHOOL, HEADING_FONT, WEBSITE_COLORS, WEBSITE_IMAGES } from "@/lib/website/constants";
+import { HEADING_FONT, WEBSITE_COLORS, WEBSITE_IMAGES, getSchoolInfo } from "@/lib/website/constants";
 import {
-  SCHOOL_STATS,
-  WHY_CHOOSE_US,
-  NEWS_ARTICLES,
-  UPCOMING_EVENTS,
-  TESTIMONIALS,
-  GALLERY_ITEMS,
+  getSchoolStats,
+  getWhyChooseUs,
+  getNewsArticles,
+  getUpcomingEvents,
+  getTestimonials,
+  getGalleryItems,
 } from "@/lib/website/data";
 
 const LazyTestimonials = lazy(() => Promise.resolve({ default: TestimonialCarousel }));
@@ -55,12 +55,18 @@ const ICONS: Record<string, React.ReactNode> = {
 
 /** Public home page with ten content sections. */
 export default function HomePage() {
-  const latestNews = NEWS_ARTICLES.slice(0, 3);
+  const SCHOOL = getSchoolInfo();
+  const latestNews = getNewsArticles().slice(0, 3);
+  const whyChooseUs = getWhyChooseUs();
+  const testimonials = getTestimonials();
+  const galleryItems = getGalleryItems();
+  const schoolStats = getSchoolStats();
+  const upcomingEvents = getUpcomingEvents();
 
   return (
     <>
       <HeroSection />
-      <StatsCounter stats={SCHOOL_STATS} />
+      <StatsCounter stats={schoolStats} />
 
       <SectionWrapper>
         <Box
@@ -128,7 +134,7 @@ export default function HomePage() {
             gap: 3,
           }}
         >
-          {WHY_CHOOSE_US.map((item) => (
+          {whyChooseUs.map((item) => (
             <Card
               key={item.title}
               sx={{
@@ -224,7 +230,7 @@ export default function HomePage() {
               <Typography variant="h6" sx={{ fontFamily: HEADING_FONT, mb: 2 }}>
                 Upcoming Events
               </Typography>
-              {UPCOMING_EVENTS.map((ev) => (
+              {upcomingEvents.map((ev) => (
                 <Box
                   key={ev.id}
                   sx={{ mb: 2, pb: 2, borderBottom: "1px solid rgba(255,255,255,0.1)" }}
@@ -293,7 +299,7 @@ export default function HomePage() {
             </Box>
           }
         >
-          <LazyTestimonials testimonials={TESTIMONIALS} />
+          <LazyTestimonials testimonials={testimonials} />
         </Suspense>
       </SectionWrapper>
 
@@ -303,7 +309,7 @@ export default function HomePage() {
           subtitle="A glimpse of our vibrant campus community."
         />
         <Suspense fallback={<CircularProgress />}>
-          <LazyGallery items={GALLERY_ITEMS} showFilters={false} limit={8} />
+          <LazyGallery items={galleryItems} showFilters={false} limit={8} />
         </Suspense>
         <Box sx={{ textAlign: "center", mt: 3 }}>
           <Button LinkComponent={Link} href="/gallery" variant="outlined">

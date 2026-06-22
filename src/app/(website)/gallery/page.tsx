@@ -8,7 +8,7 @@ import { PageBanner } from "@/components/website/PageBanner";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
 import { SectionHeading } from "@/components/website/SectionHeading";
 import { GalleryGrid } from "@/components/website/GalleryGrid";
-import { GALLERY_ITEMS } from "@/lib/website/data";
+import { getGalleryItems } from "@/lib/website/data";
 
 /** Full gallery page with album filters content. */
 export default function GalleryPage() {
@@ -21,7 +21,7 @@ export default function GalleryPage() {
       />
       <SectionWrapper>
         <SectionHeading title="Campus & Community" subtitle="Browse photos by album or view all." />
-        <GalleryGrid items={GALLERY_ITEMS} />
+        <GalleryGrid items={getGalleryItems()} />
       </SectionWrapper>
     </>
   );

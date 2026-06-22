@@ -21,6 +21,10 @@ import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
 import Alert from "@mui/material/Alert";
 import LinearProgress from "@mui/material/LinearProgress";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PublishIcon from "@mui/icons-material/Publish";
 import { useParams, useRouter } from "next/navigation";
@@ -33,9 +37,9 @@ import { RoleGuard } from "@/components/RoleGuard";
 import { useAsync } from "@/hooks/useAsync";
 import { useNotification } from "@/context/NotificationContext";
 import * as api from "@/lib/mockApi";
-import { formatDate, getGrade } from "@/lib/utils";
+import { formatDate, getGrade, getSubjectGrade, getGradeColor } from "@/lib/utils";
 import { EXAM_TYPES } from "@/lib/constants";
-import type { Exam, ExamMark } from "@/lib/types";
+import type { Exam, ExamMark, Subject } from "@/lib/types";
 
 export default function ExamDetailsPage() {
   const params = useParams();
@@ -135,9 +139,26 @@ function MarksEntryTab({ examId }: { examId: string }) {
     );
   };
 
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  useAsync(async () => {
+    const subs = await api.getSubjects();
+    setSubjects(subs);
+  }, []);
+
   const setMark = (studentId: string, value: string) => {
     const marks = value === "" ? null : Math.max(0, Math.min(100, Number(value)));
-    setRows((prev) => prev.map((r) => (r.studentId === studentId ? { ...r, marks } : r)));
+    setRows((prev) => prev.map((r) => {
+      if (r.studentId === studentId) {
+        const subject = subjects.find(s => s.id === r.subjectId);
+        const { grade, color } = marks !== null ? getSubjectGrade(marks, subject) : { grade: undefined, color: undefined };
+        return { ...r, marks, grade, color };
+      }
+      return r;
+    }));
+  };
+
+  const setComment = (studentId: string, teacherComment: string) => {
+    setRows((prev) => prev.map((r) => (r.studentId === studentId ? { ...r, teacherComment } : r)));
   };
 
   const save = async () => {
@@ -172,22 +193,26 @@ function MarksEntryTab({ examId }: { examId: string }) {
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell>Adm.</TableCell>
-                <TableCell>Student</TableCell>
-                <TableCell width={130}>Marks (/100)</TableCell>
-                <TableCell>Grade</TableCell>
-              </TableRow>
+                 <TableCell>Adm.</TableCell>
+                 <TableCell>Student</TableCell>
+                 <TableCell width={110}>Marks (/100)</TableCell>
+                 <TableCell>Grade</TableCell>
+                 <TableCell>Teacher Comment</TableCell>
+               </TableRow>
             </TableHead>
             <TableBody>
               {rows.map((r) => (
                 <TableRow key={r.studentId}>
                   <TableCell sx={{ fontFamily: "monospace", fontSize: 12 }}>{r.admissionNumber}</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>{r.studentName}</TableCell>
-                  <TableCell>
-                    <TextField type="number" size="small" value={r.marks ?? ""} onChange={(e) => setMark(r.studentId, e.target.value)} slotProps={{ htmlInput: { min: 0, max: 100 } }} sx={{ width: 100 }} />
-                  </TableCell>
-                  <TableCell>{r.marks != null ? <GradeChip grade={getGrade(r.marks)} /> : "—"}</TableCell>
-                </TableRow>
+                   <TableCell>
+                     <TextField type="number" size="small" value={r.marks ?? ""} onChange={(e) => setMark(r.studentId, e.target.value)} slotProps={{ htmlInput: { min: 0, max: 100 } }} sx={{ width: 80 }} />
+                   </TableCell>
+                   <TableCell>{r.marks != null ? <GradeChip grade={r.grade} color={r.color} /> : "—"}</TableCell>
+                   <TableCell>
+                     <TextField size="small" fullWidth placeholder="Comment..." value={(r as any).teacherComment ?? ""} onChange={(e) => setComment(r.studentId, e.target.value)} />
+                   </TableCell>
+                 </TableRow>
               ))}
             </TableBody>
           </Table>
@@ -203,7 +228,9 @@ function MarksEntryTab({ examId }: { examId: string }) {
 }
 
 function ResultsTab({ examId }: { examId: string }) {
+  const { showNotification } = useNotification();
   const [classId, setClassId] = useState("");
+  const [commentDialog, setCommentDialog] = useState<{ open: boolean, studentId?: string, studentName?: string, comment?: string }>({ open: false });
   const cards = useAsync(() => (classId ? api.generateReportCards(examId, classId) : Promise.resolve([])), [examId, classId]);
   const list = cards.data ?? [];
 
@@ -237,8 +264,15 @@ function ResultsTab({ examId }: { examId: string }) {
                     <TableCell sx={{ fontWeight: 600 }}>{rc.studentName}</TableCell>
                     <TableCell align="right">{rc.totalMarks}</TableCell>
                     <TableCell align="right">{rc.average}%</TableCell>
-                    <TableCell><GradeChip grade={getGrade(rc.average)} /></TableCell>
-                    <TableCell sx={{ maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{rc.classTeacherComment}</TableCell>
+                    <TableCell><GradeChip grade={rc.averageGrade || getGrade(rc.average)} color={rc.averageGradeColor} /></TableCell>
+                    <TableCell>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <Typography variant="body2" sx={{ maxWidth: 150, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          {rc.classTeacherComment}
+                        </Typography>
+                        <Button size="small" onClick={() => setCommentDialog({ open: true, studentId: rc.studentId, studentName: rc.studentName, comment: rc.classTeacherComment })}>Edit</Button>
+                      </Box>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -246,8 +280,34 @@ function ResultsTab({ examId }: { examId: string }) {
           )}
         </DataState>
       )}
+
+      {commentDialog.open && (
+        <Dialog open={commentDialog.open} onClose={() => setCommentDialog({ open: false })} fullWidth maxWidth="xs">
+          <DialogTitle>Edit Teacher Comment</DialogTitle>
+          <DialogContent sx={{ pt: 1 }}>
+             <Typography variant="body2" sx={{ mb: 2 }}><strong>Student:</strong> {commentDialog.studentName}</Typography>
+             <TextField 
+               label="Class Teacher Comment" 
+               fullWidth 
+               multiline 
+               rows={3} 
+               value={commentDialog.comment} 
+               onChange={e => setCommentDialog({ ...commentDialog, comment: e.target.value })} 
+             />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setCommentDialog({ open: false })}>Cancel</Button>
+            <Button variant="contained" onClick={async () => {
+               await api.saveClassTeacherComments(examId, classId, [{ studentId: commentDialog.studentId!, comment: commentDialog.comment! }]);
+               showNotification("Comment saved", "success");
+               setCommentDialog({ open: false });
+               cards.refetch();
+            }}>Save Comment</Button>
+          </DialogActions>
+        </Dialog>
+      )}
     </Box>
-  );
+);
 }
 
 function OverviewTab({ exam }: { exam: Exam }) {
