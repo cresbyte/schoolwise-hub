@@ -36,6 +36,8 @@ import { useStudent } from "@/hooks/domain";
 import { useAsync } from "@/hooks/useAsync";
 import * as api from "@/lib/mockApi";
 import { calculateAge, formatDate, formatKES, getInitials } from "@/lib/utils";
+import { useNotification } from "@/context/NotificationContext";
+import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import type { Student } from "@/lib/types";
 
 export default function StudentDetailsPage() {
@@ -319,6 +321,12 @@ function AttendanceTab({ studentId }: { studentId: string }) {
 function FeeTab({ studentId }: { studentId: string }) {
   const inv = useAsync(() => api.getStudentInvoice(studentId), [studentId]);
   const pays = useAsync(() => api.getPayments({ studentId }), [studentId]);
+  const levies = useAsync(() => api.getStudentLevies(studentId), [studentId]);
+  
+  const [payLevyOpen, setPayLevyOpen] = useState(false);
+  const [selectedLevy, setSelectedLevy] = useState<any>(null);
+
+  const { showNotification } = useNotification();
   
   return (
     <DataState loading={inv.loading} error={inv.error} data={inv.data} onRetry={inv.refetch}>
@@ -362,6 +370,90 @@ function FeeTab({ studentId }: { studentId: string }) {
               </TableBody>
             </Table>
           </TableContainer>
+
+          <Typography variant="subtitle2" sx={{ mt: 4, mb: 1, fontWeight: 700 }}>Special Levies & Ad-hoc Charges</Typography>
+          <DataState loading={levies.loading} error={levies.error} data={levies.data} isEmpty={(d) => d.length === 0} emptyMessage="No special levies for this student">
+            {(studentLevies) => (
+              <TableContainer sx={{ border: 1, borderColor: "divider", borderRadius: 1, mb: 4 }}>
+                <Table size="small">
+                  <TableHead sx={{ bgcolor: "action.hover" }}>
+                    <TableRow>
+                      <TableCell>Title</TableCell>
+                      <TableCell>Category</TableCell>
+                      <TableCell align="right">Amount</TableCell>
+                      <TableCell>Due Date</TableCell>
+                      <TableCell>Status</TableCell>
+                      <TableCell align="right">Action</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {studentLevies.map((sl: any) => (
+                      <TableRow key={sl.levy.id}>
+                        <TableCell>{sl.levy.title}</TableCell>
+                        <TableCell><Chip label={sl.levy.category} size="small" /></TableCell>
+                        <TableCell align="right">{formatKES(sl.levy.amount)}</TableCell>
+                        <TableCell>{formatDate(sl.levy.dueDate)}</TableCell>
+                        <TableCell>
+                          <Chip 
+                            label={sl.paid ? "PAID" : "UNPAID"} 
+                            size="small" 
+                            color={sl.paid ? "success" : "warning"} 
+                          />
+                        </TableCell>
+                        <TableCell align="right">
+                          {!sl.paid && (
+                            <Button 
+                              size="small" 
+                              onClick={() => { setSelectedLevy(sl.levy); setPayLevyOpen(true); }}
+                            >
+                              Pay
+                            </Button>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+          </DataState>
+
+          {selectedLevy && (
+            <Dialog open={payLevyOpen} onClose={() => setPayLevyOpen(false)} fullWidth maxWidth="xs">
+              <DialogTitle>Record Levy Payment</DialogTitle>
+              <DialogContent>
+                <Typography variant="body2" sx={{ mb: 2 }}>
+                  Recording payment of <strong>{formatKES(selectedLevy.amount)}</strong> for <strong>{selectedLevy.title}</strong>.
+                </Typography>
+                <TextField select fullWidth label="Method" size="small" defaultValue="cash" sx={{ mt: 1 }}>
+                  <MenuItem value="cash">Cash</MenuItem>
+                  <MenuItem value="mpesa">M-Pesa</MenuItem>
+                  <MenuItem value="bank">Bank Transfer</MenuItem>
+                </TextField>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setPayLevyOpen(false)}>Cancel</Button>
+                <Button variant="contained" onClick={async () => {
+                  if (!selectedLevy) return;
+                  await api.recordLevyPayment({
+                    levyId: selectedLevy.id,
+                    levyTitle: selectedLevy.title,
+                    studentId: studentId,
+                    studentName: "Student", 
+                    amount: selectedLevy.amount,
+                    paidAt: new Date().toISOString(),
+                    paymentMethod: "cash",
+                    recordedBy: "Admin",
+                  });
+                  showNotification("Payment recorded", "success");
+                  setPayLevyOpen(false);
+                  levies.refetch();
+                }}>
+                  Confirm Payment
+                </Button>
+              </DialogActions>
+            </Dialog>
+          )}
 
           <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700 }}>Full Statement of Account (All Periods)</Typography>
           <DataState loading={pays.loading} error={pays.error} data={pays.data} isEmpty={(d) => d.length === 0} emptyMessage="No transactions found">

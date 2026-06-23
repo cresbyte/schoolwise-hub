@@ -52,7 +52,8 @@ export interface User {
   phone: string;
   role: UserRole;
   avatar?: string;
-  studentId?: string;
+  studentId?: string; // keep for backward compat
+  studentIds?: string[]; // primary: list of all children
   staffId?: string;
   isActive: boolean;
   lastLogin: string;
@@ -249,7 +250,8 @@ export interface ReportCard {
   term: TermNumber;
   year: number;
   examId: string;
-  subjects: Array<{
+   subjects: Array<{
+    subjectId: string;
     subjectName: string;
     marks: number;
     grade: string;
@@ -470,4 +472,50 @@ export interface ParentReply {
   body: string;
   sentAt: string;
   readByStaff: boolean;
+}
+
+export type LevyScope = "class" | "grade" | "individual" | "all";
+export type LevyStatus = "active" | "closed" | "cancelled";
+
+export interface SpecialLevy {
+  id: string;
+  title: string;
+  description: string;
+  amount: number;
+  scope: LevyScope;
+  classId?: string;
+  className?: string;
+  gradeLevel?: string;
+  studentIds?: string[];
+  academicYear: number;
+  term: TermNumber;
+  dueDate: string;
+  issuedDate: string;
+  issuedBy: string;
+  status: LevyStatus;
+  category: "trip" | "kit" | "uniform" | "activity" | "stationery" | "other";
+}
+
+export interface LevyPayment {
+  id: string;
+  levyId: string;
+  levyTitle: string;
+  studentId: string;
+  studentName: string;
+  amount: number;
+  paidAt: string;
+  paymentMethod: PaymentMethod;
+  mpesaCode?: string;
+  receiptNumber: string;
+  recordedBy: string;
+}
+
+export interface StudentLevyStatus {
+  levy: SpecialLevy;
+  paid: boolean;
+  paidAt?: string;
+  amountPaid?: number;
+  receiptNumber?: string;
+  waived: boolean;
+  waivedReason?: string;
 }

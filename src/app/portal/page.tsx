@@ -1,10 +1,6 @@
 "use client";
 
-/**
- * Parent portal: a parent's view of their child's school record.
- * @module portal/page
- */
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -16,33 +12,53 @@ import Typography from "@mui/material/Typography";
 import Alert from "@mui/material/Alert";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
 import Stack from "@mui/material/Stack";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
+import Badge from "@mui/material/Badge";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import Grid from "@mui/material/Grid";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableContainer from "@mui/material/TableContainer";
+
 import PaymentsIcon from "@mui/icons-material/Payments";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import ChatIcon from "@mui/icons-material/Chat";
 import SendIcon from "@mui/icons-material/Send";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import PrintIcon from "@mui/icons-material/Print";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import InfoIcon from "@mui/icons-material/Info";
+
 import { PortalLayout } from "@/components/layout/PortalLayout";
 import { DataState } from "@/components/DataState";
 import { StatCard } from "@/components/StatCard";
 import { GradeChip } from "@/components/GradeChip";
 import { CBCRatingChip } from "@/components/CBCRatingChip";
-import { useStudent } from "@/hooks/domain";
+import { Letterhead } from "@/components/Letterhead";
 import { useAsync } from "@/hooks/useAsync";
 import { useAuth } from "@/context/AuthContext";
 import { useNotification } from "@/context/NotificationContext";
 import * as api from "@/lib/mockApi";
 import { formatKES, formatDate, getInitials } from "@/lib/utils";
-import type { Student } from "@/lib/types";
+import type { Student, SchoolMessage, SpecialLevy, StudentLevyStatus, ReportCard } from "@/lib/types";
 
 export default function PortalPage() {
   return (
@@ -52,87 +68,154 @@ export default function PortalPage() {
   );
 }
 
-/** Parent portal content. */
 function PortalContent() {
   const { user } = useAuth();
-  const studentId = user?.studentId ?? "std-1";
-  const { data, loading, error, refetch } = useStudent(studentId);
+  const { data: students = [], loading: loadingStudents, error: studentsError } = useAsync(() => api.getParentStudents(user?.id || ""), [user?.id]);
+  const [selectedStudentId, setSelectedStudentId] = useState<string>("");
   const [tab, setTab] = useState(0);
 
+  useEffect(() => {
+    if (students && students.length > 0 && !selectedStudentId) {
+      setSelectedStudentId(students[0].id);
+    }
+  }, [students, selectedStudentId]);
+
+  const selectedStudent = useMemo(() => (students || []).find(s => s.id === selectedStudentId), [students, selectedStudentId]);
+
+  const unreadMessages = useAsync(async () => {
+    if (!selectedStudentId) return [];
+    const msgs = await api.getParentMessages(selectedStudentId);
+    return msgs.filter(m => m.status !== "read");
+  }, [selectedStudentId]);
+
+  if (loadingStudents) return <DataState loading={true} data={null} error={null} children={<Box />} />;
+  if (studentsError) return <DataState loading={false} data={null} error={studentsError} children={<Box />} />;
+  if (!selectedStudent) return <Alert severity="info">No children linked to your account.</Alert>;
+
+  const studentList = students || [];
+
   return (
-    <DataState loading={loading} error={error} data={data} onRetry={refetch}>
-      {(s: Student) => (
-        <>
-          <Card sx={{ mb: 2 }}>
-            <CardContent>
-              <Box sx={{ display: "flex", gap: 2, alignItems: "center", flexWrap: "wrap" }}>
-                <Avatar sx={{ width: 72, height: 72, fontSize: 24, bgcolor: "primary.main" }}>{getInitials(`${s.firstName} ${s.lastName}`)}</Avatar>
-                <Box>
-                  <Typography variant="h5">{s.firstName} {s.lastName}</Typography>
-                  <Typography variant="body2" color="text.secondary">{s.className} · {s.admissionNumber}</Typography>
-                  <Chip size="small" sx={{ mt: 0.5 }} label={s.boardingStatus === "day" ? "Day Scholar" : "Boarder"} />
-                </Box>
+    <>
+      <Card sx={{ mb: 2 }}>
+        <CardContent>
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700 }}>My Children</Typography>
+            {studentList.length > 1 && (
+              <Box sx={{ display: "flex", gap: 1 }}>
+                {studentList.map(s => (
+                  <Chip
+                    key={s.id}
+                    label={s.firstName}
+                    onClick={() => setSelectedStudentId(s.id)}
+                    color={selectedStudentId === s.id ? "primary" : "default"}
+                    sx={{ fontWeight: 600 }}
+                    avatar={<Avatar sx={{ width: 24, height: 24 }}>{getInitials(s.firstName)}</Avatar>}
+                  />
+                ))}
               </Box>
-            </CardContent>
-          </Card>
-
-          <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, mb: 2 }}>
-            <StatCard icon={<PaymentsIcon />} color={s.feeBalance > 0 ? "#C62828" : "#2E7D32"} label="Fee Balance" value={formatKES(s.feeBalance)} />
-            <StatCard icon={<EventAvailableIcon />} color="#1565C0" label="Curriculum" value={s.curriculum === "CBC" ? "CBC" : "8-4-4"} />
+            )}
           </Box>
+          <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+            <Avatar sx={{ width: 64, height: 64, bgcolor: "primary.main" }}>{getInitials(`${selectedStudent.firstName} ${selectedStudent.lastName}`)}</Avatar>
+            <Box>
+              <Typography variant="h5" sx={{ fontWeight: 700 }}>{selectedStudent.firstName} {selectedStudent.lastName}</Typography>
+              <Typography variant="body2" color="text.secondary">{selectedStudent.className} · {selectedStudent.admissionNumber}</Typography>
+              <Box sx={{ mt: 1, display: "flex", gap: 1 }}>
+                <Chip size="small" label={selectedStudent.curriculum} variant="outlined" />
+                <Chip size="small" label={selectedStudent.boardingStatus === 'day' ? 'Day Scholar' : 'Boarder'} variant="outlined" />
+                {selectedStudent.feeBalance > 0 ? (
+                  <Chip size="small" label={`Balance: ${formatKES(selectedStudent.feeBalance)}`} color="error" />
+                ) : (
+                  <Chip size="small" label="Fees Fully Paid" color="success" />
+                )}
+              </Box>
+            </Box>
+          </Box>
+        </CardContent>
+      </Card>
 
-          {s.feeBalance > 0 && <Alert severity="warning" sx={{ mb: 2 }}>You have an outstanding fee balance of {formatKES(s.feeBalance)}. Kindly clear it before end of term.</Alert>}
-
-          <Card>
-            <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ borderBottom: 1, borderColor: "divider" }}>
-              <Tab label="Results" />
-              <Tab label="Attendance" />
-              <Tab label="Fees" />
-              <Tab label="Messages" />
-            </Tabs>
-            <CardContent>
-              {tab === 0 && <ResultsTab studentId={s.id} curriculum={s.curriculum} />}
-              {tab === 1 && <AttendanceTab studentId={s.id} />}
-              {tab === 2 && <FeesTab studentId={s.id} />}
-              {tab === 3 && <MessagesTab studentId={s.id} />}
-            </CardContent>
-          </Card>
-        </>
-      )}
-    </DataState>
+      <Card>
+        <Tabs 
+          value={tab} 
+          onChange={(_, v) => setTab(v)} 
+          variant="scrollable" 
+          scrollButtons="auto" 
+          sx={{ borderBottom: 1, borderColor: "divider" }}
+        >
+          <Tab label="Results" />
+          <Tab label="Attendance" />
+          <Tab label="Fees" />
+          <Tab label={
+            <Badge badgeContent={(unreadMessages.data || []).length} color="error" sx={{ "& .MuiBadge-badge": { right: -10, top: 0 } }}>
+              Messages
+            </Badge>
+          } />
+          <Tab label="Timetable" />
+        </Tabs>
+        <CardContent sx={{ p: { xs: 1, sm: 2 } }}>
+          {tab === 0 && <ResultsTab student={selectedStudent} />}
+          {tab === 1 && <AttendanceTab studentId={selectedStudent.id} />}
+          {tab === 2 && <FeesTab student={selectedStudent} />}
+          {tab === 3 && <MessagesTab student={selectedStudent} user={user} />}
+          {tab === 4 && <TimetableTab student={selectedStudent} />}
+        </CardContent>
+      </Card>
+    </>
   );
 }
 
-function ResultsTab({ studentId, curriculum }: { studentId: string; curriculum: string }) {
+function ResultsTab({ student }: { student: Student }) {
   const exams = useAsync(() => api.getExams(), []);
   const [examId, setExamId] = useState("exm-2");
-  const rc = useAsync(() => api.getStudentReportCard(studentId, examId), [studentId, examId]);
+  const rc = useAsync(() => api.getStudentReportCard(student.id, examId), [student.id, examId]);
+  const [reportCardOpen, setReportCardOpen] = useState(false);
+
   return (
     <Box>
-      <TextField select size="small" label="Exam" value={examId} onChange={(e) => setExamId(e.target.value)} sx={{ width: 240, mb: 2 }}>
-        {(exams.data ?? []).filter((e) => e.status !== "upcoming").map((e) => <MenuItem key={e.id} value={e.id}>{e.name}</MenuItem>)}
-      </TextField>
-      <DataState loading={rc.loading} error={rc.error} data={rc.data} onRetry={rc.refetch}>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2, flexWrap: "wrap", gap: 2 }}>
+        <TextField select size="small" label="Exam Session" value={examId} onChange={(e) => setExamId(e.target.value)} sx={{ width: 240 }}>
+          {(exams.data ?? []).filter((e) => e.status !== "upcoming").map((e) => <MenuItem key={e.id} value={e.id}>{e.name}</MenuItem>)}
+        </TextField>
+        <Button variant="outlined" startIcon={<PrintIcon />} onClick={() => setReportCardOpen(true)} disabled={!rc.data}>
+          Full Report Card
+        </Button>
+      </Box>
+
+      <DataState loading={rc.loading} error={rc.error} data={rc.data}>
         {(r) => (
           <>
-            <Table size="small">
-              <TableHead><TableRow><TableCell>Subject</TableCell><TableCell align="right">Marks</TableCell><TableCell>Grade</TableCell>{curriculum === "CBC" && <TableCell>CBC</TableCell>}</TableRow></TableHead>
+            <Table size="small" sx={{ mb: 2 }}>
+              <TableHead><TableRow><TableCell>Subject</TableCell><TableCell align="right">Marks</TableCell><TableCell>Grade</TableCell>{student.curriculum === "CBC" && <TableCell>Rating</TableCell>}</TableRow></TableHead>
               <TableBody>
                 {r.subjects.map((sub: any) => (
-                  <TableRow key={sub.subjectName}>
-                    <TableCell>{sub.subjectName}</TableCell>
+                  <TableRow key={sub.subjectId}>
+                    <TableCell>
+                      <Typography variant="body2" sx={{ fontWeight: 600 }}>{sub.subjectName}</Typography>
+                      {sub.teacherComment && <Typography variant="caption" color="text.secondary" sx={{ fontStyle: "italic", display: "block" }}>{sub.teacherComment}</Typography>}
+                    </TableCell>
                     <TableCell align="right">{sub.marks} / {sub.outOf}</TableCell>
                     <TableCell><GradeChip grade={sub.grade} /></TableCell>
-                    {curriculum === "CBC" && <TableCell><CBCRatingChip rating={sub.cbcRating} /></TableCell>}
+                    {student.curriculum === "CBC" && <TableCell><CBCRatingChip rating={sub.cbcRating} /></TableCell>}
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
-            <Box sx={{ display: "flex", gap: 3, mt: 2, flexWrap: "wrap" }}>
-              <Typography variant="body2"><strong>Average:</strong> {r.average}%</Typography>
-              <Typography variant="body2"><strong>Position:</strong> {r.position} / {r.classSize}</Typography>
-            </Box>
-            <Alert severity="info" sx={{ mt: 2 }}>{r.classTeacherComment}</Alert>
+            <Grid container spacing={2} sx={{ mb: 2 }}>
+              <Grid size={{ xs: 6, md: 3 }}><StatItem label="Average" value={`${r.average}%`} /></Grid>
+              <Grid size={{ xs: 6, md: 3 }}><StatItem label="Position" value={`${r.position} / ${r.classSize}`} /></Grid>
+              <Grid size={{ xs: 6, md: 3 }}><StatItem label="Mean Grade" value={r.averageGrade || "B"} /></Grid>
+              <Grid size={{ xs: 6, md: 3 }}><StatItem label="Total Marks" value={r.totalMarks} /></Grid>
+            </Grid>
+            <Alert severity="info" slot="icon" sx={{ mb: 1.5 }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Class Teacher's Comment:</Typography>
+              <Typography variant="body2">{r.classTeacherComment}</Typography>
+            </Alert>
+            <Alert severity="info" variant="outlined" icon={<CheckCircleIcon />}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Principal's Remarks:</Typography>
+              <Typography variant="body2">{r.principalComment}</Typography>
+            </Alert>
+
+            <ReportCardDialog rc={r} open={reportCardOpen} onClose={() => setReportCardOpen(false)} />
           </>
         )}
       </DataState>
@@ -142,72 +225,215 @@ function ResultsTab({ studentId, curriculum }: { studentId: string; curriculum: 
 
 function AttendanceTab({ studentId }: { studentId: string }) {
   const att = useAsync(() => api.getStudentAttendance(studentId, "2026-05-01", "2026-08-31"), [studentId]);
+  
   return (
-    <DataState loading={att.loading} error={att.error} data={att.data} onRetry={att.refetch} isEmpty={(d) => d.length === 0} emptyMessage="No attendance records">
+    <DataState loading={att.loading} error={att.error} data={att.data} isEmpty={(d: any) => d.length === 0} emptyMessage="No attendance records available.">
       {(records) => {
-        const present = records.filter((r: any) => r.status === "present").length;
-        const pct = records.length ? Math.round((present / records.length) * 100) : 0;
+        const stats = {
+          present: records.filter((r: any) => r.status === "present").length,
+          absent: records.filter((r: any) => r.status === "absent").length,
+          late: records.filter((r: any) => r.status === "late").length,
+          total: records.length,
+        };
+        const attendanceRate = stats.total ? Math.round((stats.present / stats.total) * 100) : 0;
+        
+        const monthlyData = (records || []).reduce((acc: any, r: any) => {
+          const month = new Date(r.date).toLocaleString('default', { month: 'long', year: 'numeric' });
+          if (!acc[month]) acc[month] = [];
+          acc[month].push(r);
+          return acc;
+        }, {});
+
         return (
-          <>
-            <Typography variant="body2" sx={{ mb: 2 }}><strong>Attendance rate:</strong> {pct}% ({present}/{records.length} days)</Typography>
-            <Table size="small">
-              <TableHead><TableRow><TableCell>Date</TableCell><TableCell>Status</TableCell></TableRow></TableHead>
-              <TableBody>
-                {records.slice(0, 15).map((r: any) => (
-                  <TableRow key={r.id}><TableCell>{formatDate(r.date)}</TableCell><TableCell sx={{ textTransform: "capitalize" }}>{r.status}</TableCell></TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </>
+          <Box>
+            <Grid container spacing={2} sx={{ mb: 3 }}>
+              <Grid size={{ xs: 6, md: 3 }}><PortalStatCard label="Present" value={stats.present} color="success.main" /></Grid>
+              <Grid size={{ xs: 6, md: 3 }}><PortalStatCard label="Absent" value={stats.absent} color="error.main" /></Grid>
+              <Grid size={{ xs: 6, md: 3 }}><PortalStatCard label="Late" value={stats.late} color="warning.main" /></Grid>
+              <Grid size={{ xs: 6, md: 3 }}><PortalStatCard label="Attendance %" value={`${attendanceRate}%`} color="primary.main" /></Grid>
+            </Grid>
+
+            {attendanceRate < 75 && (
+              <Alert severity="error" sx={{ mb: 3 }} icon={<WarningAmberIcon />}>
+                Attendance is below the required 75% threshold. Please contact the class teacher to discuss the reasons for absence.
+              </Alert>
+            )}
+
+            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700 }}>Monthly Breakdown</Typography>
+            {Object.entries(monthlyData).map(([month, logs]: [string, any], idx) => (
+              <Accordion key={month} defaultExpanded={idx === 0} sx={{ mb: 1 }}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%", pr: 2 }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>{month}</Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {logs.filter((l: any) => l.status === 'present').length}/{logs.length} days present
+                    </Typography>
+                  </Box>
+                </AccordionSummary>
+                <AccordionDetails sx={{ p: 0 }}>
+                  <Table size="small">
+                    <TableBody>
+                      {logs.map((l: any) => (
+                        <TableRow key={l.id}>
+                          <TableCell sx={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                              <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: l.status === 'present' ? 'success.main' : l.status === 'absent' ? 'error.main' : 'warning.main' }} />
+                              <Typography variant="body2">{formatDate(l.date)}</Typography>
+                            </Box>
+                          </TableCell>
+                          <TableCell sx={{ borderBottom: '1px solid rgba(0,0,0,0.05)', textTransform: 'capitalize' }}>{l.status}</TableCell>
+                          <TableCell sx={{ borderBottom: '1px solid rgba(0,0,0,0.05)', color: 'text.secondary' }}>{l.reason || "—"}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </AccordionDetails>
+              </Accordion>
+            ))}
+          </Box>
         );
       }}
     </DataState>
   );
 }
 
-function FeesTab({ studentId }: { studentId: string }) {
-  const inv = useAsync(() => api.getStudentInvoice(studentId), [studentId]);
-  const pays = useAsync(() => api.getPayments({ studentId }), [studentId]);
+function FeesTab({ student }: { student: Student }) {
+  const inv = useAsync(() => api.getStudentInvoice(student.id), [student.id]);
+  const pays = useAsync(() => api.getPayments({ studentId: student.id }), [student.id]);
+  const levies = useAsync(() => api.getStudentLevies(student.id), [student.id]);
+  const [payInstructionsOpen, setPayInstructionsOpen] = useState(false);
+
   return (
-    <DataState loading={inv.loading} error={inv.error} data={inv.data} onRetry={inv.refetch}>
-      {(i: any) => (
-        <>
-          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(3,1fr)" }, gap: 2, mb: 3 }}>
-            <Card variant="outlined" sx={{ p: 2 }}><Typography variant="caption" color="text.secondary">Charged</Typography><Typography sx={{ fontWeight: 700 }}>{formatKES(i.totalCharged)}</Typography></Card>
-            <Card variant="outlined" sx={{ p: 2 }}><Typography variant="caption" color="text.secondary">Paid</Typography><Typography sx={{ fontWeight: 700 }}>{formatKES(i.totalPaid)}</Typography></Card>
-            <Card variant="outlined" sx={{ p: 2 }}><Typography variant="caption" color="text.secondary">Balance</Typography><Typography sx={{ fontWeight: 700, color: i.balance > 0 ? "error.main" : "success.main" }}>{formatKES(i.balance)}</Typography></Card>
-          </Box>
-          <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700 }}>Payment History</Typography>
-          <DataState loading={pays.loading} error={pays.error} data={pays.data} isEmpty={(d) => d.length === 0} emptyMessage="No payments yet">
-            {(payments) => (
-              <Table size="small">
-                <TableHead><TableRow><TableCell>Date</TableCell><TableCell>Receipt</TableCell><TableCell align="right">Amount</TableCell></TableRow></TableHead>
-                <TableBody>
-                  {payments.map((p) => (
-                    <TableRow key={p.id}><TableCell>{formatDate(p.paymentDate)}</TableCell><TableCell sx={{ fontFamily: "monospace", fontSize: 12 }}>{p.receiptNumber}</TableCell><TableCell align="right" sx={{ fontWeight: 600 }}>{formatKES(p.amount)}</TableCell></TableRow>
+    <Box>
+      <DataState loading={inv.loading} error={inv.error} data={inv.data}>
+        {(i: any) => (
+          <>
+            <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr 1fr", sm: "repeat(4,1fr)" }, gap: 2, mb: 3 }}>
+              <Card variant="outlined" sx={{ p: 1.5 }}><Typography variant="caption" color="text.secondary">Charged</Typography><Typography variant="h6" sx={{ fontWeight: 800 }}>{formatKES(i.totalCharged)}</Typography></Card>
+              <Card variant="outlined" sx={{ p: 1.5 }}><Typography variant="caption" color="text.secondary">Paid</Typography><Typography variant="h6" sx={{ fontWeight: 800, color: "success.main" }}>{formatKES(i.totalPaid)}</Typography></Card>
+              <Card variant="outlined" sx={{ p: 1.5 }}><Typography variant="caption" color="text.secondary">Balance</Typography><Typography variant="h6" sx={{ fontWeight: 800, color: i.balance > 0 ? "error.dark" : "success.main" }}>{formatKES(i.balance)}</Typography></Card>
+              <Card variant="outlined" sx={{ p: 1.5 }}><Typography variant="caption" color="text.secondary">Due Date</Typography><Typography variant="h6" sx={{ fontWeight: 800 }}>{formatDate(i.dueDate)}</Typography></Card>
+            </Box>
+
+            <Accordion variant="outlined" sx={{ mb: 2 }}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>View Detailed Fee Breakdown</Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ p: 0 }}>
+                <Table size="small">
+                  <TableBody>
+                    {i.items.map((it: any) => (
+                      <TableRow key={it.name}>
+                        <TableCell>{it.name}</TableCell>
+                        <TableCell align="right">{formatKES(it.amount)}</TableCell>
+                      </TableRow>
+                    ))}
+                    <TableRow sx={{ bgcolor: "action.hover" }}>
+                      <TableCell sx={{ fontWeight: 700 }}>Total Term Charge</TableCell>
+                      <TableCell align="right" sx={{ fontWeight: 700 }}>{formatKES(i.totalCharged)}</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </AccordionDetails>
+            </Accordion>
+
+            <Card variant="outlined" sx={{ bgcolor: "primary.main", color: "white", p: 2, mb: 4 }}>
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Pay via M-Pesa Paybill</Typography>
+                  <Typography variant="body2">Business No: <strong>522533</strong> | Account: <strong>{student.admissionNumber}</strong></Typography>
+                </Box>
+                <Button variant="contained" color="secondary" onClick={() => setPayInstructionsOpen(true)}>Pay Now</Button>
+              </Box>
+            </Card>
+
+            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700 }}>Special Levies & Ad-hoc Charges</Typography>
+            <DataState loading={levies.loading} data={levies.data} error={null} isEmpty={(d: any) => d.length === 0} emptyMessage="No special charges at this time.">
+              {(lList: StudentLevyStatus[]) => (
+                <Grid container spacing={2} sx={{ mb: 4 }}>
+                  {lList.map((sl) => (
+                    <Grid size={{ xs: 12, sm: 6 }} key={sl.levy.id}>
+                      <Card variant="outlined">
+                        <CardContent sx={{ pb: "16px !important" }}>
+                          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+                            <Chip size="small" label={sl.levy.category.toUpperCase()} icon={<InfoIcon fontSize="small" />} color="primary" variant="outlined" />
+                            {sl.paid ? <Chip size="small" label="PAID ✓" color="success" /> : (
+                              new Date() > new Date(sl.levy.dueDate) ? <Chip size="small" label="OVERDUE" color="error" /> : <Chip size="small" label="UNPAID" color="warning" />
+                            )}
+                          </Box>
+                          <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>{sl.levy.title}</Typography>
+                          <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5, height: 40, overflow: "hidden" }}>{sl.levy.description}</Typography>
+                          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+                            <Box>
+                              <Typography variant="caption" color="text.secondary">Due Date</Typography>
+                              <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatDate(sl.levy.dueDate)}</Typography>
+                            </Box>
+                            <Typography variant="h6" color={sl.paid ? "success.main" : "error.main"} sx={{ fontWeight: 800 }}>{formatKES(sl.levy.amount)}</Typography>
+                          </Box>
+                          {sl.paid && <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: "block" }}>Receipt: {sl.receiptNumber} · Paid on {formatDate(sl.paidAt!)}</Typography>}
+                        </CardContent>
+                      </Card>
+                    </Grid>
                   ))}
-                </TableBody>
-              </Table>
-            )}
-          </DataState>
-        </>
-      )}
-    </DataState>
+                </Grid>
+              )}
+            </DataState>
+
+            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700 }}>Payment History</Typography>
+            <DataState loading={pays.loading} data={pays.data} error={null}>
+              {(payments) => (
+                <TableContainer sx={{ border: 1, borderColor: "divider", borderRadius: 1 }}>
+                  <Table size="small">
+                    <TableHead sx={{ bgcolor: "action.hover" }}>
+                      <TableRow>
+                        <TableCell>Date</TableCell>
+                        <TableCell>Method</TableCell>
+                        <TableCell>Reference</TableCell>
+                        <TableCell align="right">Amount</TableCell>
+                        <TableCell align="right">Action</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {(payments || []).map((p) => (
+                        <TableRow key={p.id}>
+                          <TableCell>{formatDate(p.paymentDate)}</TableCell>
+                          <TableCell sx={{ textTransform: "capitalize" }}>{p.paymentMethod.replace('_', ' ')}</TableCell>
+                          <TableCell>
+                            <Typography variant="body2" sx={{ fontWeight: 600 }}>{p.receiptNumber}</Typography>
+                            {p.mpesaCode && <Typography variant="caption" color="text.secondary" sx={{ fontFamily: "monospace" }}>{p.mpesaCode}</Typography>}
+                          </TableCell>
+                          <TableCell align="right" sx={{ fontWeight: 700 }}>{formatKES(p.amount)}</TableCell>
+                          <TableCell align="right"><IconButton size="small"><PrintIcon fontSize="small" /></IconButton></TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )}
+            </DataState>
+          </>
+        )}
+      </DataState>
+
+      <PayInstructionsDialog open={payInstructionsOpen} onClose={() => setPayInstructionsOpen(false)} student={student} />
+    </Box>
   );
 }
 
-function MessagesTab({ studentId }: { studentId: string }) {
+function MessagesTab({ student, user }: { student: Student, user: any }) {
   const { showNotification } = useNotification();
-  const { data: messages = [], loading, refetch } = useAsync(() => api.getMessages({ studentId }), [studentId]);
-  const [replyTo, setReplyTo] = useState<any>(null);
+  const { data: messagesRes = [], loading, refetch } = useAsync(() => api.getParentMessages(student.id), [student.id]);
+  const [replyTo, setReplyTo] = useState<SchoolMessage | null>(null);
   const [replyBody, setReplyBody] = useState("");
 
+  const messages = messagesRes || [];
+
   const handleReply = async () => {
-    if (!replyBody.trim()) return;
+    if (!replyBody.trim() || !replyTo) return;
     await api.sendParentReply({
       messageId: replyTo.id,
-      studentName: "Daniel Junior", 
-      parentName: "Daniel Njoroge", 
+      studentName: `${student.firstName} ${student.lastName}`,
+      parentName: user?.name ?? "Parent",
       body: replyBody
     });
     showNotification("Reply sent to school office", "success");
@@ -218,19 +444,24 @@ function MessagesTab({ studentId }: { studentId: string }) {
 
   return (
     <Box>
-      <DataState loading={loading} error={null} data={messages} isEmpty={(d) => d.length === 0} emptyMessage="No messages from school">
-        {() => (
+      <DataState loading={loading} error={null} data={messages} isEmpty={(d: any) => d.length === 0} emptyMessage="No messages from school">
+        {(list) => (
           <Stack spacing={2}>
-            {(messages || []).map((m: any) => (
-              <Card key={m.id} variant="outlined">
+            {list.map((m) => (
+              <Card key={m.id} variant="outlined" sx={{ borderLeft: m.status !== 'read' ? '4px solid' : '1px solid', borderColor: m.status !== 'read' ? 'primary.main' : 'divider' }}>
                 <CardContent>
                   <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-                    <Typography variant="subtitle2" color="primary">{m.channel.replace('_', ' ').toUpperCase()}</Typography>
+                    <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                      {m.status !== 'read' && <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'primary.main' }} />}
+                      <Typography variant="subtitle2" color="primary">{m.channel.replace('_', ' ').toUpperCase()}</Typography>
+                    </Box>
                     <Typography variant="caption" color="text.secondary">{formatDate(m.sentAt)}</Typography>
                   </Box>
                   <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>{m.subject}</Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 1, mb: 2 }}>{m.body}</Typography>
-                  <Button variant="outlined" size="small" startIcon={<ChatIcon />} onClick={() => setReplyTo(m)}>Reply</Button>
+                  <Button variant="outlined" size="small" startIcon={<ChatIcon />} onClick={() => { setReplyTo(m); if (m.status !== 'read') api.markMessageRead(m.id).then(() => refetch()); }}>
+                    Reply to Office
+                  </Button>
                 </CardContent>
               </Card>
             ))}
@@ -241,16 +472,8 @@ function MessagesTab({ studentId }: { studentId: string }) {
       <Dialog open={!!replyTo} onClose={() => setReplyTo(null)} fullWidth maxWidth="xs">
         <DialogTitle>Reply to Office</DialogTitle>
         <DialogContent sx={{ pt: 1 }}>
-          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 1 }}>Re: {replyTo?.subject}</Typography>
-          <TextField 
-            label="Your Message" 
-            fullWidth 
-            multiline 
-            rows={4} 
-            size="small" 
-            value={replyBody} 
-            onChange={e => setReplyBody(e.target.value)} 
-          />
+          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 1 }}>Subject: {replyTo?.subject}</Typography>
+          <TextField label="Your Message" fullWidth multiline rows={4} size="small" value={replyBody} onChange={e => setReplyBody(e.target.value)} />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setReplyTo(null)}>Cancel</Button>
@@ -258,5 +481,185 @@ function MessagesTab({ studentId }: { studentId: string }) {
         </DialogActions>
       </Dialog>
     </Box>
+  );
+}
+
+function TimetableTab({ student }: { student: Student }) {
+  const { data: slots = [], loading } = useAsync(() => api.getTimetable(student.classId), [student.classId]);
+  const [activeDay, setActiveDay] = useState(() => {
+    const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+    return ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].includes(today) ? today : "Monday";
+  });
+
+  if (loading) return <DataState loading={true} data={null} children={<Box />} />;
+  
+  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+  const slotList = slots || [];
+
+  const slotsByDay = days.reduce((acc: any, d) => {
+    acc[d] = slotList.filter(s => s.day === d).sort((a, b) => a.periodNumber - b.periodNumber);
+    return acc;
+  }, {});
+
+  return (
+    <Box>
+      <Box sx={{ mb: 2, display: { xs: "flex", md: "none" }, gap: 1, overflowX: "auto", pb: 1 }}>
+        {days.map(d => (
+          <Chip key={d} label={d.substring(0, 3)} onClick={() => setActiveDay(d)} color={activeDay === d ? "primary" : "default"} />
+        ))}
+      </Box>
+
+      <TableContainer sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}>
+        <Table size="small">
+          <TableHead sx={{ bgcolor: "action.hover", display: { xs: "none", md: "table-header-group" } }}>
+            <TableRow>
+              <TableCell>Time</TableCell>
+              {days.map(d => (
+                <TableCell key={d} align="center" sx={{ fontWeight: 700, bgcolor: d === activeDay ? 'primary.main' : 'inherit', color: d === activeDay ? 'white' : 'inherit' }}>
+                  {d}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {/* Mobile View */}
+            <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+              {slotsByDay[activeDay]?.map((s: any) => (
+                <Box key={s.id} sx={{ p: 2, borderBottom: '1px solid rgba(0,0,0,0.1)', bgcolor: s.isBreak ? 'action.hover' : 'inherit' }}>
+                  <Typography variant="caption" color="text.secondary">{s.startTime} - {s.endTime}</Typography>
+                  {s.isBreak ? (
+                    <Typography variant="subtitle2" sx={{ fontWeight: 800 }}>{s.breakName}</Typography>
+                  ) : (
+                    <>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 800 }}>{s.subjectName}</Typography>
+                      <Typography variant="caption" color="text.secondary">{s.teacherName}</Typography>
+                    </>
+                  )}
+                </Box>
+              ))}
+            </Box>
+
+            {/* Desktop View */}
+            {Array.from({ length: 9 }).map((_, periodIdx) => {
+              const periodNum = periodIdx + 1;
+              const anySlotAtThisTime = slotList.find(s => s.periodNumber === periodNum);
+              if (!anySlotAtThisTime) return null;
+              
+              return (
+                <TableRow key={periodNum} sx={{ display: { xs: 'none', md: 'table-row' } }}>
+                  <TableCell sx={{ fontWeight: 600, width: 120 }}>
+                    <Typography variant="body2">{anySlotAtThisTime.startTime} - {anySlotAtThisTime.endTime}</Typography>
+                    <Typography variant="caption" color="text.secondary">Period {periodNum}</Typography>
+                  </TableCell>
+                  {days.map(d => {
+                    const slot = slotList.find(s => s.day === d && s.periodNumber === periodNum);
+                    if (!slot) return <TableCell key={d} />;
+                    if (slot.isBreak) return <TableCell key={d} sx={{ bgcolor: "action.hover", textAlign: "center", fontWeight: 700 }}>{slot.breakName}</TableCell>;
+                    return (
+                      <TableCell key={d} align="center" sx={{ bgcolor: d === activeDay ? 'primary.main' + '08' : 'inherit' }}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>{slot.subjectName}</Typography>
+                        <Typography variant="caption" color="text.secondary">{slot.teacherName}</Typography>
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
+  );
+}
+
+function StatItem({ label, value }: { label: string; value: any }) {
+  return (
+    <Card variant="outlined" sx={{ p: 1.5, textAlign: "center" }}>
+      <Typography variant="caption" color="text.secondary">{label}</Typography>
+      <Typography variant="subtitle1" sx={{ fontWeight: 800 }}>{value}</Typography>
+    </Card>
+  );
+}
+
+function PortalStatCard({ label, value, color }: { label: string; value: any, color: string }) {
+  return (
+    <Card variant="outlined" sx={{ p: 1.5, textAlign: "center", borderTop: `4px solid`, borderTopColor: color }}>
+      <Typography variant="caption" color="text.secondary">{label}</Typography>
+      <Typography variant="h6" sx={{ fontWeight: 800 }}>{value}</Typography>
+    </Card>
+  );
+}
+
+function PayInstructionsDialog({ open, onClose, student }: { open: boolean, onClose: () => void, student: Student }) {
+  return (
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
+      <DialogTitle>How to Pay School Fees via M-Pesa</DialogTitle>
+      <DialogContent>
+        <List sx={{ pt: 0 }}>
+          <ListItem><ListItemText primary="1. Go to M-PESA menu and select Lipa na M-PESA" secondary="Select Paybill" /></ListItem>
+          <ListItem><ListItemText primary="2. Enter Business Number: 522533" secondary="Greenfield Academy Treasury" /></ListItem>
+          <ListItem><ListItemText primary="3. Enter Account Number" secondary={<strong>{student.admissionNumber}</strong>} /></ListItem>
+          <ListItem><ListItemText primary="4. Enter the Amount and your M-PESA PIN" /></ListItem>
+        </List>
+        <Alert severity="info" sx={{ mt: 1 }}>Once paid, you will receive a confirmation SMS. The balance will update on this portal within 24 hours.</Alert>
+      </DialogContent>
+      <DialogActions>
+        <Button variant="contained" onClick={onClose}>Understood</Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+function ReportCardDialog({ rc, open, onClose }: { rc: ReportCard | null; open: boolean; onClose: () => void }) {
+  if (!rc) return null;
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+      <DialogContent>
+        <Box className="printable">
+          <Letterhead title={`Report Card — Term ${rc.term}, ${rc.year}`} />
+          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2, flexWrap: "wrap", gap: 1 }}>
+            <Typography variant="body2"><strong>Name:</strong> {rc.studentName}</Typography>
+            <Typography variant="body2"><strong>Adm No:</strong> {rc.admissionNumber}</Typography>
+            <Typography variant="body2"><strong>Class:</strong> {rc.className}</Typography>
+            <Typography variant="body2"><strong>Position:</strong> {rc.position} / {rc.classSize}</Typography>
+          </Box>
+          <Table size="small" sx={{ mb: 2 }}>
+            <TableHead>
+              <TableRow>
+                <TableCell>Subject</TableCell>
+                <TableCell align="right">Marks</TableCell>
+                <TableCell>Grade</TableCell>
+                {rc.curriculum === "CBC" && <TableCell>CBC</TableCell>}
+                <TableCell>Remark</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rc.subjects.map((s: any) => (
+                <TableRow key={s.subjectId}>
+                  <TableCell>{s.subjectName}</TableCell>
+                  <TableCell align="right">{s.marks} / {s.outOf}</TableCell>
+                  <TableCell><GradeChip grade={s.grade} /></TableCell>
+                  {rc.curriculum === "CBC" && <TableCell><CBCRatingChip rating={s.cbcRating} /></TableCell>}
+                  <TableCell>{s.teacherComment ?? "—"}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <Box sx={{ display: "flex", gap: 3, mb: 2, flexWrap: "wrap" }}>
+            <Typography variant="body2"><strong>Total:</strong> {rc.totalMarks}</Typography>
+            <Typography variant="body2"><strong>Average:</strong> {rc.average}%</Typography>
+            <Typography variant="body2"><strong>Attendance:</strong> {rc.attendance.daysPresent}/{rc.attendance.totalDays} days</Typography>
+          </Box>
+          <Divider sx={{ mb: 1.5 }} />
+          <Typography variant="body2" sx={{ mb: 1 }}><strong>Class Teacher:</strong> {rc.classTeacherComment}</Typography>
+          <Typography variant="body2" sx={{ mb: 2 }}><strong>Principal:</strong> {rc.principalComment}</Typography>
+          <Typography variant="caption" color="text.secondary">Closing date: {rc.closingDate} · Next term begins: {rc.nextTermBegins}</Typography>
+        </Box>
+      </DialogContent>
+      <DialogActions className="no-print" sx={{ p: 2 }}>
+        <Button onClick={onClose}>Close</Button>
+        <Button variant="contained" startIcon={<PrintIcon />} onClick={() => window.print()}>Print</Button>
+      </DialogActions>
+    </Dialog>
   );
 }

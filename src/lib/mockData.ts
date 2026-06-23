@@ -26,6 +26,8 @@ import type {
   Curriculum,
   SchoolMessage,
   ParentReply,
+  SpecialLevy,
+  LevyPayment,
 } from "./types";
 import { computePayroll, getCBCRating, getGrade } from "./utils";
 import { DAYS_OF_WEEK } from "./constants";
@@ -147,8 +149,8 @@ export const users: User[] = [
   { id: "usr-2", name: "Mr. Joseph Mwangangi Mutua", email: "deputy@greenfieldacademy.ac.ke", phone: "0711234567", role: "headteacher", staffId: "stf-11", isActive: true, lastLogin: "2026-06-10T07:50:00Z", createdAt: "2023-01-10T00:00:00Z" },
   { id: "usr-3", name: "Mr. John Mutua Kivuva", email: "j.kivuva@greenfieldacademy.ac.ke", phone: "0722345678", role: "class_teacher", staffId: "stf-3", isActive: true, lastLogin: "2026-06-09T13:20:00Z", createdAt: "2023-02-01T00:00:00Z" },
   { id: "usr-4", name: "Ms. Agnes Njoki Kariuki", email: "accounts@greenfieldacademy.ac.ke", phone: "0733456789", role: "accountant", staffId: "stf-6", isActive: true, lastLogin: "2026-06-10T09:05:00Z", createdAt: "2023-01-15T00:00:00Z" },
-  { id: "usr-5", name: "Mr. Stephen Kamau", email: "parent.kamau@gmail.com", phone: "0744567890", role: "parent", studentId: "std-1", isActive: true, lastLogin: "2026-06-08T18:30:00Z", createdAt: "2026-01-10T00:00:00Z" },
-  { id: "usr-6", name: "Ms. Rose Akinyi Owino", email: "r.owino@greenfieldacademy.ac.ke", phone: "0755678901", role: "class_teacher", staffId: "stf-8", isActive: true, lastLogin: "2026-06-09T15:00:00Z", createdAt: "2023-02-01T00:00:00Z" },
+  { id: "usr-5", name: "Mr. Stephen Kamau", email: "parent.kamau@gmail.com", phone: "0744567890", role: "parent", studentId: "std-1", studentIds: ["std-1", "std-3", "std-7"], isActive: true, lastLogin: "2026-06-08T18:30:00Z", createdAt: "2026-01-10T00:00:00Z" },
+  { id: "usr-6", name: "Mrs. Lucy Mwangi", email: "parent.mwangi@gmail.com", phone: "0755123456", role: "parent", studentId: "std-4", studentIds: ["std-4"], isActive: true, lastLogin: "2026-06-10T10:00:00Z", createdAt: "2026-02-15T00:00:00Z" },
 ];
 
 /** Login credentials used on the login page helper. */
@@ -158,6 +160,7 @@ export const credentials: Record<string, { password: string; userId: string }> =
   "0722345678": { password: "teacher123", userId: "usr-3" },
   "0733456789": { password: "accounts123", userId: "usr-4" },
   "0744567890": { password: "parent123", userId: "usr-5" },
+  "0755123456": { password: "parent456", userId: "usr-6" },
 };
 
 const FIRST_NAMES_M = ["Brian", "Dennis", "Francis", "Hassan", "James", "Kelvin", "Martin", "Oliver", "Peter", "Samuel", "Victor", "Daniel", "Eric", "George", "Isaac", "Kevin", "Mark", "Noah", "Allan", "Collins"];
@@ -291,21 +294,6 @@ const EIGHT_SUBJECTS: Array<[string, string, string]> = [
 ];
 
 export const subjects: Subject[] = [
-  { 
-    id: "sub-math", 
-    name: "Mathematics", 
-    code: "MAT", 
-    curriculum: "844", 
-    gradeLevel: ["Grade 7", "Grade 8", "Grade 9"], 
-    isCore: true,
-    gradingSystem: [
-      { grade: "A", min: 80, max: 100, color: "#2e7d32", comment: "Excellent" },
-      { grade: "B", min: 65, max: 79, color: "#4caf50", comment: "Very Good" },
-      { grade: "C", min: 50, max: 64, color: "#fb8c00", comment: "Good" },
-      { grade: "D", min: 35, max: 49, color: "#e64a19", comment: "Fair" },
-      { grade: "F", min: 0, max: 34, color: "#c62828", comment: "Poor" },
-    ]
-  },
   ...CBC_SUBJECTS.map(([name, code, area], i) => ({
     id: `sub-cbc-${i}`,
     name,
@@ -749,6 +737,141 @@ export const parentReplies: ParentReply[] = [
     body: "I will be available on Monday at 4:00 PM. Does that work for you?",
     sentAt: "2026-06-12T17:00:00Z",
     readByStaff: true,
+  },
+];
+
+export const specialLevies: SpecialLevy[] = [
+  {
+    id: "lvy-1",
+    title: "Form 2A Naivasha Educational Trip",
+    description: "Educational visit to Lake Naivasha and Hell's Gate for geography studies.",
+    amount: 3500,
+    scope: "class",
+    classId: "cls-7",
+    className: "Form 2 A",
+    category: "trip",
+    academicYear: 2026,
+    term: 2,
+    dueDate: "2026-07-15",
+    issuedDate: "2026-06-01",
+    issuedBy: "Faith Kosgei",
+    status: "active",
+  },
+  {
+    id: "lvy-2",
+    title: "Grade 7 CBC Science Kit",
+    description: "Basic science experiment kit required for home assignments.",
+    amount: 1200,
+    scope: "grade",
+    gradeLevel: "Grade 7",
+    category: "kit",
+    academicYear: 2026,
+    term: 2,
+    dueDate: "2026-07-01",
+    issuedDate: "2026-06-05",
+    issuedBy: "Agnes Kariuki",
+    status: "active",
+  },
+  {
+    id: "lvy-3",
+    title: "Term 2 School Magazine",
+    description: "Annual school magazine featuring highlights of the year.",
+    amount: 350,
+    scope: "all",
+    category: "stationery",
+    academicYear: 2026,
+    term: 2,
+    dueDate: "2026-07-30",
+    issuedDate: "2026-06-10",
+    issuedBy: "Daniel Njoroge",
+    status: "active",
+  },
+  {
+    id: "lvy-4",
+    title: "Inter-Schools Athletics Tournament",
+    description: "Transportation and snacks for students participating in the tournament.",
+    amount: 500,
+    scope: "class",
+    classId: "cls-8",
+    className: "Form 4 A",
+    category: "activity",
+    academicYear: 2026,
+    term: 2,
+    dueDate: "2026-06-28",
+    issuedDate: "2026-06-10",
+    issuedBy: "Samuel Otieno",
+    status: "closed",
+  },
+  {
+    id: "lvy-5",
+    title: "Replacement School Diary",
+    description: "Replacement fee for lost or damaged school diary.",
+    amount: 200,
+    scope: "individual",
+    studentIds: ["std-1"],
+    category: "stationery",
+    academicYear: 2026,
+    term: 2,
+    dueDate: "2026-06-20",
+    issuedDate: "2026-06-10",
+    issuedBy: "Rose Owino",
+    status: "active",
+  },
+  {
+    id: "lvy-6",
+    title: "Form 4 Graduation Ceremony",
+    description: "Contribution towards the Form 4 graduation gown and dinner.",
+    amount: 2500,
+    scope: "grade",
+    gradeLevel: "Form 4",
+    category: "activity",
+    academicYear: 2026,
+    term: 3,
+    dueDate: "2026-09-01",
+    issuedDate: "2026-06-15",
+    issuedBy: "Daniel Njoroge",
+    status: "active",
+  },
+];
+
+export const levyPayments: LevyPayment[] = [
+  {
+    id: "lp-1",
+    levyId: "lvy-3",
+    levyTitle: "Term 2 School Magazine",
+    studentId: "std-1",
+    studentName: "Amina Kamau",
+    amount: 350,
+    paidAt: "2026-06-15T09:00:00Z",
+    paymentMethod: "mpesa",
+    mpesaCode: "QRF1234567",
+    receiptNumber: "LVR-001",
+    recordedBy: "Agnes Kariuki",
+  },
+  {
+    id: "lp-2",
+    levyId: "lvy-5",
+    levyTitle: "Replacement School Diary",
+    studentId: "std-1",
+    studentName: "Amina Kamau",
+    amount: 200,
+    paidAt: "2026-06-18T14:30:00Z",
+    paymentMethod: "cash",
+    receiptNumber: "LVR-002",
+    recordedBy: "Agnes Kariuki",
+  },
+  {
+    id: "lp-3",
+    levyId: "lvy-2",
+    levyTitle: "Grade 7 CBC Science Kit",
+    studentId: "std-3",
+    studentName: "Christine Mwangi",
+    amount: 1200,
+    paidAt: "2026-06-12T10:00:00Z",
+    paymentMethod: "mpesa",
+    mpesaCode: "QRE9876543",
+    receiptNumber: "LVR-003",
+    recordedBy: "Agnes Kariuki",
   },
 ];
 

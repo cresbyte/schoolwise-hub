@@ -26,11 +26,14 @@ export function PortalLayout({ children }: { children: ReactNode }) {
    const { user, isAuthenticated, isLoading, logout } = useAuth();
    const router = useRouter();
  
-   const studentId = user?.studentId || "std-1";
-   const { data: messagesRes = [] } = useAsync(() => api.getMessages({ studentId }), [studentId]);
-   const messages = messagesRes || [];
-   // In a real app, unread count would come from a different endpoint or filter
-   const unreadCount = messages.length > 0 ? 1 : 0; 
+   const { data: messages = [] } = useAsync(async () => {
+     if (!user?.id) return [];
+     const kids = await api.getParentStudents(user.id);
+     const allMsgs = await Promise.all((kids || []).map(k => api.getParentMessages(k.id)));
+     return allMsgs.flat();
+   }, [user?.id]);
+
+   const unreadCount = (messages || []).filter(m => m.status !== "read").length;
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) router.push("/login");

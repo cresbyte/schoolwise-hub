@@ -12,6 +12,7 @@ import AssignmentIcon from "@mui/icons-material/Assignment";
 import DescriptionIcon from "@mui/icons-material/Description";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import ReceiptIcon from "@mui/icons-material/Receipt";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import WarningIcon from "@mui/icons-material/Warning";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
@@ -74,6 +75,7 @@ export const NAV_GROUPS: NavGroup[] = [
     heading: "Finance",
     items: [
       { label: "Fee Structures", to: "/fees/structures", icon: <ReceiptIcon />, permission: "fees.view" },
+      { label: "Special Levies", to: "/fees/levies", icon: <ReceiptLongIcon />, permission: "fees.view" },
       { label: "Fee Collection", to: "/fees/collection", icon: <PaymentsIcon />, permission: "fees.view" },
       { label: "Outstanding Fees", to: "/fees/outstanding", icon: <WarningIcon />, permission: "fees.view" },
       { label: "Payroll", to: "/payroll", icon: <AccountBalanceWalletIcon />, permission: "payroll.view" },

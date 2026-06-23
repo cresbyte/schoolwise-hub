@@ -27,6 +27,9 @@ import type {
   User,
   SchoolMessage,
   ParentReply,
+  SpecialLevy,
+  LevyPayment,
+  StudentLevyStatus,
 } from "./types";
 import type {
   NewsArticle,
@@ -80,6 +83,8 @@ const subjects = clone(db.subjects);
 let classSubjects = clone(db.classSubjects);
 let schoolMessages = clone(db.schoolMessages);
 let parentReplies = clone(db.parentReplies);
+let specialLevies = clone(db.specialLevies);
+let levyPayments = clone(db.levyPayments);
 
 const classTeacherCommentStore = new Map<string, string>();
 let principalCommentTemplates = {
@@ -107,6 +112,14 @@ export async function getSchoolSettings(): Promise<School> {
 export async function updateSchoolSettings(data: Partial<School>): Promise<School> {
   school = { ...school, ...data };
   return delay(clone(school));
+}
+
+// ---- Parent Portal Helpers ----
+export async function getParentStudents(userId: string): Promise<Student[]> {
+  const user = users.find(u => u.id === userId);
+  if (!user) return delay([]);
+  const ids = user.studentIds ?? (user.studentId ? [user.studentId] : []);
+  return delay(clone(students.filter(s => ids.includes(s.id))));
 }
 
 // ---- Students ----
@@ -490,6 +503,7 @@ function buildReportCard(studentId: string, examId: string): ReportCard {
     const subject = subjects.find(s => s.id === m.subjectId);
     const { grade, color } = getSubjectGrade(m.marks ?? 0, subject);
     return {
+      subjectId: m.subjectId,
       subjectName: m.subjectName,
       marks: m.marks ?? 0,
       grade: m.grade || grade,
@@ -1127,5 +1141,103 @@ export async function getCmsWhyChooseUs(): Promise<WhyChooseUsItem[]> {
 export async function updateWhyChooseUs(data: WhyChooseUsItem[]): Promise<void> {
   setWhyChooseUs(data);
   return cmsDelay(undefined);
+}
+
+// ---- Special Levies ----
+export async function getAllLevies(filters?: { classId?: string; status?: string; term?: number }): Promise<SpecialLevy[]> {
+  let list = specialLevies;
+  if (filters?.classId) list = list.filter(l => l.classId === filters.classId);
+  if (filters?.status) list = list.filter(l => l.status === filters.status);
+  if (filters?.term) list = list.filter(l => l.term === filters.term);
+  return delay(clone(list));
+}
+
+export async function getStudentLevies(studentId: string): Promise<StudentLevyStatus[]> {
+  const student = students.find(s => s.id === studentId);
+  if (!student) return delay([]);
+
+  const applicableLevies = specialLevies.filter(l => {
+    if (l.status === "cancelled") return false;
+    if (l.scope === "all") return true;
+    if (l.scope === "class" && l.classId === student.classId) return true;
+    if (l.scope === "grade" && l.gradeLevel === student.gradeLevel) return true;
+    if (l.scope === "individual" && l.studentIds?.includes(studentId)) return true;
+    return false;
+  });
+
+  return delay(applicableLevies.map(levy => {
+    const payment = levyPayments.find(p => p.levyId === levy.id && p.studentId === studentId);
+    return {
+      levy: clone(levy),
+      paid: !!payment,
+      paidAt: payment?.paidAt,
+      amountPaid: payment?.amount,
+      receiptNumber: payment?.receiptNumber,
+      waived: false,
+    };
+  }));
+}
+
+export async function createLevy(data: Omit<SpecialLevy, 'id' | 'issuedDate'>): Promise<SpecialLevy> {
+  const levy: SpecialLevy = {
+    ...data,
+    id: "lvy-" + Date.now(),
+    issuedDate: new Date().toISOString().slice(0, 10),
+  };
+  specialLevies.push(levy);
+  return delay(clone(levy));
+}
+
+export async function updateLevy(id: string, patch: Partial<SpecialLevy>): Promise<SpecialLevy> {
+  const idx = specialLevies.findIndex(l => l.id === id);
+  if (idx === -1) throw new Error("Levy not found");
+  specialLevies[idx] = { ...specialLevies[idx], ...patch };
+  return delay(clone(specialLevies[idx]));
+}
+
+export async function cancelLevy(id: string): Promise<void> {
+  const idx = specialLevies.findIndex(l => l.id === id);
+  if (idx !== -1) specialLevies[idx].status = "cancelled";
+  return delay(undefined);
+}
+
+export async function recordLevyPayment(data: Omit<LevyPayment, 'id' | 'receiptNumber'>): Promise<LevyPayment> {
+  const pay: LevyPayment = {
+    ...data,
+    id: "lp-" + Date.now(),
+    receiptNumber: `LVR-${String(levyPayments.length + 100).padStart(3, "0")}`,
+  };
+  levyPayments.push(pay);
+  return delay(clone(pay));
+}
+
+export async function getLevyCollectionSummary(levyId: string): Promise<{ 
+  levy: SpecialLevy; 
+  totalStudents: number; 
+  paid: number; 
+  unpaid: number; 
+  totalCollected: number; 
+  payments: LevyPayment[] 
+}> {
+  const levy = specialLevies.find(l => l.id === levyId);
+  if (!levy) throw new Error("Levy not found");
+
+  let targetStudents: Student[] = [];
+  if (levy.scope === "all") targetStudents = students;
+  else if (levy.scope === "class") targetStudents = students.filter(s => s.classId === levy.classId);
+  else if (levy.scope === "grade") targetStudents = students.filter(s => s.gradeLevel === levy.gradeLevel);
+  else if (levy.scope === "individual") targetStudents = students.filter(s => levy.studentIds?.includes(s.id));
+
+  const relevantPayments = levyPayments.filter(p => p.levyId === levyId);
+  const paidCount = relevantPayments.length;
+  
+  return delay({
+    levy: clone(levy),
+    totalStudents: targetStudents.length,
+    paid: paidCount,
+    unpaid: targetStudents.length - paidCount,
+    totalCollected: relevantPayments.reduce((sum, p) => sum + p.amount, 0),
+    payments: clone(relevantPayments),
+  });
 }
 
