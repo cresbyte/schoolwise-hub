@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PageHeader } from "@/components/PageHeader";
 import { useNotification } from "@/context/NotificationContext";
+import { useAuth } from "@/context/AuthContext";
 import * as api from "@/lib/mockApi";
 import { EXAM_TYPES, GRADE_LEVELS } from "@/lib/constants";
 import type { Exam } from "@/lib/types";
@@ -36,6 +37,7 @@ type FormValues = z.infer<typeof schema>;
 
 export default function NewExamPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const { showNotification } = useNotification();
 
   const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormValues>({
@@ -63,7 +65,25 @@ export default function NewExamPage() {
       status: "upcoming",
       createdBy: "Admin",
     };
-    await api.createExam(payload);
+    const newExam = await api.createExam(payload);
+    
+    // Auto-create term event
+    await api.createTermEvent({
+      title: v.name,
+      category: "exam",
+      scope: "school",
+      startDate: v.startDate,
+      endDate: v.endDate,
+      isRange: v.startDate !== v.endDate,
+      term: v.term as any,
+      year: v.year,
+      examId: newExam.id,
+      visibleToParents: true,
+      role: user?.role || "admin",
+      createdBy: user?.id || "sys",
+      createdByName: user?.name || "Admin",
+    });
+
     showNotification(`Exam ${v.name} created successfully`, "success");
     router.push("/exams");
   });

@@ -27,6 +27,7 @@ import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import DescriptionIcon from "@mui/icons-material/Description";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { useRouter } from "next/navigation";
 import {
   Bar,
@@ -79,6 +80,7 @@ function DashboardContent() {
   const classes = useClasses();
   const payments = useAsync(() => api.getPayments(), []);
   const exams = useAsync(() => api.getExams({ status: "upcoming" }), []);
+  const pendingEvents = useAsync(() => api.getPendingTermEventCount(), []);
 
   const studentList = students.data ?? [];
   const boarding = studentList.filter((s) => s.boardingStatus === "boarding").length;
@@ -125,6 +127,17 @@ function DashboardContent() {
           label="Upcoming Exams"
           value={exams.loading ? "…" : (exams.data ?? []).length}
           footer={nextExam ? <Chip size="small" label={`${nextExam.name} · ${daysToExam}d`} sx={{ fontSize: 11 }} /> : undefined}
+        />
+        <StatCard
+          icon={<CalendarMonthIcon />}
+          color={pendingEvents.data && pendingEvents.data > 0 ? "#F57F17" : "#2E7D32"}
+          label="Term Planner"
+          value={pendingEvents.loading ? "…" : `${pendingEvents.data ?? 0} Pending`}
+          footer={
+            <Button size="small" onClick={() => router.push("/term-planner")} sx={{ fontSize: 10, p: 0, minWidth: 0 }}>
+              {pendingEvents.data && pendingEvents.data > 0 ? "Review Now" : "View Calendar"}
+            </Button>
+          }
         />
       </Box>
 

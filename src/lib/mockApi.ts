@@ -30,6 +30,9 @@ import type {
   SpecialLevy,
   LevyPayment,
   StudentLevyStatus,
+  TermEvent,
+  TermEventScope,
+  ApprovalStatus,
 } from "./types";
 import type {
   NewsArticle,
@@ -85,6 +88,7 @@ let schoolMessages = clone(db.schoolMessages);
 let parentReplies = clone(db.parentReplies);
 let specialLevies = clone(db.specialLevies);
 let levyPayments = clone(db.levyPayments);
+let termEvents = clone(db.termEvents);
 
 const classTeacherCommentStore = new Map<string, string>();
 let principalCommentTemplates = {
@@ -1241,3 +1245,109 @@ export async function getLevyCollectionSummary(levyId: string): Promise<{
   });
 }
 
+
+// ---- Term Events & Calendar ----
+export async function getTermEvents(filters?: {
+  term?: number;
+  year?: number;
+  scope?: TermEventScope;
+  classId?: string;
+  gradeLevel?: string;
+  approvalStatus?: ApprovalStatus | "all";
+  visibleToParents?: boolean;
+}): Promise<TermEvent[]> {
+  let list = clone(termEvents);
+  if (filters) {
+    if (filters.term) list = list.filter((e) => e.term === filters.term);
+    if (filters.year) list = list.filter((e) => e.year === filters.year);
+    if (filters.scope) list = list.filter((e) => e.scope === filters.scope);
+    if (filters.classId) list = list.filter((e) => e.classId === filters.classId);
+    if (filters.gradeLevel) list = list.filter((e) => e.gradeLevel === filters.gradeLevel);
+    if (filters.approvalStatus && filters.approvalStatus !== "all") {
+      list = list.filter((e) => e.approvalStatus === filters.approvalStatus);
+    }
+    if (filters.visibleToParents !== undefined) {
+      list = list.filter((e) => e.visibleToParents === filters.visibleToParents);
+    }
+  }
+  return delay(list.sort((a, b) => a.startDate.localeCompare(b.startDate)));
+}
+
+export async function getStudentTermEvents(studentId: string, term: number, year: number): Promise<TermEvent[]> {
+  const student = students.find((s) => s.id === studentId);
+  if (!student) return delay([]);
+
+  const list = termEvents.filter((e) => {
+    if (e.term !== term || e.year !== year || !e.visibleToParents || e.approvalStatus !== "approved") {
+      return false;
+    }
+    if (e.scope === "school") return true;
+    if (e.scope === "grade" && e.gradeLevel === student.gradeLevel) return true;
+    if (e.scope === "class" && e.classId === student.classId) return true;
+    return false;
+  });
+
+  return delay(clone(list).sort((a, b) => a.startDate.localeCompare(b.startDate)));
+}
+
+export async function createTermEvent(data: Omit<TermEvent, "id" | "createdAt" | "approvalStatus"> & { role: string }): Promise<TermEvent> {
+  const { role, ...rest } = data;
+  let approvalStatus: ApprovalStatus = "pending_approval";
+  if (["admin", "headteacher", "deputy", "hod"].includes(role)) {
+    approvalStatus = "approved";
+  }
+
+  const newEvent: TermEvent = {
+    ...rest,
+    id: "te-" + Date.now(),
+    createdAt: new Date().toISOString(),
+    approvalStatus,
+  } as TermEvent;
+
+  termEvents.push(newEvent);
+  return delay(clone(newEvent));
+}
+
+export async function updateTermEvent(id: string, patch: Partial<TermEvent>): Promise<TermEvent> {
+  const idx = termEvents.findIndex((e) => e.id === id);
+  if (idx === -1) throw new Error("Event not found");
+  termEvents[idx] = { ...termEvents[idx], ...patch };
+  return delay(clone(termEvents[idx]));
+}
+
+export async function deleteTermEvent(id: string): Promise<void> {
+  termEvents = termEvents.filter((e) => e.id !== id);
+  return delay(undefined);
+}
+
+export async function approveTermEvent(id: string, reviewerId: string, reviewerName: string): Promise<TermEvent> {
+  const idx = termEvents.findIndex((e) => e.id === id);
+  if (idx === -1) throw new Error("Event not found");
+  termEvents[idx] = {
+    ...termEvents[idx],
+    approvalStatus: "approved",
+    reviewedBy: reviewerId,
+    reviewedByName: reviewerName,
+    reviewedAt: new Date().toISOString(),
+    visibleToParents: true,
+  };
+  return delay(clone(termEvents[idx]));
+}
+
+export async function rejectTermEvent(id: string, reviewerId: string, reviewerName: string, reason: string): Promise<TermEvent> {
+  const idx = termEvents.findIndex((e) => e.id === id);
+  if (idx === -1) throw new Error("Event not found");
+  termEvents[idx] = {
+    ...termEvents[idx],
+    approvalStatus: "rejected",
+    reviewedBy: reviewerId,
+    reviewedByName: reviewerName,
+    reviewedAt: new Date().toISOString(),
+    rejectionReason: reason,
+  };
+  return delay(clone(termEvents[idx]));
+}
+
+export async function getPendingTermEventCount(): Promise<number> {
+  return delay(termEvents.filter((e) => e.approvalStatus === "pending_approval").length);
+}

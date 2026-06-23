@@ -11,6 +11,7 @@ import MenuBookIcon from "@mui/icons-material/MenuBook";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import DescriptionIcon from "@mui/icons-material/Description";
 import ScheduleIcon from "@mui/icons-material/Schedule";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import PaymentsIcon from "@mui/icons-material/Payments";
@@ -65,6 +66,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { label: "Examinations", to: "/exams", icon: <AssignmentIcon />, permission: "exams.marks" },
       { label: "Report Cards", to: "/report-cards", icon: <DescriptionIcon />, permission: "exams.view" },
       { label: "Timetable", to: "/timetable", icon: <ScheduleIcon />, permission: "timetable.view" },
+      { label: "Term Planner", to: "/term-planner", icon: <CalendarMonthIcon />, permission: "classes.view" },
     ],
   },
   {

@@ -519,3 +519,43 @@ export interface StudentLevyStatus {
   waived: boolean;
   waivedReason?: string;
 }
+export type TermEventCategory =
+  | "exam"          // opener, midterm, endterm, mock
+  | "holiday"       // public holiday, half-term break
+  | "closure"       // early closure day
+  | "meeting"       // parents meeting, staff meeting
+  | "activity"      // sports day, science fair, cultural day
+  | "trip"          // educational trips (class-specific)
+  | "deadline"      // fee payment deadline, form submission
+  | "other";
+
+export type TermEventScope = "school" | "grade" | "class";
+
+export type ApprovalStatus = "draft" | "pending_approval" | "approved" | "rejected";
+
+export interface TermEvent {
+  id: string;
+  title: string;
+  description?: string;
+  category: TermEventCategory;
+  scope: TermEventScope;
+  classId?: string;         // if scope === "class"
+  className?: string;
+  gradeLevel?: string;      // if scope === "grade"
+  startDate: string;        // ISO date "2026-06-17"
+  endDate: string;          // ISO date — same as startDate for single-day events
+  isRange: boolean;         // true if startDate !== endDate
+  term: TermNumber;
+  year: number;
+  visibleToParents: boolean;
+  examId?: string;          // link to Exam if category === "exam"
+  color?: string;           // optional override; defaults from category
+  approvalStatus: ApprovalStatus;
+  createdBy: string;        // userId
+  createdByName: string;    // display name
+  createdAt: string;
+  reviewedBy?: string;      // userId of approver/rejecter
+  reviewedByName?: string;
+  reviewedAt?: string;
+  rejectionReason?: string;
+}

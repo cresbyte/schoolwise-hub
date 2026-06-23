@@ -58,7 +58,9 @@ import { useAuth } from "@/context/AuthContext";
 import { useNotification } from "@/context/NotificationContext";
 import * as api from "@/lib/mockApi";
 import { formatKES, formatDate, getInitials } from "@/lib/utils";
-import type { Student, SchoolMessage, SpecialLevy, StudentLevyStatus, ReportCard } from "@/lib/types";
+import { TERM_EVENT_COLORS, TERM_EVENT_ICONS } from "@/lib/termEventConfig";
+import type { Student, SchoolMessage, SpecialLevy, StudentLevyStatus, ReportCard, TermEvent } from "@/lib/types";
+import { school as SCHOOL } from "@/lib/mockData";
 
 export default function PortalPage() {
   return (
@@ -142,6 +144,7 @@ function PortalContent() {
           scrollButtons="auto" 
           sx={{ borderBottom: 1, borderColor: "divider" }}
         >
+          <Tab label="This Term" />
           <Tab label="Results" />
           <Tab label="Attendance" />
           <Tab label="Fees" />
@@ -153,11 +156,12 @@ function PortalContent() {
           <Tab label="Timetable" />
         </Tabs>
         <CardContent sx={{ p: { xs: 1, sm: 2 } }}>
-          {tab === 0 && <ResultsTab student={selectedStudent} />}
-          {tab === 1 && <AttendanceTab studentId={selectedStudent.id} />}
-          {tab === 2 && <FeesTab student={selectedStudent} />}
-          {tab === 3 && <MessagesTab student={selectedStudent} user={user} />}
-          {tab === 4 && <TimetableTab student={selectedStudent} />}
+          {tab === 0 && <ThisTermTab student={selectedStudent} onSwitchTab={(i: number) => setTab(i)} />}
+          {tab === 1 && <ResultsTab student={selectedStudent} />}
+          {tab === 2 && <AttendanceTab studentId={selectedStudent.id} />}
+          {tab === 3 && <FeesTab student={selectedStudent} />}
+          {tab === 4 && <MessagesTab student={selectedStudent} user={user} />}
+          {tab === 5 && <TimetableTab student={selectedStudent} />}
         </CardContent>
       </Card>
     </>
@@ -509,9 +513,33 @@ function TimetableTab({ student }: { student: Student }) {
         ))}
       </Box>
 
-      <TableContainer sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}>
+      {/* Mobile View */}
+      <Box sx={{ display: { xs: 'block', md: 'none' }, border: 1, borderColor: "divider", borderRadius: 2, overflow: 'hidden' }}>
+        {slotsByDay[activeDay]?.length > 0 ? (
+          slotsByDay[activeDay].map((s: any) => (
+            <Box key={s.id} sx={{ p: 2, borderBottom: '1px solid rgba(0,0,0,0.1)', bgcolor: s.isBreak ? 'action.hover' : 'inherit', '&:last-child': { borderBottom: 0 } }}>
+              <Typography variant="caption" color="text.secondary">{s.startTime} - {s.endTime}</Typography>
+              {s.isBreak ? (
+                <Typography variant="subtitle2" sx={{ fontWeight: 800 }}>{s.breakName}</Typography>
+              ) : (
+                <>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 800 }}>{s.subjectName}</Typography>
+                  <Typography variant="caption" color="text.secondary">{s.teacherName}</Typography>
+                </>
+              )}
+            </Box>
+          ))
+        ) : (
+          <Box sx={{ p: 4, textAlign: 'center' }}>
+            <Typography variant="body2" color="text.secondary">No lessons today</Typography>
+          </Box>
+        )}
+      </Box>
+
+      {/* Desktop View */}
+      <TableContainer sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: "divider", borderRadius: 2 }}>
         <Table size="small">
-          <TableHead sx={{ bgcolor: "action.hover", display: { xs: "none", md: "table-header-group" } }}>
+          <TableHead sx={{ bgcolor: "action.hover" }}>
             <TableRow>
               <TableCell>Time</TableCell>
               {days.map(d => (
@@ -522,31 +550,13 @@ function TimetableTab({ student }: { student: Student }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {/* Mobile View */}
-            <Box sx={{ display: { xs: 'block', md: 'none' } }}>
-              {slotsByDay[activeDay]?.map((s: any) => (
-                <Box key={s.id} sx={{ p: 2, borderBottom: '1px solid rgba(0,0,0,0.1)', bgcolor: s.isBreak ? 'action.hover' : 'inherit' }}>
-                  <Typography variant="caption" color="text.secondary">{s.startTime} - {s.endTime}</Typography>
-                  {s.isBreak ? (
-                    <Typography variant="subtitle2" sx={{ fontWeight: 800 }}>{s.breakName}</Typography>
-                  ) : (
-                    <>
-                      <Typography variant="subtitle2" sx={{ fontWeight: 800 }}>{s.subjectName}</Typography>
-                      <Typography variant="caption" color="text.secondary">{s.teacherName}</Typography>
-                    </>
-                  )}
-                </Box>
-              ))}
-            </Box>
-
-            {/* Desktop View */}
             {Array.from({ length: 9 }).map((_, periodIdx) => {
               const periodNum = periodIdx + 1;
               const anySlotAtThisTime = slotList.find(s => s.periodNumber === periodNum);
               if (!anySlotAtThisTime) return null;
               
               return (
-                <TableRow key={periodNum} sx={{ display: { xs: 'none', md: 'table-row' } }}>
+                <TableRow key={periodNum}>
                   <TableCell sx={{ fontWeight: 600, width: 120 }}>
                     <Typography variant="body2">{anySlotAtThisTime.startTime} - {anySlotAtThisTime.endTime}</Typography>
                     <Typography variant="caption" color="text.secondary">Period {periodNum}</Typography>
@@ -661,5 +671,190 @@ function ReportCardDialog({ rc, open, onClose }: { rc: ReportCard | null; open: 
         <Button variant="contained" startIcon={<PrintIcon />} onClick={() => window.print()}>Print</Button>
       </DialogActions>
     </Dialog>
+  );
+}
+
+function ThisTermTab({ student, onSwitchTab }: { student: Student; onSwitchTab: (i: number) => void }) {
+  const events = useAsync(() => api.getStudentTermEvents(student.id, SCHOOL.currentTerm, SCHOOL.currentYear), [student.id]);
+  const levies = useAsync(() => api.getStudentLevies(student.id), [student.id]);
+  const examResults = useAsync(() => api.getStudentReportCard(student.id, "exm-1"), [student.id]); // just for one exam as preview
+
+  const daysRemaining = useMemo(() => {
+    const end = new Date(SCHOOL.termEndDate);
+    const today = new Date();
+    const diff = end.getTime() - today.getTime();
+    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+  }, []);
+
+  const termProgress = useMemo(() => {
+    const start = new Date(SCHOOL.termStartDate).getTime();
+    const end = new Date(SCHOOL.termEndDate).getTime();
+    const today = new Date().getTime();
+    const progress = ((today - start) / (end - start)) * 100;
+    return Math.min(100, Math.max(0, progress));
+  }, []);
+
+  const unpaidLevies = useMemo(() => {
+    const list = (levies.data ?? []).filter(l => !l.paid && !l.waived);
+    return {
+      count: list.length,
+      total: list.reduce((sum, l) => sum + l.levy.amount, 0)
+    };
+  }, [levies.data]);
+
+  const upcomingEvents = useMemo(() => {
+    const today = new Date().toISOString().split('T')[0];
+    return (events.data ?? []).filter(e => e.startDate >= today);
+  }, [events.data]);
+
+  return (
+    <Box>
+      <DataState loading={events.loading} data={events.data}>
+        {() => (
+          <>
+            {/* Term Overview */}
+            <Card variant="outlined" sx={{ mb: 3, bgcolor: "primary.main", color: "white" }}>
+              <CardContent>
+                <Grid container spacing={2}>
+                  <Grid size={{ xs: 12, sm: 8 }}>
+                    <Typography variant="h5" sx={{ fontWeight: 800 }}>Term {SCHOOL.currentTerm}, {SCHOOL.currentYear}</Typography>
+                    <Typography variant="body2">{formatDate(SCHOOL.termStartDate)} — {formatDate(SCHOOL.termEndDate)}</Typography>
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 4 }} sx={{ textAlign: { sm: "right" } }}>
+                    <Typography variant="h6" sx={{ fontWeight: 800 }}>{daysRemaining} Days Left</Typography>
+                  </Grid>
+                </Grid>
+                <Box sx={{ mt: 2 }}>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
+                    <Typography variant="caption">Term Progress</Typography>
+                    <Typography variant="caption">{Math.round(termProgress)}%</Typography>
+                  </Box>
+                  <Box sx={{ height: 8, bgcolor: "rgba(255,255,255,0.2)", borderRadius: 4 }}>
+                    <Box sx={{ height: "100%", width: `${termProgress}%`, bgcolor: "white", borderRadius: 4 }} />
+                  </Box>
+                </Box>
+              </CardContent>
+            </Card>
+
+            <Grid container spacing={3}>
+              <Grid size={{ xs: 12, md: 7 }}>
+                {/* Exam Schedule */}
+                <Typography variant="subtitle1" sx={{ fontWeight: 800, mb: 2 }}>Exam Schedule</Typography>
+                <Stack spacing={2} sx={{ mb: 4 }}>
+                  {(events.data ?? []).filter(e => e.category === "exam").map(examEvent => {
+                    const today = new Date().toISOString().split('T')[0];
+                    const isUpcoming = examEvent.startDate > today;
+                    const isOngoing = today >= examEvent.startDate && today <= examEvent.endDate;
+                    
+                    return (
+                      <Card key={examEvent.id} variant="outlined">
+                        <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
+                          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                            <Box>
+                              <Typography variant="subtitle2" sx={{ fontWeight: 800 }}>{examEvent.title}</Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                {examEvent.isRange ? `${formatDate(examEvent.startDate)} – ${formatDate(examEvent.endDate)}` : formatDate(examEvent.startDate)}
+                              </Typography>
+                            </Box>
+                            <Box sx={{ textAlign: "right" }}>
+                              {isUpcoming ? (
+                                <Chip label="Upcoming" size="small" color="info" sx={{ fontWeight: 700 }} />
+                              ) : isOngoing ? (
+                                <Chip label="Ongoing" size="small" color="warning" sx={{ fontWeight: 700 }} />
+                              ) : (
+                                <Stack spacing={1}>
+                                  <Chip label="Results Available" size="small" color="success" sx={{ fontWeight: 700 }} />
+                                  <Button size="small" onClick={() => onSwitchTab(1)}>View Full Results</Button>
+                                </Stack>
+                              )}
+                            </Box>
+                          </Box>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </Stack>
+
+                {/* Quick Actions */}
+                <Typography variant="subtitle1" sx={{ fontWeight: 800, mb: 2 }}>Quick Actions</Typography>
+                <Grid container spacing={2}>
+                  {[
+                    { label: "View Report Card", icon: <PrintIcon />, tab: 1 },
+                    { label: "Attendance History", icon: <EventAvailableIcon />, tab: 2 },
+                    { label: "Pay Fees", icon: <PaymentsIcon />, tab: 3 },
+                    { label: "Term Timetable", icon: <AccessTimeIcon />, tab: 5 },
+                  ].map(action => (
+                    <Grid size={{ xs: 6 }} key={action.label}>
+                      <Button 
+                        fullWidth 
+                        variant="outlined" 
+                        startIcon={action.icon} 
+                        onClick={() => onSwitchTab(action.tab)}
+                        sx={{ py: 1.5, borderRadius: 2, fontWeight: 700 }}
+                      >
+                        {action.label}
+                      </Button>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Grid>
+
+              <Grid size={{ xs: 12, md: 5 }}>
+                {/* Calendar Strip */}
+                <Typography variant="subtitle1" sx={{ fontWeight: 800, mb: 2 }}>Coming Up</Typography>
+                <Box sx={{ display: "flex", gap: 1, overflowX: "auto", pb: 2, mb: 1 }}>
+                  {upcomingEvents.map(e => (
+                    <Chip 
+                      key={e.id}
+                      label={e.title}
+                      size="small"
+                      variant="outlined"
+                      avatar={<Box sx={{ width: 8, height: 8, borderRadius: "50%", bgcolor: TERM_EVENT_COLORS[e.category] }} />}
+                      sx={{ flexShrink: 0, fontWeight: 600 }}
+                    />
+                  ))}
+                </Box>
+
+                <List sx={{ bgcolor: "background.paper", borderRadius: 2, border: 1, borderColor: "divider" }}>
+                  {upcomingEvents.map((e, idx) => (
+                    <Box key={e.id}>
+                      <ListItem sx={{ py: 1.5 }}>
+                        <Box sx={{ minWidth: 60, textAlign: "center" }}>
+                          <Typography variant="caption" sx={{ fontWeight: 800, color: "text.secondary", display: "block", lineHeight: 1 }}>
+                            {new Date(e.startDate).toLocaleString('default', { month: 'short' }).toUpperCase()}
+                          </Typography>
+                          <Typography variant="h6" sx={{ fontWeight: 800, lineHeight: 1 }}>
+                            {new Date(e.startDate).getDate()}
+                          </Typography>
+                        </Box>
+                        <ListItemText 
+                          primary={<Typography variant="body2" sx={{ fontWeight: 800 }}>{e.title}</Typography>}
+                          secondary={<Typography variant="caption" color="text.secondary">{TERM_EVENT_ICONS[e.category]} {e.category.toUpperCase()}</Typography>}
+                        />
+                        {e.scope !== 'school' && <Chip label="Your class" size="small" color="secondary" sx={{ height: 20, fontSize: 10 }} />}
+                      </ListItem>
+                      {idx < upcomingEvents.length - 1 && <Divider />}
+                    </Box>
+                  ))}
+                  {upcomingEvents.length === 0 && <ListItem><ListItemText secondary="No upcoming events" /></ListItem>}
+                </List>
+
+                {/* Fees Alert */}
+                {unpaidLevies.count > 0 && (
+                  <Alert 
+                    severity="warning" 
+                    sx={{ mt: 3, borderRadius: 2 }} 
+                    action={<Button size="small" color="inherit" onClick={() => onSwitchTab(3)}>View</Button>}
+                  >
+                    <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Unpaid Levies</Typography>
+                    <Typography variant="body2">You have {unpaidLevies.count} unpaid special levies totaling {formatKES(unpaidLevies.total)}.</Typography>
+                  </Alert>
+                )}
+              </Grid>
+            </Grid>
+          </>
+        )}
+      </DataState>
+    </Box>
   );
 }
