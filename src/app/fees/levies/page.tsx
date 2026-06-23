@@ -40,7 +40,7 @@ import type { SpecialLevy, LevyScope, Student } from "@/lib/types";
 
 export default function LeviesPage() {
   return (
-    <DashboardLayout title="Special Levies & Ad-hoc Charges">
+    <DashboardLayout>
       <RoleGuard permission="fees.view">
         <LeviesContent />
       </RoleGuard>
@@ -147,7 +147,7 @@ function LeviesContent() {
                         />
                       </TableCell>
                       <TableCell align="right">
-                        <Stack direction="row" spacing={1} justifyContent="flex-end">
+                        <Stack direction="row" spacing={1} sx={{ justifyContent: "flex-end" }}>
                           <Tooltip title="View Collection">
                             <IconButton size="small" onClick={() => { setSelectedLevy(l); setDetailOpen(true); }}>
                               <VisibilityIcon fontSize="small" />
@@ -195,7 +195,8 @@ function NewLevyDialog({ open, onClose, onSuccess }: { open: boolean, onClose: (
     status: "active",
   });
 
-  const { data: classes = [] } = useAsync(() => api.getClasses(), []);
+  const { data: classesData } = useAsync(() => api.getClasses(), []);
+  const classes = classesData || [];
 
   const handleSubmit = async () => {
     if (!formData.title || !formData.amount) return;
@@ -368,19 +369,24 @@ function LevyDetailDialog({ open, onClose, levy }: { open: boolean, onClose: () 
 }
 
 function StudentPaymentList({ levyId, onRecordPayment }: { levyId: string, onRecordPayment: (s: any) => void }) {
-  const { data: summary, loading } = useAsync(() => api.getLevyCollectionSummary(levyId), [levyId]);
-  const { data: students = [] } = useAsync(async () => {
+  const { data: summary, loading: summaryLoading } = useAsync(() => api.getLevyCollectionSummary(levyId), [levyId]);
+  const { data: studentsData, loading: studentsLoading } = useAsync(async () => {
     const l = await api.getAllLevies();
     const target = l.find(x => x.id === levyId);
     if (!target) return [];
     if (target.scope === "class") return api.getStudentsByClass(target.classId!);
-    if (target.scope === "grade") return api.getStudents({ gradeLevel: target.gradeLevel });
+    if (target.scope === "grade") {
+      const all = await api.getStudents();
+      return all.filter(s => s.gradeLevel === (target as any).gradeLevel);
+    }
     if (target.scope === "all") return api.getStudents();
     if (target.scope === "individual") return Promise.all((target.studentIds || []).map(id => api.getStudentById(id)));
     return [];
   }, [levyId]);
 
-  if (loading) return <LinearProgress />;
+  const students = studentsData || [];
+
+  if (summaryLoading || studentsLoading) return <LinearProgress />;
 
   return (
     <Table size="small">

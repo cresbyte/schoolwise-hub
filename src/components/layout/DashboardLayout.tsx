@@ -146,7 +146,10 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
 
         <Box sx={{ overflowY: "auto", py: 1 }}>
           {NAV_GROUPS.map((group) => {
-            const items = group.items.filter((i) => !i.permission || hasPermission(i.permission));
+            const items = group.items.filter((i) => {
+              if (i.hiddenRoles && user && i.hiddenRoles.includes(user.role)) return false;
+              return !i.permission || hasPermission(i.permission);
+            });
             if (!items.length) return null;
             return (
               <List key={group.heading} dense sx={{ px: 1 }}>

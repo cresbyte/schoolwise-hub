@@ -37,9 +37,10 @@ import { ClassSelect } from "@/components/ClassSelect";
 import { DataState } from "@/components/DataState";
 import { useAsync } from "@/hooks/useAsync";
 import { useNotification } from "@/context/NotificationContext";
+import { useAuth } from "@/context/AuthContext";
 import * as api from "@/lib/mockApi";
 import { formatDate, getWeeksInRange, getDaysInWeek } from "@/lib/utils";
-import type { AttendanceRecord, AttendanceStatus, Student } from "@/lib/types";
+import type { AttendanceRecord, AttendanceStatus, Student, Staff } from "@/lib/types";
 
 const STATUS_CONFIG: Record<AttendanceStatus, { icon: any; color: string; label: string; shortcut: string }> = {
   present: { icon: <CheckCircleIcon fontSize="small" />, color: "#2E7D32", label: "Present", shortcut: "P" },
@@ -62,10 +63,20 @@ export default function AttendancePage() {
 }
 
 function AttendanceMatrix({ settings }: { settings: any }) {
+  const { user } = useAuth();
   const { showNotification } = useNotification();
   const [classId, setClassId] = useState("");
   const [selectedWeekIdx, setSelectedWeekIdx] = useState(0);
   const [saving, setSaving] = useState(false);
+
+  // If teacher, fetch their assigned class
+  const staff = useAsync(() => user?.staffId ? api.getStaffById(user.staffId) : Promise.resolve(null), [user]);
+  
+  useEffect(() => {
+    if (user?.role === "class_teacher" && staff.data?.classAssigned) {
+      setClassId(staff.data.classAssigned);
+    }
+  }, [user, staff.data]);
 
   // Calculate available weeks in the current term
   const weeks = useMemo(() => {
@@ -158,7 +169,13 @@ function AttendanceMatrix({ settings }: { settings: any }) {
       <Card sx={{ mb: 3 }}>
         <CardContent sx={{ display: "flex", gap: 2, flexWrap: "wrap", alignItems: "center", justifyContent: "space-between" }}>
           <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", alignItems: "center" }}>
-            <ClassSelect value={classId} onChange={setClassId} allOption={false} label="Select Class" />
+            <ClassSelect 
+              value={classId} 
+              onChange={setClassId} 
+              allOption={false} 
+              label="Select Class" 
+              disabled={user?.role === "class_teacher"}
+            />
             <TextField
               select
               size="small"

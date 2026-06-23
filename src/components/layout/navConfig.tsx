@@ -3,6 +3,7 @@
  * @module navConfig
  */
 import type { ReactNode } from "react";
+import type { UserRole } from "@/lib/types";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleIcon from "@mui/icons-material/People";
 import SchoolIcon from "@mui/icons-material/School";
@@ -39,6 +40,7 @@ export interface NavItem {
   to: string;
   icon: ReactNode;
   permission?: string;
+  hiddenRoles?: UserRole[];
 }
 export interface NavGroup {
   heading: string;
@@ -54,15 +56,12 @@ export const NAV_GROUPS: NavGroup[] = [
     heading: "Students",
     items: [
       { label: "All Students", to: "/students", icon: <PeopleIcon />, permission: "students.view" },
-      { label: "Classes & Streams", to: "/classes", icon: <SchoolIcon />, permission: "classes.view" },
       { label: "Attendance", to: "/attendance", icon: <EventAvailableIcon />, permission: "attendance.write" },
     ],
   },
   {
     heading: "Academics",
     items: [
-      { label: "Subjects", to: "/subjects", icon: <MenuBookIcon />, permission: "classes.view" },
-      { label: "Teacher Assignments", to: "/subjects/assignments", icon: <AssignmentIndIcon />, permission: "classes.view" },
       { label: "Examinations", to: "/exams", icon: <AssignmentIcon />, permission: "exams.marks" },
       { label: "Report Cards", to: "/report-cards", icon: <DescriptionIcon />, permission: "exams.view" },
       { label: "Timetable", to: "/timetable", icon: <ScheduleIcon />, permission: "timetable.view" },
@@ -93,9 +92,9 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     heading: "Reports",
     items: [
-      { label: "Academic Reports", to: "/reports/academic", icon: <BarChartIcon />, permission: "reports.view" },
-      { label: "NEMIS Export", to: "/reports/nemis", icon: <DownloadIcon />, permission: "reports.view" },
-      { label: "Audit Trail", to: "/reports/audit", icon: <HistoryIcon />, permission: "reports.view" },
+      { label: "Academic Reports", to: "/reports/academic", icon: <BarChartIcon />, permission: "reports.view", hiddenRoles: ["class_teacher"] },
+      { label: "NEMIS Export", to: "/reports/nemis", icon: <DownloadIcon />, permission: "reports.view", hiddenRoles: ["class_teacher"] },
+      { label: "Audit Trail", to: "/reports/audit", icon: <HistoryIcon />, permission: "reports.view", hiddenRoles: ["class_teacher"] },
     ],
   },
   {

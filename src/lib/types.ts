@@ -559,3 +559,13 @@ export interface TermEvent {
   reviewedAt?: string;
   rejectionReason?: string;
 }
+export interface TeacherClassSummary {
+  classId: string;
+  className: string;
+  studentCount: number;
+  attendanceRate: number;
+  averageMarks: number;
+  unpaidFeesCount: number;
+  upcomingExams: Exam[];
+  topStudents: Array<{ id: string; name: string; mark: number }>;
+}

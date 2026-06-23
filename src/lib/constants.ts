@@ -132,6 +132,8 @@ export const PERMISSIONS: Record<UserRole, string[]> = {
     "attendance.write",
     "exams.marks",
     "timetable.view",
+    "reports.view",
+    "classes.view",
   ],
   accountant: ["fees.*", "payroll.*", "students.view", "reports.fees"],
   parent: ["portal.view"],
@@ -141,7 +143,7 @@ export const PERMISSIONS: Record<UserRole, string[]> = {
 export const ROLE_HOME: Record<UserRole, string> = {
   admin: "/dashboard",
   headteacher: "/dashboard",
-  class_teacher: "/attendance",
+  class_teacher: "/dashboard",
   accountant: "/fees/collection",
   parent: "/portal",
 };

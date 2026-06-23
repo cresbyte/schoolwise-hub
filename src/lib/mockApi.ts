@@ -33,6 +33,7 @@ import type {
   TermEvent,
   TermEventScope,
   ApprovalStatus,
+  TeacherClassSummary,
 } from "./types";
 import type {
   NewsArticle,
@@ -1350,4 +1351,38 @@ export async function rejectTermEvent(id: string, reviewerId: string, reviewerNa
 
 export async function getPendingTermEventCount(): Promise<number> {
   return delay(termEvents.filter((e) => e.approvalStatus === "pending_approval").length);
+}
+
+// ---- Teacher Dashboard ----
+export async function getTeacherClassSummary(staffId: string): Promise<TeacherClassSummary> {
+  const teacher = staff.find(s => s.id === staffId);
+  if (!teacher || !teacher.classAssigned) {
+    throw new Error("Staff is not assigned to any class");
+  }
+  
+  const cls = classes.find(c => c.id === teacher.classAssigned)!;
+  const classStudents = students.filter(s => s.classId === cls.id);
+  const classExams = exams.filter(e => e.gradeLevel.includes(cls.gradeLevel));
+  const classMarks = examMarks.filter(m => m.classId === cls.id && m.marks !== null);
+  
+  const avg = classMarks.length > 0 
+    ? classMarks.reduce((s, m) => s + (m.marks || 0), 0) / classMarks.length 
+    : 0;
+
+  const topStudents = classStudents.map(s => {
+    const sMarks = classMarks.filter(m => m.studentId === s.id);
+    const sAvg = sMarks.length > 0 ? sMarks.reduce((sum, mk) => sum + (mk.marks || 0), 0) / sMarks.length : 0;
+    return { id: s.id, name: `${s.firstName} ${s.lastName}`, mark: sAvg };
+  }).sort((a, b) => b.mark - a.mark).slice(0, 5);
+
+  return delay({
+    classId: cls.id,
+    className: cls.name,
+    studentCount: cls.studentCount,
+    attendanceRate: 94, // Mock
+    averageMarks: Math.round(avg),
+    unpaidFeesCount: classStudents.filter(s => s.feeBalance > 0).length,
+    upcomingExams: classExams.filter(e => e.status === "upcoming"),
+    topStudents,
+  });
 }
