@@ -25,13 +25,16 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PageHeader } from "@/components/PageHeader";
 import { DataState } from "@/components/DataState";
 import { RoleGuard } from "@/components/RoleGuard";
+import { PageGuard } from "@/components/common/PageGuard";
 import { useClasses } from "@/hooks/domain";
 import { CURRICULUM_LABELS } from "@/lib/constants";
 
 export default function ClassesPage() {
   return (
     <DashboardLayout>
-      <ClassesContent />
+      <PageGuard permission="classes.view">
+        <ClassesContent />
+      </PageGuard>
     </DashboardLayout>
   );
 }

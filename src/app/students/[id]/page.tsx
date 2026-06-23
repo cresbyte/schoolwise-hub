@@ -29,6 +29,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { useParams, useRouter } from "next/navigation";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { DataState } from "@/components/DataState";
+import { PageGuard } from "@/components/common/PageGuard";
 import { StatusChip } from "@/components/StatusChip";
 import { GradeChip } from "@/components/GradeChip";
 import { CBCRatingChip } from "@/components/CBCRatingChip";
@@ -45,7 +46,9 @@ export default function StudentDetailsPage() {
   const id = params.id as string;
   return (
     <DashboardLayout>
-      <StudentDetail id={id} />
+      <PageGuard permission="students.view">
+        <StudentDetail id={id} />
+      </PageGuard>
     </DashboardLayout>
   );
 }
@@ -76,7 +79,10 @@ function StudentDetail({ id }: { id: string }) {
             <CardContent>
               <Box sx={{ display: "flex", gap: 3, alignItems: "center", flexWrap: "wrap" }}>
                 <Box sx={{ position: "relative" }}>
-                  <Avatar src={s.photo} sx={{ width: 100, height: 100, fontSize: 32, bgcolor: "primary.main" }}>
+                  <Avatar 
+                    src={s.avatarUrl || s.photo} 
+                    sx={{ width: 100, height: 100, fontSize: 32, bgcolor: "primary.main" }}
+                  >
                     {getInitials(`${s.firstName} ${s.lastName}`)}
                   </Avatar>
                   <IconButton

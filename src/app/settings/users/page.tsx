@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PageHeader } from "@/components/PageHeader";
 import { DataState } from "@/components/DataState";
+import { PageGuard } from "@/components/common/PageGuard";
 import { useAsync } from "@/hooks/useAsync";
 import { useNotification } from "@/context/NotificationContext";
 import * as api from "@/lib/mockApi";
@@ -30,7 +31,9 @@ import { ROLE_LABELS, ROLE_COLORS } from "@/lib/constants";
 export default function UsersSettingsPage() {
   return (
     <DashboardLayout>
-      <UsersContent />
+      <PageGuard permission="settings.users">
+        <UsersContent />
+      </PageGuard>
     </DashboardLayout>
   );
 }

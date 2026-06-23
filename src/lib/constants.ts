@@ -126,16 +126,18 @@ export const PERMISSIONS: Record<UserRole, string[]> = {
     "reports.*",
     "timetable.*",
     "fees.view",
+    "messages.send",
   ],
   class_teacher: [
     "students.view",
     "attendance.write",
     "exams.marks",
+    "exams.view",
     "timetable.view",
     "reports.view",
     "classes.view",
   ],
-  accountant: ["fees.*", "payroll.*", "students.view", "reports.fees"],
+  accountant: ["fees.*", "fees.view", "fees.write", "payroll.*", "payroll.view", "students.view", "reports.fees"],
   parent: ["portal.view"],
 };
 

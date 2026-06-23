@@ -1,5 +1,5 @@
 /**
- * Mutable in-memory content store for the Greenfield public website.
+ * Mutable in-memory content store for the Primrose public website.
  * All arrays are wrapped in module-level variables; call the getter
  * functions so CMS mutations are reflected on the public site.
  * @module website/data
@@ -167,10 +167,10 @@ export const STAFF_QUALIFICATIONS: Record<string, string> = {
 let _heroSlides: HeroSlide[] = [
   {
     id: "1",
-    title: "Welcome to Greenfield Private Academy",
+    title: "Welcome to Primrose Private Academy",
     subtitle: "Excellence Through Knowledge in the heart of Nakuru",
     image: WEBSITE_IMAGES.campusBanner,
-    imageAlt: "Greenfield Private Academy campus in Nakuru",
+    imageAlt: "Primrose Private Academy campus in Nakuru",
     cta: { label: "Explore Our School", href: "/about" },
   },
   {
@@ -178,7 +178,7 @@ let _heroSlides: HeroSlide[] = [
     title: "CBC & 8-4-4 Excellence",
     subtitle: "Holistic education from PP1 through Form 4",
     image: WEBSITE_IMAGES.classroom,
-    imageAlt: "Students engaged in classroom learning at Greenfield",
+    imageAlt: "Students engaged in classroom learning at Primrose",
     cta: { label: "View Academics", href: "/academics" },
   },
   {
@@ -244,11 +244,11 @@ export const setWhyChooseUs = (data: WhyChooseUsItem[]) => { _whyChooseUs = data
 // ─── News Articles ────────────────────────────────────────────────────────────
 
 const ARTICLE_BODY = `
-Greenfield Private Academy continues to strengthen its position as one of Nakuru County's leading private institutions. Situated along Milimani Road with views of the Rift Valley, our campus provides a nurturing environment where learners from diverse backgrounds thrive academically, socially, and spiritually.
+Primrose Private Academy continues to strengthen its position as one of Nakuru County's leading private institutions. Situated along Milimani Road with views of the Rift Valley, our campus provides a nurturing environment where learners from diverse backgrounds thrive academically, socially, and spiritually.
 
 This term, we have invested in upgrading our science laboratories and expanding our digital learning resources. Form 4 candidates are benefiting from intensive revision clinics led by experienced KNEC examiners, while our Junior School learners engage in project-based CBC assessments that develop critical thinking and creativity.
 
-Our boarding section remains a cornerstone of the Greenfield experience. With structured evening prep, supervised recreation, and nutritious meals prepared in our modern kitchen, boarders enjoy a home-away-from-home atmosphere. Day scholars equally benefit from extended library hours and after-school clubs ranging from robotics to debate.
+Our boarding section remains a cornerstone of the Primrose experience. With structured evening prep, supervised recreation, and nutritious meals prepared in our modern kitchen, boarders enjoy a home-away-from-home atmosphere. Day scholars equally benefit from extended library hours and after-school clubs ranging from robotics to debate.
 
 Community engagement remains central to our ethos. Last month, our Environmental Club partnered with Nakuru Municipality on a tree-planting initiative along the Njoro River, reinforcing our commitment to environmental stewardship. The Inter-House Athletics Championships drew families from across the county, showcasing the talent and sportsmanship of our learners.
 
@@ -256,7 +256,7 @@ Parents appreciate our transparent fee policies and convenient M-Pesa payment op
 
 As we look ahead to Term 3, we invite prospective families to attend our Open Day on 15 July. Tours will include our ICT centre, dormitories, and newly refurbished art studio. Admissions for limited spaces in Form 1 and Grade 4 are now open.
 
-At Greenfield, we believe every child deserves an education that unlocks their full potential. Join us in nurturing tomorrow's leaders today.
+At Primrose, we believe every child deserves an education that unlocks their full potential. Join us in nurturing tomorrow's leaders today.
 `.trim();
 
 function mkArticle(
@@ -266,18 +266,18 @@ function mkArticle(
   category: NewsArticle["category"],
   date: string,
   image: string,
-  author = "Greenfield Communications",
+  author = "Primrose Communications",
 ): NewsArticle {
   return { slug, title, excerpt, category, date, author, readMinutes: 4, image, content: ARTICLE_BODY };
 }
 
 let _newsArticles: NewsArticle[] = [
-  mkArticle("greenfield-kcse-2026-results", "Greenfield Celebrates Strong KCSE 2026 Performance", "Our Form 4 class achieved a mean score of 8.2, with 12 students earning straight A grades.", "Achievements", "2026-05-20", WEBSITE_IMAGES.classroom),
+  mkArticle("primrose-kcse-2026-results", "Primrose Celebrates Strong KCSE 2026 Performance", "Our Form 4 class achieved a mean score of 8.2, with 12 students earning straight A grades.", "Achievements", "2026-05-20", WEBSITE_IMAGES.classroom),
   mkArticle("open-day-july-2026", "Open Day & Campus Tour — 15 July 2026", "Prospective families are invited to tour our facilities and meet our leadership team.", "Events", "2026-06-01", WEBSITE_IMAGES.campusBanner),
   mkArticle("cbc-grade-6-assessment", "Grade 6 Learners Excel in National Assessment", "Our inaugural CBC cohort demonstrated outstanding performance in the June national assessment.", "Achievements", "2026-06-05", WEBSITE_IMAGES.classroom),
   mkArticle("new-science-lab", "State-of-the-Art Science Lab Officially Opened", "The new laboratory will enhance practical learning for Form 3 and Form 4 sciences.", "News", "2026-05-15", WEBSITE_IMAGES.classroom),
   mkArticle("inter-house-athletics", "Inter-House Athletics Championships 2026", "Blue House emerged victorious in a thrilling day of track and field events.", "Events", "2026-05-10", WEBSITE_IMAGES.sports),
-  mkArticle("debate-team-nakuru", "Debate Team Wins Nakuru County Championship", "Greenfield debaters will represent the county at the national finals in Nairobi.", "Achievements", "2026-04-28", WEBSITE_IMAGES.classroom),
+  mkArticle("debate-team-nakuru", "Debate Team Wins Nakuru County Championship", "Primrose debaters will represent the county at the national finals in Nairobi.", "Achievements", "2026-04-28", WEBSITE_IMAGES.classroom),
   mkArticle("parent-portal-launch", "ShuleSmart Parent Portal Now Live", "Parents can now view fees, attendance, and report cards online via the new portal.", "Announcements", "2026-04-15", WEBSITE_IMAGES.library),
   mkArticle("music-drama-festival", "Annual Music & Drama Festival Set for August", "Learners are rehearsing for the highly anticipated cultural showcase.", "Events", "2026-04-01", WEBSITE_IMAGES.sports),
   mkArticle("tree-planting-initiative", "Environmental Club Plants 500 Trees", "Learners partnered with Nakuru Municipality on a reforestation project.", "News", "2026-03-20", WEBSITE_IMAGES.campusBanner),
@@ -311,9 +311,9 @@ export const setGalleryItems = (data: GalleryItem[]) => { _galleryItems = data; 
 // ─── Testimonials ─────────────────────────────────────────────────────────────
 
 let _testimonials: Testimonial[] = [
-  { id: "t1", name: "Grace Wanjiku", role: "Parent, Grade 6", quote: "Greenfield has transformed my daughter's confidence. The teachers genuinely care about every child.", gradient: "linear-gradient(135deg, #1565C0, #42A5F5)" },
+  { id: "t1", name: "Grace Wanjiku", role: "Parent, Grade 6", quote: "Primrose has transformed my daughter's confidence. The teachers genuinely care about every child.", gradient: "linear-gradient(135deg, #1565C0, #42A5F5)" },
   { id: "t2", name: "James Otieno", role: "Alumnus, KCSE 2023 — A", quote: "The discipline and mentorship I received here prepared me for university. I am forever grateful.", gradient: "linear-gradient(135deg, #2E7D32, #66BB6A)" },
-  { id: "t3", name: "Faith Chemutai", role: "Parent, Form 2 Boarder", quote: "As a working parent in Nairobi, I trust Greenfield's boarding programme completely. Excellent pastoral care.", gradient: "linear-gradient(135deg, #F57F17, #FFB74D)" },
+  { id: "t3", name: "Faith Chemutai", role: "Parent, Form 2 Boarder", quote: "As a working parent in Nairobi, I trust Primrose's boarding programme completely. Excellent pastoral care.", gradient: "linear-gradient(135deg, #F57F17, #FFB74D)" },
   { id: "t4", name: "Peter Kariuki", role: "Parent, PP2", quote: "The CBC approach is well implemented. My son loves going to school every morning!", gradient: "linear-gradient(135deg, #6A1B9A, #AB47BC)" },
 ];
 export const getTestimonials = (): Testimonial[] => [..._testimonials];
@@ -344,7 +344,7 @@ let _faqItems: FaqItem[] = [
   { id: "f9", question: "How does the admission process work?", answer: "Submit an online application, attend an assessment interview, receive an offer letter, and complete enrollment with required documents and fees." },
   { id: "f10", question: "Are scholarships available?", answer: "Yes. Merit scholarships are awarded annually to outstanding KCPE candidates. Financial aid applications are reviewed by the bursar's office." },
   { id: "f11", question: "What extracurricular activities are offered?", answer: "Sports, music, drama, debate, scouting, environmental club, robotics, and Christian union among others. See our School Life page for details." },
-  { id: "f12", question: "How can I contact the principal?", answer: "Email principal@greenfieldacademy.ac.ke or call 0712 345 678 ext. 101. Appointments can be scheduled through the school secretary." },
+  { id: "f12", question: "How can I contact the principal?", answer: "Email principal@primroseacademy.ac.ke or call 0712 345 678 ext. 101. Appointments can be scheduled through the school secretary." },
 ];
 export const getFaqItems = (): FaqItem[] => [..._faqItems];
 export const setFaqItems = (data: FaqItem[]) => { _faqItems = data; };
@@ -708,7 +708,7 @@ let _applicationSubmissions: ApplicationSubmission[] = [
     relationship: "Mother",
     prevSchool: "Starehe Boys Centre, Nairobi",
     prevClass: "Form 1",
-    reason: "Transfer due to family financial constraints. Greenfield closer to home.",
+    reason: "Transfer due to family financial constraints. Primrose closer to home.",
     submittedAt: "2026-05-30T10:00:00Z",
     status: "enrolled",
     notes: "Fully enrolled. All fees cleared. Admission number GFA-2026-0357.",

@@ -6,6 +6,22 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/**
+ * Generates a deterministic DiceBear avatar URL.
+ * Students use the "micah" style (friendly, youthful).
+ * Staff use the "personas" style (professional).
+ * The seed combines name + id to ensure uniqueness even for same-name people.
+ */
+export function studentAvatarUrl(firstName: string, lastName: string, id: string): string {
+  const seed = encodeURIComponent(`${firstName}${lastName}${id}`);
+  return `https://api.dicebear.com/9.x/micah/svg?seed=${seed}`;
+}
+
+export function staffAvatarUrl(name: string, id: string): string {
+  const seed = encodeURIComponent(`${name}${id}`);
+  return `https://api.dicebear.com/9.x/personas/svg?seed=${seed}`;
+}
+
 import { PERSONAL_RELIEF_MONTHLY } from "./constants";
 
 /** Format a number as Kenyan Shillings, e.g. "KES 12,500.00". */

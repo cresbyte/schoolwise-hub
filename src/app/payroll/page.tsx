@@ -31,6 +31,7 @@ import { StatCard } from "@/components/StatCard";
 import { StatusChip } from "@/components/StatusChip";
 import { Letterhead } from "@/components/Letterhead";
 import { RoleGuard } from "@/components/RoleGuard";
+import { PageGuard } from "@/components/common/PageGuard";
 import { useAsync } from "@/hooks/useAsync";
 import { useNotification } from "@/context/NotificationContext";
 import * as api from "@/lib/mockApi";
@@ -40,7 +41,9 @@ import type { PayrollRecord } from "@/lib/types";
 export default function PayrollPage() {
   return (
     <DashboardLayout>
-      <PayrollContent />
+      <PageGuard permission="payroll.view">
+        <PayrollContent />
+      </PageGuard>
     </DashboardLayout>
   );
 }

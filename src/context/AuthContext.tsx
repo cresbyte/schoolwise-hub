@@ -45,6 +45,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(false);
   }, []);
 
+  /**
+   * JWT INTEGRATION NOTE (for Django backend):
+   * When integrating Django + JWT auth, replace the body of this `login` function:
+   * 1. POST credentials to /api/auth/token/ → receive { access, refresh, user }
+   * 2. Store access token in memory (NOT localStorage for security)
+   * 3. Store refresh token in httpOnly cookie (handled by Django)
+   * 4. Set user object from the JWT payload (decoded or from /api/auth/me/)
+   * 5. The user.role field from Django must match the UserRole type exactly:
+   *    "admin" | "headteacher" | "deputy" | "hod" |
+   *    "class_teacher" | "subject_teacher" | "accountant" | "parent"
+   * 
+   * The hasPermission(), hasRole(), and hasAnyRole() helpers do NOT need to change.
+   * The PERMISSIONS map in constants.ts does NOT need to change.
+   * useRouteGuard() and PageGuard do NOT need to change.
+   * Only this login/logout function and the session storage mechanism changes.
+   */
   const login = useCallback(async (phone: string, password: string) => {
     const { user: u } = await api.login(phone, password);
     setUser(u);
@@ -52,6 +68,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return u;
   }, []);
 
+  /**
+   * JWT LOGOUT NOTE:
+   * With Django JWT, also call POST /api/auth/token/blacklist/ to invalidate
+   * the refresh token server-side. Clear the access token from memory.
+   */
   const logout = useCallback(async () => {
     await api.logout();
     setUser(null);

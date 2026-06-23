@@ -1,66 +1,25 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Avatar from "@mui/material/Avatar";
-import Chip from "@mui/material/Chip";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Typography from "@mui/material/Typography";
-import Alert from "@mui/material/Alert";
-import MenuItem from "@mui/material/MenuItem";
-import TextField from "@mui/material/TextField";
-import Stack from "@mui/material/Stack";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
-import Button from "@mui/material/Button";
-import Badge from "@mui/material/Badge";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import Grid from "@mui/material/Grid";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TableContainer from "@mui/material/TableContainer";
+import { Accordion, AccordionDetails, AccordionSummary, Alert, Avatar, Badge, Box, Button, Card, CardContent, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, IconButton, List, ListItem, ListItemText, MenuItem, Stack, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, TextField, Typography } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
 
-import PaymentsIcon from "@mui/icons-material/Payments";
-import EventAvailableIcon from "@mui/icons-material/EventAvailable";
-import ChatIcon from "@mui/icons-material/Chat";
-import SendIcon from "@mui/icons-material/Send";
-import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import PrintIcon from "@mui/icons-material/Print";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import WarningAmberIcon from "@mui/icons-material/WarningAmber";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import InfoIcon from "@mui/icons-material/Info";
+import { AccessTime, Chat, CheckCircle, EventAvailable, ExpandMore, Info, Payments, Print, Send, WarningAmber } from "@mui/icons-material";
 
-import { PortalLayout } from "@/components/layout/PortalLayout";
-import { DataState } from "@/components/DataState";
-import { StatCard } from "@/components/StatCard";
-import { GradeChip } from "@/components/GradeChip";
+
 import { CBCRatingChip } from "@/components/CBCRatingChip";
+import { DataState } from "@/components/DataState";
+import { GradeChip } from "@/components/GradeChip";
+import { PortalLayout } from "@/components/layout/PortalLayout";
 import { Letterhead } from "@/components/Letterhead";
-import { useAsync } from "@/hooks/useAsync";
 import { useAuth } from "@/context/AuthContext";
 import { useNotification } from "@/context/NotificationContext";
+import { useAsync } from "@/hooks/useAsync";
 import * as api from "@/lib/mockApi";
-import { formatKES, formatDate, getInitials } from "@/lib/utils";
-import { TERM_EVENT_COLORS, TERM_EVENT_ICONS } from "@/lib/termEventConfig";
-import type { Student, SchoolMessage, SpecialLevy, StudentLevyStatus, ReportCard, TermEvent } from "@/lib/types";
 import { school as SCHOOL } from "@/lib/mockData";
+import { TERM_EVENT_COLORS, TERM_EVENT_ICONS } from "@/lib/termEventConfig";
+import type { ReportCard, SchoolMessage, Student, StudentLevyStatus } from "@/lib/types";
+import { formatDate, formatKES, getInitials } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 export default function PortalPage() {
   return (
@@ -72,6 +31,22 @@ export default function PortalPage() {
 
 function PortalContent() {
   const { user } = useAuth();
+  const router = useRouter();
+
+  if (user?.role !== "parent") {
+    return (
+      <Box p={4} textAlign="center">
+        <Typography variant="h6" sx={{ mb: 2 }}>This page is for parents only.</Typography>
+        <Button
+          variant="contained"
+          onClick={() => router.push("/dashboard")}
+        >
+          Go to Dashboard
+        </Button>
+      </Box>
+    );
+  }
+
   const { data: students = [], loading: loadingStudents, error: studentsError } = useAsync(() => api.getParentStudents(user?.id || ""), [user?.id]);
   const [selectedStudentId, setSelectedStudentId] = useState<string>("");
   const [tab, setTab] = useState(0);
@@ -111,14 +86,26 @@ function PortalContent() {
                     onClick={() => setSelectedStudentId(s.id)}
                     color={selectedStudentId === s.id ? "primary" : "default"}
                     sx={{ fontWeight: 600 }}
-                    avatar={<Avatar sx={{ width: 24, height: 24 }}>{getInitials(s.firstName)}</Avatar>}
+                    avatar={
+                      <Avatar
+                        src={s.avatarUrl}
+                        sx={{ width: 24, height: 24 }}
+                      >
+                        {getInitials(s.firstName)}
+                      </Avatar>
+                    }
                   />
                 ))}
               </Box>
             )}
           </Box>
           <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-            <Avatar sx={{ width: 64, height: 64, bgcolor: "primary.main" }}>{getInitials(`${selectedStudent.firstName} ${selectedStudent.lastName}`)}</Avatar>
+            <Avatar
+              src={selectedStudent.avatarUrl}
+              sx={{ width: 64, height: 64, bgcolor: "primary.main" }}
+            >
+              {getInitials(`${selectedStudent.firstName} ${selectedStudent.lastName}`)}
+            </Avatar>
             <Box>
               <Typography variant="h5" sx={{ fontWeight: 700 }}>{selectedStudent.firstName} {selectedStudent.lastName}</Typography>
               <Typography variant="body2" color="text.secondary">{selectedStudent.className} · {selectedStudent.admissionNumber}</Typography>
@@ -137,11 +124,11 @@ function PortalContent() {
       </Card>
 
       <Card>
-        <Tabs 
-          value={tab} 
-          onChange={(_, v) => setTab(v)} 
-          variant="scrollable" 
-          scrollButtons="auto" 
+        <Tabs
+          value={tab}
+          onChange={(_, v) => setTab(v)}
+          variant="scrollable"
+          scrollButtons="auto"
           sx={{ borderBottom: 1, borderColor: "divider" }}
         >
           <Tab label="This Term" />
@@ -180,7 +167,7 @@ function ResultsTab({ student }: { student: Student }) {
         <TextField select size="small" label="Exam Session" value={examId} onChange={(e) => setExamId(e.target.value)} sx={{ width: 240 }}>
           {(exams.data ?? []).filter((e) => e.status !== "upcoming").map((e) => <MenuItem key={e.id} value={e.id}>{e.name}</MenuItem>)}
         </TextField>
-        <Button variant="outlined" startIcon={<PrintIcon />} onClick={() => setReportCardOpen(true)} disabled={!rc.data}>
+        <Button variant="outlined" startIcon={<Print />} onClick={() => setReportCardOpen(true)} disabled={!rc.data}>
           Full Report Card
         </Button>
       </Box>
@@ -214,7 +201,7 @@ function ResultsTab({ student }: { student: Student }) {
               <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Class Teacher's Comment:</Typography>
               <Typography variant="body2">{r.classTeacherComment}</Typography>
             </Alert>
-            <Alert severity="info" variant="outlined" icon={<CheckCircleIcon />}>
+            <Alert severity="info" variant="outlined" icon={<CheckCircle />}>
               <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Principal's Remarks:</Typography>
               <Typography variant="body2">{r.principalComment}</Typography>
             </Alert>
@@ -229,7 +216,7 @@ function ResultsTab({ student }: { student: Student }) {
 
 function AttendanceTab({ studentId }: { studentId: string }) {
   const att = useAsync(() => api.getStudentAttendance(studentId, "2026-05-01", "2026-08-31"), [studentId]);
-  
+
   return (
     <DataState loading={att.loading} error={att.error} data={att.data} isEmpty={(d: any) => d.length === 0} emptyMessage="No attendance records available.">
       {(records) => {
@@ -240,7 +227,7 @@ function AttendanceTab({ studentId }: { studentId: string }) {
           total: records.length,
         };
         const attendanceRate = stats.total ? Math.round((stats.present / stats.total) * 100) : 0;
-        
+
         const monthlyData = (records || []).reduce((acc: any, r: any) => {
           const month = new Date(r.date).toLocaleString('default', { month: 'long', year: 'numeric' });
           if (!acc[month]) acc[month] = [];
@@ -258,7 +245,7 @@ function AttendanceTab({ studentId }: { studentId: string }) {
             </Grid>
 
             {attendanceRate < 75 && (
-              <Alert severity="error" sx={{ mb: 3 }} icon={<WarningAmberIcon />}>
+              <Alert severity="error" sx={{ mb: 3 }} icon={<WarningAmber />}>
                 Attendance is below the required 75% threshold. Please contact the class teacher to discuss the reasons for absence.
               </Alert>
             )}
@@ -266,7 +253,7 @@ function AttendanceTab({ studentId }: { studentId: string }) {
             <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700 }}>Monthly Breakdown</Typography>
             {Object.entries(monthlyData).map(([month, logs]: [string, any], idx) => (
               <Accordion key={month} defaultExpanded={idx === 0} sx={{ mb: 1 }}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <AccordionSummary expandIcon={<ExpandMore />}>
                   <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%", pr: 2 }}>
                     <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>{month}</Typography>
                     <Typography variant="caption" color="text.secondary">
@@ -320,7 +307,7 @@ function FeesTab({ student }: { student: Student }) {
             </Box>
 
             <Accordion variant="outlined" sx={{ mb: 2 }}>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <AccordionSummary expandIcon={<ExpandMore />}>
                 <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>View Detailed Fee Breakdown</Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ p: 0 }}>
@@ -360,7 +347,7 @@ function FeesTab({ student }: { student: Student }) {
                       <Card variant="outlined">
                         <CardContent sx={{ pb: "16px !important" }}>
                           <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-                            <Chip size="small" label={sl.levy.category.toUpperCase()} icon={<InfoIcon fontSize="small" />} color="primary" variant="outlined" />
+                            <Chip size="small" label={sl.levy.category.toUpperCase()} icon={<Info fontSize="small" />} color="primary" variant="outlined" />
                             {sl.paid ? <Chip size="small" label="PAID ✓" color="success" /> : (
                               new Date() > new Date(sl.levy.dueDate) ? <Chip size="small" label="OVERDUE" color="error" /> : <Chip size="small" label="UNPAID" color="warning" />
                             )}
@@ -407,7 +394,7 @@ function FeesTab({ student }: { student: Student }) {
                             {p.mpesaCode && <Typography variant="caption" color="text.secondary" sx={{ fontFamily: "monospace" }}>{p.mpesaCode}</Typography>}
                           </TableCell>
                           <TableCell align="right" sx={{ fontWeight: 700 }}>{formatKES(p.amount)}</TableCell>
-                          <TableCell align="right"><IconButton size="small"><PrintIcon fontSize="small" /></IconButton></TableCell>
+                          <TableCell align="right"><IconButton size="small"><Print fontSize="small" /></IconButton></TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -463,7 +450,7 @@ function MessagesTab({ student, user }: { student: Student, user: any }) {
                   </Box>
                   <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>{m.subject}</Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 1, mb: 2 }}>{m.body}</Typography>
-                  <Button variant="outlined" size="small" startIcon={<ChatIcon />} onClick={() => { setReplyTo(m); if (m.status !== 'read') api.markMessageRead(m.id).then(() => refetch()); }}>
+                  <Button variant="outlined" size="small" startIcon={<Chat />} onClick={() => { setReplyTo(m); if (m.status !== 'read') api.markMessageRead(m.id).then(() => refetch()); }}>
                     Reply to Office
                   </Button>
                 </CardContent>
@@ -481,7 +468,7 @@ function MessagesTab({ student, user }: { student: Student, user: any }) {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setReplyTo(null)}>Cancel</Button>
-          <Button variant="contained" startIcon={<SendIcon />} onClick={handleReply} disabled={!replyBody.trim()}>Send Reply</Button>
+          <Button variant="contained" startIcon={<Send />} onClick={handleReply} disabled={!replyBody.trim()}>Send Reply</Button>
         </DialogActions>
       </Dialog>
     </Box>
@@ -496,7 +483,7 @@ function TimetableTab({ student }: { student: Student }) {
   });
 
   if (loading) return <DataState loading={true} data={null} children={<Box />} />;
-  
+
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
   const slotList = slots || [];
 
@@ -554,7 +541,7 @@ function TimetableTab({ student }: { student: Student }) {
               const periodNum = periodIdx + 1;
               const anySlotAtThisTime = slotList.find(s => s.periodNumber === periodNum);
               if (!anySlotAtThisTime) return null;
-              
+
               return (
                 <TableRow key={periodNum}>
                   <TableCell sx={{ fontWeight: 600, width: 120 }}>
@@ -607,7 +594,7 @@ function PayInstructionsDialog({ open, onClose, student }: { open: boolean, onCl
       <DialogContent>
         <List sx={{ pt: 0 }}>
           <ListItem><ListItemText primary="1. Go to M-PESA menu and select Lipa na M-PESA" secondary="Select Paybill" /></ListItem>
-          <ListItem><ListItemText primary="2. Enter Business Number: 522533" secondary="Greenfield Academy Treasury" /></ListItem>
+          <ListItem><ListItemText primary="2. Enter Business Number: 522533" secondary="Primrose Academy Treasury" /></ListItem>
           <ListItem><ListItemText primary="3. Enter Account Number" secondary={<strong>{student.admissionNumber}</strong>} /></ListItem>
           <ListItem><ListItemText primary="4. Enter the Amount and your M-PESA PIN" /></ListItem>
         </List>
@@ -668,7 +655,7 @@ function ReportCardDialog({ rc, open, onClose }: { rc: ReportCard | null; open: 
       </DialogContent>
       <DialogActions className="no-print" sx={{ p: 2 }}>
         <Button onClick={onClose}>Close</Button>
-        <Button variant="contained" startIcon={<PrintIcon />} onClick={() => window.print()}>Print</Button>
+        <Button variant="contained" startIcon={<Print />} onClick={() => window.print()}>Print</Button>
       </DialogActions>
     </Dialog>
   );
@@ -745,7 +732,7 @@ function ThisTermTab({ student, onSwitchTab }: { student: Student; onSwitchTab: 
                     const today = new Date().toISOString().split('T')[0];
                     const isUpcoming = examEvent.startDate > today;
                     const isOngoing = today >= examEvent.startDate && today <= examEvent.endDate;
-                    
+
                     return (
                       <Card key={examEvent.id} variant="outlined">
                         <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
@@ -779,16 +766,16 @@ function ThisTermTab({ student, onSwitchTab }: { student: Student; onSwitchTab: 
                 <Typography variant="subtitle1" sx={{ fontWeight: 800, mb: 2 }}>Quick Actions</Typography>
                 <Grid container spacing={2}>
                   {[
-                    { label: "View Report Card", icon: <PrintIcon />, tab: 1 },
-                    { label: "Attendance History", icon: <EventAvailableIcon />, tab: 2 },
-                    { label: "Pay Fees", icon: <PaymentsIcon />, tab: 3 },
-                    { label: "Term Timetable", icon: <AccessTimeIcon />, tab: 5 },
+                    { label: "View Report Card", icon: <Print />, tab: 1 },
+                    { label: "Attendance History", icon: <EventAvailable />, tab: 2 },
+                    { label: "Pay Fees", icon: <Payments />, tab: 3 },
+                    { label: "Term Timetable", icon: <AccessTime />, tab: 5 },
                   ].map(action => (
                     <Grid size={{ xs: 6 }} key={action.label}>
-                      <Button 
-                        fullWidth 
-                        variant="outlined" 
-                        startIcon={action.icon} 
+                      <Button
+                        fullWidth
+                        variant="outlined"
+                        startIcon={action.icon}
                         onClick={() => onSwitchTab(action.tab)}
                         sx={{ py: 1.5, borderRadius: 2, fontWeight: 700 }}
                       >
@@ -804,7 +791,7 @@ function ThisTermTab({ student, onSwitchTab }: { student: Student; onSwitchTab: 
                 <Typography variant="subtitle1" sx={{ fontWeight: 800, mb: 2 }}>Coming Up</Typography>
                 <Box sx={{ display: "flex", gap: 1, overflowX: "auto", pb: 2, mb: 1 }}>
                   {upcomingEvents.map(e => (
-                    <Chip 
+                    <Chip
                       key={e.id}
                       label={e.title}
                       size="small"
@@ -827,7 +814,7 @@ function ThisTermTab({ student, onSwitchTab }: { student: Student; onSwitchTab: 
                             {new Date(e.startDate).getDate()}
                           </Typography>
                         </Box>
-                        <ListItemText 
+                        <ListItemText
                           primary={<Typography variant="body2" sx={{ fontWeight: 800 }}>{e.title}</Typography>}
                           secondary={<Typography variant="caption" color="text.secondary">{TERM_EVENT_ICONS[e.category]} {e.category.toUpperCase()}</Typography>}
                         />
@@ -841,9 +828,9 @@ function ThisTermTab({ student, onSwitchTab }: { student: Student; onSwitchTab: 
 
                 {/* Fees Alert */}
                 {unpaidLevies.count > 0 && (
-                  <Alert 
-                    severity="warning" 
-                    sx={{ mt: 3, borderRadius: 2 }} 
+                  <Alert
+                    severity="warning"
+                    sx={{ mt: 3, borderRadius: 2 }}
                     action={<Button size="small" color="inherit" onClick={() => onSwitchTab(3)}>View</Button>}
                   >
                     <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Unpaid Levies</Typography>

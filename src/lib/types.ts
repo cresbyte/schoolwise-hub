@@ -141,6 +141,7 @@ export interface Student {
   homeLocation: string;
   boardingStatus: BoardingStatus;
   feeBalance: number;
+  avatarUrl?: string;
 }
 
 export interface GradeRule {
@@ -206,6 +207,7 @@ export interface Staff {
     phone: string;
     idNumber?: string;
   };
+  avatarUrl?: string;
 }
 
 export interface Exam {

@@ -32,6 +32,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useParams, useRouter } from "next/navigation";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { DataState } from "@/components/DataState";
+import { PageGuard } from "@/components/common/PageGuard";
 import { StatusChip } from "@/components/StatusChip";
 import { Letterhead } from "@/components/Letterhead";
 import { useAsync } from "@/hooks/useAsync";
@@ -46,7 +47,9 @@ export default function StaffDetailsPage() {
   const id = params.id as string;
   return (
     <DashboardLayout>
-      <StaffDetailContent id={id} />
+      <PageGuard permission="staff.view">
+        <StaffDetailContent id={id} />
+      </PageGuard>
     </DashboardLayout>
   );
 }
@@ -76,7 +79,11 @@ function StaffDetailContent({ id }: { id: string }) {
           <Card sx={{ mb: 2 }}>
             <CardContent>
               <Box sx={{ display: "flex", gap: 3, alignItems: "center", flexWrap: "wrap" }}>
-                <Avatar sx={{ width: 84, height: 84, fontSize: 28, bgcolor: "secondary.main" }}>
+                <Avatar 
+                  src={s.avatarUrl || s.photo} 
+                  alt={`${s.firstName} ${s.lastName}`}
+                  sx={{ width: 84, height: 84, fontSize: 28, bgcolor: "secondary.main" }}
+                >
                   {getInitials(`${s.firstName} ${s.lastName}`)}
                 </Avatar>
                 <Box sx={{ flex: 1, minWidth: 220 }}>

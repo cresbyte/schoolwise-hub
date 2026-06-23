@@ -44,6 +44,7 @@ import {
 } from "recharts";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PageHeader } from "@/components/PageHeader";
+import { PageGuard } from "@/components/common/PageGuard";
 import { StatCard } from "@/components/StatCard";
 import { DataState } from "@/components/DataState";
 import { useStudents, useStaff, useFees, useClasses } from "@/hooks/domain";
@@ -56,10 +57,12 @@ import type { Student, Staff, ClassRoom, TeacherClassSummary } from "@/lib/types
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  
+
   return (
     <DashboardLayout>
-      {user?.role === "class_teacher" ? <TeacherDashboard /> : <DashboardContent />}
+      <PageGuard permission="reports.view">
+        {user?.role === "class_teacher" ? <TeacherDashboard /> : <DashboardContent />}
+      </PageGuard>
     </DashboardLayout>
   );
 }
@@ -95,7 +98,7 @@ function DashboardContent() {
 
   return (
     <>
-      <PageHeader title="Dashboard" subtitle="Greenfield Private Academy · Term 2, 2026" />
+      <PageHeader title="Dashboard" subtitle="Primrose Private Academy · Term 2, 2026" />
 
       <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" }, mb: 3 }}>
         <StatCard
@@ -253,23 +256,23 @@ function DashboardContent() {
       <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", lg: "1fr 1fr" }, mb: 3 }}>
         <CommunicationWidget />
         <Card>
-           <CardContent>
-             <Typography variant="h6" sx={{ mb: 2 }}>Quick Actions</Typography>
-             <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
-               <Button variant="contained" startIcon={<PaymentsIcon />} onClick={() => router.push("/fees/collection")}>
-                 Record Fee Payment
-               </Button>
-               <Button variant="outlined" startIcon={<EventAvailableIcon />} onClick={() => router.push("/attendance")}>
-                 Take Attendance
-               </Button>
-               <Button variant="outlined" startIcon={<QuestionAnswerIcon />} onClick={() => router.push("/messages")}>
-                 Send Message
-               </Button>
-               <Button variant="outlined" startIcon={<DescriptionIcon />} onClick={() => router.push("/report-cards")}>
-                 Generate Report Cards
-               </Button>
-             </Box>
-           </CardContent>
+          <CardContent>
+            <Typography variant="h6" sx={{ mb: 2 }}>Quick Actions</Typography>
+            <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
+              <Button variant="contained" startIcon={<PaymentsIcon />} onClick={() => router.push("/fees/collection")}>
+                Record Fee Payment
+              </Button>
+              <Button variant="outlined" startIcon={<EventAvailableIcon />} onClick={() => router.push("/attendance")}>
+                Take Attendance
+              </Button>
+              <Button variant="outlined" startIcon={<QuestionAnswerIcon />} onClick={() => router.push("/messages")}>
+                Send Message
+              </Button>
+              <Button variant="outlined" startIcon={<DescriptionIcon />} onClick={() => router.push("/report-cards")}>
+                Generate Report Cards
+              </Button>
+            </Box>
+          </CardContent>
         </Card>
       </Box>
 
@@ -330,9 +333,9 @@ function TeacherDashboard() {
 
   return (
     <>
-      <PageHeader 
-        title={`Class Dashboard: ${summary.className}`} 
-        subtitle={`Managing ${summary.studentCount} students · Term 2, 2026`} 
+      <PageHeader
+        title={`Class Dashboard: ${summary.className}`}
+        subtitle={`Managing ${summary.studentCount} students · Term 2, 2026`}
       />
 
       <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" }, mb: 3 }}>
@@ -385,37 +388,37 @@ function TeacherDashboard() {
           <CardContent>
             <Typography variant="h6" sx={{ mb: 2 }}>Class Quick Actions</Typography>
             <Stack spacing={2}>
-              <Button 
-                variant="contained" 
-                size="large" 
-                startIcon={<EventAvailableIcon />} 
+              <Button
+                variant="contained"
+                size="large"
+                startIcon={<EventAvailableIcon />}
                 onClick={() => router.push("/attendance")}
                 fullWidth
               >
                 Mark Attendance
               </Button>
-              <Button 
-                variant="outlined" 
-                size="large" 
-                startIcon={<EditNoteIcon />} 
+              <Button
+                variant="outlined"
+                size="large"
+                startIcon={<EditNoteIcon />}
                 onClick={() => router.push("/exams/marks")}
                 fullWidth
               >
                 Enter Exam Marks
               </Button>
-              <Button 
-                variant="outlined" 
-                size="large" 
-                startIcon={<QuestionAnswerIcon />} 
+              <Button
+                variant="outlined"
+                size="large"
+                startIcon={<QuestionAnswerIcon />}
                 onClick={() => router.push("/messages")}
                 fullWidth
               >
                 Contact Parents
               </Button>
-              <Button 
-                variant="outlined" 
-                size="large" 
-                startIcon={<DescriptionIcon />} 
+              <Button
+                variant="outlined"
+                size="large"
+                startIcon={<DescriptionIcon />}
                 onClick={() => router.push("/report-cards")}
                 fullWidth
               >
@@ -436,9 +439,9 @@ function TeacherDashboard() {
                   <ListItemIcon>
                     <AssignmentIcon color="primary" />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary={ex.name} 
-                    secondary={`Starts: ${formatDate(ex.startDate)} · ${ex.type.toUpperCase()}`} 
+                  <ListItemText
+                    primary={ex.name}
+                    secondary={`Starts: ${formatDate(ex.startDate)} · ${ex.type.toUpperCase()}`}
                   />
                   <Chip label="Upcoming" size="small" variant="outlined" color="primary" />
                 </ListItemButton>

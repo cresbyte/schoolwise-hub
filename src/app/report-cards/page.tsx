@@ -25,6 +25,7 @@ import PrintIcon from "@mui/icons-material/Print";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PageHeader } from "@/components/PageHeader";
 import { DataState } from "@/components/DataState";
+import { PageGuard } from "@/components/common/PageGuard";
 import { GradeChip } from "@/components/GradeChip";
 import { CBCRatingChip } from "@/components/CBCRatingChip";
 import { ClassSelect } from "@/components/ClassSelect";
@@ -37,7 +38,9 @@ import type { ReportCard } from "@/lib/types";
 export default function ReportCardsPage() {
   return (
     <DashboardLayout>
-      <ReportCardsContent />
+      <PageGuard permission="reports.view">
+        <ReportCardsContent />
+      </PageGuard>
     </DashboardLayout>
   );
 }

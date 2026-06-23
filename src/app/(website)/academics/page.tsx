@@ -127,7 +127,7 @@ export default function AcademicsPage() {
               </BarChart>
             </ResponsiveContainer>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 2, textAlign: "center" }}>
-              Greenfield's 2026 mean score of 8.2 places us among the top private schools in Nakuru
+              Primrose's 2026 mean score of 8.2 places us among the top private schools in Nakuru
               County.
             </Typography>
           </CardContent>

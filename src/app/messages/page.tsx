@@ -33,6 +33,7 @@ import Badge from "@mui/material/Badge";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PageHeader } from "@/components/PageHeader";
 import { DataState } from "@/components/DataState";
+import { PageGuard } from "@/components/common/PageGuard";
 import { RoleGuard } from "@/components/RoleGuard";
 import { useAsync } from "@/hooks/useAsync";
 import { useNotification } from "@/context/NotificationContext";
@@ -43,7 +44,9 @@ import type { SchoolMessage, ParentReply, ClassRoom, Student } from "@/lib/types
 export default function MessagesPage() {
   return (
     <DashboardLayout>
-      <MessagesContent />
+      <PageGuard permission="messages.send">
+        <MessagesContent />
+      </PageGuard>
     </DashboardLayout>
   );
 }

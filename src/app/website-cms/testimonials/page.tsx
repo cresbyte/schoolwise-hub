@@ -67,7 +67,7 @@ export default function TestimonialsCmsPage() {
           <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
             <Box>
               <Typography variant="h4" sx={{ fontWeight: 700 }}>Testimonials</Typography>
-              <Typography variant="body2" color="text.secondary">What parents and alumni say about Greenfield.</Typography>
+              <Typography variant="body2" color="text.secondary">What parents and alumni say about Primrose.</Typography>
             </Box>
             <Button variant="contained" startIcon={<AddIcon />} onClick={() => { setForm({ name: "", role: "Parent", quote: "", gradient: GRADIENTS[0] }); setOpen(true); }}>
               Add Testimonial

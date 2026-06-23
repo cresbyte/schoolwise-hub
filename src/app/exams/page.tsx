@@ -33,6 +33,7 @@ import { StatusChip } from "@/components/StatusChip";
 import { GradeChip } from "@/components/GradeChip";
 import { ClassSelect } from "@/components/ClassSelect";
 import { RoleGuard } from "@/components/RoleGuard";
+import { PageGuard } from "@/components/common/PageGuard";
 import { useExams } from "@/hooks/domain";
 import { useAsync } from "@/hooks/useAsync";
 import { useNotification } from "@/context/NotificationContext";
@@ -44,7 +45,9 @@ import type { Exam, ExamMark } from "@/lib/types";
 export default function ExamsPage() {
   return (
     <DashboardLayout>
-      <ExamsContent />
+      <PageGuard permission="exams.view">
+        <ExamsContent />
+      </PageGuard>
     </DashboardLayout>
   );
 }

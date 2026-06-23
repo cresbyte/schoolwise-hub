@@ -33,12 +33,14 @@ import { useAuth } from "@/context/AuthContext";
 import { NAV_GROUPS } from "./navConfig";
 import { NotificationBell } from "./NotificationBell";
 import { getInitials } from "@/lib/utils";
+import { useRouteGuard } from "@/hooks/useRouteGuard";
 
 const FULL = 248;
 const RAIL = 68;
 
 /** Authenticated app shell with sidebar and app bar. */
 export function DashboardLayout({ children }: { children: ReactNode }) {
+  useRouteGuard();
   const { user, isAuthenticated, isLoading, logout, hasPermission } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -92,7 +94,11 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
             sx={{ display: "flex", alignItems: "center", gap: 1, ml: 1, cursor: "pointer" }}
             onClick={(e) => setAnchor(e.currentTarget)}
           >
-            <Avatar sx={{ width: 34, height: 34, bgcolor: "primary.main", fontSize: 14 }}>
+            <Avatar
+              src={(user as any).avatarUrl || (user as any).photo}
+              alt={user.name}
+              sx={{ width: 34, height: 34, bgcolor: "primary.main", fontSize: 14 }}
+            >
               {getInitials(user.name)}
             </Avatar>
             <Box sx={{ display: { xs: "none", sm: "block" }, lineHeight: 1.1 }}>

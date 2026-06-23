@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Greenfield Private Academy — Home page.
+ * Primrose Private Academy — Home page.
  * @module website/page
  */
 import { lazy, Suspense } from "react";
@@ -81,7 +81,7 @@ export default function HomePage() {
             <ImagePlaceholder
               src={WEBSITE_IMAGES.principal}
               aspectRatio="4/5"
-              alt={`${SCHOOL.principal}, Principal of Greenfield Private Academy`}
+              alt={`${SCHOOL.principal}, Principal of Primrose Private Academy`}
               priority
             />
             <CardContent>
@@ -94,9 +94,9 @@ export default function HomePage() {
             </CardContent>
           </Card>
           <Box>
-            <SectionHeading title="Welcome to Greenfield" align="left" subtitle={SCHOOL.tagline} />
+            <SectionHeading title="Welcome to Primrose" align="left" subtitle={SCHOOL.tagline} />
             <Typography variant="body1" sx={{ lineHeight: 1.8, mb: 3, color: "text.secondary" }}>
-              For over {new Date().getFullYear() - SCHOOL.founded} years, Greenfield Private Academy
+              For over {new Date().getFullYear() - SCHOOL.founded} years, Primrose Private Academy
               has been a beacon of academic excellence in Nakuru County. We nurture confident,
               compassionate learners prepared for Kenya's evolving educational landscape.
             </Typography>
@@ -124,7 +124,7 @@ export default function HomePage() {
 
       <SectionWrapper alt>
         <SectionHeading
-          title="Why Choose Greenfield?"
+          title="Why Choose Primrose?"
           subtitle="Discover what makes our school a trusted choice for families across Nakuru and beyond."
         />
         <Box
@@ -186,7 +186,7 @@ export default function HomePage() {
             <ImagePlaceholder
               src={WEBSITE_IMAGES.library}
               aspectRatio="16/9"
-              alt="Students studying in the Greenfield school library"
+              alt="Students studying in the Primrose school library"
             />
             <CardContent>
               <Typography variant="h5" sx={{ fontFamily: HEADING_FONT, fontWeight: 700, mb: 1 }}>
@@ -263,7 +263,7 @@ export default function HomePage() {
         }}
       >
         <Typography variant="h4" sx={{ fontFamily: HEADING_FONT, fontWeight: 700, mb: 2 }}>
-          Begin Your Greenfield Journey
+          Begin Your Primrose Journey
         </Typography>
         <Typography sx={{ mb: 3, opacity: 0.9, maxWidth: 560, mx: "auto" }}>
           Limited spaces available for Term 3, 2026. Apply today and join a community committed to
@@ -305,7 +305,7 @@ export default function HomePage() {
 
       <SectionWrapper alt>
         <SectionHeading
-          title="Life at Greenfield"
+          title="Life at Primrose"
           subtitle="A glimpse of our vibrant campus community."
         />
         <Suspense fallback={<CircularProgress />}>

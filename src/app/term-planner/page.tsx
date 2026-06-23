@@ -82,7 +82,7 @@ function TermPlannerContent() {
       scope: filters.scope === "all" ? undefined : filters.scope as TermEventScope,
       approvalStatus: filters.status,
     });
-    
+
     let filtered = all;
     if (filters.category !== "all") {
       filtered = filtered.filter(e => e.category === filters.category);
@@ -136,14 +136,14 @@ function TermPlannerContent() {
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 3, flexWrap: "wrap", gap: 2 }}>
         <Box>
           <Typography variant="body1" color="text.secondary">
-            Greenfield Academy Term 2, 2026 — May 6 to Aug 9
+            Primrose Academy Term 2, 2026 — May 6 to Aug 9
           </Typography>
         </Box>
         <Stack direction="row" spacing={1}>
           <RoleGuard permission="settings.view">
-            <Button 
-              variant="outlined" 
-              color="warning" 
+            <Button
+              variant="outlined"
+              color="warning"
               onClick={() => setOpenPendingDialog(true)}
               startIcon={<Badge badgeContent={pendingCount} color="error"><CalendarMonthIcon /></Badge>}
             >
@@ -230,9 +230,9 @@ function TermPlannerContent() {
                 </Typography>
                 <Stack spacing={2}>
                   {monthEvents.map(event => (
-                    <EventCard 
-                      key={event.id} 
-                      event={event} 
+                    <EventCard
+                      key={event.id}
+                      event={event}
                       onEdit={() => { setEditingEvent(event); setOpenAddDialog(true); }}
                       onDelete={() => handleDelete(event.id)}
                       onApprove={() => handleApprove(event.id)}
@@ -250,25 +250,25 @@ function TermPlannerContent() {
         </Grid>
       </Grid>
 
-      <AddEventDialog 
-        open={openAddDialog} 
-        onClose={() => setOpenAddDialog(false)} 
-        onSuccess={() => refetch()} 
+      <AddEventDialog
+        open={openAddDialog}
+        onClose={() => setOpenAddDialog(false)}
+        onSuccess={() => refetch()}
         editingEvent={editingEvent}
       />
-      
-      <PendingApprovalsDialog 
-        open={openPendingDialog} 
-        onClose={() => setOpenPendingDialog(false)} 
-        onSuccess={() => refetch()} 
+
+      <PendingApprovalsDialog
+        open={openPendingDialog}
+        onClose={() => setOpenPendingDialog(false)}
+        onSuccess={() => refetch()}
       />
     </Box>
   );
 }
 
-function EventCard({ event, onEdit, onDelete, onApprove, onReject, isAdmin }: { 
-  event: TermEvent; 
-  onEdit: () => void; 
+function EventCard({ event, onEdit, onDelete, onApprove, onReject, isAdmin }: {
+  event: TermEvent;
+  onEdit: () => void;
   onDelete: () => void;
   onApprove: () => void;
   onReject: (reason: string) => void;
@@ -287,8 +287,8 @@ function EventCard({ event, onEdit, onDelete, onApprove, onReject, isAdmin }: {
   }, [event]);
 
   return (
-    <Card sx={{ 
-      borderLeft: 6, 
+    <Card sx={{
+      borderLeft: 6,
       borderColor: TERM_EVENT_COLORS[event.category],
       position: "relative",
       "&:hover": { boxShadow: 4 }
@@ -297,23 +297,23 @@ function EventCard({ event, onEdit, onDelete, onApprove, onReject, isAdmin }: {
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <Box>
             <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
-              <Chip 
-                label={`${TERM_EVENT_ICONS[event.category]} ${event.category.toUpperCase()}`} 
-                size="small" 
-                variant="outlined" 
+              <Chip
+                label={`${TERM_EVENT_ICONS[event.category]} ${event.category.toUpperCase()}`}
+                size="small"
+                variant="outlined"
                 sx={{ height: 20, fontSize: 10, fontWeight: 700 }}
               />
-              <Chip 
-                label={event.scope === "school" ? "School-wide" : event.className || event.gradeLevel} 
-                size="small" 
+              <Chip
+                label={event.scope === "school" ? "School-wide" : event.className || event.gradeLevel}
+                size="small"
                 color="secondary"
                 variant="outlined"
                 sx={{ height: 20, fontSize: 10, fontWeight: 700 }}
               />
               {event.approvalStatus !== "approved" && (
-                <Chip 
-                  label={event.approvalStatus.replace("_", " ").toUpperCase()} 
-                  size="small" 
+                <Chip
+                  label={event.approvalStatus.replace("_", " ").toUpperCase()}
+                  size="small"
                   color={event.approvalStatus === "pending_approval" ? "warning" : event.approvalStatus === "rejected" ? "error" : "default"}
                   sx={{ height: 20, fontSize: 10, fontWeight: 700 }}
                 />
@@ -356,12 +356,12 @@ function EventCard({ event, onEdit, onDelete, onApprove, onReject, isAdmin }: {
               </Stack>
             ) : (
               <Stack spacing={1}>
-                <TextField 
-                  size="small" 
-                  label="Rejection Reason" 
-                  fullWidth 
-                  value={rejectReason} 
-                  onChange={(e) => setRejectReason(e.target.value)} 
+                <TextField
+                  size="small"
+                  label="Rejection Reason"
+                  fullWidth
+                  value={rejectReason}
+                  onChange={(e) => setRejectReason(e.target.value)}
                 />
                 <Stack direction="row" spacing={1}>
                   <Button size="small" variant="contained" color="error" onClick={() => onReject(rejectReason)} disabled={!rejectReason.trim()}>
@@ -378,19 +378,19 @@ function EventCard({ event, onEdit, onDelete, onApprove, onReject, isAdmin }: {
   );
 }
 
-function MiniCalendar({ events, selectedDate, onDateSelect }: { 
-  events: TermEvent[], 
-  selectedDate: string | null, 
-  onDateSelect: (d: string | null) => void 
+function MiniCalendar({ events, selectedDate, onDateSelect }: {
+  events: TermEvent[],
+  selectedDate: string | null,
+  onDateSelect: (d: string | null) => void
 }) {
   const [currentViewDate, setCurrentViewDate] = useState(new Date(2026, 5, 1)); // June 2026
-  
+
   const daysInMonth = useMemo(() => {
     const year = currentViewDate.getFullYear();
     const month = currentViewDate.getMonth();
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMo = new Date(year, month + 1, 0).getDate();
-    
+
     const days = [];
     // Padding for first week
     for (let i = 0; i < firstDay; i++) {
@@ -431,21 +431,21 @@ function MiniCalendar({ events, selectedDate, onDateSelect }: {
         <Grid container columns={7}>
           {daysInMonth.map((date, idx) => {
             if (!date) return <Grid size={1} key={`pad-${idx}`} sx={{ height: 40 }} />;
-            
+
             const dayNum = parseInt(date.split('-')[2]);
             const dayEvents = getDayEvents(date);
             const isSelected = selectedDate === date;
             const isToday = new Date().toISOString().split('T')[0] === date;
 
             return (
-              <Grid 
-                size={1} 
-                key={date} 
-                sx={{ 
-                  height: 44, 
-                  display: "flex", 
-                  flexDirection: "column", 
-                  alignItems: "center", 
+              <Grid
+                size={1}
+                key={date}
+                sx={{
+                  height: 44,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
                   cursor: "pointer",
                   bgcolor: isSelected ? "primary.light" : "transparent",
                   borderRadius: 1,
@@ -453,9 +453,9 @@ function MiniCalendar({ events, selectedDate, onDateSelect }: {
                 }}
                 onClick={() => onDateSelect(isSelected ? null : date)}
               >
-                <Typography 
-                  variant="caption" 
-                  sx={{ 
+                <Typography
+                  variant="caption"
+                  sx={{
                     fontWeight: isSelected || isToday ? 800 : 500,
                     color: isToday ? "primary.main" : isSelected ? "white" : "text.primary",
                     mt: 0.5,
@@ -473,14 +473,14 @@ function MiniCalendar({ events, selectedDate, onDateSelect }: {
                 </Typography>
                 <Box sx={{ display: "flex", gap: 0.5, mt: 0.25, justifyContent: "center" }}>
                   {dayEvents.slice(0, 3).map(e => (
-                    <Box 
-                      key={e.id} 
-                      sx={{ 
-                        width: 4, 
-                        height: 4, 
-                        borderRadius: "50%", 
-                        bgcolor: TERM_EVENT_COLORS[e.category] 
-                      }} 
+                    <Box
+                      key={e.id}
+                      sx={{
+                        width: 4,
+                        height: 4,
+                        borderRadius: "50%",
+                        bgcolor: TERM_EVENT_COLORS[e.category]
+                      }}
                     />
                   ))}
                   {dayEvents.length > 3 && (
@@ -496,9 +496,9 @@ function MiniCalendar({ events, selectedDate, onDateSelect }: {
   );
 }
 
-function AddEventDialog({ open, onClose, onSuccess, editingEvent }: { 
-  open: boolean, 
-  onClose: () => void, 
+function AddEventDialog({ open, onClose, onSuccess, editingEvent }: {
+  open: boolean,
+  onClose: () => void,
   onSuccess: () => void,
   editingEvent: TermEvent | null
 }) {
@@ -569,88 +569,88 @@ function AddEventDialog({ open, onClose, onSuccess, editingEvent }: {
       <DialogTitle>{editingEvent ? "Edit Term Event" : "Add Term Event"}</DialogTitle>
       <DialogContent sx={{ pt: 1 }}>
         <Stack spacing={2} sx={{ mt: 1 }}>
-          <TextField 
-            label="Title" 
-            fullWidth 
-            required 
-            value={formData.title} 
-            onChange={e => setFormData({ ...formData, title: e.target.value })} 
+          <TextField
+            label="Title"
+            fullWidth
+            required
+            value={formData.title}
+            onChange={e => setFormData({ ...formData, title: e.target.value })}
           />
-          <TextField 
-            select 
-            label="Category" 
-            fullWidth 
-            value={formData.category} 
+          <TextField
+            select
+            label="Category"
+            fullWidth
+            value={formData.category}
             onChange={e => setFormData({ ...formData, category: e.target.value as TermEventCategory })}
           >
             {Object.entries(TERM_EVENT_ICONS).map(([cat, icon]) => (
               <MenuItem key={cat} value={cat}>{icon} {cat.toUpperCase()}</MenuItem>
             ))}
           </TextField>
-          <TextField 
-            label="Description" 
-            fullWidth 
-            multiline 
-            rows={2} 
-            value={formData.description} 
-            onChange={e => setFormData({ ...formData, description: e.target.value })} 
+          <TextField
+            label="Description"
+            fullWidth
+            multiline
+            rows={2}
+            value={formData.description}
+            onChange={e => setFormData({ ...formData, description: e.target.value })}
           />
           <Grid container spacing={2}>
             <Grid size={6}>
-              <TextField 
-                label="Start Date" 
-                type="date" 
-                fullWidth 
-                required 
-                slotProps={{ inputLabel: { shrink: true } }} 
-                value={formData.startDate} 
+              <TextField
+                label="Start Date"
+                type="date"
+                fullWidth
+                required
+                slotProps={{ inputLabel: { shrink: true } }}
+                value={formData.startDate}
                 onChange={e => setFormData({ ...formData, startDate: e.target.value })}
               />
             </Grid>
             <Grid size={6}>
-              <TextField 
-                label="End Date" 
-                type="date" 
-                fullWidth 
-                required 
-                slotProps={{ inputLabel: { shrink: true } }} 
-                value={formData.endDate} 
+              <TextField
+                label="End Date"
+                type="date"
+                fullWidth
+                required
+                slotProps={{ inputLabel: { shrink: true } }}
+                value={formData.endDate}
                 onChange={e => setFormData({ ...formData, endDate: e.target.value })}
                 helperText="Same as start for single day"
               />
             </Grid>
           </Grid>
-          <TextField 
-            select 
-            label="Scope" 
-            fullWidth 
-            value={formData.scope} 
+          <TextField
+            select
+            label="Scope"
+            fullWidth
+            value={formData.scope}
             onChange={e => setFormData({ ...formData, scope: e.target.value as TermEventScope })}
           >
             <MenuItem value="school">School-wide</MenuItem>
             <MenuItem value="grade">Specific Grade</MenuItem>
             <MenuItem value="class">Specific Class</MenuItem>
           </TextField>
-          
+
           {formData.scope === "grade" && (
-            <TextField 
-              label="Grade Level" 
-              select 
-              fullWidth 
-              value={formData.gradeLevel || ''} 
+            <TextField
+              label="Grade Level"
+              select
+              fullWidth
+              value={formData.gradeLevel || ''}
               onChange={e => setFormData({ ...formData, gradeLevel: e.target.value })}
             >
-              {[1,2,3,4,5,6,7,8,9].map(g => <MenuItem key={g} value={`Grade ${g}`}>Grade {g}</MenuItem>)}
-              {[1,2,3,4].map(g => <MenuItem key={g} value={`Form ${g}`}>Form {g}</MenuItem>)}
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(g => <MenuItem key={g} value={`Grade ${g}`}>Grade {g}</MenuItem>)}
+              {[1, 2, 3, 4].map(g => <MenuItem key={g} value={`Form ${g}`}>Form {g}</MenuItem>)}
             </TextField>
           )}
 
           {formData.scope === "class" && (
-            <TextField 
-              label="Class" 
-              select 
-              fullWidth 
-              value={formData.classId || ''} 
+            <TextField
+              label="Class"
+              select
+              fullWidth
+              value={formData.classId || ''}
               onChange={e => {
                 const cls = classes.find((c: ClassRoom) => c.id === e.target.value);
                 setFormData({ ...formData, classId: e.target.value, className: cls?.name });
@@ -661,11 +661,11 @@ function AddEventDialog({ open, onClose, onSuccess, editingEvent }: {
           )}
 
           {formData.category === "exam" && (
-            <TextField 
-              label="Linked Exam" 
-              select 
-              fullWidth 
-              value={formData.examId || ''} 
+            <TextField
+              label="Linked Exam"
+              select
+              fullWidth
+              value={formData.examId || ''}
               onChange={e => setFormData({ ...formData, examId: e.target.value })}
               placeholder="Optional link to exam"
             >
@@ -725,8 +725,8 @@ function PendingApprovalsDialog({ open, onClose, onSuccess }: { open: boolean, o
               {items.map(event => (
                 <ListItem key={event.id} sx={{ bgcolor: "action.hover", borderRadius: 1, mb: 1, flexDirection: "column", alignItems: "flex-start" }}>
                   <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%", alignItems: "center" }}>
-                    <ListItemText 
-                      primary={event.title} 
+                    <ListItemText
+                      primary={event.title}
                       secondary={`${event.createdByName} | ${event.scope.toUpperCase()} | ${formatDate(event.startDate)}`}
                     />
                     <Stack direction="row" spacing={1}>

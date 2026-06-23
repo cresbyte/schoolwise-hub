@@ -27,6 +27,7 @@ import TableRow from "@mui/material/TableRow";
 import PrintIcon from "@mui/icons-material/Print";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PageHeader } from "@/components/PageHeader";
+import { PageGuard } from "@/components/common/PageGuard";
 import { DataState } from "@/components/DataState";
 import { StudentSelect } from "@/components/StudentSelect";
 import { Letterhead } from "@/components/Letterhead";
@@ -40,7 +41,9 @@ import type { Student, FeePayment } from "@/lib/types";
 export default function FeesCollectionPage() {
   return (
     <DashboardLayout>
-      <FeesCollectionContent />
+      <PageGuard permission="fees.write">
+        <FeesCollectionContent />
+      </PageGuard>
     </DashboardLayout>
   );
 }

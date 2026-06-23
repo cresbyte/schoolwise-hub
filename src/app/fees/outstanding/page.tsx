@@ -21,6 +21,7 @@ import PeopleIcon from "@mui/icons-material/People";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PageHeader } from "@/components/PageHeader";
 import { DataState } from "@/components/DataState";
+import { PageGuard } from "@/components/common/PageGuard";
 import { StatCard } from "@/components/StatCard";
 import { ClassSelect } from "@/components/ClassSelect";
 import { StatusChip } from "@/components/StatusChip";
@@ -32,7 +33,9 @@ import { formatKES, exportToCSV } from "@/lib/utils";
 export default function OutstandingFeesPage() {
   return (
     <DashboardLayout>
-      <OutstandingContent />
+      <PageGuard permission="fees.view">
+        <OutstandingContent />
+      </PageGuard>
     </DashboardLayout>
   );
 }

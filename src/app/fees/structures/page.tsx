@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PageHeader } from "@/components/PageHeader";
 import { DataState } from "@/components/DataState";
+import { PageGuard } from "@/components/common/PageGuard";
 import { StatusChip } from "@/components/StatusChip";
 import { RoleGuard } from "@/components/RoleGuard";
 import { useAsync } from "@/hooks/useAsync";
@@ -28,7 +29,9 @@ import { formatKES } from "@/lib/utils";
 export default function FeeStructuresPage() {
   return (
     <DashboardLayout>
-      <FeeStructuresContent />
+      <PageGuard permission="fees.view">
+        <FeeStructuresContent />
+      </PageGuard>
     </DashboardLayout>
   );
 }
@@ -43,7 +46,7 @@ function FeeStructuresContent() {
     <>
       <PageHeader
         title="Fee Structures"
-        subtitle="Greenfield Private Academy · 2026"
+        subtitle="Primrose Private Academy · 2026"
         actions={
           <RoleGuard permission="finance.*">
             <Button variant="contained" startIcon={<AddIcon />} onClick={() => router.push("/fees/structures/new")}>

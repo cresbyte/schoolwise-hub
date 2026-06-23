@@ -20,13 +20,13 @@ import { HEADING_FONT, getSchoolInfo } from "@/lib/website/constants";
 /** Contact page with form and directory. */
 export default function ContactPage() {
   const SCHOOL = getSchoolInfo();
-  
+
   const DIRECTORY = [
     {
       role: "Principal's Office",
       name: SCHOOL.principal,
       phone: SCHOOL.phone,
-      email: "principal@greenfieldacademy.ac.ke",
+      email: "principal@primroseacademy.ac.ke",
     },
     {
       role: "Admissions",
@@ -38,13 +38,13 @@ export default function ContactPage() {
       role: "Accounts & Fees",
       name: "Ms. Agnes Kariuki",
       phone: "0733 456 789",
-      email: "accounts@greenfieldacademy.ac.ke",
+      email: "accounts@primroseacademy.ac.ke",
     },
     {
       role: "Boarding Office",
       name: "Mr. Joseph Mutua",
       phone: "0711 234 567",
-      email: "deputy@greenfieldacademy.ac.ke",
+      email: "deputy@primroseacademy.ac.ke",
     },
   ];
   return (

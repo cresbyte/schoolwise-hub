@@ -22,7 +22,7 @@ const SECTIONS = [
     items: ["Football", "Basketball", "Athletics", "Swimming", "Rugby", "Volleyball"],
     desc: "Our sports programme competes at county and national levels. Inter-house competitions foster teamwork and school spirit.",
     image: WEBSITE_IMAGES.sports,
-    imageAlt: "Greenfield students competing in inter-house athletics and sports day events",
+    imageAlt: "Primrose students competing in inter-house athletics and sports day events",
   },
   {
     id: "clubs",
@@ -127,7 +127,7 @@ export default function SchoolLifePage() {
               <ImagePlaceholder
                 src={WEBSITE_IMAGES.campusBanner}
                 aspectRatio="4/3"
-                alt="Greenfield boarding wing and campus accommodation facilities"
+                alt="Primrose boarding wing and campus accommodation facilities"
               />
               <Box>
                 <Typography variant="h5" sx={{ fontFamily: HEADING_FONT, fontWeight: 700, mb: 2 }}>

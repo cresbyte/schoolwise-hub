@@ -46,7 +46,7 @@ export default function AdmissionsPage() {
     <>
       <PageBanner
         title="Admissions"
-        subtitle="Join the Greenfield family"
+        subtitle="Join the Primrose family"
         crumbs={[{ label: "Home", href: "/" }, { label: "Admissions" }]}
       />
 

@@ -136,7 +136,7 @@ export default function ParentsPage() {
               <Typography sx={{ opacity: 0.9, mb: 2 }}>
                 Contact the accounts office for portal credentials or password resets.
               </Typography>
-              <Typography variant="body2">accounts@greenfieldacademy.ac.ke</Typography>
+              <Typography variant="body2">accounts@primroseacademy.ac.ke</Typography>
               <Typography variant="body2">0733 456 789</Typography>
             </CardContent>
           </Card>

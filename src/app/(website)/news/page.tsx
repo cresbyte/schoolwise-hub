@@ -30,7 +30,7 @@ export default function NewsPage() {
     <>
       <PageBanner
         title="News & Events"
-        subtitle="Stay connected with Greenfield"
+        subtitle="Stay connected with Primrose"
         crumbs={[{ label: "Home", href: "/" }, { label: "News" }]}
       />
       <SectionWrapper>

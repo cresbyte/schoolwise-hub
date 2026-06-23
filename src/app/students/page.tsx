@@ -34,6 +34,7 @@ import { DataState } from "@/components/DataState";
 import { SearchInput } from "@/components/SearchInput";
 import { StatusChip } from "@/components/StatusChip";
 import { RoleGuard } from "@/components/RoleGuard";
+import { PageGuard } from "@/components/common/PageGuard";
 import { useStudents, useClasses } from "@/hooks/domain";
 import { formatKES, getInitials } from "@/lib/utils";
 import { exportToCSV } from "@/lib/utils";
@@ -41,7 +42,9 @@ import { exportToCSV } from "@/lib/utils";
 export default function StudentsPage() {
   return (
     <DashboardLayout>
-      <StudentsContent />
+      <PageGuard permission="students.view">
+        <StudentsContent />
+      </PageGuard>
     </DashboardLayout>
   );
 }
@@ -146,7 +149,11 @@ function StudentsContent() {
                         <TableCell sx={{ fontFamily: "monospace", fontSize: 13 }}>{s.admissionNumber}</TableCell>
                         <TableCell>
                           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                            <Avatar sx={{ width: 32, height: 32, fontSize: 12, bgcolor: "primary.main" }}>
+                            <Avatar 
+                              src={s.avatarUrl} 
+                              alt={`${s.firstName} ${s.lastName}`}
+                              sx={{ width: 32, height: 32, fontSize: 12, bgcolor: "primary.main" }}
+                            >
                               {getInitials(`${s.firstName} ${s.lastName}`)}
                             </Avatar>
                             <Link href={`/students/${s.id}`} style={{ fontWeight: 600, color: "#1565C0", textDecoration: "none" }}>

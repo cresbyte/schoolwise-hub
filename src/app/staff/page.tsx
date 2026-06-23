@@ -31,6 +31,7 @@ import { DataState } from "@/components/DataState";
 import { SearchInput } from "@/components/SearchInput";
 import { StatusChip } from "@/components/StatusChip";
 import { RoleGuard } from "@/components/RoleGuard";
+import { PageGuard } from "@/components/common/PageGuard";
 import { useStaff } from "@/hooks/domain";
 import { useAsync } from "@/hooks/useAsync";
 import * as api from "@/lib/mockApi";
@@ -41,7 +42,9 @@ import type { Staff } from "@/lib/types";
 export default function StaffPage() {
   return (
     <DashboardLayout>
-      <StaffContent />
+      <PageGuard permission="staff.view">
+        <StaffContent />
+      </PageGuard>
     </DashboardLayout>
   );
 }
@@ -108,7 +111,13 @@ function StaffContent() {
                       <TableCell sx={{ fontFamily: "monospace", fontSize: 13 }}>{s.staffNumber}</TableCell>
                       <TableCell>
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                          <Avatar sx={{ width: 32, height: 32, fontSize: 12, bgcolor: "secondary.main" }}>{getInitials(`${s.firstName} ${s.lastName}`)}</Avatar>
+                          <Avatar 
+                            src={s.avatarUrl || s.photo} 
+                            alt={`${s.firstName} ${s.lastName}`}
+                            sx={{ width: 32, height: 32, fontSize: 12, bgcolor: "secondary.main" }}
+                          >
+                            {getInitials(`${s.firstName} ${s.lastName}`)}
+                          </Avatar>
                           <span style={{ fontWeight: 600 }}>{s.firstName} {s.lastName}</span>
                         </Box>
                       </TableCell>

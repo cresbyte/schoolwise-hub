@@ -33,6 +33,7 @@ import FlashOnIcon from "@mui/icons-material/FlashOn";
 
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PageHeader } from "@/components/PageHeader";
+import { PageGuard } from "@/components/common/PageGuard";
 import { ClassSelect } from "@/components/ClassSelect";
 import { DataState } from "@/components/DataState";
 import { useAsync } from "@/hooks/useAsync";
@@ -54,10 +55,12 @@ export default function AttendancePage() {
   
   return (
     <DashboardLayout>
-      <PageHeader title="Attendance Register" subtitle="Weekly matrix view for efficient recording" />
-      <DataState loading={settings.loading} error={settings.error} data={settings.data}>
-        {(s) => <AttendanceMatrix settings={s} />}
-      </DataState>
+      <PageGuard permission="attendance.write">
+        <PageHeader title="Attendance Register" subtitle="Weekly matrix view for efficient recording" />
+        <DataState loading={settings.loading} error={settings.error} data={settings.data}>
+          {(s) => <AttendanceMatrix settings={s} />}
+        </DataState>
+      </PageGuard>
     </DashboardLayout>
   );
 }

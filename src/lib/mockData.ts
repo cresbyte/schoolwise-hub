@@ -1,5 +1,5 @@
 /**
- * Realistic mock data for ShuleSmart (Greenfield Private Academy, Nakuru).
+ * Realistic mock data for ShuleSmart (Primrose Private Academy, Nakuru).
  * Data is generated deterministically at module load.
  * @module mockData
  */
@@ -30,7 +30,7 @@ import type {
   LevyPayment,
   TermEvent,
 } from "./types";
-import { computePayroll, getCBCRating, getGrade } from "./utils";
+import { computePayroll, getCBCRating, getGrade, staffAvatarUrl, studentAvatarUrl } from "./utils";
 import { DAYS_OF_WEEK } from "./constants";
 
 /** Tiny deterministic PRNG so data stays stable between renders. */
@@ -54,7 +54,7 @@ function phone(): string {
 
 export const school: School = {
   id: "sch-1",
-  name: "Greenfield Private Academy",
+  name: "Primrose Private Academy",
   motto: "Knowledge · Integrity · Excellence",
   registrationNumber: "P/REG/NAK/2456",
   knecCode: "30412104",
@@ -64,8 +64,8 @@ export const school: School = {
   county: "Nakuru",
   subCounty: "Nakuru East",
   phone: "0712345678",
-  email: "info@greenfieldacademy.ac.ke",
-  website: "www.greenfieldacademy.ac.ke",
+  email: "info@primroseacademy.ac.ke",
+  website: "www.primroseacademy.ac.ke",
   principalName: "Mr. Daniel Kamau Njoroge",
   curriculum: ["CBC", "844"],
   mpesaPaybill: "522533",
@@ -123,7 +123,7 @@ function mkStaff(
     gender,
     dateOfBirth: `19${randInt(75, 95)}-0${randInt(1, 9)}-1${randInt(0, 9)}`,
     phone: phone(),
-    email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@greenfieldacademy.ac.ke`,
+    email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@primroseacademy.ac.ke`,
     idNumber: String(randInt(20000000, 39999999)),
     kraPin: `A0${randInt(10000000, 99999999)}X`,
     nssfNumber: String(randInt(1000000, 9999999)),
@@ -142,14 +142,15 @@ function mkStaff(
     bankAccount: String(randInt(1000000000, 9999999999)),
     bankBranch: "Nakuru",
     nextOfKin: { name: "Mary " + lastName, relationship: "Spouse", phone: phone() },
+    avatarUrl: staffAvatarUrl(`${firstName} ${lastName}`, id),
   };
 }
 
 export const users: User[] = [
-  { id: "usr-1", name: "Mr. Daniel Kamau Njoroge", email: "principal@greenfieldacademy.ac.ke", phone: "0712345678", role: "admin", staffId: "stf-1", isActive: true, lastLogin: "2026-06-10T08:12:00Z", createdAt: "2023-01-10T00:00:00Z" },
-  { id: "usr-2", name: "Mr. Joseph Mwangangi Mutua", email: "deputy@greenfieldacademy.ac.ke", phone: "0711234567", role: "headteacher", staffId: "stf-11", isActive: true, lastLogin: "2026-06-10T07:50:00Z", createdAt: "2023-01-10T00:00:00Z" },
-  { id: "usr-3", name: "Mr. John Mutua Kivuva", email: "j.kivuva@greenfieldacademy.ac.ke", phone: "0722345678", role: "class_teacher", staffId: "stf-3", isActive: true, lastLogin: "2026-06-09T13:20:00Z", createdAt: "2023-02-01T00:00:00Z" },
-  { id: "usr-4", name: "Ms. Agnes Njoki Kariuki", email: "accounts@greenfieldacademy.ac.ke", phone: "0733456789", role: "accountant", staffId: "stf-6", isActive: true, lastLogin: "2026-06-10T09:05:00Z", createdAt: "2023-01-15T00:00:00Z" },
+  { id: "usr-1", name: "Mr. Daniel Kamau Njoroge", email: "principal@primroseacademy.ac.ke", phone: "0712345678", role: "admin", staffId: "stf-1", isActive: true, lastLogin: "2026-06-10T08:12:00Z", createdAt: "2023-01-10T00:00:00Z" },
+  { id: "usr-2", name: "Mr. Joseph Mwangangi Mutua", email: "deputy@primroseacademy.ac.ke", phone: "0711234567", role: "headteacher", staffId: "stf-11", isActive: true, lastLogin: "2026-06-10T07:50:00Z", createdAt: "2023-01-10T00:00:00Z" },
+  { id: "usr-3", name: "Mr. John Mutua Kivuva", email: "j.kivuva@primroseacademy.ac.ke", phone: "0722345678", role: "class_teacher", staffId: "stf-3", isActive: true, lastLogin: "2026-06-09T13:20:00Z", createdAt: "2023-02-01T00:00:00Z" },
+  { id: "usr-4", name: "Ms. Agnes Njoki Kariuki", email: "accounts@primroseacademy.ac.ke", phone: "0733456789", role: "accountant", staffId: "stf-6", isActive: true, lastLogin: "2026-06-10T09:05:00Z", createdAt: "2023-01-15T00:00:00Z" },
   { id: "usr-5", name: "Mr. Stephen Kamau", email: "parent.kamau@gmail.com", phone: "0744567890", role: "parent", studentId: "std-1", studentIds: ["std-1", "std-3", "std-7"], isActive: true, lastLogin: "2026-06-08T18:30:00Z", createdAt: "2026-01-10T00:00:00Z" },
   { id: "usr-6", name: "Mrs. Lucy Mwangi", email: "parent.mwangi@gmail.com", phone: "0755123456", role: "parent", studentId: "std-4", studentIds: ["std-4"], isActive: true, lastLogin: "2026-06-10T10:00:00Z", createdAt: "2026-02-15T00:00:00Z" },
 ];
@@ -255,6 +256,7 @@ function mkStudent(
     homeLocation: pick(LOCATIONS),
     boardingStatus: boarding,
     feeBalance,
+    avatarUrl: studentAvatarUrl(firstName, lastName, id),
   };
 }
 

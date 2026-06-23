@@ -16,7 +16,7 @@ export default function GalleryPage() {
     <>
       <PageBanner
         title="Photo Gallery"
-        subtitle="Moments from life at Greenfield"
+        subtitle="Moments from life at Primrose"
         crumbs={[{ label: "Home", href: "/" }, { label: "Gallery" }]}
       />
       <SectionWrapper>
