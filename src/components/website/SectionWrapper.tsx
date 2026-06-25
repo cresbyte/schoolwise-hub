@@ -39,7 +39,7 @@ export function SectionWrapper({
       className={sectionClass}
       sx={{ bgcolor, color }}
     >
-      <Container maxWidth="lg" className="website-container">
+      <Container maxWidth="xl" className="website-container">
         {children}
       </Container>
     </Box>

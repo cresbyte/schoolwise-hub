@@ -21,7 +21,7 @@ export const SCHOOL = {
   postal: "P.O. Box 1245-20100, Nakuru",
   county: "Nakuru",
   knecCode: "30412104",
-  principal: "Mr. Daniel Kamau Njoroge",
+  principal: "Mr. Daniel Kamau",
   founded: 2008,
   ogImage: "/og-primrose.jpg",
 };

@@ -227,7 +227,7 @@ export default function HomePage() {
           </Box>
           <Card sx={{ bgcolor: WEBSITE_COLORS.bgNavy, color: "common.white", height: "fit-content" }}>
             <CardContent>
-              <Typography variant="h6" sx={{ fontFamily: HEADING_FONT, mb: 2 }}>
+              <Typography variant="h6" sx={{ fontFamily: HEADING_FONT, mb: 2, color: "common.white" }}>
                 Upcoming Events
               </Typography>
               {upcomingEvents.map((ev) => (
@@ -241,10 +241,10 @@ export default function HomePage() {
                   >
                     {ev.date}
                   </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                  <Typography variant="body2" sx={{ fontWeight: 600, color: "common.white" }}>
                     {ev.title}
                   </Typography>
-                  <Typography variant="caption" sx={{ opacity: 0.7 }}>
+                  <Typography variant="caption" sx={{ opacity: 0.8, color: "rgba(255,255,255,0.8)" }}>
                     {ev.time} · {ev.location}
                   </Typography>
                 </Box>
@@ -262,10 +262,10 @@ export default function HomePage() {
           textAlign: "center",
         }}
       >
-        <Typography variant="h4" sx={{ fontFamily: HEADING_FONT, fontWeight: 700, mb: 2 }}>
+        <Typography variant="h4" sx={{ fontFamily: HEADING_FONT, fontWeight: 700, mb: 2, color: "common.white" }}>
           Begin Your Primrose Journey
         </Typography>
-        <Typography sx={{ mb: 3, opacity: 0.9, maxWidth: 560, mx: "auto" }}>
+        <Typography sx={{ mb: 3, opacity: 0.95, maxWidth: 560, mx: "auto", color: "rgba(255,255,255,0.9)" }}>
           Limited spaces available for Term 3, 2026. Apply today and join a community committed to
           excellence.
         </Typography>
@@ -328,27 +328,27 @@ export default function HomePage() {
           }}
         >
           <Box>
-            <Typography variant="h4" sx={{ fontFamily: HEADING_FONT, fontWeight: 700, mb: 2 }}>
+            <Typography variant="h4" sx={{ fontFamily: HEADING_FONT, fontWeight: 700, mb: 2, color: "common.white" }}>
               Visit Us in Nakuru
             </Typography>
-            <Typography sx={{ opacity: 0.85, mb: 3, lineHeight: 1.7 }}>
+            <Typography sx={{ opacity: 0.9, mb: 3, lineHeight: 1.7, color: "rgba(255,255,255,0.85)" }}>
               Located along Milimani Road with panoramic views of the Rift Valley. We welcome
               prospective families for campus tours every Saturday.
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
               <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
                 <LocationOnIcon sx={{ color: WEBSITE_COLORS.secondary }} />
-                <Typography variant="body2">
+                <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.9)" }}>
                   {SCHOOL.address}, {SCHOOL.county}
                 </Typography>
               </Box>
               <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
                 <PhoneIcon sx={{ color: WEBSITE_COLORS.secondary }} />
-                <Typography variant="body2">{SCHOOL.phone}</Typography>
+                <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.9)" }}>{SCHOOL.phone}</Typography>
               </Box>
               <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
                 <EmailIcon sx={{ color: WEBSITE_COLORS.secondary }} />
-                <Typography variant="body2">{SCHOOL.email}</Typography>
+                <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.9)" }}>{SCHOOL.email}</Typography>
               </Box>
             </Box>
             <Button

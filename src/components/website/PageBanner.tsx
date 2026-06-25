@@ -47,7 +47,7 @@ export function PageBanner({
         },
       }}
     >
-      <Container maxWidth="lg">
+      <Container maxWidth="xl">
         {crumbs && crumbs.length > 0 && (
           <Breadcrumbs
             aria-label="breadcrumb"
@@ -76,11 +76,18 @@ export function PageBanner({
             )}
           </Breadcrumbs>
         )}
-        <Typography variant="h3" component="h1" sx={{ fontWeight: 700, mb: subtitle ? 1 : 0 }}>
+        <Typography
+          variant="h3"
+          component="h1"
+          sx={{ fontWeight: 700, mb: subtitle ? 1 : 0, color: "common.white" }}
+        >
           {title}
         </Typography>
         {subtitle && (
-          <Typography variant="h6" sx={{ opacity: 0.9, fontWeight: 400, maxWidth: 640 }}>
+          <Typography
+            variant="h6"
+            sx={{ opacity: 0.9, fontWeight: 400, maxWidth: 640, color: "rgba(255,255,255,0.95)" }}
+          >
             {subtitle}
           </Typography>
         )}

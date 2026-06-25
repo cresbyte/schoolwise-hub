@@ -29,18 +29,20 @@ const QUICK_LINKS = [
 ];
 
 const footerLinkSx = {
-  color: "rgba(255,255,255,0.75)",
+  color: "rgba(255,255,255,0.85)",
   fontSize: 14,
   textDecoration: "none",
   display: "block",
+  transition: "color 0.2s ease",
   "&:hover": { color: "#fff" },
 } as const;
 
 const bottomLinkSx = {
-  color: "rgba(255,255,255,0.5)",
+  color: "rgba(255,255,255,0.6)",
   fontSize: 12,
   textDecoration: "none",
-  "&:hover": { color: "rgba(255,255,255,0.85)" },
+  transition: "color 0.2s ease",
+  "&:hover": { color: "rgba(255,255,255,0.95)" },
 } as const;
 
 /**
@@ -54,9 +56,9 @@ export function WebsiteFooter() {
     <Box
       component="footer"
       className="website-footer no-print"
-      sx={{ bgcolor: WEBSITE_COLORS.footerBg, color: "rgba(255,255,255,0.85)" }}
+      sx={{ bgcolor: WEBSITE_COLORS.footerBg, color: "rgba(255,255,255,0.95)" }}
     >
-      <Container maxWidth="lg" sx={{ py: { xs: 5, md: 6 } }}>
+      <Container maxWidth="xl" sx={{ py: { xs: 5, md: 6 } }}>
         <Box
           sx={{
             display: "grid",
@@ -125,7 +127,7 @@ export function WebsiteFooter() {
               <Box
                 component="a"
                 href={`tel:+${SCHOOL.phoneRaw}`}
-                sx={{ color: "rgba(255,255,255,0.75)", fontSize: 14, textDecoration: "none" }}
+                sx={{ color: "rgba(255,255,255,0.85)", fontSize: 14, textDecoration: "none" }}
               >
                 {SCHOOL.phone}
               </Box>
@@ -135,7 +137,7 @@ export function WebsiteFooter() {
               <Box
                 component="a"
                 href={`mailto:${SCHOOL.email}`}
-                sx={{ color: "rgba(255,255,255,0.75)", fontSize: 14, textDecoration: "none" }}
+                sx={{ color: "rgba(255,255,255,0.85)", fontSize: 14, textDecoration: "none" }}
               >
                 {SCHOOL.email}
               </Box>
@@ -189,7 +191,7 @@ export function WebsiteFooter() {
       </Container>
 
       <Divider sx={{ borderColor: "rgba(255,255,255,0.12)" }} />
-      <Container maxWidth="lg">
+      <Container maxWidth="xl">
         <Box
           sx={{
             py: 2,
@@ -200,7 +202,7 @@ export function WebsiteFooter() {
             gap: 1,
           }}
         >
-          <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.5)" }}>
+          <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.6)" }}>
             © {new Date().getFullYear()} {SCHOOL.name}. All rights reserved.
           </Typography>
           <Box sx={{ display: "flex", gap: 2 }}>

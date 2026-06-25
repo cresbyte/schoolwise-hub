@@ -66,7 +66,7 @@ export const school: School = {
   phone: "0712345678",
   email: "info@primroseacademy.ac.ke",
   website: "www.primroseacademy.ac.ke",
-  principalName: "Mr. Daniel Kamau Njoroge",
+  principalName: "Mr. Daniel Kamau",
   curriculum: ["CBC", "844"],
   mpesaPaybill: "522533",
   mpesaTill: "5045120",
@@ -147,10 +147,10 @@ function mkStaff(
 }
 
 export const users: User[] = [
-  { id: "usr-1", name: "Mr. Daniel Kamau Njoroge", email: "principal@primroseacademy.ac.ke", phone: "0712345678", role: "admin", staffId: "stf-1", isActive: true, lastLogin: "2026-06-10T08:12:00Z", createdAt: "2023-01-10T00:00:00Z" },
+  { id: "usr-1", name: "Mr. Daniel Kamau", email: "principal@primroseacademy.ac.ke", phone: "0712345678", role: "admin", staffId: "stf-1", isActive: true, lastLogin: "2026-06-10T08:12:00Z", createdAt: "2023-01-10T00:00:00Z" },
   { id: "usr-2", name: "Mr. Joseph Mwangangi Mutua", email: "deputy@primroseacademy.ac.ke", phone: "0711234567", role: "headteacher", staffId: "stf-11", isActive: true, lastLogin: "2026-06-10T07:50:00Z", createdAt: "2023-01-10T00:00:00Z" },
-  { id: "usr-3", name: "Mr. John Mutua Kivuva", email: "j.kivuva@primroseacademy.ac.ke", phone: "0722345678", role: "class_teacher", staffId: "stf-3", isActive: true, lastLogin: "2026-06-09T13:20:00Z", createdAt: "2023-02-01T00:00:00Z" },
-  { id: "usr-4", name: "Ms. Agnes Njoki Kariuki", email: "accounts@primroseacademy.ac.ke", phone: "0733456789", role: "accountant", staffId: "stf-6", isActive: true, lastLogin: "2026-06-10T09:05:00Z", createdAt: "2023-01-15T00:00:00Z" },
+  { id: "usr-3", name: "Mr. John Mutua", email: "j.kivuva@primroseacademy.ac.ke", phone: "0722345678", role: "class_teacher", staffId: "stf-3", isActive: true, lastLogin: "2026-06-09T13:20:00Z", createdAt: "2023-02-01T00:00:00Z" },
+  { id: "usr-4", name: "Ms. Agnes Njoki", email: "accounts@primroseacademy.ac.ke", phone: "0733456789", role: "accountant", staffId: "stf-6", isActive: true, lastLogin: "2026-06-10T09:05:00Z", createdAt: "2023-01-15T00:00:00Z" },
   { id: "usr-5", name: "Mr. Stephen Kamau", email: "parent.kamau@gmail.com", phone: "0744567890", role: "parent", studentId: "std-1", studentIds: ["std-1", "std-3", "std-7"], isActive: true, lastLogin: "2026-06-08T18:30:00Z", createdAt: "2026-01-10T00:00:00Z" },
   { id: "usr-6", name: "Mrs. Lucy Mwangi", email: "parent.mwangi@gmail.com", phone: "0755123456", role: "parent", studentId: "std-4", studentIds: ["std-4"], isActive: true, lastLogin: "2026-06-10T10:00:00Z", createdAt: "2026-02-15T00:00:00Z" },
 ];
@@ -506,7 +506,7 @@ function buildPayroll(month: number, status: "paid" | "draft"): PayrollRecord[] 
       paymentDate: status === "paid" ? `2026-0${month}-28` : undefined,
       paymentMethod: status === "paid" ? "bank_transfer" : undefined,
       processedBy: "Ms. Agnes Njoki Kariuki",
-      approvedBy: status === "paid" ? "Mr. Daniel Kamau Njoroge" : undefined,
+      approvedBy: status === "paid" ? "Mr. Daniel Kamau" : undefined,
     };
   });
 }
@@ -586,9 +586,9 @@ export const attendance: AttendanceRecord[] = (() => {
 })();
 
 export const leaveRequests: LeaveRequest[] = [
-  { id: "lv-1", staffId: "stf-4", staffName: "Faith Kosgei", leaveType: "annual", startDate: "2026-06-20", endDate: "2026-06-25", days: 5, reason: "Family function upcountry", status: "approved", appliedOn: "2026-06-01", reviewedBy: "Mr. Daniel Kamau Njoroge", reviewedOn: "2026-06-03" },
+  { id: "lv-1", staffId: "stf-4", staffName: "Faith Kosgei", leaveType: "annual", startDate: "2026-06-20", endDate: "2026-06-25", days: 5, reason: "Family function upcountry", status: "approved", appliedOn: "2026-06-01", reviewedBy: "Mr. Daniel Kamau", reviewedOn: "2026-06-03" },
   { id: "lv-2", staffId: "stf-9", staffName: "Charles Githinji", leaveType: "sick", startDate: "2026-06-12", endDate: "2026-06-14", days: 3, reason: "Medical treatment", status: "pending", appliedOn: "2026-06-10" },
-  { id: "lv-3", staffId: "stf-10", staffName: "Hannah Bett", leaveType: "maternity", startDate: "2026-07-01", endDate: "2026-09-30", days: 90, reason: "Maternity leave", status: "approved", appliedOn: "2026-05-20", reviewedBy: "Mr. Daniel Kamau Njoroge", reviewedOn: "2026-05-22" },
+  { id: "lv-3", staffId: "stf-10", staffName: "Hannah Bett", leaveType: "maternity", startDate: "2026-07-01", endDate: "2026-09-30", days: 90, reason: "Maternity leave", status: "approved", appliedOn: "2026-05-20", reviewedBy: "Mr. Daniel Kamau", reviewedOn: "2026-05-22" },
 ];
 
 export const notifications: AppNotification[] = [
@@ -901,7 +901,7 @@ export const termEvents: TermEvent[] = [
     visibleToParents: true,
     approvalStatus: "approved",
     createdBy: "usr-1",
-    createdByName: "Mr. Daniel Kamau Njoroge",
+    createdByName: "Mr. Daniel Kamau",
     createdAt: "2026-05-01T08:00:00Z",
   },
   {
@@ -917,7 +917,7 @@ export const termEvents: TermEvent[] = [
     visibleToParents: true,
     approvalStatus: "approved",
     createdBy: "usr-1",
-    createdByName: "Mr. Daniel Kamau Njoroge",
+    createdByName: "Mr. Daniel Kamau",
     createdAt: "2026-05-01T08:00:00Z",
   },
   {
@@ -934,7 +934,7 @@ export const termEvents: TermEvent[] = [
     visibleToParents: true,
     approvalStatus: "approved",
     createdBy: "usr-1",
-    createdByName: "Mr. Daniel Kamau Njoroge",
+    createdByName: "Mr. Daniel Kamau",
     createdAt: "2026-05-01T08:00:00Z",
   },
   {
@@ -950,7 +950,7 @@ export const termEvents: TermEvent[] = [
     visibleToParents: true,
     approvalStatus: "approved",
     createdBy: "usr-1",
-    createdByName: "Mr. Daniel Kamau Njoroge",
+    createdByName: "Mr. Daniel Kamau",
     createdAt: "2026-05-01T08:00:00Z",
   },
   {
@@ -967,7 +967,7 @@ export const termEvents: TermEvent[] = [
     visibleToParents: true,
     approvalStatus: "approved",
     createdBy: "usr-1",
-    createdByName: "Mr. Daniel Kamau Njoroge",
+    createdByName: "Mr. Daniel Kamau",
     createdAt: "2026-05-01T08:00:00Z",
   },
   {
@@ -984,7 +984,7 @@ export const termEvents: TermEvent[] = [
     visibleToParents: true,
     approvalStatus: "approved",
     createdBy: "usr-1",
-    createdByName: "Mr. Daniel Kamau Njoroge",
+    createdByName: "Mr. Daniel Kamau",
     createdAt: "2026-05-01T08:00:00Z",
   },
   {
@@ -1018,7 +1018,7 @@ export const termEvents: TermEvent[] = [
     visibleToParents: true,
     approvalStatus: "approved",
     createdBy: "usr-1",
-    createdByName: "Mr. Daniel Kamau Njoroge",
+    createdByName: "Mr. Daniel Kamau",
     createdAt: "2026-05-01T08:00:00Z",
   },
   {
@@ -1035,7 +1035,7 @@ export const termEvents: TermEvent[] = [
     visibleToParents: true,
     approvalStatus: "approved",
     createdBy: "usr-1",
-    createdByName: "Mr. Daniel Kamau Njoroge",
+    createdByName: "Mr. Daniel Kamau",
     createdAt: "2026-05-01T08:00:00Z",
   },
   {
@@ -1051,7 +1051,7 @@ export const termEvents: TermEvent[] = [
     visibleToParents: true,
     approvalStatus: "approved",
     createdBy: "usr-1",
-    createdByName: "Mr. Daniel Kamau Njoroge",
+    createdByName: "Mr. Daniel Kamau",
     createdAt: "2026-05-01T08:00:00Z",
   },
   {

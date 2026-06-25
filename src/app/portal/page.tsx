@@ -704,20 +704,20 @@ function ThisTermTab({ student, onSwitchTab }: { student: Student; onSwitchTab: 
               <CardContent>
                 <Grid container spacing={2}>
                   <Grid size={{ xs: 12, sm: 8 }}>
-                    <Typography variant="h5" sx={{ fontWeight: 800 }}>Term {SCHOOL.currentTerm}, {SCHOOL.currentYear}</Typography>
-                    <Typography variant="body2">{formatDate(SCHOOL.termStartDate)} — {formatDate(SCHOOL.termEndDate)}</Typography>
+                    <Typography variant="h5" sx={{ fontWeight: 800, color: "inherit" }}>Term {SCHOOL.currentTerm}, {SCHOOL.currentYear}</Typography>
+                    <Typography variant="body2" sx={{ color: "inherit", opacity: 0.9 }}>{formatDate(SCHOOL.termStartDate)} — {formatDate(SCHOOL.termEndDate)}</Typography>
                   </Grid>
                   <Grid size={{ xs: 12, sm: 4 }} sx={{ textAlign: { sm: "right" } }}>
-                    <Typography variant="h6" sx={{ fontWeight: 800 }}>{daysRemaining} Days Left</Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 800, color: "inherit" }}>{daysRemaining} Days Left</Typography>
                   </Grid>
                 </Grid>
                 <Box sx={{ mt: 2 }}>
                   <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
-                    <Typography variant="caption">Term Progress</Typography>
-                    <Typography variant="caption">{Math.round(termProgress)}%</Typography>
+                    <Typography variant="caption" sx={{ color: "inherit", opacity: 0.8 }}>Term Progress</Typography>
+                    <Typography variant="caption" sx={{ color: "inherit", opacity: 0.8 }}>{Math.round(termProgress)}%</Typography>
                   </Box>
-                  <Box sx={{ height: 8, bgcolor: "rgba(255,255,255,0.2)", borderRadius: 4 }}>
-                    <Box sx={{ height: "100%", width: `${termProgress}%`, bgcolor: "white", borderRadius: 4 }} />
+                  <Box sx={{ height: 8, bgcolor: "rgba(255,255,255,0.15)", borderRadius: 4 }}>
+                    <Box sx={{ height: "100%", width: `${termProgress}%`, bgcolor: "common.white", borderRadius: 4,  }} />
                   </Box>
                 </Box>
               </CardContent>
