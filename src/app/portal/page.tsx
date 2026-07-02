@@ -35,7 +35,7 @@ function PortalContent() {
 
   if (user?.role !== "parent") {
     return (
-      <Box p={4} textAlign="center">
+      <Box sx={{ p: 4, textAlign: "center" }}>
         <Typography variant="h6" sx={{ mb: 2 }}>This page is for parents only.</Typography>
         <Button
           variant="contained"

@@ -34,7 +34,7 @@ export const Logo: React.FC<LogoProps> = ({
             width: size,
             height: size,
             objectFit: "contain",
-            borderRadius: size * 0.2, // Subtle rounding
+            borderRadius: 0,
           }}
         />
       )}
