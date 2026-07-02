@@ -1,223 +1,158 @@
 /**
- * Four-column website footer with newsletter signup.
+ * Public website footer — Kabarak-style.
+ * Dark band with multiple config-driven link columns, a contacts block,
+ * a logo watermark and a divided bottom bar. No rounded corners.
  * @module WebsiteFooter
  */
-import { useState } from "react";
+"use client";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import Divider from "@mui/material/Divider";
-import Stack from "@mui/material/Stack";
-import { Logo } from "@/components/common/Logo";
+import Link from "next/link";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import NextLink from "next/link";
-import { HEADING_FONT, WEBSITE_COLORS, getSchoolInfo } from "@/lib/website/constants";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import { Logo } from "@/components/common/Logo";
+import { SocialIcons } from "./SocialIcons";
+import { getSchoolInfo, WEBSITE_COLORS } from "@/lib/website/constants";
+import { FOOTER_COLUMNS } from "@/lib/website/nav";
 
-const QUICK_LINKS = [
-  { label: "About Us", href: "/about" },
-  { label: "Academics", href: "/academics" },
-  { label: "Admissions", href: "/admissions" },
-  { label: "School Life", href: "/school-life" },
-  { label: "News & Events", href: "/news" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "Our Staff", href: "/our-staff" },
-  { label: "Parent Resources", href: "/parents" },
-];
+const columnHeadingSx = {
+  fontWeight: 700,
+  fontSize: 15,
+  textTransform: "uppercase" as const,
+  letterSpacing: "0.05em",
+  color: "#fff",
+  pb: 1.5,
+  mb: 2,
+  position: "relative" as const,
+  "&::after": {
+    content: '""',
+    position: "absolute" as const,
+    left: 0,
+    bottom: 0,
+    width: 40,
+    height: 3,
+    backgroundColor: WEBSITE_COLORS.secondary,
+  },
+};
 
-const footerLinkSx = {
-  color: "rgba(255,255,255,0.85)",
+const linkSx = {
+  color: "rgba(255,255,255,0.72)",
   fontSize: 14,
   textDecoration: "none",
   display: "block",
-  transition: "color 0.2s ease",
-  "&:hover": { color: "#fff" },
-} as const;
-
-const bottomLinkSx = {
-  color: "rgba(255,255,255,0.6)",
-  fontSize: 12,
-  textDecoration: "none",
-  transition: "color 0.2s ease",
-  "&:hover": { color: "rgba(255,255,255,0.95)" },
+  py: 0.6,
+  transition: "color 0.18s ease, padding-left 0.18s ease",
+  "&:hover": { color: "#fff", pl: 0.75 },
 } as const;
 
 /**
- * Site-wide footer with identity, links, contact, and newsletter.
+ * Site-wide dark footer with link columns, contacts and bottom bar.
  */
 export function WebsiteFooter() {
   const SCHOOL = getSchoolInfo();
-  const [subscribed, setSubscribed] = useState(false);
 
   return (
-    <Box
-      component="footer"
-      className="website-footer no-print"
-      sx={{ bgcolor: WEBSITE_COLORS.footerBg, color: "rgba(255,255,255,0.95)" }}
-    >
-      <Container maxWidth="xl" sx={{ py: { xs: 5, md: 6 } }}>
+    <Box component="footer" className="website-footer no-print" sx={{ bgcolor: WEBSITE_COLORS.footerBg, color: "rgba(255,255,255,0.85)" }}>
+      {/* Accent top rule */}
+      <Box sx={{ height: 4, background: `linear-gradient(90deg, ${WEBSITE_COLORS.primary} 0 60%, ${WEBSITE_COLORS.secondary} 60% 100%)` }} />
+
+      <Container maxWidth="xl" sx={{ py: { xs: 5, md: 7 } }}>
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: "1.4fr 1fr 1fr 1.2fr" },
-            gap: 4,
+            gap: { xs: 4, md: 5 },
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "1fr 1fr",
+              md: "1.6fr 1fr 1fr 1fr",
+              lg: "1.8fr repeat(4, 1fr)",
+            },
           }}
         >
-          {/* Brand */}
+          {/* Identity + contacts */}
           <Box>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
-              <Logo size={40} variant="light" withText={false} />
-              <Typography
-                sx={{
-                  fontFamily: HEADING_FONT,
-                  fontWeight: 700,
-                  color: "common.white",
-                  fontSize: 18,
-                }}
-              >
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
+              <Logo size={44} variant="light" withText={false} />
+              <Typography sx={{ fontWeight: 800, color: "#fff", fontSize: 18, letterSpacing: "0.02em" }}>
                 {SCHOOL.name}
               </Typography>
             </Box>
-            <Typography
-              variant="body2"
-              sx={{ mb: 1, fontStyle: "italic", color: WEBSITE_COLORS.secondary }}
-            >
+            <Typography sx={{ color: WEBSITE_COLORS.secondaryLight, fontStyle: "italic", mb: 2, fontSize: 14 }}>
               {SCHOOL.motto}
             </Typography>
-            <Typography variant="body2" sx={{ lineHeight: 1.7 }}>
-              {SCHOOL.tagline}. A premier private day and boarding school in {SCHOOL.location},
-              offering CBC and 8-4-4 programmes from PP1 to Form 4.
-            </Typography>
-          </Box>
 
-          {/* Quick Links */}
-          <Box>
-            <Typography
-              sx={{ fontFamily: HEADING_FONT, fontWeight: 700, color: "common.white", mb: 2 }}
-            >
-              Quick Links
-            </Typography>
-            <Stack spacing={0.75}>
-              {QUICK_LINKS.map((link) => (
-                <Box key={link.href} component={NextLink} href={link.href} sx={footerLinkSx}>
-                  {link.label}
-                </Box>
-              ))}
-            </Stack>
-          </Box>
-
-          {/* Contact */}
-          <Box>
-            <Typography
-              sx={{ fontFamily: HEADING_FONT, fontWeight: 700, color: "common.white", mb: 2 }}
-            >
-              Contact Us
-            </Typography>
-            <Box sx={{ display: "flex", gap: 1, mb: 1.5, alignItems: "flex-start" }}>
+            <Box sx={{ display: "flex", gap: 1.2, mb: 1.5, alignItems: "flex-start" }}>
               <LocationOnIcon sx={{ fontSize: 18, mt: 0.3, color: WEBSITE_COLORS.secondary }} />
-              <Typography variant="body2">
-                {SCHOOL.address}, {SCHOOL.county}
+              <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.78)" }}>
+                {SCHOOL.address}<br />{SCHOOL.postal}
               </Typography>
             </Box>
-            <Box sx={{ display: "flex", gap: 1, mb: 1.5, alignItems: "center" }}>
+            <Box sx={{ display: "flex", gap: 1.2, mb: 1.5, alignItems: "center" }}>
               <PhoneIcon sx={{ fontSize: 18, color: WEBSITE_COLORS.secondary }} />
-              <Box
-                component="a"
-                href={`tel:+${SCHOOL.phoneRaw}`}
-                sx={{ color: "rgba(255,255,255,0.85)", fontSize: 14, textDecoration: "none" }}
-              >
+              <Box component="a" href={`tel:+${SCHOOL.phoneRaw}`} sx={{ color: "rgba(255,255,255,0.78)", fontSize: 14, textDecoration: "none", "&:hover": { color: "#fff" } }}>
                 {SCHOOL.phone}
               </Box>
             </Box>
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+            <Box sx={{ display: "flex", gap: 1.2, mb: 1.5, alignItems: "center" }}>
               <EmailIcon sx={{ fontSize: 18, color: WEBSITE_COLORS.secondary }} />
-              <Box
-                component="a"
-                href={`mailto:${SCHOOL.email}`}
-                sx={{ color: "rgba(255,255,255,0.85)", fontSize: 14, textDecoration: "none" }}
-              >
+              <Box component="a" href={`mailto:${SCHOOL.email}`} sx={{ color: "rgba(255,255,255,0.78)", fontSize: 14, textDecoration: "none", "&:hover": { color: "#fff" } }}>
                 {SCHOOL.email}
               </Box>
             </Box>
-          </Box>
-
-          {/* Newsletter */}
-          <Box>
-            <Typography
-              sx={{ fontFamily: HEADING_FONT, fontWeight: 700, color: "common.white", mb: 2 }}
-            >
-              Newsletter
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 2 }}>
-              Stay updated with school news, events, and announcements.
-            </Typography>
-            {subscribed ? (
-              <Typography variant="body2" sx={{ color: WEBSITE_COLORS.secondary }}>
-                Thank you for subscribing!
+            <Box sx={{ display: "flex", gap: 1.2, mb: 2.5, alignItems: "center" }}>
+              <AccessTimeIcon sx={{ fontSize: 18, color: WEBSITE_COLORS.secondary }} />
+              <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.78)" }}>
+                Mon – Fri: 7:30 AM – 5:00 PM
               </Typography>
-            ) : (
-              <Box
-                component="form"
-                onSubmit={(e: React.FormEvent) => {
-                  e.preventDefault();
-                  setSubscribed(true);
-                }}
-              >
-                <TextField
-                  size="small"
-                  placeholder="Your email"
-                  type="email"
-                  required
-                  fullWidth
-                  sx={{
-                    mb: 1,
-                    "& .MuiOutlinedInput-root": {
-                      bgcolor: "rgba(255,255,255,0.08)",
-                      color: "common.white",
-                    },
-                    "& .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.2)" },
-                  }}
-                />
-                <Button type="submit" variant="contained" color="secondary" fullWidth>
-                  Subscribe
-                </Button>
-              </Box>
-            )}
+            </Box>
+            <SocialIcons color="rgba(255,255,255,0.7)" hoverColor="#fff" size={17} />
           </Box>
+
+          {/* Link columns */}
+          {FOOTER_COLUMNS.map((col) => (
+            <Box key={col.heading}>
+              <Typography sx={columnHeadingSx}>{col.heading}</Typography>
+              {col.links.map((l) => (
+                <Box key={l.label + l.href} component={Link} href={l.href} sx={linkSx}>
+                  {l.label}
+                </Box>
+              ))}
+            </Box>
+          ))}
         </Box>
       </Container>
 
-      <Divider sx={{ borderColor: "rgba(255,255,255,0.12)" }} />
-      <Container maxWidth="xl">
-        <Box
-          sx={{
-            py: 2,
-            display: "flex",
-            flexDirection: { xs: "column", sm: "row" },
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: 1,
-          }}
-        >
-          <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.6)" }}>
-            © {new Date().getFullYear()} {SCHOOL.name}. All rights reserved.
-          </Typography>
-          <Box sx={{ display: "flex", gap: 2 }}>
-            <Box component={NextLink} href="/privacy" sx={bottomLinkSx}>
-              Privacy Policy
-            </Box>
-            <Box component={NextLink} href="/terms" sx={bottomLinkSx}>
-              Terms of Use
-            </Box>
+      {/* Watermark logo strip */}
+      <Box sx={{ borderTop: "1px solid rgba(255,255,255,0.08)", py: 2.5, textAlign: "center", opacity: 0.35 }}>
+        <Logo size={30} variant="light" withText={false} />
+      </Box>
+
+      {/* Bottom bar */}
+      <Box sx={{ bgcolor: "rgba(0,0,0,0.25)" }}>
+        <Container maxWidth="xl">
+          <Box
+            sx={{
+              py: 2,
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 1,
+              textAlign: "center",
+            }}
+          >
+            <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.6)" }}>
+              © {new Date().getFullYear()} {SCHOOL.name}. All rights reserved.
+            </Typography>
+            <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.5)" }}>
+              {SCHOOL.tagline} · Powered by ShuleSmart
+            </Typography>
           </Box>
-          <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.4)" }}>
-            Powered by ShuleSmart
-          </Typography>
-        </Box>
-      </Container>
+        </Container>
+      </Box>
     </Box>
   );
 }
