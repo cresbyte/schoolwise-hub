@@ -294,7 +294,7 @@ export function WebsiteNavbar() {
                               onClick={() => setDrawerOpen(false)}
                               sx={{ pl: 1, py: 0.5 }}
                             >
-                              <ListItemText primary={l.label} slotProps={{ primary: { fontSize: 14 } }} />
+                              <ListItemText primary={l.label} slotProps={{ primary: { sx: { fontSize: 14 } } }} />
                             </ListItemButton>
                           ))}
                         </Box>
@@ -320,8 +320,8 @@ export function WebsiteNavbar() {
             <Divider />
             <List>
               {TOP_BAR_LINKS.map((l) => (
-                <ListItemButton key={l.label} component={Link} href={l.href} onClick={() => setDrawerOpen(false)}>
-                  <ListItemText primary={l.label} slotProps={{ primary: { fontSize: 13 } }} />
+                  <ListItemButton key={l.label} component={Link} href={l.href} onClick={() => setDrawerOpen(false)}>
+                  <ListItemText primary={l.label} slotProps={{ primary: { sx: { fontSize: 13 } } }} />
                 </ListItemButton>
               ))}
             </List>
