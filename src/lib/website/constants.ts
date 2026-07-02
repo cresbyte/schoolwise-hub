@@ -32,23 +32,28 @@ export type SchoolInfo = typeof _schoolInfo;
 export const getSchoolInfo = (): SchoolInfo => ({ ..._schoolInfo });
 export const setSchoolInfo = (patch: Partial<SchoolInfo>) => { _schoolInfo = { ..._schoolInfo, ...patch }; };
 
-export const HEADING_FONT = "'Merriweather', Georgia, serif";
-export const BODY_FONT = "'Outfit', system-ui, -apple-system, sans-serif";
+export const HEADING_FONT = "'Poppins', system-ui, -apple-system, sans-serif";
+export const BODY_FONT = "'Poppins', system-ui, -apple-system, sans-serif";
 
-/** Website-only colour tokens (aligned with MUI theme). */
+/**
+ * Website-only colour tokens — Kabarak University palette
+ * (extracted from kabarak.ac.ke computed CSS). Aligned with websiteTheme.
+ */
 export const WEBSITE_COLORS = {
-  primary: "#1A3A6B",
-  primaryDark: "#0F2347",
-  secondary: "#C8922A",
-  secondaryLight: "#F5B942",
-  accent: "#1E6E3A",
+  primary: "#95191c",
+  primaryDark: "#6b1214",
+  secondary: "#59ac46",
+  secondaryLight: "#62ae50",
+  gold: "#cb9e4f",
+  accent: "#59ac46",
   bgWhite: "#FFFFFF",
-  bgAlt: "#F8FAFD",
-  bgNavy: "#0F1923",
-  navbarBg: "#1A3A6B",
+  bgAlt: "#eef1f4",
+  bgNavy: "#343a40",
+  navbarBg: "#95191c",
   navbarText: "#FFFFFF",
-  footerBg: "#0F1923",
-  footerText: "#94A3B8",
+  topBarBg: "#6b1214",
+  footerBg: "#343a40",
+  footerText: "rgba(255,255,255,0.72)",
   whatsapp: "#25D366",
   whatsappDark: "#1DA851",
 } as const;
