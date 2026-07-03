@@ -32,23 +32,23 @@ export type SchoolInfo = typeof _schoolInfo;
 export const getSchoolInfo = (): SchoolInfo => ({ ..._schoolInfo });
 export const setSchoolInfo = (patch: Partial<SchoolInfo>) => { _schoolInfo = { ..._schoolInfo, ...patch }; };
 
-export const HEADING_FONT = "'Poppins', 'Merriweather', Georgia, serif";
-export const BODY_FONT = "'Poppins', 'Outfit', system-ui, -apple-system, sans-serif";
+export const HEADING_FONT = "'Merriweather', Georgia, serif";
+export const BODY_FONT = "'Outfit', system-ui, -apple-system, sans-serif";
 
 /** Website-only colour tokens (aligned with MUI theme). */
 export const WEBSITE_COLORS = {
-  primary: "#95191c",
-  primaryDark: "#7a1215",
-  secondary: "#59ac46",
-  secondaryLight: "#7bc66a",
-  accent: "#C8922A",
+  primary: "#1A3A6B",
+  primaryDark: "#0F2347",
+  secondary: "#C8922A",
+  secondaryLight: "#F5B942",
+  accent: "#1E6E3A",
   bgWhite: "#FFFFFF",
-  bgAlt: "#f9f9f9",
-  bgNavy: "#1a1a1a",
-  navbarBg: "#95191c",
+  bgAlt: "#F8FAFD",
+  bgNavy: "#0F1923",
+  navbarBg: "#1A3A6B",
   navbarText: "#FFFFFF",
-  footerBg: "#1a1a1a",
-  footerText: "#aaaaaa",
+  footerBg: "#0F1923",
+  footerText: "#94A3B8",
   whatsapp: "#25D366",
   whatsappDark: "#1DA851",
 } as const;
