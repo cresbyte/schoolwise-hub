@@ -20,14 +20,7 @@ import {
   ListItemButton,
   ListItemText,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import PhoneIcon from "@mui/icons-material/Phone";
-import EmailIcon from "@mui/icons-material/Email";
-import FacebookIcon from "@mui/icons-material/Facebook";
-import TwitterIcon from "@mui/icons-material/Twitter";
+import {Menu, Close, ExpandMore, KeyboardArrowDown, Phone, Email, Facebook, Twitter} from "@mui/icons-material";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -209,8 +202,8 @@ export function WebsiteNavbar() {
             {/* Social icons */}
             <Box sx={{ display: "flex", gap: 0.5 }}>
               {[
-                { icon: <FacebookIcon sx={{ fontSize: 16 }} />, label: "Facebook" },
-                { icon: <TwitterIcon sx={{ fontSize: 16 }} />, label: "Twitter" },
+                { icon: <Facebook sx={{ fontSize: 16 }} />, label: "Facebook" },
+                { icon: <Twitter sx={{ fontSize: 16 }} />, label: "Twitter" },
                 { icon: <YouTubeIcon sx={{ fontSize: 16 }} />, label: "YouTube" },
               ].map(({ icon, label }) => (
                 <IconButton
@@ -233,7 +226,7 @@ export function WebsiteNavbar() {
             {/* Contact info + quick links */}
             <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
               <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
-                <PhoneIcon sx={{ fontSize: 13 }} />
+                <Phone sx={{ fontSize: 13 }} />
                 <Typography
                   component="a"
                   href={`tel:+${school.phoneRaw}`}
@@ -248,7 +241,7 @@ export function WebsiteNavbar() {
                 </Typography>
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
-                <EmailIcon sx={{ fontSize: 13 }} />
+                <Email sx={{ fontSize: 13 }} />
                 <Typography
                   component="a"
                   href={`mailto:${school.email}`}
@@ -328,7 +321,7 @@ export function WebsiteNavbar() {
               href="/"
               sx={{ display: "flex", alignItems: "center", gap: 1.5, textDecoration: "none" }}
             >
-              <Logo size={scrolled ? 36 : 44} />
+              <Logo size={scrolled ? 36 : 44} withText={false} />
               <Box sx={{ display: { xs: "none", sm: "block" } }}>
                 <Typography
                   sx={{
@@ -395,7 +388,7 @@ export function WebsiteNavbar() {
                     }}
                   >
                     {group.label}
-                    <KeyboardArrowDownIcon
+                    <KeyboardArrowDown
                       sx={{
                         fontSize: 16,
                         transition: "transform 0.2s",
@@ -520,7 +513,7 @@ export function WebsiteNavbar() {
               onClick={() => setDrawerOpen(true)}
               sx={{ display: { md: "none" }, color: "#fff" }}
             >
-              <MenuIcon />
+              <Menu />
             </IconButton>
           </Box>
         </Container>
@@ -567,7 +560,7 @@ export function WebsiteNavbar() {
             onClick={() => setDrawerOpen(false)}
             sx={{ color: "rgba(255,255,255,0.8)" }}
           >
-            <CloseIcon fontSize="small" />
+            <Close fontSize="small" />
           </IconButton>
         </Box>
 
@@ -582,7 +575,7 @@ export function WebsiteNavbar() {
                 "&:before": { display: "none" },
               }}
             >
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <AccordionSummary expandIcon={<ExpandMore />}>
                 <Typography
                   sx={{
                     fontFamily: "'Poppins', sans-serif",

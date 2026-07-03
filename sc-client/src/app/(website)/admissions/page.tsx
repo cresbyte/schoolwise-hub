@@ -4,21 +4,7 @@
  * Admissions page — process stepper, spaces, fees, scholarships.
  * @module website/admissions/page
  */
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import Stepper from "@mui/material/Stepper";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
+import {Box, Card, CardContent, Typography, Button, Stepper, Step, StepLabel, Tabs, Tab, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import { useState } from "react";
 import Link from "next/link";
 import { PageBanner } from "@/components/website/PageBanner";

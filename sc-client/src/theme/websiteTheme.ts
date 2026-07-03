@@ -1,17 +1,17 @@
 /**
  * Website-specific theme tokens.
- * Kabarak University-inspired design system for the public website.
+ * Primrose University-inspired design system for the public website.
  * These tokens supplement the main theme.ts for website-specific styling.
  */
 
-/** Kabarak-style color palette for the public website */
+/** Primrose-style color palette for the public website */
 export const KAB = {
-  // Primary brand — Kabarak maroon/dark red
+  // Primary brand — Primrose maroon/dark red
   primary: "#95191c",
   primaryDark: "#7a1215",
   primaryLight: "#b42d31",
 
-  // Secondary — Kabarak green
+  // Secondary — Primrose green
   secondary: "#59ac46",
   secondaryDark: "#428233",
   secondaryLight: "#7bc66a",

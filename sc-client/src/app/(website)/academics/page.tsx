@@ -5,18 +5,7 @@
  * @module website/academics/page
  */
 import { useState } from "react";
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Button from "@mui/material/Button";
+import {Box,Card, CardContent, Typography, Tabs, Tab, Table, TableBody, TableCell, TableHead, TableRow, Button } from "@mui/material";
 import PrintIcon from "@mui/icons-material/Print";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { PageBanner } from "@/components/website/PageBanner";

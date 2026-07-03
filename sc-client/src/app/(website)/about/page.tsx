@@ -4,12 +4,7 @@
  * About Us page — story, vision, leadership, accreditation, facilities.
  * @module website/about/page
  */
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import Avatar from "@mui/material/Avatar";
-import Chip from "@mui/material/Chip";
+import {Box, Card, CardContent, Typography, Avatar, Chip} from "@mui/material";
 import { PageBanner } from "@/components/website/PageBanner";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
 import { SectionHeading } from "@/components/website/SectionHeading";
