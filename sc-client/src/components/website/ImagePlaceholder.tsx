@@ -24,7 +24,7 @@ export function ImagePlaceholder({
   alt,
   aspectRatio = "16/9",
   height,
-  borderRadius = 0,
+  borderRadius = 2,
   priority = false,
   overlay = false,
 }: ImagePlaceholderProps) {

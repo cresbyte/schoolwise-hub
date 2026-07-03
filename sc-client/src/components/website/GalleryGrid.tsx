@@ -67,6 +67,7 @@ export function GalleryGrid({ items, showFilters = true, limit }: GalleryGridPro
             onClick={() => setLightbox(idx)}
             sx={{
               cursor: "pointer",
+              borderRadius: 2,
               overflow: "hidden",
               position: "relative",
               "&:hover": { opacity: 0.9 },

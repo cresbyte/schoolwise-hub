@@ -8,7 +8,6 @@ import { TOKENS } from "@/theme/theme";
 
 /** Props for {@link SectionHeading}. */
 export interface SectionHeadingProps {
-  id?: string;
   overline?: string;
   title: string;
   subtitle?: string;
@@ -19,7 +18,7 @@ export interface SectionHeadingProps {
  * Styled section title with optional overline, gold rule, and subtitle.
  * @param props - Overline, title, optional subtitle, alignment
  */
-export function SectionHeading({ id, overline, title, subtitle, align = "center" }: SectionHeadingProps) {
+export function SectionHeading({ overline, title, subtitle, align = "center" }: SectionHeadingProps) {
   const isCenter = align === "center";
 
   return (
@@ -39,7 +38,7 @@ export function SectionHeading({ id, overline, title, subtitle, align = "center"
           {overline}
         </Typography>
       )}
-      <Typography variant="h2" component="h2" id={id} sx={{ mb: 2 }}>
+      <Typography variant="h2" component="h2" sx={{ mb: 2 }}>
         {title}
       </Typography>
       <Box
@@ -47,7 +46,7 @@ export function SectionHeading({ id, overline, title, subtitle, align = "center"
           width: 56,
           height: 3,
           background: `linear-gradient(90deg, ${TOKENS.color.secondary}, ${TOKENS.color.secondaryLight})`,
-          borderRadius: 0,
+          borderRadius: TOKENS.radius.full,
           mx: isCenter ? "auto" : 0,
           mb: subtitle ? 2 : 0,
         }}

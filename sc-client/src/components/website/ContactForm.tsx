@@ -63,7 +63,7 @@ export function ContactForm({ submitLabel = "Send Message" }: ContactFormProps) 
 
   if (sent) {
     return (
-      <Alert severity="success">
+      <Alert severity="success" sx={{ borderRadius: 2 }}>
         Thank you for your message! Our team will respond within 2 business days.
       </Alert>
     );

@@ -4,6 +4,7 @@
  * These tokens supplement the main theme.ts for website-specific styling.
  */
 
+<<<<<<< HEAD
 /** Primrose-style color palette for the public website */
 export const KAB = {
   // Primary brand — Primrose maroon/dark red
@@ -15,54 +16,67 @@ export const KAB = {
   secondary: "#59ac46",
   secondaryDark: "#428233",
   secondaryLight: "#7bc66a",
+=======
+/** Kabarak-style color palette for website */
+export const KAB = {
+  // Primary brand colors
+  primary: "#1A3A6B",
+  primaryDark: "#0F2347",
+  primaryLight: "#2A52A0",
 
-  // Accent — Gold/Amber
+  // Accent colors
+  secondary: "#C8922A",
+  secondaryDark: "#A87520",
+  secondaryLight: "#F5B942",
+>>>>>>> 0a504b006fe5d116c278ca0f79d2bee09e343aa1
+
+  // Semantic accent colors
+  green: "#1E6E3A",
+  greenLight: "#2A8A4E",
   gold: "#C8922A",
   goldLight: "#F5B942",
-  green: "#59ac46",
-  greenLight: "#7bc66a",
 
-  // Dark / footer tones
-  dark: "#1a1a1a",
-  darkLight: "#2e2e2e",
+  // Dark theme colors
+  dark: "#1C2B3A",
+  darkLight: "#2D3F52",
 
-  // Background
+  // Background colors
   white: "#FFFFFF",
-  bgMuted: "#f9f9f9",
-  bgSubtle: "#fdf4f4",
+  bgMuted: "#F5F7FA",
+  bgSubtle: "#EEF2FA",
 
-  // Text
-  textPrimary: "#222222",
-  textSecondary: "#555555",
-  textMuted: "#999999",
+  // Text colors
+  textPrimary: "#0F1923",
+  textSecondary: "#546E8A",
+  textMuted: "#9AB0C8",
 
-  // Borders
-  border: "#e5e5e5",
-  borderLight: "#f2f2f2",
-  borderDark: "#cccccc",
+  // Border colors
+  border: "#C8D7E5",
+  borderLight: "#E4EDF5",
+  borderDark: "#3A4F66",
 
-  // Semantic states
-  success: "#59ac46",
+  // Status colors
+  success: "#1E6E3A",
   warning: "#B45309",
   error: "#B91C1C",
-  info: "#95191c",
+  info: "#1A3A6B",
 };
 
 /** Website-specific typography options */
 export const WEBSITE_TYPOGRAPHY = {
   fontFamily: {
-    heading: "'Poppins', 'Merriweather', Georgia, serif",
-    body: "'Poppins', 'Outfit', system-ui, -apple-system, sans-serif",
+    heading: "'Merriweather', Georgia, serif",
+    body: "'Outfit', system-ui, -apple-system, sans-serif",
   },
   headingStyles: {
     hero: {
-      fontFamily: "'Poppins', sans-serif",
+      fontFamily: "'Merriweather', Georgia, serif",
       fontWeight: 700,
       lineHeight: 1.15,
       letterSpacing: "-0.02em",
     },
     section: {
-      fontFamily: "'Poppins', sans-serif",
+      fontFamily: "'Merriweather', Georgia, serif",
       fontWeight: 700,
       lineHeight: 1.25,
     },
