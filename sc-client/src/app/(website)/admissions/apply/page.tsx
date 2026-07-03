@@ -5,12 +5,22 @@
  * @module website/admissions/apply/page
  */
 import { useState } from "react";
-import {Box, Card, CardContent, Typography, TextField, Button, MenuItem, Stepper, Step, StepLabel, Alert } from "@mui/material";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import MenuItem from "@mui/material/MenuItem";
+import Stepper from "@mui/material/Stepper";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import Alert from "@mui/material/Alert";
 import PrintIcon from "@mui/icons-material/Print";
 import { PageBanner } from "@/components/website/PageBanner";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
 import { HEADING_FONT, getSchoolInfo } from "@/lib/website/constants";
-import * as api from "@/lib/mockApi";
+import { api } from "@/lib/api";
 
 const STEPS = ["Learner Details", "Parent/Guardian", "Previous School", "Review & Submit"];
 const GRADES = [
@@ -36,6 +46,8 @@ export default function ApplyPage() {
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [applicationRef, setApplicationRef] = useState("");
+  const [submitError, setSubmitError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -57,6 +69,8 @@ export default function ApplyPage() {
   };
 
   const handleSubmit = async () => {
+    setSubmitting(true);
+    setSubmitError("");
     try {
       const result = await api.submitApplication({
         firstName: form.firstName,
@@ -74,12 +88,19 @@ export default function ApplyPage() {
         reason: form.reason,
       });
       setApplicationRef(result.applicationRef);
-    } catch {
-      // Fallback ref if API fails
-      setApplicationRef(`APP-${new Date().getFullYear()}-${Date.now().toString(36).toUpperCase()}`);
+      setSubmitted(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (err) {
+      // Surface the real failure instead of pretending it succeeded — the
+      // parent needs to know if their application wasn't actually saved.
+      setSubmitError(
+        err instanceof Error
+          ? err.message
+          : "We couldn't submit your application. Please check your details and try again.",
+      );
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitted(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   if (submitted) {
@@ -96,8 +117,8 @@ export default function ApplyPage() {
         <SectionWrapper>
           <Alert severity="success" sx={{ mb: 3 }}>
             Thank you! Your application has been received.{" "}
-            <strong>Reference: {applicationRef}</strong>. Our admissions team will contact you within 3
-            business days.
+            <strong>Reference: {applicationRef}</strong>. Our admissions team will contact you
+            within 3 business days.
           </Alert>
           <Box className="print-area">
             <Box className="print-only" sx={{ display: "none", textAlign: "center", mb: 3 }}>
@@ -296,14 +317,15 @@ export default function ApplyPage() {
                 <Typography variant="body2" sx={{ mb: 2 }}>
                   <strong>Previous School:</strong> {form.prevSchool || "N/A"}
                 </Typography>
-                <Alert severity="info">
+                <Alert severity="info" sx={{ mb: submitError ? 2 : 0 }}>
                   By submitting, you confirm that the information provided is accurate.
                 </Alert>
+                {submitError && <Alert severity="error">{submitError}</Alert>}
               </Box>
             )}
 
             <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
-              <Button disabled={step === 0} onClick={() => setStep((s) => s - 1)}>
+              <Button disabled={step === 0 || submitting} onClick={() => setStep((s) => s - 1)}>
                 Back
               </Button>
               {step < STEPS.length - 1 ? (
@@ -311,8 +333,13 @@ export default function ApplyPage() {
                   Next
                 </Button>
               ) : (
-                <Button variant="contained" color="secondary" onClick={handleSubmit}>
-                  Submit Application
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={handleSubmit}
+                  disabled={submitting}
+                >
+                  {submitting ? "Submitting…" : "Submit Application"}
                 </Button>
               )}
             </Box>

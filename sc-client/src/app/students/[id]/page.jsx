@@ -5,25 +5,7 @@
  * @module students/[id]/page
  */
 import { useState } from "react";
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import Avatar from "@mui/material/Avatar";
-import Chip from "@mui/material/Chip";
-import Button from "@mui/material/Button";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TableContainer from "@mui/material/TableContainer";
-import IconButton from "@mui/material/IconButton";
-import MenuItem from "@mui/material/MenuItem";
-import TextField from "@mui/material/TextField";
-import Divider from "@mui/material/Divider";
+import {Box, Card, CardContent, Typography, Avatar, Chip, Button, Tabs, Tab, Table, TableBody, TableCell, TableHead, TableRow, TableContainer, IconButton, MenuItem, TextField, Divider} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditIcon from "@mui/icons-material/Edit";
 import { useParams, useRouter } from "next/navigation";
@@ -77,37 +59,13 @@ function StudentDetail({ id }) {
             <CardContent>
               <Box sx={{ display: "flex", gap: 3, alignItems: "center", flexWrap: "wrap" }}>
                 <Box sx={{ position: "relative" }}>
-                  <Avatar 
-                    src={s.avatarUrl || s.photo} 
-                    sx={{ width: 100, height: 100, fontSize: 32, bgcolor: "primary.main" }}
+                  <Avatar
+                    src={s.photo || s.avatarUrl}
+                    variant="rounded"
+                    sx={{ width: 100, height: 125, fontSize: 32, bgcolor: "primary.main" }}
                   >
                     {getInitials(`${s.firstName} ${s.lastName}`)}
                   </Avatar>
-                  <IconButton
-                    size="small"
-                    component="label"
-                    sx={{
-                      position: "absolute",
-                      bottom: 0,
-                      right: 0,
-                      bgcolor: "background.paper",
-                      boxShadow: 2,
-                      "&:hover": { bgcolor: "action.hover" },
-                    }}
-                  >
-                    <EditIcon fontSize="small" />
-                    <input
-                      type="file"
-                      hidden
-                      accept="image/*"
-                      onChange={async () => {
-                        const randomId = Math.floor(Math.random() * 70) + 1;
-                        const photoUrl = `https://i.pravatar.cc/150?u=std-${randomId}`;
-                        await api.updateStudentAvatar(s.id, photoUrl);
-                        refetch();
-                      }}
-                    />
-                  </IconButton>
                 </Box>
                 <Box sx={{ flex: 1, minWidth: 220 }}>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap" }}>
@@ -228,7 +186,7 @@ function AttendanceTab({ studentId }) {
   const [year, setYear] = useState(2026);
   // Simulation: using the date ranges for the current term
   const att = useAsync(() => api.getStudentAttendance(studentId, "2026-05-01", "2026-08-31"), [studentId, term, year]);
-  
+
   return (
     <Box>
       <Box sx={{ display: "flex", gap: 2, mb: 3, flexWrap: "wrap", alignItems: "center" }}>
@@ -253,7 +211,7 @@ function AttendanceTab({ studentId }) {
             total: records.length,
           };
           const pct = stats.total ? Math.round(((stats.present + stats.late) / stats.total) * 100) : 0;
-          
+
           return (
             <>
               <TableContainer sx={{ border: 1, borderColor: "divider", borderRadius: 1, mb: 4 }}>
@@ -297,14 +255,14 @@ function AttendanceTab({ studentId }) {
                         <TableCell sx={{ fontWeight: 600 }}>{formatDate(r.date)}</TableCell>
                         <TableCell>{new Date(r.date).toLocaleDateString('en-US', { weekday: 'long' })}</TableCell>
                         <TableCell>
-                          <Chip 
-                            size="small" 
-                            label={r.status.toUpperCase()} 
-                            sx={{ 
+                          <Chip
+                            size="small"
+                            label={r.status.toUpperCase()}
+                            sx={{
                               fontWeight: 700, fontSize: 10,
                               color: r.status === "present" ? "success.main" : r.status === "absent" ? "error.main" : "warning.main",
                               bgcolor: r.status === "present" ? "success.main" + "19" : r.status === "absent" ? "error.main" + "19" : "warning.main" + "19"
-                            }} 
+                            }}
                           />
                         </TableCell>
                         <TableCell>{r.recordedBy}</TableCell>
@@ -326,12 +284,12 @@ function FeeTab({ studentId }) {
   const inv = useAsync(() => api.getStudentInvoice(studentId), [studentId]);
   const pays = useAsync(() => api.getPayments({ studentId }), [studentId]);
   const levies = useAsync(() => api.getStudentLevies(studentId), [studentId]);
-  
+
   const [payLevyOpen, setPayLevyOpen] = useState(false);
   const [selectedLevy, setSelectedLevy] = useState(null);
 
   const { showNotification } = useNotification();
-  
+
   return (
     <DataState loading={inv.loading} error={inv.error} data={inv.data} onRetry={inv.refetch}>
       {(i) => (
@@ -398,16 +356,16 @@ function FeeTab({ studentId }) {
                         <TableCell align="right">{formatKES(sl.levy.amount)}</TableCell>
                         <TableCell>{formatDate(sl.levy.dueDate)}</TableCell>
                         <TableCell>
-                          <Chip 
-                            label={sl.paid ? "PAID" : "UNPAID"} 
-                            size="small" 
-                            color={sl.paid ? "success" : "warning"} 
+                          <Chip
+                            label={sl.paid ? "PAID" : "UNPAID"}
+                            size="small"
+                            color={sl.paid ? "success" : "warning"}
                           />
                         </TableCell>
                         <TableCell align="right">
                           {!sl.paid && (
-                            <Button 
-                              size="small" 
+                            <Button
+                              size="small"
                               onClick={() => { setSelectedLevy(sl.levy); setPayLevyOpen(true); }}
                             >
                               Pay
@@ -443,7 +401,7 @@ function FeeTab({ studentId }) {
                     levyId: selectedLevy.id,
                     levyTitle: selectedLevy.title,
                     studentId: studentId,
-                    studentName: "Student", 
+                    studentName: "Student",
                     amount: selectedLevy.amount,
                     paidAt: new Date().toISOString(),
                     paymentMethod: "cash",

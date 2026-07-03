@@ -5,22 +5,7 @@
  * @module students/page
  */
 import { useState } from "react";
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import Chip from "@mui/material/Chip";
-import Button from "@mui/material/Button";
-import MenuItem from "@mui/material/MenuItem";
-import TextField from "@mui/material/TextField";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TablePagination from "@mui/material/TablePagination";
-import Avatar from "@mui/material/Avatar";
-import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
+import { Box, Card, Chip, Button, MenuItem, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Avatar, Tooltip, IconButton, } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DownloadIcon from "@mui/icons-material/Download";
 import PrintIcon from "@mui/icons-material/Print";
@@ -68,6 +53,17 @@ function StudentsContent() {
   const classes = useClasses();
   const list = data ?? [];
   const paged = list.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'active': return '#4CAF50'; // Green
+      case 'transferred_out': return '#FF9800'; // Orange
+      case 'graduated': return '#2196F3'; // Blue
+      case 'withdrawn': return '#F44336'; // Red
+      case 'suspended': return '#FFC107'; // Amber
+      default: return '#9E9E9E'; // Grey
+    }
+  };
 
   const handleExport = () => {
     exportToCSV(
@@ -139,27 +135,33 @@ function StudentsContent() {
                       <TableCell>Boarding</TableCell>
                       <TableCell>Parent Phone</TableCell>
                       <TableCell align="right">Fee Balance</TableCell>
-                      <TableCell>Status</TableCell>
                       <TableCell align="right">Actions</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {paged.map((s) => (
                       <TableRow key={s.id} hover>
-                        <TableCell sx={{ fontFamily: "monospace", fontSize: 13 }}>{s.admissionNumber}</TableCell>
                         <TableCell>
-                          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                            <Avatar 
-                              src={s.avatarUrl} 
-                              alt={`${s.firstName} ${s.lastName}`}
-                              sx={{ width: 32, height: 32, fontSize: 12, bgcolor: "primary.main" }}
-                            >
-                              {getInitials(`${s.firstName} ${s.lastName}`)}
-                            </Avatar>
-                            <Link href={`/students/${s.id}`} style={{ fontWeight: 600, color: "#1565C0", textDecoration: "none" }}>
-                              {s.firstName} {s.lastName}
-                            </Link>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Box
+                              component="span"
+                              sx={{
+                                width: 8,
+                                height: 8,
+                                borderRadius: '50%',
+                                backgroundColor: getStatusColor(s.status),
+                                display: 'inline-block'
+                              }}
+                            />
+                            <Box component="span" sx={{ fontFamily: "monospace", fontSize: 13 }}>
+                              {s.admissionNumber}
+                            </Box>
                           </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Link href={`/students/${s.id}`} style={{ fontWeight: 600, color: "#1565C0", textDecoration: "none" }}>
+                            {s.firstName} {s.lastName}
+                          </Link>
                         </TableCell>
                         <TableCell>{s.className}</TableCell>
                         <TableCell>
@@ -170,7 +172,6 @@ function StudentsContent() {
                         <TableCell align="right" sx={{ fontWeight: 700, color: s.feeBalance > 0 ? "error.main" : "success.main" }}>
                           {formatKES(s.feeBalance)}
                         </TableCell>
-                        <TableCell><StatusChip status={s.status} /></TableCell>
                         <TableCell align="right">
                           <Tooltip title="View">
                             <IconButton size="small" onClick={() => router.push(`/students/${s.id}`)}>

@@ -5,11 +5,15 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
 async function request(path: string, options: RequestInit = {}) {
   const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
-  const headers = {
+  const headers: any = {
     "Content-Type": "application/json",
     ...(token ? { "Authorization": `Bearer ${token}` } : {}),
     ...options.headers,
   };
+
+  if (options.body instanceof FormData) {
+    delete headers["Content-Type"];
+  }
 
   const response = await fetch(`${BASE_URL}${path}`, { ...options, headers });
   if (!response.ok) {
@@ -36,7 +40,7 @@ export const api = {
     return request(`/staff/${query}`);
   },
   getStaffById: (id: string) => request(`/staff/${id}/`),
-  
+
   // Finance
   getFeeCollectionSummary: () => request("/fees/summary/").catch(() => ({ collectionRate: 0, totalInvoiced: 0, totalCollected: 0 })),
   getPayroll: (month: number, year: number) => request(`/payroll/?month=${month}&year=${year}`).catch(() => []),
@@ -54,14 +58,14 @@ export const api = {
   getAttendanceSummary: (classId: string, dateFrom: string, dateTo: string) =>
     request(`/attendance/summary/?class_room=${classId}&date_from=${dateFrom}&date_to=${dateTo}`).catch(() => []),
 
-  
+
   // Students
   getStudents: (params?: any) => {
     const p = { ...params };
     if (p.classId) { p.class_room = p.classId; delete p.classId; }
-    if (p.boardingStatus) { 
-      if (p.boardingStatus !== "all") p.boarding_status = p.boardingStatus; 
-      delete p.boardingStatus; 
+    if (p.boardingStatus) {
+      if (p.boardingStatus !== "all") p.boarding_status = p.boardingStatus;
+      delete p.boardingStatus;
     }
     if (p.status === "all") delete p.status;
     const query = new URLSearchParams(p).toString();
@@ -74,7 +78,7 @@ export const api = {
     // Auto-generate ID and admission number if missing
     if (!payload.id) payload.id = `std-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
     if (!payload.admissionNumber) payload.admissionNumber = `ADM-2026-${Math.floor(10000 + Math.random() * 90000)}`;
-    
+
     // Flatten parent fields if they are nested in the frontend but flat in the backend serializer Meta.fields
     if (payload.parent) {
       payload.father_name = payload.parent.fatherName;
@@ -84,17 +88,45 @@ export const api = {
       delete payload.parent;
     }
 
+    if (typeof payload.photo === "string") {
+      delete payload.photo;
+    }
+
+    if (payload.photo instanceof File) {
+      const formData = new FormData();
+      Object.entries(payload).forEach(([k, v]) => {
+        if (v !== undefined && v !== null) {
+          formData.append(k, v instanceof Blob ? v : String(v));
+        }
+      });
+      return request("/students/", { method: "POST", body: formData });
+    }
+
     return request("/students/", { method: "POST", body: JSON.stringify(payload) });
   },
   updateStudent: (id: string, data: any) => {
     const payload = { ...data };
-    
+
     if (payload.parent) {
       payload.father_name = payload.parent.fatherName;
       payload.mother_name = payload.parent.motherName;
       payload.primary_contact_name = payload.parent.primaryContactName;
       payload.primary_contact_phone = payload.parent.primaryContactPhone;
       delete payload.parent;
+    }
+
+    if (typeof payload.photo === "string") {
+      delete payload.photo;
+    }
+
+    if (payload.photo instanceof File) {
+      const formData = new FormData();
+      Object.entries(payload).forEach(([k, v]) => {
+        if (v !== undefined && v !== null) {
+          formData.append(k, v instanceof Blob ? v : String(v));
+        }
+      });
+      return request(`/students/${id}/`, { method: "PATCH", body: formData });
     }
 
     return request(`/students/${id}/`, { method: "PATCH", body: JSON.stringify(payload) });
@@ -161,7 +193,7 @@ export const api = {
   getExamById: (id: string | number) => request(`/academics/exams/${id}/`),
   createExam: (data: any) => request("/academics/exams/", { method: "POST", body: JSON.stringify(data) }),
   publishExamResults: (id: string | number) => request(`/academics/exams/${id}/`, { method: "PATCH", body: JSON.stringify({ status: "published" }) }),
-  
+
   getExamMarks: (examId: string | number, classId: string, subjectId?: string) => {
     const subParam = subjectId ? `&subject=${subjectId}` : "";
     return request(`/academics/marks/?exam=${examId}&class_room=${classId}${subParam}`)
@@ -367,11 +399,55 @@ export const api = {
   sendParentReply: (data: any) => request("/messaging/replies/", { method: "POST", body: JSON.stringify(data) }),
   markReplyRead: (id: string | number) =>
     request(`/messaging/replies/${id}/read/`, { method: "POST" }).catch(() => null),
-  
+
   getClassPerformanceReport: (classId: string, examId: string) =>
     request(`/academics/performance/?class_room=${classId}&exam=${examId}`).catch(() => ({ subjectStats: [] })),
   getSchoolPerformanceTrend: () =>
     request("/academics/performance/trend/").catch(() => []),
   getKNEC7Best: (classId: string, examId: string) =>
     request(`/academics/exams/knec7/?class_room=${classId}&exam=${examId}`).catch(() => []),
+
+  // Admissions
+  /**
+   * Public submission from the website apply form. Deliberately bypasses the
+   * shared request() helper: that helper always attaches whatever token is
+   * sitting in localStorage, and a stale/expired one causes SimpleJWT to
+   * reject the request with 401 *before* the backend's AllowAny permission
+   * is ever checked. This endpoint must work for anonymous site visitors
+   * regardless of what's left over in the browser from a previous session.
+   */
+  submitApplication: async (data: any) => {
+    const response = await fetch(`${BASE_URL}/students/applications/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ detail: "Submission failed" }));
+      throw new Error(error.detail || "Submission failed");
+    }
+    return response.json();
+  },
+  getApplications: (status?: string) => {
+    const query = status ? `?status=${status}` : "";
+    return request(`/students/applications/${query}`).catch(() => []);
+  },
+  getApplication: (id: string | number) => request(`/students/applications/${id}/`),
+  /** Non-terminal transitions: interview_scheduled | offered | rejected | withdrawn. */
+  updateApplicationStatus: (id: string | number, statusValue: string, extra?: any) =>
+    request(`/students/applications/${id}/status/`, {
+      method: "POST",
+      body: JSON.stringify({ status: statusValue, ...extra }),
+    }),
+  /** Converts an offered application into a real Student + parent account. */
+  convertApplication: (id: string | number, classId: string) =>
+    request(`/students/applications/${id}/convert/`, {
+      method: "POST",
+      body: JSON.stringify({ classId }),
+    }),
+  updateApplication: (id: string | number, data: any) =>
+    request(`/students/applications/${id}/`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    }),
 };

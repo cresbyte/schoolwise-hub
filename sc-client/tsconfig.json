@@ -6,7 +6,7 @@
     "eslint.config.js",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
-  ],
+, "src/app/(website)/admissions/apply/page.tsx", "src/app/website-cms/applications/page.jsx"  ],
   "compilerOptions": {
     "target": "ES2022",
     "jsx": "react-jsx",
