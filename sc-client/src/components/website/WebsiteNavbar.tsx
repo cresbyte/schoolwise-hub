@@ -1,40 +1,34 @@
 /**
- * Sticky public website navigation bar with dropdowns and mobile drawer.
+ * Sticky public website navigation bar — Kabarak University style.
+ * Two-row layout: utility topbar + logo/nav row with mega-menu dropdowns.
  * @module WebsiteNavbar
  */
-import { useState } from "react";
+"use client";
+import { useState, useEffect, useRef } from "react";
 import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
   Box,
+  Container,
+  Typography,
   IconButton,
   Drawer,
-  List,
-  ListItemButton,
-  ListItemText,
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Menu,
-  MenuItem,
-  Container,
   Divider,
+  Collapse,
+  List,
+  ListItemButton,
+  ListItemText,
 } from "@mui/material";
-<<<<<<< HEAD
 import {Menu, Close, ExpandMore, KeyboardArrowDown, Phone, Email, Facebook, Twitter} from "@mui/icons-material";
 import YouTubeIcon from "@mui/icons-material/YouTube";
-=======
-import MenuIcon from "@mui/icons-material/Menu";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { Logo } from "@/components/common/Logo";
-import PhoneIcon from "@mui/icons-material/Phone";
-import EmailIcon from "@mui/icons-material/Email";
->>>>>>> 0a504b006fe5d116c278ca0f79d2bee09e343aa1
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Logo } from "@/components/common/Logo";
 import { getSchoolInfo } from "@/lib/website/constants";
+import { KAB } from "@/theme/websiteTheme";
+
+// ─── Nav Config ──────────────────────────────────────────────────────────────
 
 interface NavLink {
   label: string;
@@ -43,107 +37,159 @@ interface NavLink {
 
 interface NavGroup {
   label: string;
-  links: NavLink[];
+  href?: string;
+  columns: { heading?: string; links: NavLink[] }[];
 }
 
 const NAV_GROUPS: NavGroup[] = [
   {
-    label: "About",
-    links: [
-      { label: "Our Story", href: "/about#story" },
-      { label: "Vision & Mission", href: "/about#vision" },
-      { label: "Leadership", href: "/about#leadership" },
-      { label: "Accreditation", href: "/about#accreditation" },
-      { label: "Facilities", href: "/about#facilities" },
+    label: "About Us",
+    href: "/about",
+    columns: [
+      {
+        heading: "Institution",
+        links: [
+          { label: "Our Story", href: "/about#story" },
+          { label: "Vision & Mission", href: "/about#vision" },
+          { label: "Core Values", href: "/about#values" },
+          { label: "Accreditation", href: "/about#accreditation" },
+        ],
+      },
+      {
+        heading: "People",
+        links: [
+          { label: "Leadership Team", href: "/about#leadership" },
+          { label: "Our Staff", href: "/our-staff" },
+        ],
+      },
+      {
+        heading: "Campus",
+        links: [
+          { label: "Facilities", href: "/about#facilities" },
+          { label: "Photo Gallery", href: "/gallery" },
+        ],
+      },
     ],
   },
   {
     label: "Academics",
-    links: [
-      { label: "CBC Programme", href: "/academics#cbc" },
-      { label: "8-4-4 Programme", href: "/academics#844" },
-      { label: "KCSE Results", href: "/academics#results" },
-      { label: "Academic Calendar", href: "/academics#calendar" },
+    href: "/academics",
+    columns: [
+      {
+        heading: "Programmes",
+        links: [
+          { label: "CBC Programme", href: "/academics#cbc" },
+          { label: "8-4-4 Programme", href: "/academics#844" },
+          { label: "Junior Secondary", href: "/academics#junior" },
+          { label: "Senior Secondary", href: "/academics#senior" },
+        ],
+      },
+      {
+        heading: "Performance",
+        links: [
+          { label: "KCSE Results", href: "/academics#results" },
+          { label: "Academic Calendar", href: "/academics#calendar" },
+        ],
+      },
     ],
   },
   {
     label: "Admissions",
-    links: [
-      { label: "How to Apply", href: "/admissions#process" },
-      { label: "Fee Structure", href: "/admissions#fees" },
-      { label: "Available Spaces", href: "/admissions#spaces" },
-      { label: "Scholarships", href: "/admissions#scholarships" },
-      { label: "Apply Online", href: "/admissions/apply" },
+    href: "/admissions",
+    columns: [
+      {
+        heading: "Apply",
+        links: [
+          { label: "How to Apply", href: "/admissions#process" },
+          { label: "Apply Online", href: "/admissions/apply" },
+          { label: "Available Spaces", href: "/admissions#spaces" },
+        ],
+      },
+      {
+        heading: "Information",
+        links: [
+          { label: "Fee Structure", href: "/admissions#fees" },
+          { label: "Scholarships", href: "/admissions#scholarships" },
+          { label: "FAQs", href: "/admissions#faqs" },
+        ],
+      },
     ],
   },
   {
     label: "School Life",
-    links: [
-      { label: "Sports", href: "/school-life#sports" },
-      { label: "Clubs", href: "/school-life#clubs" },
-      { label: "Arts & Culture", href: "/school-life#arts" },
-      { label: "Leadership", href: "/school-life#leadership" },
-      { label: "Boarding", href: "/school-life#boarding" },
-      { label: "Photo Gallery", href: "/gallery" },
+    href: "/school-life",
+    columns: [
+      {
+        heading: "Activities",
+        links: [
+          { label: "Sports", href: "/school-life#sports" },
+          { label: "Arts & Culture", href: "/school-life#arts" },
+          { label: "Clubs & Societies", href: "/school-life#clubs" },
+        ],
+      },
+      {
+        heading: "Campus Life",
+        links: [
+          { label: "Boarding", href: "/school-life#boarding" },
+          { label: "Leadership", href: "/school-life#leadership" },
+        ],
+      },
     ],
   },
 ];
 
-const navLinkSx = {
-  color: "common.white",
-  fontWeight: 500,
-  fontSize: 15,
-  letterSpacing: "0.02em",
-  textTransform: "none" as const,
-  position: "relative" as const,
-  "&:hover": {
-    color: "secondary.main",
-    backgroundColor: "transparent",
-    "&::after": {
-      content: '""',
-      position: "absolute",
-      bottom: 4,
-      left: 12,
-      right: 12,
-      height: 2,
-      bgcolor: "secondary.main",
-      borderRadius: 1,
-    },
-  },
-  "&.active": {
-    color: "secondary.main",
-  },
-};
+const SOLO_LINKS: NavLink[] = [
+  { label: "News", href: "/news" },
+  { label: "Contact", href: "/contact" },
+];
 
-/**
- * Sticky navbar with top info bar, desktop dropdown menus and mobile drawer.
- */
+// ─── Component ────────────────────────────────────────────────────────────────
+
 export function WebsiteNavbar() {
-  const SCHOOL = getSchoolInfo();
   const pathname = usePathname();
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [menuAnchors, setMenuAnchors] = useState<Record<string, HTMLElement | null>>({});
+  const school = getSchoolInfo();
 
-  const openMenu = (label: string) => (e: React.MouseEvent<HTMLElement>) => {
-    setMenuAnchors((a) => ({ ...a, [label]: e.currentTarget }));
+  const [scrolled, setScrolled] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const closeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    setDrawerOpen(false);
+    setOpenMenu(null);
+  }, [pathname]);
+
+  const handleMenuEnter = (label: string) => {
+    if (closeTimeout.current) clearTimeout(closeTimeout.current);
+    setOpenMenu(label);
   };
-  const closeMenu = (label: string) => () => {
-    setMenuAnchors((a) => ({ ...a, [label]: null }));
+
+  const handleMenuLeave = () => {
+    closeTimeout.current = setTimeout(() => setOpenMenu(null), 120);
   };
+
+  const isActive = (href: string) =>
+    href !== "/" && pathname.startsWith(href.split("#")[0]);
 
   return (
     <>
+      {/* ── Utility Topbar ───────────────────────────────────────────────── */}
       <Box
-        className="website-navbar no-print"
+        component="header"
         sx={{
-          bgcolor: "primary.dark",
-          color: "common.white",
-          height: 36,
-          display: "flex",
-          alignItems: "center",
+          bgcolor: KAB.primaryDark,
+          color: "rgba(255,255,255,0.82)",
+          fontSize: 13,
+          display: { xs: "none", md: "block" },
         }}
       >
-<<<<<<< HEAD
         <Container maxWidth="xl">
           <Box
             sx={{
@@ -240,61 +286,25 @@ export function WebsiteNavbar() {
               >
                 Apply Now →
               </Typography>
-=======
-        <Container maxWidth="xl" sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.7)", fontSize: 12 }}>
-            Term 2, 2026 is ongoing
-          </Typography>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Box
-              component="a"
-              href={`tel:+${SCHOOL.phoneRaw}`}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 0.5,
-                color: "rgba(255,255,255,0.7)",
-                fontSize: 12,
-                textDecoration: "none",
-                "&:hover": { color: "common.white" },
-              }}
-            >
-              <PhoneIcon sx={{ fontSize: 14 }} />
-              {SCHOOL.phone}
-            </Box>
-            <Box
-              component="a"
-              href={`mailto:${SCHOOL.email}`}
-              sx={{
-                display: { xs: "none", sm: "flex" },
-                alignItems: "center",
-                gap: 0.5,
-                color: "rgba(255,255,255,0.7)",
-                fontSize: 12,
-                textDecoration: "none",
-                "&:hover": { color: "common.white" },
-              }}
-            >
-              <EmailIcon sx={{ fontSize: 14 }} />
-              {SCHOOL.email}
->>>>>>> 0a504b006fe5d116c278ca0f79d2bee09e343aa1
             </Box>
           </Box>
         </Container>
       </Box>
 
-      <AppBar
-        position="sticky"
-        elevation={0}
-        className="no-print"
+      {/* ── Main Nav Row ─────────────────────────────────────────────────── */}
+      <Box
+        component="nav"
+        aria-label="Main navigation"
         sx={{
-          bgcolor: "primary.main",
-          color: "common.white",
-          borderBottom: "none",
+          position: "sticky",
+          top: 0,
+          zIndex: 1100,
+          bgcolor: KAB.primary,
+          boxShadow: scrolled ? "0 2px 12px rgba(0,0,0,0.25)" : "none",
+          transition: "box-shadow 0.3s ease, padding 0.3s ease",
         }}
       >
         <Container maxWidth="xl">
-<<<<<<< HEAD
           <Box
             ref={menuRef}
             sx={{
@@ -498,19 +508,17 @@ export function WebsiteNavbar() {
             </Box>
 
             {/* Mobile hamburger */}
-=======
-          <Toolbar disableGutters sx={{ minHeight: { xs: 64, md: 72 }, gap: 1 }}>
->>>>>>> 0a504b006fe5d116c278ca0f79d2bee09e343aa1
             <IconButton
-              edge="start"
-              sx={{ display: { md: "none" }, color: "common.white" }}
-              onClick={() => setDrawerOpen(true)}
               aria-label="Open menu"
+              onClick={() => setDrawerOpen(true)}
+              sx={{ display: { md: "none" }, color: "#fff" }}
             >
               <Menu />
             </IconButton>
+          </Box>
+        </Container>
+      </Box>
 
-<<<<<<< HEAD
       {/* ── Mobile Drawer ─────────────────────────────────────────────────── */}
       <Drawer
         anchor="right"
@@ -562,226 +570,131 @@ export function WebsiteNavbar() {
               key={group.label}
               disableGutters
               elevation={0}
-=======
-            <Box
-              component={Link}
-              href="/"
->>>>>>> 0a504b006fe5d116c278ca0f79d2bee09e343aa1
               sx={{
-                display: "flex",
-                alignItems: "center",
-                textDecoration: "none",
-                color: "common.white",
-                mr: 2,
-                flexShrink: 0,
+                borderBottom: `1px solid ${KAB.borderLight}`,
+                "&:before": { display: "none" },
               }}
             >
-<<<<<<< HEAD
               <AccordionSummary expandIcon={<ExpandMore />}>
-=======
-              <Logo size={40} variant="light" withText={false} sx={{ mr: 1.5 }} />
-              <Box>
->>>>>>> 0a504b006fe5d116c278ca0f79d2bee09e343aa1
                 <Typography
                   sx={{
-                    fontWeight: 700,
-                    fontSize: { xs: 14, sm: 16 },
-                    color: "common.white",
-                    lineHeight: 1.2,
+                    fontFamily: "'Poppins', sans-serif",
+                    fontWeight: 600,
+                    fontSize: 14,
+                    color: KAB.textPrimary,
                   }}
                 >
-                  {SCHOOL.shortName}
+                  {group.label}
                 </Typography>
-                <Typography
-                  variant="caption"
-                  sx={{
-                    display: { xs: "none", sm: "block" },
-                    color: "rgba(255,255,255,0.7)",
-                    fontStyle: "italic",
-                  }}
-                >
-                  {SCHOOL.motto}
-                </Typography>
-              </Box>
-            </Box>
-
-            <Box
-              sx={{ display: { xs: "none", md: "flex" }, alignItems: "center", flex: 1, gap: 0.5 }}
-            >
-              {NAV_GROUPS.map((group) => (
-                <Box key={group.label}>
-                  <Button
-                    endIcon={<ExpandMoreIcon />}
-                    onClick={openMenu(group.label)}
-                    sx={{
-                      ...navLinkSx,
-                      bgcolor: menuAnchors[group.label] ? "rgba(255,255,255,0.08)" : "transparent",
-                    }}
-                  >
-                    {group.label}
-                  </Button>
-                  <Menu
-                    anchorEl={menuAnchors[group.label]}
-                    open={Boolean(menuAnchors[group.label])}
-                    onClose={closeMenu(group.label)}
-                  >
-                    {group.links.map((link) => (
-                      <MenuItem
-                        key={link.href}
-                        component="a"
-                        href={link.href}
-                        onClick={closeMenu(group.label)}
-                        sx={{ fontSize: 14 }}
-                      >
-                        {link.label}
-                      </MenuItem>
-                    ))}
-                  </Menu>
-                </Box>
-              ))}
-              <Button
-                component={Link}
-                href="/news"
-                className={pathname.startsWith("/news") ? "active" : undefined}
-                sx={navLinkSx}
-              >
-                News & Events
-              </Button>
-              <Button
-                component={Link}
-                href="/contact"
-                className={pathname === "/contact" ? "active" : undefined}
-                sx={navLinkSx}
-              >
-                Contact
-              </Button>
-            </Box>
-
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, ml: "auto" }}>
-              <Button
-                component={Link}
-                href="/login"
-                variant="outlined"
-                size="small"
-                sx={{
-                  display: { xs: "none", sm: "inline-flex" },
-                  fontWeight: 600,
-                  color: "common.white",
-                  borderColor: "rgba(255,255,255,0.5)",
-                  "&:hover": { borderColor: "common.white", bgcolor: "rgba(255,255,255,0.08)" },
-                }}
-              >
-                Parent Portal
-              </Button>
-              <Button
-                component={Link}
-                href="/admissions/apply"
-                variant="contained"
-                color="secondary"
-                size="small"
-                sx={{ fontWeight: 700 }}
-              >
-                Apply Now
-              </Button>
-            </Box>
-          </Toolbar>
-        </Container>
-      </AppBar>
-
-      <Drawer
-        anchor="left"
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        className="no-print"
-      >
-        <Box sx={{ width: 300, pt: 2 }}>
-          <Box sx={{ px: 2, mb: 2 }}>
-            <Typography sx={{ fontWeight: 700, color: "primary.main" }}>
-              {SCHOOL.name}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              {SCHOOL.motto}
-            </Typography>
-          </Box>
-          <Divider />
-          <List>
-            <ListItemButton
-              component={Link}
-              href="/"
-              selected={pathname === "/"}
-              onClick={() => setDrawerOpen(false)}
-            >
-              <ListItemText primary="Home" />
-            </ListItemButton>
-            {NAV_GROUPS.map((group) => (
-              <Accordion key={group.label} disableGutters elevation={0}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography sx={{ fontWeight: 600 }}>{group.label}</Typography>
-                </AccordionSummary>
-                <AccordionDetails sx={{ pt: 0 }}>
-                  {group.links.map((link) => (
+              </AccordionSummary>
+              <AccordionDetails sx={{ p: 0 }}>
+                {group.columns.flatMap((col) =>
+                  col.links.map((link) => (
                     <ListItemButton
                       key={link.href}
-                      component="a"
+                      component={Link}
                       href={link.href}
-                      onClick={() => setDrawerOpen(false)}
-                      sx={{ pl: 3 }}
+                      selected={isActive(link.href)}
+                      sx={{
+                        pl: 3,
+                        py: "7px",
+                        "&.Mui-selected": {
+                          bgcolor: `${KAB.primary}12`,
+                          color: KAB.primary,
+                        },
+                      }}
                     >
                       <ListItemText
-                        primary={link.label}
-                        slotProps={{ primary: { style: { fontSize: 14 } } }}
+                        disableTypography
+                        primary={
+                          <Typography
+                            sx={{
+                              fontFamily: "'Poppins', sans-serif",
+                              fontSize: 13,
+                              fontWeight: isActive(link.href) ? 600 : 400,
+                              color: "inherit",
+                            }}
+                          >
+                            {link.label}
+                          </Typography>
+                        }
                       />
                     </ListItemButton>
-                  ))}
-                </AccordionDetails>
-              </Accordion>
-            ))}
-            <ListItemButton component={Link} href="/news" onClick={() => setDrawerOpen(false)}>
-              <ListItemText primary="News & Events" />
-            </ListItemButton>
+                  ))
+                )}
+              </AccordionDetails>
+            </Accordion>
+          ))}
+
+          {SOLO_LINKS.map((link) => (
             <ListItemButton
+              key={link.href}
               component={Link}
-              href="/contact"
-              onClick={() => setDrawerOpen(false)}
+              href={link.href}
+              selected={isActive(link.href)}
+              sx={{
+                px: 3,
+                py: "10px",
+                borderBottom: `1px solid ${KAB.borderLight}`,
+              }}
             >
-              <ListItemText primary="Contact" />
+              <ListItemText
+                disableTypography
+                primary={
+                  <Typography
+                    sx={{
+                      fontFamily: "'Poppins', sans-serif",
+                      fontWeight: 600,
+                      fontSize: 14,
+                      color: "inherit",
+                    }}
+                  >
+                    {link.label}
+                  </Typography>
+                }
+              />
             </ListItemButton>
-            <ListItemButton
-              component={Link}
-              href="/parents"
-              onClick={() => setDrawerOpen(false)}
-            >
-              <ListItemText primary="Parent Resources" />
-            </ListItemButton>
-            <ListItemButton
-              component={Link}
-              href="/our-staff"
-              onClick={() => setDrawerOpen(false)}
-            >
-              <ListItemText primary="Our Staff" />
-            </ListItemButton>
-          </List>
-          <Divider />
-          <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 1 }}>
-            <Button
-              component={Link}
-              href="/login"
-              variant="outlined"
-              fullWidth
-              onClick={() => setDrawerOpen(false)}
-            >
-              Parent Portal
-            </Button>
-            <Button
-              component={Link}
-              href="/admissions/apply"
-              variant="contained"
-              color="secondary"
-              fullWidth
-              onClick={() => setDrawerOpen(false)}
-            >
-              Apply Now
-            </Button>
+          ))}
+        </Box>
+
+        {/* Drawer footer */}
+        <Box sx={{ p: 2, borderTop: `1px solid ${KAB.border}` }}>
+          <Box
+            component={Link}
+            href="/admissions/apply"
+            sx={{
+              display: "block",
+              textAlign: "center",
+              bgcolor: KAB.primary,
+              color: "#fff",
+              py: 1.25,
+              fontFamily: "'Poppins', sans-serif",
+              fontWeight: 700,
+              fontSize: 14,
+              textDecoration: "none",
+              mb: 1,
+              "&:hover": { bgcolor: KAB.primaryDark },
+            }}
+          >
+            Apply Now
+          </Box>
+          <Box
+            component={Link}
+            href="/login"
+            sx={{
+              display: "block",
+              textAlign: "center",
+              border: `1px solid ${KAB.border}`,
+              color: KAB.textPrimary,
+              py: 1.25,
+              fontFamily: "'Poppins', sans-serif",
+              fontWeight: 600,
+              fontSize: 14,
+              textDecoration: "none",
+              "&:hover": { bgcolor: KAB.bgMuted },
+            }}
+          >
+            Parent Portal
           </Box>
         </Box>
       </Drawer>

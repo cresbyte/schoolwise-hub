@@ -8,52 +8,52 @@ import { createTheme } from "@mui/material/styles";
 // ─── DESIGN TOKENS ────────────────────────────────────────────────
 
 const TOKENS = {
-  // Brand colours — inspired by Kabarak's deep navy + gold palette
+  // Brand colours — inspired by Kabarak's deep navy/maroon + green + gold palette
   color: {
-    primary: "#1A3A6B",
-    primaryDark: "#0F2347",
-    primaryLight: "#2A52A0",
-    primarySubtle: "#EEF2FA",
+    primary: "#95191c",
+    primaryDark: "#7a1215",
+    primaryLight: "#b42d31",
+    primarySubtle: "#fdf4f4",
 
-    secondary: "#C8922A",
-    secondaryDark: "#A87520",
-    secondaryLight: "#F5B942",
-    secondarySubtle: "#FDF3E0",
+    secondary: "#59ac46",
+    secondaryDark: "#428233",
+    secondaryLight: "#7bc66a",
+    secondarySubtle: "#f5faf3",
 
-    accent: "#1E6E3A",
-    accentSubtle: "#E8F5EE",
+    accent: "#C8922A",
+    accentSubtle: "#fef7e9",
 
-    neutral900: "#0F1923",
-    neutral800: "#1C2B3A",
-    neutral700: "#2D3F52",
-    neutral600: "#3A4F66",
-    neutral500: "#546E8A",
-    neutral400: "#9AB0C8",
-    neutral300: "#C8D7E5",
-    neutral200: "#E4EDF5",
-    neutral100: "#F2F6FB",
-    neutral50: "#F8FAFD",
+    neutral900: "#222222",
+    neutral800: "#333333",
+    neutral700: "#444444",
+    neutral600: "#555555",
+    neutral500: "#666666",
+    neutral400: "#999999",
+    neutral300: "#cccccc",
+    neutral200: "#e5e5e5",
+    neutral100: "#f2f2f2",
+    neutral50: "#fafafa",
 
-    success: "#1E6E3A",
-    successSubtle: "#E8F5EE",
+    success: "#59ac46",
+    successSubtle: "#f5faf3",
     warning: "#B45309",
     warningSubtle: "#FEF3C7",
     error: "#B91C1C",
     errorSubtle: "#FEE2E2",
-    info: "#1A3A6B",
-    infoSubtle: "#EEF2FA",
+    info: "#95191c",
+    infoSubtle: "#fdf4f4",
 
     white: "#FFFFFF",
     surface: "#FFFFFF",
-    surfaceAlt: "#F8FAFD",
-    border: "#C8D7E5",
-    borderLight: "#E4EDF5",
+    surfaceAlt: "#fafafa",
+    border: "#e5e5e5",
+    borderLight: "#f2f2f2",
   },
 
   font: {
     family: {
-      body: "'Outfit', system-ui, -apple-system, sans-serif",
-      heading: "'Merriweather', Georgia, serif",
+      body: "'Poppins', 'Outfit', system-ui, -apple-system, sans-serif",
+      heading: "'Poppins', 'Merriweather', Georgia, serif",
     },
     weight: {
       light: 300,
@@ -112,27 +112,27 @@ const TOKENS = {
 
   radius: {
     none: "0px",
-    sm: "4px",
-    base: "6px",
-    md: "8px",
-    lg: "12px",
-    xl: "16px",
-    "2xl": "20px",
+    sm: "0px",
+    base: "0px",
+    md: "0px",
+    lg: "0px",
+    xl: "0px",
+    "2xl": "0px",
     full: "9999px",
   },
 
   shadow: {
     none: "none",
-    xs: "0 1px 2px 0 rgba(26,58,107,0.05)",
-    sm: "0 1px 3px 0 rgba(26,58,107,0.08), 0 1px 2px -1px rgba(26,58,107,0.06)",
-    base: "0 2px 6px -1px rgba(26,58,107,0.10), 0 2px 4px -2px rgba(26,58,107,0.06)",
-    md: "0 4px 12px -2px rgba(26,58,107,0.12), 0 2px 4px -2px rgba(26,58,107,0.07)",
-    lg: "0 8px 24px -4px rgba(26,58,107,0.14), 0 4px 8px -4px rgba(26,58,107,0.08)",
-    xl: "0 16px 40px -8px rgba(26,58,107,0.18), 0 8px 16px -8px rgba(26,58,107,0.10)",
-    "2xl": "0 24px 64px -12px rgba(26,58,107,0.22)",
-    inner: "inset 0 2px 4px 0 rgba(26,58,107,0.08)",
-    primaryGlow: "0 4px 14px 0 rgba(26,58,107,0.30)",
-    goldGlow: "0 4px 14px 0 rgba(200,146,42,0.35)",
+    xs: "0 1px 2px 0 rgba(0,0,0,0.05)",
+    sm: "0 1px 3px 0 rgba(0,0,0,0.08), 0 1px 2px -1px rgba(0,0,0,0.06)",
+    base: "0 2px 6px -1px rgba(0,0,0,0.10), 0 2px 4px -2px rgba(0,0,0,0.06)",
+    md: "0 4px 12px -2px rgba(0,0,0,0.12), 0 2px 4px -2px rgba(0,0,0,0.07)",
+    lg: "0 8px 24px -4px rgba(0,0,0,0.14), 0 4px 8px -4px rgba(0,0,0,0.08)",
+    xl: "0 16px 40px -8px rgba(0,0,0,0.18), 0 8px 16px -8px rgba(0,0,0,0.10)",
+    "2xl": "0 24px 64px -12px rgba(0,0,0,0.22)",
+    inner: "inset 0 2px 4px 0 rgba(0,0,0,0.08)",
+    primaryGlow: "none",
+    goldGlow: "none",
   },
 
   transition: {
@@ -294,7 +294,7 @@ const theme = createTheme({
   },
 
   shape: {
-    borderRadius: 8,
+    borderRadius: 0,
   },
 
   spacing: 8,
@@ -332,7 +332,7 @@ const theme = createTheme({
       defaultProps: { elevation: 2 },
       styleOverrides: {
         root: {
-          borderRadius: TOKENS.radius.lg,
+          borderRadius: 0,
           boxShadow: TOKENS.shadow.sm,
           border: `1px solid ${TOKENS.color.borderLight}`,
           transition: TOKENS.transition.base,
@@ -376,7 +376,7 @@ const theme = createTheme({
           backgroundImage: "none",
         },
         rounded: {
-          borderRadius: TOKENS.radius.lg,
+          borderRadius: 0,
         },
         elevation1: { boxShadow: TOKENS.shadow.sm },
         elevation2: { boxShadow: TOKENS.shadow.sm },
@@ -399,7 +399,7 @@ const theme = createTheme({
           fontSize: TOKENS.font.size.sm,
           letterSpacing: TOKENS.font.letterSpacing.wide,
           textTransform: "none",
-          borderRadius: TOKENS.radius.md,
+          borderRadius: 0,
           transition: TOKENS.transition.base,
           padding: "8px 20px",
           ...(ownerState.variant === 'contained' && {
@@ -448,7 +448,7 @@ const theme = createTheme({
     MuiIconButton: {
       styleOverrides: {
         root: {
-          borderRadius: TOKENS.radius.md,
+          borderRadius: 0,
           transition: TOKENS.transition.base,
           "&:hover": {
             backgroundColor: TOKENS.color.primarySubtle,
@@ -469,7 +469,7 @@ const theme = createTheme({
         root: {
           fontFamily: TOKENS.font.family.body,
           fontSize: TOKENS.font.size.base,
-          borderRadius: TOKENS.radius.md,
+          borderRadius: 0,
           backgroundColor: TOKENS.color.white,
           transition: TOKENS.transition.base,
           "& .MuiOutlinedInput-notchedOutline": {
@@ -512,7 +512,7 @@ const theme = createTheme({
           fontWeight: TOKENS.font.weight.medium,
           fontSize: TOKENS.font.size.xs,
           letterSpacing: TOKENS.font.letterSpacing.wide,
-          borderRadius: TOKENS.radius.full,
+          borderRadius: 0,
           height: "24px",
           ...(ownerState.color === 'primary' && {
             backgroundColor: TOKENS.color.primarySubtle,
@@ -545,7 +545,7 @@ const theme = createTheme({
     MuiTableContainer: {
       styleOverrides: {
         root: {
-          borderRadius: TOKENS.radius.lg,
+          borderRadius: 0,
           border: `1px solid ${TOKENS.color.borderLight}`,
           boxShadow: "none",
         },
@@ -662,7 +662,7 @@ const theme = createTheme({
     MuiListItemButton: {
       styleOverrides: {
         root: {
-          borderRadius: TOKENS.radius.md,
+          borderRadius: 0,
           margin: "2px 8px",
           padding: "8px 12px",
           transition: TOKENS.transition.base,
@@ -704,7 +704,7 @@ const theme = createTheme({
     MuiDialog: {
       styleOverrides: {
         paper: {
-          borderRadius: TOKENS.radius.xl,
+          borderRadius: 0,
           boxShadow: TOKENS.shadow["2xl"],
         },
       },
@@ -744,7 +744,7 @@ const theme = createTheme({
         root: ({ ownerState }: any) => ({
           fontFamily: TOKENS.font.family.body,
           fontSize: TOKENS.font.size.sm,
-          borderRadius: TOKENS.radius.md,
+          borderRadius: 0,
           padding: "10px 16px",
           border: "1px solid",
           ...(ownerState.variant === 'standard' && ownerState.severity === 'success' && {

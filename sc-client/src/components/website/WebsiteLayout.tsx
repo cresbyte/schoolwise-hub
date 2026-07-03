@@ -12,13 +12,16 @@ import { WhatsAppButton } from "./WhatsAppButton";
 import { ScrollToTop } from "./ScrollToTop";
 import { BODY_FONT, HEADING_FONT } from "@/lib/website/constants";
 
-/** Extended theme with Merriweather for website display headings (h1–h3). */
+/** Extended theme: Poppins for all headings and body text on the public website. */
 const websiteTheme = createTheme(theme, {
   typography: {
     fontFamily: BODY_FONT,
     h1: { fontFamily: HEADING_FONT },
     h2: { fontFamily: HEADING_FONT },
     h3: { fontFamily: HEADING_FONT },
+    h4: { fontFamily: HEADING_FONT },
+    h5: { fontFamily: HEADING_FONT },
+    h6: { fontFamily: HEADING_FONT },
   },
 });
 
