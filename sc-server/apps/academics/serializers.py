@@ -49,12 +49,12 @@ class SubjectAssignmentSerializer(serializers.ModelSerializer):
     subject_name = serializers.CharField(source="subject.name", read_only=True)
     class_name = serializers.CharField(source="class_room.name", read_only=True)
 
-    # CamelCase aliases for relations
+    # CamelCase aliases for relations (these are the writable fields)
     classId = serializers.PrimaryKeyRelatedField(source="class_room", queryset=ClassRoom.objects.all())
     subjectId = serializers.PrimaryKeyRelatedField(source="subject", queryset=Subject.objects.all())
     teacherId = serializers.PrimaryKeyRelatedField(source="teacher", queryset=Staff.objects.all())
     periodsPerWeek = serializers.IntegerField(source="periods_per_week", required=False, default=5)
-    
+
     # CamelCase aliases for read-only fields
     teacherName = serializers.CharField(source="teacher.user.name", read_only=True)
     subjectName = serializers.CharField(source="subject.name", read_only=True)
@@ -68,6 +68,7 @@ class SubjectAssignmentSerializer(serializers.ModelSerializer):
             "class_room", "class_room_id", "classId", "class_name", "className",
             "periods_per_week", "periodsPerWeek"
         ]
+        read_only_fields = ["teacher", "subject", "class_room"]
 
 class TimetableSlotSerializer(serializers.ModelSerializer):
     classId = serializers.PrimaryKeyRelatedField(source="class_room", queryset=ClassRoom.objects.all())
