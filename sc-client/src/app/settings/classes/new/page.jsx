@@ -15,7 +15,7 @@ import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useRouter } from "next/navigation";
-import { DashboardLayout } from "@/components/layout/DashboardLayout";
+
 import { PageHeader } from "@/components/PageHeader";
 import { useNotification } from "@/context/NotificationContext";
 import { useStaff } from "@/hooks/domain";
@@ -27,7 +27,7 @@ const schema = z.object({
   gradeLevel: z.string().min(1, "Required"),
   stream: z.string().optional(),
   curriculum: z.enum(["CBC", "844"]),
-  classTeacherId: z.string().optional(),
+  classTeacherId: z.coerce.string().optional(),
   capacity: z.coerce.number().min(1, "Must be at least 1"),
   room: z.string().optional(),
 });
@@ -36,6 +36,7 @@ export default function NewClassPage() {
   const router = useRouter();
   const { showNotification } = useNotification();
   const teachers = useStaff({ status: "active" });
+  const classesRes = useAsync(api.getClasses);
 
   const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
@@ -44,6 +45,10 @@ export default function NewClassPage() {
       capacity: 40,
     },
   });
+
+  const assignedClassMap = (classesRes.data || [])
+    .filter(c => c.classTeacherId)
+    .reduce((acc, c) => ({ ...acc, [c.classTeacherId]: c.name }), {});
 
   const onSubmit = handleSubmit(async (v) => {
     const teacher = (teachers.data ?? []).find((t) => t.id === v.classTeacherId);
@@ -54,7 +59,7 @@ export default function NewClassPage() {
       stream: v.stream,
       curriculum: v.curriculum,
       classTeacherId: v.classTeacherId || null,
-      classTeacherName: teacher ? `${teacher.firstName} ${teacher.lastName}` : undefined,
+      classTeacherName: teacher ? teacher.name : undefined,
       capacity: v.capacity,
       studentCount: 0,
       room: v.room,
@@ -62,11 +67,11 @@ export default function NewClassPage() {
     };
     await api.createClass(payload);
     showNotification(`Class ${v.name} created successfully`, "success");
-    router.push("/classes");
+    router.push("/settings/classes");
   });
 
   return (
-    <DashboardLayout>
+    <>
       <PageHeader title="Add Class" subtitle="Create a new class or stream" />
       <Card component="form" onSubmit={onSubmit}>
         <CardContent>
@@ -87,18 +92,26 @@ export default function NewClassPage() {
             <Controller name="classTeacherId" control={control} render={({ field }) => (
               <TextField {...field} select label="Class Teacher" size="small">
                 <MenuItem value="">None</MenuItem>
-                {(teachers.data ?? []).map((t) => <MenuItem key={t.id} value={t.id}>{t.firstName} {t.lastName}</MenuItem>)}
+                {(teachers.data ?? []).map((t) => (
+                  <MenuItem 
+                    key={t.id} 
+                    value={t.id} 
+                    disabled={!!assignedClassMap[t.id]}
+                  >
+                    {t.name} {assignedClassMap[t.id] ? `(${assignedClassMap[t.id]})` : ""}
+                  </MenuItem>
+                ))}
               </TextField>
             )} />
             <Controller name="capacity" control={control} render={({ field }) => <TextField {...field} type="number" label="Capacity" size="small" error={!!errors.capacity} helperText={errors.capacity?.message} />} />
             <Controller name="room" control={control} render={({ field }) => <TextField {...field} label="Room / Building" size="small" />} />
           </Box>
           <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end", gap: 1 }}>
-            <Button onClick={() => router.push("/classes")}>Cancel</Button>
+            <Button onClick={() => router.push("/settings/classes")}>Cancel</Button>
             <Button type="submit" variant="contained" disabled={isSubmitting}>{isSubmitting ? "Creating…" : "Create Class"}</Button>
           </Box>
         </CardContent>
       </Card>
-    </DashboardLayout>
+    </>
   );
 }

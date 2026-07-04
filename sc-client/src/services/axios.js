@@ -68,7 +68,7 @@ api.interceptors.response.use(
 
           // Dispatch logout event
           window.dispatchEvent(new Event("authLogout"));
-          window.location.href = "/auth/login";
+          window.location.href = "/login";
         }
       } else {
         localStorage.removeItem("accessToken");
@@ -76,7 +76,7 @@ api.interceptors.response.use(
 
         // Dispatch logout event
         window.dispatchEvent(new Event("authLogout"));
-        window.location.href = "/auth/login";
+        window.location.href = "/login";
       }
     }
     return Promise.reject(error);

@@ -7,6 +7,7 @@ class UserRole(models.TextChoices):
     DEPUTY = "deputy", "Deputy Principal"
     HOD = "hod", "Head of Department"
     CLASS_TEACHER = "class_teacher", "Class Teacher"
+    TEACHER = "teacher", "Teacher"
     ACCOUNTANT = "accountant", "Accountant"
     STAFF = "staff", "Staff"
     PARENT = "parent", "Parent"

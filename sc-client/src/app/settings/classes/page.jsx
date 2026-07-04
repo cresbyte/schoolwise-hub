@@ -21,7 +21,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { DashboardLayout } from "@/components/layout/DashboardLayout";
+
 import { PageHeader } from "@/components/PageHeader";
 import { DataState } from "@/components/DataState";
 import { RoleGuard } from "@/components/RoleGuard";
@@ -31,11 +31,9 @@ import { CURRICULUM_LABELS } from "@/lib/constants";
 
 export default function ClassesPage() {
   return (
-    <DashboardLayout>
-      <PageGuard permission="classes.view">
-        <ClassesContent />
-      </PageGuard>
-    </DashboardLayout>
+    <PageGuard permission="classes.view">
+      <ClassesContent />
+    </PageGuard>
   );
 }
 
@@ -51,7 +49,7 @@ function ClassesContent() {
         subtitle={<Chip size="small" label={`${list.length} classes`} />}
         actions={
           <RoleGuard permission="classes.*">
-            <Button startIcon={<AddIcon />} variant="contained" onClick={() => router.push("/classes/new")}>
+            <Button startIcon={<AddIcon />} variant="contained" onClick={() => router.push("/settings/classes/new")}>
               Add Class
             </Button>
           </RoleGuard>
@@ -89,10 +87,10 @@ function ClassesContent() {
                           <LinearProgress variant="determinate" value={Math.min(pct, 100)} color={pct >= 100 ? "error" : pct >= 85 ? "warning" : "success"} sx={{ height: 7, borderRadius: 4 }} />
                         </TableCell>
                         <TableCell align="right">
-                          <IconButton size="small" onClick={() => router.push(`/classes/${c.id}`)} title="View">
+                          <IconButton size="small" onClick={() => router.push(`/settings/classes/${c.id}`)} title="View">
                             <VisibilityIcon fontSize="small" />
                           </IconButton>
-                          <IconButton size="small" onClick={() => router.push(`/classes/${c.id}/edit`)} title="Edit">
+                          <IconButton size="small" onClick={() => router.push(`/settings/classes/${c.id}/edit`)} title="Edit">
                             <EditIcon fontSize="small" />
                           </IconButton>
                         </TableCell>

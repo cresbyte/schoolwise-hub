@@ -98,6 +98,7 @@ export const ROLE_LABELS: Record<UserRole, string> = {
   admin: "Administrator",
   headteacher: "Head Teacher",
   class_teacher: "Class Teacher",
+  teacher: "Teacher",
   accountant: "Accountant",
   parent: "Parent",
 };
@@ -106,6 +107,7 @@ export const ROLE_COLORS: Record<UserRole, string> = {
   admin: "#C62828",
   headteacher: "#6A1B9A",
   class_teacher: "#1565C0",
+  teacher: "#0288D1",
   accountant: "#2E7D32",
   parent: "#F57F17",
 };
@@ -137,15 +139,22 @@ export const PERMISSIONS: Record<UserRole, string[]> = {
     "reports.view",
     "classes.view",
   ],
+  teacher: [
+    "students.view",
+    "exams.marks",
+    "exams.view",
+    "timetable.view",
+    "classes.view",
+  ],
   accountant: ["fees.*", "fees.view", "fees.write", "payroll.*", "payroll.view", "students.view", "reports.fees"],
   parent: ["portal.view"],
 };
 
-/** Default landing route per role after login. */
 export const ROLE_HOME: Record<UserRole, string> = {
   admin: "/dashboard",
   headteacher: "/dashboard",
   class_teacher: "/dashboard",
+  teacher: "/dashboard",
   accountant: "/fees/collection",
   parent: "/portal",
 };

@@ -22,7 +22,7 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useRouter } from "next/navigation";
-import { DashboardLayout } from "@/components/layout/DashboardLayout";
+
 import { PageHeader } from "@/components/PageHeader";
 import { DataState } from "@/components/DataState";
 import { RoleGuard } from "@/components/RoleGuard";
@@ -31,11 +31,7 @@ import { api } from "@/lib/api";
 import { CURRICULUM_LABELS } from "@/lib/constants";
 
 export default function SubjectsPage() {
-  return (
-    <DashboardLayout>
-      <SubjectsContent />
-    </DashboardLayout>
-  );
+  return <SubjectsContent />;
 }
 
 /** Subject catalogue content. */
@@ -54,7 +50,7 @@ function SubjectsContent() {
         subtitle={<Chip size="small" label={`${list.length} subjects`} />}
         actions={
           <RoleGuard permission="classes.*">
-            <Button startIcon={<AddIcon />} variant="contained" onClick={() => router.push("/subjects/new")}>
+            <Button startIcon={<AddIcon />} variant="contained" onClick={() => router.push("/settings/classes/subjects/new")}>
               Add Subject
             </Button>
           </RoleGuard>
@@ -95,7 +91,7 @@ function SubjectsContent() {
                         <Chip size="small" label={s.isCore ? "Core" : "Optional"} color={s.isCore ? "primary" : "default"} variant={s.isCore ? "filled" : "outlined"} />
                       </TableCell>
                       <TableCell align="right">
-                        <IconButton size="small" onClick={() => router.push(`/subjects/${s.id}`)} title="Settings"><EditIcon fontSize="small" /></IconButton>
+                        <IconButton size="small" onClick={() => router.push(`/settings/classes/subjects/${s.id}`)} title="Settings"><EditIcon fontSize="small" /></IconButton>
                       </TableCell>
                     </TableRow>
                   ))}

@@ -34,9 +34,12 @@ class StaffSerializer(serializers.ModelSerializer):
         return None
 
 class StaffSummarySerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source="pk", read_only=True)
     name = serializers.CharField(source="user.name", read_only=True)
+    firstName = serializers.CharField(source="user.first_name", read_only=True)
+    lastName = serializers.CharField(source="user.last_name", read_only=True)
     phone = serializers.CharField(source="user.phone", read_only=True)
 
     class Meta:
         model = Staff
-        fields = ["staff_id", "name", "phone", "designation", "status"]
+        fields = ["id", "staff_id", "name", "firstName", "lastName", "phone", "designation", "status"]

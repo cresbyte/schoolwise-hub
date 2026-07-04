@@ -143,6 +143,9 @@ export const api = {
 
   // School profile
   getSchool: () => request("/school/profile/").catch(() => null),
+  getIntegrationsStatus: () => request("/school/integrations-status/").catch(() => ({
+    emailConfigured: false, mpesaConfigured: false, smsConfigured: false,
+  })),
   getSchoolSettings: () => request("/school/profile/").catch(() => null),
   updateSchoolSettings: (data: any) => request("/school/profile/", { method: "PATCH", body: JSON.stringify(data) }),
   getStudentsByClass: (classId: string) => request(`/students/?class_room=${classId}`),
@@ -163,6 +166,7 @@ export const api = {
   },
   createClassSubject: (data: any) => request("/academics/assignments/", { method: "POST", body: JSON.stringify(data) }),
   updateClassSubject: (id: string, patch: any) => request(`/academics/assignments/${id}/`, { method: "PATCH", body: JSON.stringify(patch) }),
+  deleteClassSubject: (id: string) => request(`/academics/assignments/${id}/`, { method: "DELETE" }),
   getTeacherLoad: (staffId: string) => request(`/academics/assignments/?teacherId=${staffId}`).then(res => {
     const list = Array.isArray(res) ? res : [];
     const totalPeriods = list.reduce((s: number, cs: any) => s + (cs.periodsPerWeek ?? 5), 0);

@@ -36,7 +36,7 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-import { DashboardLayout } from "@/components/layout/DashboardLayout";
+
 import { DataState } from "@/components/DataState";
 import { GradeChip } from "@/components/GradeChip";
 import { StatusChip } from "@/components/StatusChip";
@@ -48,11 +48,7 @@ import { DAYS_OF_WEEK } from "@/lib/constants";
 export default function ClassDetailsPage() {
   const params = useParams();
   const id = params.id;
-  return (
-    <DashboardLayout>
-      <ClassDetailContent id={id} />
-    </DashboardLayout>
-  );
+  return <ClassDetailContent id={id} />;
 }
 
 const PERIODS = ["7:30", "8:30", "9:30", "10:30", "11:45", "12:45", "1:45", "2:45"];
@@ -66,7 +62,7 @@ function ClassDetailContent({ id }) {
     <DataState loading={classData.loading} error={classData.error} data={classData.data} onRetry={classData.refetch}>
       {(cls) => (
         <>
-          <Button startIcon={<ArrowBackIcon />} onClick={() => router.push("/classes")} sx={{ mb: 2 }}>
+          <Button startIcon={<ArrowBackIcon />} onClick={() => router.push("/settings/classes")} sx={{ mb: 2 }}>
             Back to Classes
           </Button>
           <Card sx={{ mb: 2 }}>

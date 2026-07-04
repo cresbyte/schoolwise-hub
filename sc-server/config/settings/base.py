@@ -109,3 +109,10 @@ LANGUAGE_CODE = "en-us"
 TIME_ZONE = "Africa/Nairobi"
 USE_I18N = True
 USE_TZ = True
+
+# Email Configuration
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", 587))
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True").lower() == "true"

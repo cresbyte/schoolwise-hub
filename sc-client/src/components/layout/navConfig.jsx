@@ -54,15 +54,7 @@ export const NAV_GROUPS = [
       { label: "Attendance", to: "/attendance", icon: <EventAvailableIcon />, permission: "attendance.write" },
     ],
   },
-  {
-    heading: "Classes",
-    items: [
-      { label: "Classes", to: "/classes", icon: <MeetingRoomIcon />, permission: "classes.view" },
-      { label: "Subjects", to: "/subjects", icon: <LibraryBooksIcon />, permission: "classes.view" },
-      { label: "Grade Subject Setup", to: "/subjects/setup", icon: <TuneIcon />, permission: "classes.*" },
-      { label: "Subject Assignments", to: "/subjects/assignments", icon: <GroupWorkIcon />, permission: "classes.view" },
-    ],
-  },
+
   {
     heading: "Academics",
     items: [
@@ -100,6 +92,13 @@ export const NAV_GROUPS = [
       { label: "NEMIS Export", to: "/reports/nemis", icon: <DownloadIcon />, permission: "reports.view", hiddenRoles: ["class_teacher"] },
       { label: "Audit Trail", to: "/reports/audit", icon: <HistoryIcon />, permission: "reports.view", hiddenRoles: ["class_teacher"] },
     ],
+  },{
+    heading: "Settings",
+    items: [
+      { label: "Classes", to: "/settings/classes", icon: <MeetingRoomIcon />, permission: "classes.view" },
+      { label: "School Settings", to: "/settings", icon: <SettingsIcon />, permission: "settings.view" },
+      { label: "User Management", to: "/settings/users", icon: <ManageAccountsIcon />, permission: "settings.view" },
+    ],
   },
   {
     heading: "Website",
@@ -114,11 +113,5 @@ export const NAV_GROUPS = [
       { label: "School Info", to: "/website-cms/school-info", icon: <InfoIcon />, permission: "settings.edit" },
     ],
   },
-  {
-    heading: "Settings",
-    items: [
-      { label: "School Settings", to: "/settings", icon: <SettingsIcon />, permission: "settings.view" },
-      { label: "User Management", to: "/settings/users", icon: <ManageAccountsIcon />, permission: "settings.view" },
-    ],
-  },
+
 ];

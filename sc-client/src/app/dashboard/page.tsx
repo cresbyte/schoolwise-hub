@@ -90,8 +90,8 @@ function DashboardContent() {
   const pendingEvents = useAsync(() => api.getPendingTermEventCount(), []);
 
   const studentList = students.data ?? [];
-  const boarding = studentList.filter((s) => s.boardingStatus === "boarding").length;
-  const onLeave = (staff.data ?? []).filter((s) => s.status === "on_leave").length;
+  const boarding = studentList.filter((s: any) => s.boardingStatus === "boarding").length;
+  const onLeave = (staff.data ?? []).filter((s: any) => s.status === "on_leave").length;
   const enrollment = (classes.data ?? []).map((c) => ({ name: c.name, value: c.studentCount }));
   const nextExam = exams.data?.[0];
   const daysToExam = nextExam ? Math.max(0, Math.ceil((new Date(nextExam.startDate).getTime() - Date.now()) / 86400000)) : 0;

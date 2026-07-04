@@ -14,7 +14,7 @@ import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import { useParams, useRouter } from "next/navigation";
-import { DashboardLayout } from "@/components/layout/DashboardLayout";
+
 import { PageHeader } from "@/components/PageHeader";
 import { DataState } from "@/components/DataState";
 import { useAsync } from "@/hooks/useAsync";
@@ -28,7 +28,7 @@ const schema = z.object({
   gradeLevel: z.string().min(1, "Required"),
   stream: z.string().optional(),
   curriculum: z.enum(["CBC", "844"]),
-  classTeacherId: z.string().optional(),
+  classTeacherId: z.coerce.string().optional(),
   capacity: z.coerce.number().min(1, "Must be at least 1"),
   room: z.string().optional(),
 });
@@ -39,12 +39,12 @@ export default function EditClassPage() {
   const cls = useAsync(() => api.getClassById(id), [id]);
 
   return (
-    <DashboardLayout>
+    <>
       <PageHeader title="Edit Class" subtitle={cls.data ? `Updating ${cls.data.name}` : "Updating class information"} />
       <DataState loading={cls.loading} error={cls.error} data={cls.data} onRetry={cls.refetch}>
         {(c) => <EditClassForm cls={c} />}
       </DataState>
-    </DashboardLayout>
+    </>
   );
 }
 
@@ -52,6 +52,7 @@ function EditClassForm({ cls }) {
   const router = useRouter();
   const { showNotification } = useNotification();
   const teachers = useStaff({ status: "active" });
+  const classesRes = useAsync(api.getClasses);
 
   const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
@@ -66,6 +67,10 @@ function EditClassForm({ cls }) {
     },
   });
 
+  const assignedClassMap = (classesRes.data || [])
+    .filter(c => c.id !== cls.id && c.classTeacherId)
+    .reduce((acc, c) => ({ ...acc, [c.classTeacherId]: c.name }), {});
+
   const onSubmit = handleSubmit(async (v) => {
     const teacher = (teachers.data ?? []).find((t) => t.id === v.classTeacherId);
     const payload = {
@@ -74,13 +79,13 @@ function EditClassForm({ cls }) {
       stream: v.stream,
       curriculum: v.curriculum,
       classTeacherId: v.classTeacherId || null,
-      classTeacherName: teacher ? `${teacher.firstName} ${teacher.lastName}` : undefined,
+      classTeacherName: teacher ? teacher.name : undefined,
       capacity: v.capacity,
       room: v.room,
     };
     await api.updateClass(cls.id, payload);
     showNotification(`Class ${v.name} updated successfully`, "success");
-    router.push("/classes");
+    router.push("/settings/classes");
   });
 
   return (
@@ -103,14 +108,22 @@ function EditClassForm({ cls }) {
           <Controller name="classTeacherId" control={control} render={({ field }) => (
             <TextField {...field} select label="Class Teacher" size="small">
               <MenuItem value="">None</MenuItem>
-              {(teachers.data ?? []).map((t) => <MenuItem key={t.id} value={t.id}>{t.firstName} {t.lastName}</MenuItem>)}
+              {(teachers.data ?? []).map((t) => (
+                <MenuItem
+                  key={t.id}
+                  value={t.id}
+                  disabled={!!assignedClassMap[t.id]}
+                >
+                  {t.name} {assignedClassMap[t.id] ? `(${assignedClassMap[t.id]})` : ""}
+                </MenuItem>
+              ))}
             </TextField>
           )} />
           <Controller name="capacity" control={control} render={({ field }) => <TextField {...field} type="number" label="Capacity" size="small" error={!!errors.capacity} helperText={errors.capacity?.message} />} />
           <Controller name="room" control={control} render={({ field }) => <TextField {...field} label="Room / Building" size="small" />} />
         </Box>
         <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end", gap: 1 }}>
-          <Button onClick={() => router.push("/classes")}>Cancel</Button>
+          <Button onClick={() => router.push("/settings/classes")}>Cancel</Button>
           <Button type="submit" variant="contained" disabled={isSubmitting}>{isSubmitting ? "Saving…" : "Save Changes"}</Button>
         </Box>
       </CardContent>

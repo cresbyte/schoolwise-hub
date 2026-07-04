@@ -29,7 +29,7 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import SaveIcon from "@mui/icons-material/Save";
 import TuneIcon from "@mui/icons-material/Tune";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { DashboardLayout } from "@/components/layout/DashboardLayout";
+
 import { PageHeader } from "@/components/PageHeader";
 import { useNotification } from "@/context/NotificationContext";
 import { api } from "@/lib/api";
@@ -58,11 +58,7 @@ const DEFAULT_GRADING = {
 };
 
 export default function GradeSubjectSetupPage() {
-  return (
-    <DashboardLayout>
-      <SetupContent />
-    </DashboardLayout>
-  );
+  return <SetupContent />;
 }
 
 function SetupContent() {
