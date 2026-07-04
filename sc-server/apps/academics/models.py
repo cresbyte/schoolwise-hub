@@ -1,6 +1,56 @@
 from django.db import models
 from django.conf import settings
 
+
+class AcademicTerm(models.Model):
+    """
+    Canonical definition of a term's date range. Every other model that
+    references (year, term) as plain integers — TermEvent, FeeStructure,
+    FeeLevy, ClassRoom — should be understood as pointing at one of these,
+    even though (for now, deliberately) they stay loosely coupled via plain
+    integers rather than a hard foreign key, to avoid a large migration
+    touching four existing tables. This model's only job is to answer
+    "when does term N of year Y start and end."
+    """
+    year = models.IntegerField()
+    term_number = models.IntegerField()  # 1, 2, 3 — not hardcoded to exactly 3
+    start_date = models.DateField()
+    end_date = models.DateField()
+    is_current = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["year", "term_number"]
+        unique_together = ("year", "term_number")
+        verbose_name = "Academic Term"
+        verbose_name_plural = "Academic Terms"
+
+    def __str__(self):
+        return f"Term {self.term_number}, {self.year} ({self.start_date} – {self.end_date})"
+
+    def save(self, *args, **kwargs):
+        # Only one term system-wide can be "current" at a time.
+        if self.is_current:
+            AcademicTerm.objects.exclude(pk=self.pk).update(is_current=False)
+        super().save(*args, **kwargs)
+        if self.is_current:
+            self._sync_school_current_term()
+
+    def _sync_school_current_term(self):
+        """
+        Keep School.current_term/current_year/term_start/term_end in sync so
+        existing code that already reads those fields directly keeps working
+        unchanged. This model is additive, not a breaking replacement.
+        """
+        from apps.school.models import School
+        school = School.objects.first()
+        if school:
+            school.current_term = self.term_number
+            school.current_year = self.year
+            school.term_start = self.start_date
+            school.term_end = self.end_date
+            school.save(update_fields=["current_term", "current_year", "term_start", "term_end"])
+
+
 class ClassRoom(models.Model):
     id = models.CharField(max_length=50, primary_key=True)
     name = models.CharField(max_length=100) # e.g. Grade 6 Blue

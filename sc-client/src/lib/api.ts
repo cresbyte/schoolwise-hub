@@ -373,6 +373,23 @@ export const api = {
   getStudentLevies: (studentId: string) => request(`/fees/levies/?student=${studentId}`).catch(() => []),
   recordLevyPayment: (data: any) => request("/fees/levies/pay/", { method: "POST", body: JSON.stringify(data) }),
 
+  // Fee Structures
+  getFeeStructures: (filters?: any) => {
+    const query = filters ? `?${new URLSearchParams(filters).toString()}` : "";
+    return request(`/fees/structures/${query}`).catch(() => []);
+  },
+  getFeeStructure: (id: string | number) => request(`/fees/structures/${id}/`),
+  createFeeStructure: (data: any) => request("/fees/structures/", { method: "POST", body: JSON.stringify(data) }),
+  reviseFeeStructure: (id: string | number, data: any) =>
+    request(`/fees/structures/${id}/revise/`, { method: "POST", body: JSON.stringify(data) }),
+  bulkSetupFeeStructures: (year: number, structures: any[]) =>
+    request("/fees/structures/bulk-setup/", { method: "POST", body: JSON.stringify({ year, structures }) }),
+  getFeeStructuresForPrint: (gradeLevel: string, year: number, term?: number) => {
+    const params = new URLSearchParams({ gradeLevel, year: String(year) });
+    if (term) params.append("term", String(term));
+    return request(`/fees/structures/print/?${params.toString()}`).catch(() => []);
+  },
+
   // Term Planner
   getTermEvents: (filters?: any) => {
     const query = filters ? `?${new URLSearchParams(filters).toString()}` : "";
@@ -385,6 +402,18 @@ export const api = {
     request(`/academics/term-events/${id}/approve/`, { method: "POST" }),
   rejectTermEvent: (id: string | number, _reviewerId?: string, _reviewerName?: string, reason?: string) =>
     request(`/academics/term-events/${id}/reject/`, { method: "POST", body: JSON.stringify({ reason: reason || "" }) }),
+
+  // Academic Terms
+  getAcademicTerms: (filters?: any) => {
+    const query = filters ? `?${new URLSearchParams(filters).toString()}` : "";
+    return request(`/academics/terms/${query}`).catch(() => []);
+  },
+  getAcademicTerm: (id: string | number) => request(`/academics/terms/${id}/`),
+  createAcademicTerm: (data: any) => request("/academics/terms/", { method: "POST", body: JSON.stringify(data) }),
+  updateAcademicTerm: (id: string | number, data: any) => request(`/academics/terms/${id}/`, { method: "PATCH", body: JSON.stringify(data) }),
+  deleteAcademicTerm: (id: string | number) => request(`/academics/terms/${id}/`, { method: "DELETE" }),
+  setupAcademicYear: (year: number, terms: any[]) =>
+    request("/academics/terms/setup-year/", { method: "POST", body: JSON.stringify({ year, terms }) }),
 
   // Messaging
   getMessages: (filters?: any) => {

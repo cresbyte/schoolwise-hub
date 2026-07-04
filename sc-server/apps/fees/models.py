@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 class FeeStructure(models.Model):
@@ -12,6 +13,19 @@ class FeeStructure(models.Model):
 
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    # Versioning fields
+    version = models.PositiveIntegerField(default=1)
+    previous_version = models.ForeignKey(
+        "self", on_delete=models.SET_NULL, null=True, blank=True, related_name="next_versions"
+    )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="created_fee_structures"
+    )
+
+    class Meta:
+        ordering = ["-year", "-term", "grade_level"]
 
     def __str__(self):
         return self.name

@@ -4,14 +4,70 @@ from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 from apps.accounts.permissions import IsSchoolAdmin, IsStaff, IsStaffOrParent
 from apps.accounts.models import UserRole
-from .models import ClassRoom, Subject, SubjectAssignment, TimetableSlot, TermEvent
+from .models import AcademicTerm, ClassRoom, Subject, SubjectAssignment, TimetableSlot, TermEvent
 from .serializers import (
-    ClassRoomSerializer, 
-    SubjectSerializer, 
+    AcademicTermSerializer,
+    ClassRoomSerializer,
+    SubjectSerializer,
     SubjectAssignmentSerializer,
     TimetableSlotSerializer,
     TermEventSerializer,
 )
+
+
+class AcademicTermViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for managing academic terms. All authenticated users can view,
+    but only school admins can create/update/delete.
+    """
+    queryset = AcademicTerm.objects.all().order_by("year", "term_number")
+    serializer_class = AcademicTermSerializer
+    pagination_class = None
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["year", "term_number", "is_current"]
+
+    def get_permissions(self):
+        if self.action in ["list", "retrieve"]:
+            return [permissions.IsAuthenticated()]
+        return [permissions.IsAuthenticated(), IsSchoolAdmin()]
+
+    @action(detail=False, methods=["post"], url_path="setup-year")
+    def setup_year(self, request):
+        """
+        Create or update all terms for a given year in one call.
+        Payload: {"year": 2026, "terms": [{"termNumber": 1, "startDate": "...", "endDate": "..."}, ...]}
+        """
+        year = request.data.get("year")
+        terms_data = request.data.get("terms", [])
+
+        if not year:
+            return Response({"detail": "year is required."}, status=status.HTTP_400_BAD_REQUEST)
+        if not terms_data:
+            return Response({"detail": "terms array is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        created_terms = []
+        for term_data in terms_data:
+            term_number = term_data.get("termNumber") or term_data.get("term_number")
+            start_date = term_data.get("startDate") or term_data.get("start_date")
+            end_date = term_data.get("endDate") or term_data.get("end_date")
+            is_current = term_data.get("isCurrent", term_data.get("is_current", False))
+
+            if not all([term_number, start_date, end_date]):
+                continue
+
+            term, created = AcademicTerm.objects.update_or_create(
+                year=year,
+                term_number=term_number,
+                defaults={
+                    "start_date": start_date,
+                    "end_date": end_date,
+                    "is_current": is_current
+                }
+            )
+            created_terms.append(term)
+
+        return Response(AcademicTermSerializer(created_terms, many=True).data, status=status.HTTP_200_OK if not created_terms else status.HTTP_201_CREATED)
+
 
 class ClassRoomViewSet(viewsets.ModelViewSet):
     queryset = ClassRoom.objects.all().order_by('name')

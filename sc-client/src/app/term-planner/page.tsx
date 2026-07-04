@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -24,6 +24,8 @@ import Switch from "@mui/material/Switch";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
+import Alert from "@mui/material/Alert";
+import Paper from "@mui/material/Paper";
 
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
@@ -35,6 +37,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import SettingsIcon from "@mui/icons-material/Settings";
 
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { RoleGuard } from "@/components/RoleGuard";
@@ -46,6 +49,15 @@ import { api } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
 import { TERM_EVENT_COLORS, TERM_EVENT_ICONS } from "@/lib/termEventConfig";
 import type { TermEvent, TermEventCategory, TermEventScope, ApprovalStatus, ClassRoom } from "@/lib/types";
+
+interface AcademicTerm {
+  id: number;
+  year: number;
+  termNumber: number;
+  startDate: string;
+  endDate: string;
+  isCurrent: boolean;
+}
 
 export default function TermPlannerPage() {
   return (
@@ -60,6 +72,7 @@ export default function TermPlannerPage() {
 function TermPlannerContent() {
   const { user } = useAuth();
   const { showNotification } = useNotification();
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [filters, setFilters] = useState<{
     scope: TermEventScope | "all";
     category: TermEventCategory | "all";
@@ -73,12 +86,51 @@ function TermPlannerContent() {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [openPendingDialog, setOpenPendingDialog] = useState(false);
+  const [openSetupYearDialog, setOpenSetupYearDialog] = useState(false);
   const [editingEvent, setEditingEvent] = useState<TermEvent | null>(null);
 
+  // Fetch school info
+  const { data: school } = useAsync(() => api.getSchool(), []);
+
+  // Fetch academic terms
+  const { data: allTerms, loading: termsLoading, refetch: refetchTerms } = useAsync(async () => {
+    const terms = await api.getAcademicTerms() as AcademicTerm[];
+    return terms;
+  }, []);
+
+  // Derive available years from terms
+  const availableYears = useMemo(() => {
+    if (!allTerms || allTerms.length === 0) return [2026];
+    const years = [...new Set(allTerms.map((t: AcademicTerm) => t.year))];
+    return years.sort((a, b) => b - a);
+  }, [allTerms]);
+
+  // Find current term to set initial year
+  const currentTerm = useMemo(() => {
+    if (!allTerms) return null;
+    return allTerms.find((t: AcademicTerm) => t.isCurrent) || allTerms[0];
+  }, [allTerms]);
+
+  // Set selected year to current year on load
+  useEffect(() => {
+    if (currentTerm && selectedYear === null) {
+      setSelectedYear(currentTerm.year);
+    }
+  }, [currentTerm, selectedYear]);
+
+  // Get terms for selected year
+  const termsForYear = useMemo(() => {
+    if (!allTerms || !selectedYear) return [];
+    return allTerms
+      .filter((t: AcademicTerm) => t.year === selectedYear)
+      .sort((a: AcademicTerm, b: AcademicTerm) => a.termNumber - b.termNumber);
+  }, [allTerms, selectedYear]);
+
+  // Fetch events for the selected year
   const { data: eventData, loading, error, refetch } = useAsync(async () => {
+    if (!selectedYear) return [];
     const all = await api.getTermEvents({
-      term: 2,
-      year: 2026,
+      year: selectedYear,
       scope: filters.scope === "all" ? undefined : filters.scope as TermEventScope,
       approvalStatus: filters.status,
     });
@@ -95,21 +147,22 @@ function TermPlannerContent() {
       });
     }
     return filtered;
-  }, [filters, selectedDate]);
+  }, [filters, selectedDate, selectedYear]);
 
   const events = eventData || [];
 
-  const pendingCount = useMemo(() => events.filter(e => e.approvalStatus === "pending_approval").length, [events]);
-
-  const eventsByMonth = useMemo(() => {
-    const groups: Record<string, TermEvent[]> = {};
+  // Group events by term
+  const eventsByTerm = useMemo(() => {
+    const groups: Record<number, TermEvent[]> = { 1: [], 2: [], 3: [] };
     events.forEach(e => {
-      const monthYear = new Date(e.startDate).toLocaleString('default', { month: 'long', year: 'numeric' });
-      if (!groups[monthYear]) groups[monthYear] = [];
-      groups[monthYear].push(e);
+      const term = e.term || 1;
+      if (!groups[term]) groups[term] = [];
+      groups[term].push(e);
     });
     return groups;
   }, [events]);
+
+  const pendingCount = useMemo(() => events.filter(e => e.approvalStatus === "pending_approval").length, [events]);
 
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this event?")) {
@@ -131,15 +184,56 @@ function TermPlannerContent() {
     refetch();
   };
 
+  // Get school name with fallback
+  const schoolName = school?.name || "Primrose Academy";
+
+  // Format term date range for header
+  const currentTermDisplay = useMemo(() => {
+    if (!currentTerm) return "";
+    return `Term ${currentTerm.termNumber}, ${currentTerm.year} — ${formatDate(currentTerm.startDate)} to ${formatDate(currentTerm.endDate)}`;
+  }, [currentTerm]);
+
   return (
     <Box>
+      {/* Header with year selector */}
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 3, flexWrap: "wrap", gap: 2 }}>
         <Box>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1 }}>
+            <TextField
+              select
+              size="small"
+              label="Year"
+              value={selectedYear || ""}
+              onChange={(e) => setSelectedYear(Number(e.target.value))}
+              sx={{ minWidth: 120 }}
+            >
+              {availableYears.map((year: number) => (
+                <MenuItem key={year} value={year}>{year}</MenuItem>
+              ))}
+            </TextField>
+            {currentTerm && (
+              <Chip
+                label={`Current: Term ${currentTerm.termNumber}, ${currentTerm.year}`}
+                color="primary"
+                size="small"
+                variant="outlined"
+              />
+            )}
+          </Box>
           <Typography variant="body1" color="text.secondary">
-            Primrose Academy Term 2, 2026 — May 6 to Aug 9
+            {schoolName} {currentTermDisplay}
           </Typography>
         </Box>
         <Stack direction="row" spacing={1}>
+          <RoleGuard permission="settings.view">
+            <Button
+              variant="outlined"
+              startIcon={<SettingsIcon />}
+              onClick={() => setOpenSetupYearDialog(true)}
+            >
+              Setup Year
+            </Button>
+          </RoleGuard>
           <RoleGuard permission="settings.view">
             <Button
               variant="outlined"
@@ -147,7 +241,7 @@ function TermPlannerContent() {
               onClick={() => setOpenPendingDialog(true)}
               startIcon={<Badge badgeContent={pendingCount} color="error"><CalendarMonthIcon /></Badge>}
             >
-              Pending Approvals
+              Pending
             </Button>
           </RoleGuard>
           <Button variant="contained" startIcon={<AddIcon />} onClick={() => { setEditingEvent(null); setOpenAddDialog(true); }}>
@@ -156,6 +250,7 @@ function TermPlannerContent() {
         </Stack>
       </Box>
 
+      {/* Filters */}
       <Card sx={{ mb: 3 }}>
         <CardContent sx={{ pb: 1 }}>
           <Grid container spacing={2}>
@@ -212,7 +307,7 @@ function TermPlannerContent() {
             <Grid size={{ xs: 12, md: 3 }}>
               {selectedDate && (
                 <Button size="small" onClick={() => setSelectedDate(null)} startIcon={<CancelIcon />}>
-                  Clear Date: {formatDate(selectedDate)}
+                  Clear: {formatDate(selectedDate)}
                 </Button>
               )}
             </Grid>
@@ -220,47 +315,77 @@ function TermPlannerContent() {
         </CardContent>
       </Card>
 
-      <Grid container spacing={3}>
-        <Grid size={{ xs: 12, md: 7, lg: 8 }}>
-          <DataState loading={loading} error={error} data={events} isEmpty={(d) => d.length === 0} emptyMessage="No events found matching your criteria.">
-            {Object.entries(eventsByMonth).map(([month, monthEvents]) => (
-              <Box key={month} sx={{ mb: 4 }}>
-                <Typography variant="h6" sx={{ mb: 2, fontWeight: 700, color: "primary.main", borderBottom: 1, borderColor: "divider", pb: 0.5 }}>
-                  {month}
-                </Typography>
-                <Stack spacing={2}>
-                  {monthEvents.map(event => (
-                    <EventCard
-                      key={event.id}
-                      event={event}
-                      onEdit={() => { setEditingEvent(event); setOpenAddDialog(true); }}
-                      onDelete={() => handleDelete(event.id)}
-                      onApprove={() => handleApprove(event.id)}
-                      onReject={(reason) => handleReject(event.id, reason)}
-                      isAdmin={["admin", "headteacher", "deputy", "hod"].includes(user?.role || "")}
-                    />
-                  ))}
-                </Stack>
-              </Box>
-            ))}
-          </DataState>
-        </Grid>
-        <Grid size={{ xs: 12, md: 5, lg: 4 }}>
-          <MiniCalendar events={events} selectedDate={selectedDate} onDateSelect={setSelectedDate} />
-        </Grid>
-      </Grid>
+      {/* Term bands */}
+      <DataState loading={termsLoading || loading} error={error} data={termsForYear} isEmpty={(d) => d.length === 0} emptyMessage="No academic terms configured for this year. Use 'Setup Year' to add terms.">
+        <Stack spacing={3}>
+          {termsForYear.map((term: AcademicTerm) => {
+            const termEvents = eventsByTerm[term.termNumber] || [];
+            const termEventsFiltered = termEvents.filter(e => {
+              const eventTerm = e.term;
+              return eventTerm === term.termNumber;
+            });
+
+            return (
+              <Paper key={term.id} elevation={term.isCurrent ? 2 : 0} sx={{ p: 2, border: 1, borderColor: term.isCurrent ? "primary.main" : "divider", bgcolor: term.isCurrent ? "primary.subtle" : "background.paper" }}>
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+                  <Box>
+                    <Typography variant="h6" sx={{ fontWeight: 700, color: term.isCurrent ? "primary.main" : "text.primary" }}>
+                      Term {term.termNumber}
+                      {term.isCurrent && <Chip label="Current" size="small" color="primary" sx={{ ml: 1 }} />}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {formatDate(term.startDate)} — {formatDate(term.endDate)}
+                    </Typography>
+                  </Box>
+                  <Chip label={`${termEventsFiltered.length} events`} size="small" variant="outlined" />
+                </Box>
+
+                <DataState
+                  loading={loading}
+                  data={termEventsFiltered}
+                  isEmpty={(d) => d.length === 0}
+                  emptyMessage={`No events scheduled for Term ${term.termNumber}`}
+                >
+                  <Stack spacing={2}>
+                    {termEventsFiltered.map(event => (
+                      <EventCard
+                        key={event.id}
+                        event={event}
+                        onEdit={() => { setEditingEvent(event); setOpenAddDialog(true); }}
+                        onDelete={() => handleDelete(event.id)}
+                        onApprove={() => handleApprove(event.id)}
+                        onReject={(reason) => handleReject(event.id, reason)}
+                        isAdmin={["admin", "headteacher", "deputy", "hod"].includes(user?.role || "")}
+                      />
+                    ))}
+                  </Stack>
+                </DataState>
+              </Paper>
+            );
+          })}
+        </Stack>
+      </DataState>
 
       <AddEventDialog
         open={openAddDialog}
         onClose={() => setOpenAddDialog(false)}
         onSuccess={() => refetch()}
         editingEvent={editingEvent}
+        defaultYear={selectedYear || 2026}
+        defaultTerm={currentTerm?.termNumber || 1}
       />
 
       <PendingApprovalsDialog
         open={openPendingDialog}
         onClose={() => setOpenPendingDialog(false)}
         onSuccess={() => refetch()}
+      />
+
+      <SetupYearDialog
+        open={openSetupYearDialog}
+        onClose={() => setOpenSetupYearDialog(false)}
+        onSuccess={() => { refetchTerms(); refetch(); }}
+        existingYears={availableYears}
       />
     </Box>
   );
@@ -378,129 +503,13 @@ function EventCard({ event, onEdit, onDelete, onApprove, onReject, isAdmin }: {
   );
 }
 
-function MiniCalendar({ events, selectedDate, onDateSelect }: {
-  events: TermEvent[],
-  selectedDate: string | null,
-  onDateSelect: (d: string | null) => void
-}) {
-  const [currentViewDate, setCurrentViewDate] = useState(new Date(2026, 5, 1)); // June 2026
-
-  const daysInMonth = useMemo(() => {
-    const year = currentViewDate.getFullYear();
-    const month = currentViewDate.getMonth();
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMo = new Date(year, month + 1, 0).getDate();
-
-    const days = [];
-    // Padding for first week
-    for (let i = 0; i < firstDay; i++) {
-      days.push(null);
-    }
-    for (let i = 1; i <= daysInMo; i++) {
-      days.push(new Date(year, month, i).toISOString().split('T')[0]);
-    }
-    return days;
-  }, [currentViewDate]);
-
-  const monthLabel = currentViewDate.toLocaleString('default', { month: 'long', year: 'numeric' });
-
-  const getDayEvents = (isoDate: string) => {
-    return events.filter(e => isoDate >= e.startDate && isoDate <= e.endDate && e.approvalStatus === "approved");
-  };
-
-  const handlePrev = () => setCurrentViewDate(new Date(currentViewDate.getFullYear(), currentViewDate.getMonth() - 1, 1));
-  const handleNext = () => setCurrentViewDate(new Date(currentViewDate.getFullYear(), currentViewDate.getMonth() + 1, 1));
-
-  return (
-    <Card sx={{ position: "sticky", top: 80 }}>
-      <CardContent>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 800 }}>{monthLabel}</Typography>
-          <Box>
-            <IconButton size="small" onClick={handlePrev}><ChevronLeftIcon /></IconButton>
-            <IconButton size="small" onClick={handleNext}><ChevronRightIcon /></IconButton>
-          </Box>
-        </Box>
-        <Grid container columns={7} sx={{ borderBottom: 1, borderColor: "divider", pb: 1, mb: 1 }}>
-          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(d => (
-            <Grid size={1} key={d} sx={{ textAlign: "center" }}>
-              <Typography variant="caption" sx={{ fontWeight: 700, color: "text.secondary" }}>{d}</Typography>
-            </Grid>
-          ))}
-        </Grid>
-        <Grid container columns={7}>
-          {daysInMonth.map((date, idx) => {
-            if (!date) return <Grid size={1} key={`pad-${idx}`} sx={{ height: 40 }} />;
-
-            const dayNum = parseInt(date.split('-')[2]);
-            const dayEvents = getDayEvents(date);
-            const isSelected = selectedDate === date;
-            const isToday = new Date().toISOString().split('T')[0] === date;
-
-            return (
-              <Grid
-                size={1}
-                key={date}
-                sx={{
-                  height: 44,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  cursor: "pointer",
-                  bgcolor: isSelected ? "primary.light" : "transparent",
-                  borderRadius: 1,
-                  "&:hover": { bgcolor: isSelected ? "primary.light" : "action.hover" }
-                }}
-                onClick={() => onDateSelect(isSelected ? null : date)}
-              >
-                <Typography
-                  variant="caption"
-                  sx={{
-                    fontWeight: isSelected || isToday ? 800 : 500,
-                    color: isToday ? "primary.main" : isSelected ? "white" : "text.primary",
-                    mt: 0.5,
-                    width: 24,
-                    height: 24,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: "50%",
-                    border: isToday ? 1 : 0,
-                    borderColor: "primary.main"
-                  }}
-                >
-                  {dayNum}
-                </Typography>
-                <Box sx={{ display: "flex", gap: 0.5, mt: 0.25, justifyContent: "center" }}>
-                  {dayEvents.slice(0, 3).map(e => (
-                    <Box
-                      key={e.id}
-                      sx={{
-                        width: 4,
-                        height: 4,
-                        borderRadius: "50%",
-                        bgcolor: TERM_EVENT_COLORS[e.category]
-                      }}
-                    />
-                  ))}
-                  {dayEvents.length > 3 && (
-                    <Typography sx={{ fontSize: 8, lineHeight: 1 }}>+</Typography>
-                  )}
-                </Box>
-              </Grid>
-            );
-          })}
-        </Grid>
-      </CardContent>
-    </Card>
-  );
-}
-
-function AddEventDialog({ open, onClose, onSuccess, editingEvent }: {
+function AddEventDialog({ open, onClose, onSuccess, editingEvent, defaultYear, defaultTerm }: {
   open: boolean,
   onClose: () => void,
   onSuccess: () => void,
-  editingEvent: TermEvent | null
+  editingEvent: TermEvent | null,
+  defaultYear: number,
+  defaultTerm: number
 }) {
   const { user } = useAuth();
   const { showNotification } = useNotification();
@@ -513,15 +522,17 @@ function AddEventDialog({ open, onClose, onSuccess, editingEvent }: {
     endDate: new Date().toISOString().split('T')[0],
     scope: "school",
     visibleToParents: true,
+    term: defaultTerm,
+    year: defaultYear,
   });
 
   const { data: classesData } = useAsync(() => api.getClasses(), []);
-  const { data: examsData } = useAsync(() => api.getExams({ term: 2, year: 2026 }), []);
+  const { data: examsData } = useAsync(() => api.getExams({ term: defaultTerm, year: defaultYear }), [defaultTerm, defaultYear]);
   const classes = classesData || [];
   const exams = examsData || [];
 
   useMemo(() => {
-    if (editingEvent) setFormData(editingEvent);
+    if (editingEvent) setFormData({ ...editingEvent, term: editingEvent.term || defaultTerm, year: editingEvent.year || defaultYear });
     else setFormData({
       title: "",
       category: "activity",
@@ -530,8 +541,10 @@ function AddEventDialog({ open, onClose, onSuccess, editingEvent }: {
       endDate: new Date().toISOString().split('T')[0],
       scope: "school",
       visibleToParents: true,
+      term: defaultTerm,
+      year: defaultYear,
     });
-  }, [editingEvent, open]);
+  }, [editingEvent, open, defaultTerm, defaultYear]);
 
   const handleSave = async () => {
     setLoading(true);
@@ -539,8 +552,8 @@ function AddEventDialog({ open, onClose, onSuccess, editingEvent }: {
       const data = {
         ...formData,
         isRange: formData.startDate !== formData.endDate,
-        term: 2 as any,
-        year: 2026,
+        term: formData.term || defaultTerm,
+        year: formData.year || defaultYear,
         createdBy: user?.id,
         createdByName: user?.name,
         role: user?.role,
@@ -569,6 +582,30 @@ function AddEventDialog({ open, onClose, onSuccess, editingEvent }: {
       <DialogTitle>{editingEvent ? "Edit Term Event" : "Add Term Event"}</DialogTitle>
       <DialogContent sx={{ pt: 1 }}>
         <Stack spacing={2} sx={{ mt: 1 }}>
+          <Grid container spacing={2}>
+            <Grid size={6}>
+              <TextField
+                select
+                label="Term"
+                fullWidth
+                value={formData.term || defaultTerm}
+                onChange={e => setFormData({ ...formData, term: Number(e.target.value) })}
+              >
+                <MenuItem value={1}>Term 1</MenuItem>
+                <MenuItem value={2}>Term 2</MenuItem>
+                <MenuItem value={3}>Term 3</MenuItem>
+              </TextField>
+            </Grid>
+            <Grid size={6}>
+              <TextField
+                label="Year"
+                type="number"
+                fullWidth
+                value={formData.year || defaultYear}
+                onChange={e => setFormData({ ...formData, year: Number(e.target.value) })}
+              />
+            </Grid>
+          </Grid>
           <TextField
             label="Title"
             fullWidth
@@ -719,7 +756,7 @@ function PendingApprovalsDialog({ open, onClose, onSuccess }: { open: boolean, o
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
       <DialogTitle>Pending Event Approvals</DialogTitle>
       <DialogContent>
-        <DataState loading={loading} data={pendingEvents} isEmpty={(d) => d.length === 0} emptyMessage="No pending approvals 🎉">
+        <DataState loading={loading} data={pendingEvents} isEmpty={(d) => d.length === 0} emptyMessage="No pending approvals">
           {(items) => (
             <List>
               {items.map(event => (
@@ -750,6 +787,129 @@ function PendingApprovalsDialog({ open, onClose, onSuccess }: { open: boolean, o
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Close</Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+function SetupYearDialog({ open, onClose, onSuccess, existingYears }: {
+  open: boolean,
+  onClose: () => void,
+  onSuccess: () => void,
+  existingYears: number[]
+}) {
+  const { showNotification } = useNotification();
+  const [loading, setLoading] = useState(false);
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [terms, setTerms] = useState([
+    { termNumber: 1, startDate: "", endDate: "", isCurrent: false },
+    { termNumber: 2, startDate: "", endDate: "", isCurrent: false },
+    { termNumber: 3, startDate: "", endDate: "", isCurrent: true },
+  ]);
+
+  useEffect(() => {
+    if (open) {
+      setYear(new Date().getFullYear());
+      setTerms([
+        { termNumber: 1, startDate: "", endDate: "", isCurrent: false },
+        { termNumber: 2, startDate: "", endDate: "", isCurrent: false },
+        { termNumber: 3, startDate: "", endDate: "", isCurrent: true },
+      ]);
+    }
+  }, [open]);
+
+  const handleTermChange = (idx: number, field: string, value: any) => {
+    setTerms(prev => {
+      const updated = [...prev];
+      updated[idx] = { ...updated[idx], [field]: value };
+      // If setting a term as current, unset others
+      if (field === "isCurrent" && value === true) {
+        updated.forEach((t, i) => {
+          if (i !== idx) t.isCurrent = false;
+        });
+      }
+      return updated;
+    });
+  };
+
+  const handleSave = async () => {
+    const validTerms = terms.filter(t => t.startDate && t.endDate);
+    if (validTerms.length === 0) {
+      showNotification("Please fill in at least one term with start and end dates", "error");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await api.setupAcademicYear(year, validTerms);
+      showNotification(`Academic year ${year} configured successfully`, "success");
+      onSuccess();
+      onClose();
+    } catch (error: any) {
+      showNotification(error.message || "Failed to setup academic year", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+      <DialogTitle>Setup Academic Year</DialogTitle>
+      <DialogContent sx={{ pt: 1 }}>
+        <Stack spacing={3} sx={{ mt: 2 }}>
+          <TextField
+            label="Year"
+            type="number"
+            fullWidth
+            value={year}
+            onChange={e => setYear(Number(e.target.value))}
+            helperText={existingYears.includes(year) ? "This year already has terms configured — this will update them" : ""}
+          />
+          <Typography variant="subtitle2" fontWeight={700}>Term Dates</Typography>
+          {terms.map((term, idx) => (
+            <Card key={term.termNumber} variant="outlined" sx={{ p: 2 }}>
+              <Typography variant="subtitle2" sx={{ mb: 2 }}>Term {term.termNumber}</Typography>
+              <Grid container spacing={2}>
+                <Grid size={5}>
+                  <TextField
+                    label="Start Date"
+                    type="date"
+                    fullWidth
+                    size="small"
+                    slotProps={{ inputLabel: { shrink: true } }}
+                    value={term.startDate}
+                    onChange={e => handleTermChange(idx, "startDate", e.target.value)}
+                  />
+                </Grid>
+                <Grid size={5}>
+                  <TextField
+                    label="End Date"
+                    type="date"
+                    fullWidth
+                    size="small"
+                    slotProps={{ inputLabel: { shrink: true } }}
+                    value={term.endDate}
+                    onChange={e => handleTermChange(idx, "endDate", e.target.value)}
+                  />
+                </Grid>
+                <Grid size={2}>
+                  <FormControlLabel
+                    control={<Switch checked={term.isCurrent} onChange={e => handleTermChange(idx, "isCurrent", e.target.checked)} />}
+                    label="Current"
+                    labelPlacement="top"
+                  />
+                </Grid>
+              </Grid>
+            </Card>
+          ))}
+          <Alert severity="info">Only terms with both start and end dates will be saved. You can add more than 3 terms if needed.</Alert>
+        </Stack>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button variant="contained" onClick={handleSave} disabled={loading}>
+          Save Terms
+        </Button>
       </DialogActions>
     </Dialog>
   );

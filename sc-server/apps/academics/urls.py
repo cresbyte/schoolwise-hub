@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 from . import views
 
 router = DefaultRouter()
+router.register(r"terms", views.AcademicTermViewSet, basename="academic-terms")
 router.register(r"classes", views.ClassRoomViewSet)
 router.register(r"subjects", views.SubjectViewSet)
 router.register(r"assignments", views.SubjectAssignmentViewSet)

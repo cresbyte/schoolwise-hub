@@ -1,7 +1,24 @@
 from rest_framework import serializers
-from .models import ClassRoom, Subject, SubjectAssignment, TimetableSlot, TermEvent
+from .models import AcademicTerm, ClassRoom, Subject, SubjectAssignment, TimetableSlot, TermEvent
 from apps.staff.models import Staff
 from apps.exams.models import Exam
+
+
+class AcademicTermSerializer(serializers.ModelSerializer):
+    """Serializer for AcademicTerm with camelCase field mappings."""
+    termNumber = serializers.IntegerField(source="term_number")
+    startDate = serializers.DateField(source="start_date")
+    endDate = serializers.DateField(source="end_date")
+    isCurrent = serializers.BooleanField(source="is_current", required=False, default=False)
+
+    class Meta:
+        model = AcademicTerm
+        fields = [
+            "id", "year", "term_number", "termNumber",
+            "start_date", "startDate", "end_date", "endDate",
+            "is_current", "isCurrent"
+        ]
+
 
 class ClassRoomSerializer(serializers.ModelSerializer):
     student_count = serializers.IntegerField(source="students.count", read_only=True)

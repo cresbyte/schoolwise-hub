@@ -7,14 +7,33 @@ class FeeStructureSerializer(serializers.ModelSerializer):
     totalAmount = serializers.DecimalField(source="total_amount", max_digits=12, decimal_places=2)
     isActive = serializers.BooleanField(source="is_active", required=False, default=True)
     createdAt = serializers.DateTimeField(source="created_at", read_only=True)
+    version = serializers.IntegerField(read_only=True)
+    previousVersionId = serializers.IntegerField(source="previous_version_id", read_only=True, allow_null=True)
+    createdById = serializers.IntegerField(source="created_by_id", read_only=True, allow_null=True)
+    createdByName = serializers.CharField(source="created_by.name", read_only=True, allow_null=True)
+    versionHistory = serializers.SerializerMethodField()
 
     class Meta:
         model = FeeStructure
         fields = [
             "id", "name", "grade_level", "gradeLevel", "year", "term",
             "total_amount", "totalAmount", "breakdown", "is_active", "isActive",
-            "createdAt",
+            "createdAt", "version", "previousVersionId", "createdById", "createdByName", "versionHistory"
         ]
+
+    def get_versionHistory(self, obj):
+        """Walk backwards through previous_version to build history list."""
+        history = []
+        current = obj.previous_version
+        while current:
+            history.append({
+                "version": current.version,
+                "totalAmount": float(current.total_amount),
+                "createdAt": current.created_at.isoformat() if current.created_at else None,
+                "createdByName": current.created_by.name if current.created_by else None,
+            })
+            current = current.previous_version
+        return history
 
 
 class PaymentSerializer(serializers.ModelSerializer):

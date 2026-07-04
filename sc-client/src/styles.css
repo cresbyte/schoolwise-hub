@@ -335,6 +335,7 @@ body {
   .page-break-before { page-break-before: always; }
   .no-page-break     { page-break-inside: avoid; }
   .report-card-print { page-break-after: always; }
+  .fee-structure-print { page-break-after: always; }
 
   .timetable-print { page-break-before: always; }
 
