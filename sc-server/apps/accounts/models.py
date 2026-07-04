@@ -32,7 +32,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     """
     Custom user model using phone as the unique identifier.
     Roles map exactly to frontend UserRole type.
-    JWT tokens include role so frontend RBAC works without extra calls.
+    JWT tokens include role so frontend RBAC works without extra calls. Okay
     """
     phone = models.CharField(max_length=15, unique=True)
     email = models.EmailField(blank=True, null=True)
