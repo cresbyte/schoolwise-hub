@@ -92,7 +92,7 @@ function DashboardContent() {
   const studentList = students.data ?? [];
   const boarding = studentList.filter((s: any) => s.boardingStatus === "boarding").length;
   const onLeave = (staff.data ?? []).filter((s: any) => s.status === "on_leave").length;
-  const enrollment = (classes.data ?? []).map((c) => ({ name: c.name, value: c.studentCount }));
+  const enrollment = (classes.data ?? []).map((c: any) => ({ name: c.name, value: c.studentCount || c.capacity }));
   const nextExam = exams.data?.[0];
   const daysToExam = nextExam ? Math.max(0, Math.ceil((new Date(nextExam.startDate).getTime() - Date.now()) / 86400000)) : 0;
 

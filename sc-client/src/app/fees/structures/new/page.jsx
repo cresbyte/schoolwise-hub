@@ -8,7 +8,7 @@ import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
+import {CardContent, } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
@@ -22,9 +22,8 @@ import { useRouter } from "next/navigation";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PageHeader } from "@/components/PageHeader";
 import { useNotification } from "@/context/NotificationContext";
-import * as api from "@/lib/mockApi";
+import { api } from "@/lib/api";
 import { GRADE_LEVELS } from "@/lib/constants";
-import type { FeeStructure, FeeItem } from "@/lib/types";
 
 const schema = z.object({
   name: z.string().min(2, "Required"),
@@ -39,13 +38,12 @@ const schema = z.object({
     isOptional: z.boolean(),
   })).min(1, "Add at least one fee item"),
 });
-type FormValues = z.infer<typeof schema>;
 
 export default function NewFeeStructurePage() {
   const router = useRouter();
   const { showNotification } = useNotification();
 
-  const { control, handleSubmit, formState: { errors, isSubmitting }, watch } = useForm<FormValues>({
+  const { control, handleSubmit, formState: { errors, isSubmitting }, watch } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       name: "",
@@ -65,17 +63,24 @@ export default function NewFeeStructurePage() {
   const total = items.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
 
   const onSubmit = handleSubmit(async (v) => {
-    const payload: FeeStructure = {
-      id: "",
+    const breakdown = {};
+    v.items.forEach(it => {
+        breakdown[it.name] = Number(it.amount);
+    });
+
+    const payload = {
       name: v.name,
-      academicYear: v.academicYear,
-      term: v.term as any,
-      gradeLevel: v.gradeLevel as any,
-      boardingStatus: v.boardingStatus as any,
-      items: v.items.map((it, idx) => ({ ...it, id: String(idx + 1) })),
+      year: v.academicYear,
+      term: v.term,
+      gradeLevel: v.gradeLevel,
+      grade_level: v.gradeLevel,
+      boardingStatus: v.boardingStatus,
+      breakdown: breakdown,
       totalAmount: total,
+      total_amount: total,
       dueDate: v.dueDate,
-      status: "active",
+      isActive: true,
+      is_active: true,
     };
     await api.createFeeStructure(payload);
     showNotification(`Fee structure ${v.name} created successfully`, "success");

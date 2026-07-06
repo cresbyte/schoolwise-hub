@@ -81,7 +81,7 @@ export const NAV_GROUPS = [
   {
     heading: "Staff",
     items: [
-      { label: "All Staff", to: "/staff", icon: <BadgeIcon />, permission: "staff.view" },
+      { label: "All Staff", to: "/staff", icon: <BadgeIcon />, permission: "staff.view", exact: true },
       { label: "Leave Management", to: "/staff/leave", icon: <BeachAccessIcon />, permission: "staff.view" },
     ],
   },
@@ -96,14 +96,14 @@ export const NAV_GROUPS = [
     heading: "Settings",
     items: [
       { label: "Classes", to: "/settings/classes", icon: <MeetingRoomIcon />, permission: "classes.view" },
-      { label: "School Settings", to: "/settings", icon: <SettingsIcon />, permission: "settings.view" },
+      { label: "School Settings", to: "/settings", icon: <SettingsIcon />, permission: "settings.view", exact: true },
       { label: "User Management", to: "/settings/users", icon: <ManageAccountsIcon />, permission: "settings.view" },
     ],
   },
   {
     heading: "Website",
     items: [
-      { label: "Overview", to: "/website-cms", icon: <LanguageIcon />, permission: "settings.view" },
+      { label: "Overview", to: "/website-cms", icon: <LanguageIcon />, permission: "settings.view", exact: true },
       { label: "News & Events", to: "/website-cms/news", icon: <ArticleIcon />, permission: "settings.view" },
       { label: "Gallery", to: "/website-cms/gallery", icon: <PhotoLibraryIcon />, permission: "settings.view" },
       { label: "Applications", to: "/website-cms/applications", icon: <SchoolIcon />, permission: "settings.view" },

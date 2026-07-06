@@ -102,7 +102,7 @@ function TermPlannerContent() {
   const availableYears = useMemo(() => {
     if (!allTerms || allTerms.length === 0) return [2026];
     const years = [...new Set(allTerms.map((t: AcademicTerm) => t.year))];
-    return years.sort((a, b) => b - a);
+    return years.sort((a: any, b: any) => b - a);
   }, [allTerms]);
 
   // Find current term to set initial year
@@ -137,12 +137,12 @@ function TermPlannerContent() {
 
     let filtered = all;
     if (filters.category !== "all") {
-      filtered = filtered.filter(e => e.category === filters.category);
+      filtered = filtered.filter(e => (e as any).category === filters.category);
     }
     if (selectedDate) {
       filtered = filtered.filter(e => {
-        const start = e.startDate;
-        const end = e.endDate;
+        const start = (e as any).startDate;
+        const end = (e as any).endDate;
         return selectedDate >= start && selectedDate <= end;
       });
     }
@@ -154,7 +154,7 @@ function TermPlannerContent() {
   // Group events by term
   const eventsByTerm = useMemo(() => {
     const groups: Record<number, TermEvent[]> = { 1: [], 2: [], 3: [] };
-    events.forEach(e => {
+    events.forEach((e: any) => {
       const term = e.term || 1;
       if (!groups[term]) groups[term] = [];
       groups[term].push(e);
@@ -162,7 +162,7 @@ function TermPlannerContent() {
     return groups;
   }, [events]);
 
-  const pendingCount = useMemo(() => events.filter(e => e.approvalStatus === "pending_approval").length, [events]);
+  const pendingCount = useMemo(() => events.filter((e: any) => e.approvalStatus === "pending_approval").length, [events]);
 
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this event?")) {
@@ -184,8 +184,8 @@ function TermPlannerContent() {
     refetch();
   };
 
-  // Get school name with fallback
-  const schoolName = school?.name || "Primrose Academy";
+  // Get school name without fallback
+  const schoolName = school?.name || "";
 
   // Format term date range for header
   const currentTermDisplay = useMemo(() => {
@@ -207,7 +207,7 @@ function TermPlannerContent() {
               onChange={(e) => setSelectedYear(Number(e.target.value))}
               sx={{ minWidth: 120 }}
             >
-              {availableYears.map((year: number) => (
+              {(availableYears as number[]).map((year: number) => (
                 <MenuItem key={year} value={year}>{year}</MenuItem>
               ))}
             </TextField>
@@ -385,7 +385,7 @@ function TermPlannerContent() {
         open={openSetupYearDialog}
         onClose={() => setOpenSetupYearDialog(false)}
         onSuccess={() => { refetchTerms(); refetch(); }}
-        existingYears={availableYears}
+        existingYears={availableYears as number[]}
       />
     </Box>
   );
@@ -759,7 +759,7 @@ function PendingApprovalsDialog({ open, onClose, onSuccess }: { open: boolean, o
         <DataState loading={loading} data={pendingEvents} isEmpty={(d) => d.length === 0} emptyMessage="No pending approvals">
           {(items) => (
             <List>
-              {items.map(event => (
+               {items.map((event: any) => (
                 <ListItem key={event.id} sx={{ bgcolor: "action.hover", borderRadius: 1, mb: 1, flexDirection: "column", alignItems: "flex-start" }}>
                   <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%", alignItems: "center" }}>
                     <ListItemText
@@ -865,7 +865,7 @@ function SetupYearDialog({ open, onClose, onSuccess, existingYears }: {
             onChange={e => setYear(Number(e.target.value))}
             helperText={existingYears.includes(year) ? "This year already has terms configured — this will update them" : ""}
           />
-          <Typography variant="subtitle2" fontWeight={700}>Term Dates</Typography>
+          <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Term Dates</Typography>
           {terms.map((term, idx) => (
             <Card key={term.termNumber} variant="outlined" sx={{ p: 2 }}>
               <Typography variant="subtitle2" sx={{ mb: 2 }}>Term {term.termNumber}</Typography>
@@ -902,7 +902,7 @@ function SetupYearDialog({ open, onClose, onSuccess, existingYears }: {
               </Grid>
             </Card>
           ))}
-          <Alert severity="info">Only terms with both start and end dates will be saved. You can add more than 3 terms if needed.</Alert>
+          <Alert severity="info">Only terms with both start and end dates will be saved. Exactly 3 terms are expected per year.</Alert>
         </Stack>
       </DialogContent>
       <DialogActions>

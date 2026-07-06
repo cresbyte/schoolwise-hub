@@ -37,7 +37,7 @@ export function PageHeader({ title, subtitle, actions, breadcrumbs }: PageHeader
             {title}
           </Typography>
           {subtitle && (
-            <Typography variant="body2" sx={{ color: "text.secondary", mt: 0.25 }}>
+            <Typography variant="body2" component="div" sx={{ color: "text.secondary", mt: 0.25 }}>
               {subtitle}
             </Typography>
           )}

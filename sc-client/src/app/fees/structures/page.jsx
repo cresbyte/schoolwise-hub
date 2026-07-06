@@ -33,26 +33,6 @@ import { useAsync } from "@/hooks/useAsync";
 import { api } from "@/lib/api";
 import { formatKES } from "@/lib/utils";
 
-interface FeeStructure {
-  id: number;
-  name: string;
-  gradeLevel: string;
-  year: number;
-  term: number;
-  totalAmount: number;
-  breakdown: Record<string, number>;
-  isActive: boolean;
-  version: number;
-  createdById?: number;
-  createdByName?: string;
-  createdAt: string;
-  versionHistory: Array<{
-    version: number;
-    totalAmount: number;
-    createdAt: string | null;
-    createdByName: string | null;
-  }>;
-}
 
 export default function FeeStructuresPage() {
   return (
@@ -66,18 +46,18 @@ export default function FeeStructuresPage() {
 
 function FeeStructuresContent() {
   const router = useRouter();
-  const [term, setTerm] = useState("2");
+  const [term, setTerm] = useState("1");
   const [year, setYear] = useState("2026");
 
   const { data, loading, error, refetch } = useAsync(
-    () => api.api.getFeeStructures({ year: Number(year), term: Number(term), is_active: true }) as Promise<FeeStructure[]>,
+    () => api.getFeeStructures({ year: Number(year), term: Number(term), is_active: 1 }),
     [term, year]
   );
   const list = data ?? [];
 
   // Group by grade level for printing
   const gradeLevels = useMemo(() => {
-    return [...new Set(list.map((f: FeeStructure) => f.gradeLevel))].sort();
+    return [...new Set(list.map((f) => f.gradeLevel))].sort();
   }, [list]);
 
   const handlePrintAll = () => {
@@ -85,7 +65,7 @@ function FeeStructuresContent() {
     router.push(`/fees/structures/print?year=${year}&term=${term}`);
   };
 
-  const handlePrintGrade = (gradeLevel: string) => {
+  const handlePrintGrade = (gradeLevel) => {
     router.push(`/fees/structures/print?gradeLevel=${encodeURIComponent(gradeLevel)}&year=${year}`);
   };
 
@@ -110,7 +90,7 @@ function FeeStructuresContent() {
         }
       />
       <Card sx={{ p: 2, mb: 2 }}>
-        <Stack direction="row" spacing={2} alignItems="center">
+        <Stack direction="row" spacing={2} >
           <TextField select size="small" label="Year" value={year} onChange={(e) => setYear(e.target.value)} sx={{ width: 120 }}>
             <MenuItem value="2025">2025</MenuItem>
             <MenuItem value="2026">2026</MenuItem>
@@ -124,10 +104,10 @@ function FeeStructuresContent() {
           <Chip label={`${list.length} structures`} size="small" variant="outlined" />
         </Stack>
       </Card>
-      <DataState loading={loading} error={error} data={list} onRetry={refetch} isEmpty={(d: FeeStructure[]) => d.length === 0} emptyMessage="No fee structures for this term">
+      <DataState loading={loading} error={error} data={list} onRetry={refetch} isEmpty={(d) => d.length === 0} emptyMessage="No fee structures for this term">
         {() => (
           <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "1fr 1fr", lg: "repeat(3, 1fr)" } }}>
-            {list.map((f: FeeStructure) => (
+            {list.map((f) => (
               <FeeStructureCard key={f.id} structure={f} onPrint={() => handlePrintGrade(f.gradeLevel)} />
             ))}
           </Box>
@@ -137,7 +117,7 @@ function FeeStructuresContent() {
   );
 }
 
-function FeeStructureCard({ structure, onPrint }: { structure: FeeStructure; onPrint: () => void }) {
+function FeeStructureCard({ structure, onPrint }) {
   const [showHistory, setShowHistory] = useState(false);
   const hasHistory = structure.versionHistory && structure.versionHistory.length > 0;
 

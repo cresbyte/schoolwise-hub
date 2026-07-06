@@ -24,31 +24,6 @@ import { useAsync } from "@/hooks/useAsync";
 import { api } from "@/lib/api";
 import { formatKES } from "@/lib/utils";
 
-interface FeeStructure {
-  id: number;
-  name: string;
-  gradeLevel: string;
-  year: number;
-  term: number;
-  totalAmount: number;
-  breakdown: Record<string, number>;
-  isActive: boolean;
-  version: number;
-  createdAt: string;
-}
-
-interface School {
-  name: string;
-  motto: string;
-  address: string;
-  physical_address?: string;
-  phone: string;
-  email: string;
-  logo?: string;
-  registration_number?: string;
-  county?: string;
-  sub_county?: string;
-}
 
 export default function PrintableFeesPage() {
   const router = useRouter();
@@ -76,21 +51,16 @@ function PrintableFeesContent({
   year,
   term,
   onBack
-}: {
-  gradeLevel?: string;
-  year?: number;
-  term?: number;
-  onBack: () => void;
 }) {
   const [selectedYear, setSelectedYear] = useState(year || new Date().getFullYear());
   const [selectedGrade, setSelectedGrade] = useState(gradeLevel || "");
 
   // Fetch school info
-  const { data: school, loading: schoolLoading } = useAsync<Promise<School | null>>(() => api.getSchool(), []);
+  const { data: school, loading: schoolLoading } = useAsync(() => api.getSchool(), []);
 
   // Fetch fee structures
   const fetchParams = useMemo(() => {
-    const params: Record<string, any> = { year: selectedYear, is_active: true };
+    const params = { year: selectedYear, is_active: true };
     if (selectedGrade) params.gradeLevel = selectedGrade;
     if (term) params.term = term;
     return params;
@@ -100,25 +70,27 @@ function PrintableFeesContent({
     async () => {
       if (!selectedGrade) {
         // If no grade selected, get all structures for the year
-        return api.api.getFeeStructures({ year: selectedYear, is_active: true });
+        const queryParams = { year: selectedYear, is_active: 1 };
+        if (term) queryParams.term = term;
+        return api.getFeeStructures(queryParams);
       }
       if (term) {
-        return api.api.getFeeStructuresForPrint(selectedGrade, selectedYear, term);
+        return api.getFeeStructuresForPrint(selectedGrade, selectedYear, term);
       }
-      return api.api.getFeeStructuresForPrint(selectedGrade, selectedYear);
+      return api.getFeeStructuresForPrint(selectedGrade, selectedYear);
     },
     [fetchParams]
   );
 
-  const structuresList = (structures || []) as FeeStructure[];
+  const structuresList = (structures || []);
 
   // Group by term for full-year view
   const structuresByTerm = useMemo(() => {
     if (term) {
       return { [term]: structuresList };
     }
-    const grouped: Record<number, FeeStructure[]> = { 1: [], 2: [], 3: [] };
-    structuresList.forEach((s: FeeStructure) => {
+    const grouped = { 1: [], 2: [], 3: [] };
+    structuresList.forEach((s) => {
       if (!grouped[s.term]) grouped[s.term] = [];
       grouped[s.term].push(s);
     });
@@ -128,13 +100,13 @@ function PrintableFeesContent({
   // Calculate grand total for full year
   const grandTotal = useMemo(() => {
     if (term || !selectedGrade) return 0;
-    return structuresList.reduce((sum: number, s: FeeStructure) => sum + Number(s.totalAmount), 0);
+    return structuresList.reduce((sum, s) => sum + Number(s.totalAmount), 0);
   }, [structuresList, term, selectedGrade]);
 
   // Available grades from data
   const availableGrades = useMemo(() => {
     if (!structuresList) return [];
-    return [...new Set(structuresList.map((s: FeeStructure) => s.gradeLevel))].sort();
+    return [...new Set(structuresList.map((s) => s.gradeLevel))].sort();
   }, [structuresList]);
 
   const isLoading = schoolLoading || structuresLoading;
@@ -308,11 +280,6 @@ function FeeBreakdownTable({
   school,
   term,
   year
-}: {
-  structures: FeeStructure[];
-  school: School;
-  term: number;
-  year: number;
 }) {
   // If single grade, show detailed breakdown
   // If multiple grades, show summary table
