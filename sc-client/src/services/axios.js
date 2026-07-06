@@ -31,7 +31,8 @@ api.interceptors.response.use(
     const isAuthPath =
       originalRequest.url.includes("login") ||
       originalRequest.url.includes("register") ||
-      originalRequest.url.includes("password-reset");
+      originalRequest.url.includes("password-reset") ||
+      originalRequest.url.includes("refresh");
 
     if (
       error.response?.status === 401 &&
@@ -49,6 +50,9 @@ api.interceptors.response.use(
 
           if (response.status === 200) {
             localStorage.setItem("accessToken", response.data.access);
+            if (response.data.refresh) {
+                localStorage.setItem("refreshToken", response.data.refresh);
+            }
             api.defaults.headers.common["Authorization"] =
               `Bearer ${response.data.access}`;
 

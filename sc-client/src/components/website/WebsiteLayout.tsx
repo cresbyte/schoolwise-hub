@@ -1,7 +1,11 @@
+"use client";
+
 /**
  * Public website shell — navbar, footer, and floating actions.
  * @module WebsiteLayout
  */
+import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import Box from "@mui/material/Box";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -36,6 +40,12 @@ export interface WebsiteLayoutProps {
  * @param props - Page content and optional chrome hiding for print views
  */
 export function WebsiteLayout({ children, hideChrome = false }: WebsiteLayoutProps) {
+  const pathname = usePathname();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
   return (
     <ThemeProvider theme={websiteTheme}>
       <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", bgcolor: "background.paper" }}>

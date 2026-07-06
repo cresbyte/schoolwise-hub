@@ -19,39 +19,13 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const refreshTimeoutRef = useRef(null);
 
-    // Function to refresh user state from current token
-    const refreshUser = useCallback(() => {
-        const token = localStorage.getItem('accessToken');
-        if (token) {
-            try {
-                const decoded = jwtDecode(token);
-                // Check if token is expired
-                if (decoded.exp * 1000 < Date.now()) {
-                    logout();
-                } else {
-                    setIsAuthenticated(true);
-                    // Map full user profile from token
-                    setUser({
-                        id: decoded.user_id,
-                        name: decoded.name,
-                        firstName: decoded.firstName || "",
-                        lastName: decoded.lastName || "",
-                        gender: decoded.gender || "",
-                        birthDate: decoded.birthDate || "",
-                        phone: decoded.phone,
-                        role: decoded.role,
-                        photo: decoded.photo,
-                        staffId: decoded.staffId,
-                        studentIds: decoded.studentIds || [],
-                        email: decoded.email || "",
-                    });
-                    // Schedule next refresh
-                    scheduleTokenRefresh(token);
-                }
-            } catch (error) {
-                console.error("Invalid token:", error);
-                logout();
-            }
+    const logout = useCallback(() => {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        setUser(null);
+        setIsAuthenticated(false);
+        if (refreshTimeoutRef.current) {
+            clearTimeout(refreshTimeoutRef.current);
         }
     }, []);
 
@@ -66,21 +40,31 @@ export const AuthProvider = ({ children }) => {
             const expiryTime = decoded.exp * 1000;
             const currentTime = Date.now();
 
-            // Refresh 2 minutes before expiry
-            const refreshTime = expiryTime - currentTime - (2 * 60 * 1000);
+            // Refresh 1 minute before expiry
+            const refreshTime = expiryTime - currentTime - (60 * 1000);
 
             if (refreshTime > 0) {
-                console.log(`Scheduling token refresh in ${Math.round(refreshTime / 1000 / 60)} minutes`);
                 refreshTimeoutRef.current = setTimeout(async () => {
                     const refreshToken = localStorage.getItem('refreshToken');
                     if (refreshToken) {
                         try {
-                            const response = await api.post('auth/refresh/', { refresh: refreshToken });
-                            const { access } = response.data;
-                            localStorage.setItem('accessToken', access);
-                            scheduleTokenRefresh(access);
-                            refreshUser();
-                            console.log("Proactive token refresh successful");
+                            const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/";
+                            const response = await fetch(`${baseURL}auth/refresh/`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ refresh: refreshToken })
+                            });
+                            if (!response.ok) throw new Error('Refresh failed');
+                            const data = await response.json();
+                            
+                            localStorage.setItem('accessToken', data.access);
+                            if (data.refresh) localStorage.setItem('refreshToken', data.refresh);
+                            
+                            window.dispatchEvent(
+                              new CustomEvent("tokenRefreshed", {
+                                detail: { access: data.access },
+                              })
+                            );
                         } catch (error) {
                             console.error("Proactive token refresh failed:", error);
                             logout();
@@ -91,7 +75,68 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
             console.error("Error scheduling refresh:", error);
         }
-    }, [refreshUser]);
+    }, [logout]);
+
+    // Function to refresh user state from current token
+    const refreshUser = useCallback(async () => {
+        let token = localStorage.getItem('accessToken');
+        if (token) {
+            try {
+                let decoded = jwtDecode(token);
+                // Check if token is expired
+                if (decoded.exp * 1000 < Date.now()) {
+                    const refreshToken = localStorage.getItem('refreshToken');
+                    if (refreshToken) {
+                        try {
+                            const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/";
+                            const response = await fetch(`${baseURL}auth/refresh/`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ refresh: refreshToken })
+                            });
+                            if (!response.ok) throw new Error('Refresh failed');
+                            const data = await response.json();
+                            
+                            token = data.access;
+                            localStorage.setItem('accessToken', token);
+                            if (data.refresh) localStorage.setItem('refreshToken', data.refresh);
+                            
+                            decoded = jwtDecode(token);
+                        } catch (err) {
+                            console.error("Failed to silently refresh expired token:", err);
+                            logout();
+                            return;
+                        }
+                    } else {
+                        logout();
+                        return;
+                    }
+                }
+                
+                setIsAuthenticated(true);
+                // Map full user profile from token
+                setUser({
+                    id: decoded.user_id,
+                    name: decoded.name,
+                    firstName: decoded.firstName || "",
+                    lastName: decoded.lastName || "",
+                    gender: decoded.gender || "",
+                    birthDate: decoded.birthDate || "",
+                    phone: decoded.phone,
+                    role: decoded.role,
+                    photo: decoded.photo,
+                    staffId: decoded.staffId,
+                    studentIds: decoded.studentIds || [],
+                    email: decoded.email || "",
+                });
+                // Schedule next refresh
+                scheduleTokenRefresh(token);
+            } catch (error) {
+                console.error("Invalid token:", error);
+                logout();
+            }
+        }
+    }, [logout, scheduleTokenRefresh]);
 
     useEffect(() => {
         const initializeAuth = async () => {
@@ -194,15 +239,7 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const logout = useCallback(() => {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        setUser(null);
-        setIsAuthenticated(false);
-        if (refreshTimeoutRef.current) {
-            clearTimeout(refreshTimeoutRef.current);
-        }
-    }, []);
+
 
     const hasPermission = useCallback((permission) => {
         if (!user) return false;

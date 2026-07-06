@@ -32,7 +32,7 @@ function TimetableContent() {
   const [classId, setClassId] = useState("");
 
   useEffect(() => {
-    if (!classId && classes.length > 0) {
+    if (!classId && classes?.length > 0) {
       setClassId(classes[0].id);
     }
   }, [classes, classId]);
