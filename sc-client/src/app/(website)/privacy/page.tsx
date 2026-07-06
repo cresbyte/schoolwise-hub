@@ -5,7 +5,6 @@
  * @module website/privacy/page
  */
 import Typography from "@mui/material/Typography";
-import { PageBanner } from "@/components/website/PageBanner";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
 import { getSchoolInfo } from "@/lib/website/constants";
 
@@ -14,11 +13,7 @@ export default function PrivacyPage() {
   const SCHOOL = getSchoolInfo();
   return (
     <>
-      <PageBanner
-        title="Privacy Policy"
-        crumbs={[{ label: "Home", href: "/" }, { label: "Privacy Policy" }]}
-      />
-      <SectionWrapper>
+            <SectionWrapper>
         <Typography
           variant="body1"
           sx={{ lineHeight: 1.8, color: "text.secondary", maxWidth: 720 }}

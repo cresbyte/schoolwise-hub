@@ -11,7 +11,6 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Pagination from "@mui/material/Pagination";
 import Chip from "@mui/material/Chip";
-import { PageBanner } from "@/components/website/PageBanner";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
 import { NewsCard } from "@/components/website/NewsCard";
 import { HEADING_FONT } from "@/lib/website/constants";
@@ -28,12 +27,7 @@ export default function NewsPage() {
 
   return (
     <>
-      <PageBanner
-        title="News & Events"
-        subtitle="Stay connected with Primrose"
-        crumbs={[{ label: "Home", href: "/" }, { label: "News" }]}
-      />
-      <SectionWrapper>
+            <SectionWrapper>
         <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "1fr 320px" }, gap: 4 }}>
           <Box>
             <Box

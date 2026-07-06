@@ -8,7 +8,6 @@ import { useState } from "react";
 import {Box,Card, CardContent, Typography, Tabs, Tab, Table, TableBody, TableCell, TableHead, TableRow, Button } from "@mui/material";
 import PrintIcon from "@mui/icons-material/Print";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { PageBanner } from "@/components/website/PageBanner";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
 import { SectionHeading } from "@/components/website/SectionHeading";
 import { HEADING_FONT, getSchoolInfo } from "@/lib/website/constants";
@@ -21,12 +20,7 @@ export default function AcademicsPage() {
 
   return (
     <>
-      <PageBanner
-        title="Academics"
-        subtitle="Rigorous programmes aligned to Kenyan national standards"
-        crumbs={[{ label: "Home", href: "/" }, { label: "Academics" }]}
-      />
-
+      
       <SectionWrapper id="cbc">
         <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 3 }}>
           <Tab label="CBC Programme" sx={{ textTransform: "none", fontWeight: 600 }} />

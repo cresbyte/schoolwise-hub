@@ -11,7 +11,6 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import LoginIcon from "@mui/icons-material/Login";
 import Link from "next/link";
-import { PageBanner } from "@/components/website/PageBanner";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
 import { SectionHeading } from "@/components/website/SectionHeading";
 import { FAQAccordion } from "@/components/website/FAQAccordion";
@@ -34,12 +33,7 @@ const QUICK_LINKS = [
 export default function ParentsPage() {
   return (
     <>
-      <PageBanner
-        title="Parent Resources"
-        subtitle="Everything you need to support your child's education"
-        crumbs={[{ label: "Home", href: "/" }, { label: "Parents" }]}
-      />
-
+      
       <SectionWrapper>
         <SectionHeading title="Quick Access" />
         <Box

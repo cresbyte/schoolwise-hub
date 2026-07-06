@@ -5,7 +5,6 @@
  * @module website/about/page
  */
 import {Box, Card, CardContent, Typography, Avatar, Chip} from "@mui/material";
-import { PageBanner } from "@/components/website/PageBanner";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
 import { SectionHeading } from "@/components/website/SectionHeading";
 import { ImagePlaceholder } from "@/components/website/ImagePlaceholder";
@@ -89,12 +88,7 @@ export default function AboutPage() {
   const SCHOOL = getSchoolInfo();
   return (
     <>
-      <PageBanner
-        title="About Us"
-        subtitle={SCHOOL.tagline}
-        crumbs={[{ label: "Home", href: "/" }, { label: "About Us" }]}
-      />
-
+      
       <SectionWrapper id="story">
         <SectionHeading title="Our Story" align="left" />
         <Box

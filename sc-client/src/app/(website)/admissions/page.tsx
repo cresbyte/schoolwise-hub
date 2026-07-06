@@ -7,7 +7,6 @@
 import {Box, Card, CardContent, Typography, Button, Stepper, Step, StepLabel, Tabs, Tab, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import { useState } from "react";
 import Link from "next/link";
-import { PageBanner } from "@/components/website/PageBanner";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
 import { SectionHeading } from "@/components/website/SectionHeading";
 import { HEADING_FONT, getSchoolInfo } from "@/lib/website/constants";
@@ -30,12 +29,7 @@ export default function AdmissionsPage() {
 
   return (
     <>
-      <PageBanner
-        title="Admissions"
-        subtitle="Join the Primrose family"
-        crumbs={[{ label: "Home", href: "/" }, { label: "Admissions" }]}
-      />
-
+      
       <SectionWrapper id="process">
         <SectionHeading title="How to Apply" />
         <Stepper activeStep={-1} alternativeLabel sx={{ mb: 4 }}>

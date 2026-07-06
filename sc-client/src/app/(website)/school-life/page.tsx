@@ -10,7 +10,6 @@ import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { PageBanner } from "@/components/website/PageBanner";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
 import { ImagePlaceholder } from "@/components/website/ImagePlaceholder";
 import { HEADING_FONT, WEBSITE_IMAGES } from "@/lib/website/constants";
@@ -57,12 +56,7 @@ export default function SchoolLifePage() {
 
   return (
     <>
-      <PageBanner
-        title="School Life"
-        subtitle="Beyond the classroom"
-        crumbs={[{ label: "Home", href: "/" }, { label: "School Life" }]}
-      />
-
+      
       <SectionWrapper>
         <Tabs
           value={tab}

@@ -5,7 +5,6 @@
  * @module website/terms/page
  */
 import Typography from "@mui/material/Typography";
-import { PageBanner } from "@/components/website/PageBanner";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
 import { getSchoolInfo } from "@/lib/website/constants";
 
@@ -14,11 +13,7 @@ export default function TermsPage() {
   const SCHOOL = getSchoolInfo();
   return (
     <>
-      <PageBanner
-        title="Terms of Use"
-        crumbs={[{ label: "Home", href: "/" }, { label: "Terms of Use" }]}
-      />
-      <SectionWrapper>
+            <SectionWrapper>
         <Typography
           variant="body1"
           sx={{ lineHeight: 1.8, color: "text.secondary", maxWidth: 720 }}

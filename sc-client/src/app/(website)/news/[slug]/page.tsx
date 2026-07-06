@@ -9,7 +9,6 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 import Divider from "@mui/material/Divider";
-import { PageBanner } from "@/components/website/PageBanner";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
 import { NewsCard } from "@/components/website/NewsCard";
 import { ImagePlaceholder } from "@/components/website/ImagePlaceholder";
@@ -32,15 +31,7 @@ export default function NewsArticlePage() {
 
   return (
     <>
-      <PageBanner
-        title={article.title}
-        crumbs={[
-          { label: "Home", href: "/" },
-          { label: "News", href: "/news" },
-          { label: article.title },
-        ]}
-      />
-      <SectionWrapper>
+            <SectionWrapper>
         <Box sx={{ maxWidth: 800, mx: "auto" }}>
           <Box sx={{ display: "flex", gap: 1, mb: 2, flexWrap: "wrap" }}>
             <Chip label={article.category} color="primary" size="small" />

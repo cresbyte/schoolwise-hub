@@ -14,7 +14,6 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Button from "@mui/material/Button";
 import Link from "next/link";
-import { PageBanner } from "@/components/website/PageBanner";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
 import { SectionHeading } from "@/components/website/SectionHeading";
 import { staff as staffData } from "@/lib/mockData";
@@ -36,12 +35,7 @@ export default function OurStaffPage() {
 
   return (
     <>
-      <PageBanner
-        title="Our Staff"
-        subtitle="Dedicated educators shaping young minds"
-        crumbs={[{ label: "Home", href: "/" }, { label: "Our Staff" }]}
-      />
-      <SectionWrapper>
+            <SectionWrapper>
         <Tabs value={filter} onChange={(_, v) => setFilter(v)} sx={{ mb: 3 }}>
           {FILTERS.map((f) => (
             <Tab key={f} label={f} value={f} sx={{ textTransform: "none", fontWeight: 600 }} />

@@ -12,7 +12,6 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import { PageBanner } from "@/components/website/PageBanner";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
 import { ContactForm } from "@/components/website/ContactForm";
 import { HEADING_FONT, getSchoolInfo } from "@/lib/website/constants";
@@ -49,12 +48,7 @@ export default function ContactPage() {
   ];
   return (
     <>
-      <PageBanner
-        title="Contact Us"
-        subtitle="We'd love to hear from you"
-        crumbs={[{ label: "Home", href: "/" }, { label: "Contact" }]}
-      />
-      <SectionWrapper>
+            <SectionWrapper>
         <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "1fr 1fr" }, gap: 4 }}>
           <Box>
             <Typography variant="h5" sx={{ fontFamily: HEADING_FONT, fontWeight: 700, mb: 3 }}>

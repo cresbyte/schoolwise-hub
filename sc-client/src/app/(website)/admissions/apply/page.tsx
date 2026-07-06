@@ -17,7 +17,6 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Alert from "@mui/material/Alert";
 import PrintIcon from "@mui/icons-material/Print";
-import { PageBanner } from "@/components/website/PageBanner";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
 import { HEADING_FONT, getSchoolInfo } from "@/lib/website/constants";
 import { api } from "@/lib/api";
@@ -106,15 +105,7 @@ export default function ApplyPage() {
   if (submitted) {
     return (
       <>
-        <PageBanner
-          title="Application Submitted"
-          crumbs={[
-            { label: "Home", href: "/" },
-            { label: "Admissions", href: "/admissions" },
-            { label: "Application" },
-          ]}
-        />
-        <SectionWrapper>
+                <SectionWrapper>
           <Alert severity="success" sx={{ mb: 3 }}>
             Thank you! Your application has been received.{" "}
             <strong>Reference: {applicationRef}</strong>. Our admissions team will contact you
@@ -167,16 +158,7 @@ export default function ApplyPage() {
 
   return (
     <>
-      <PageBanner
-        title="Online Application"
-        subtitle="Complete all steps to apply"
-        crumbs={[
-          { label: "Home", href: "/" },
-          { label: "Admissions", href: "/admissions" },
-          { label: "Apply" },
-        ]}
-      />
-      <SectionWrapper>
+            <SectionWrapper>
         <Stepper activeStep={step} sx={{ mb: 4 }}>
           {STEPS.map((s) => (
             <Step key={s}>
