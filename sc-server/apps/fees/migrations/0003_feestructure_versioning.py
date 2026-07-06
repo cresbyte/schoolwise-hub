@@ -1,7 +1,7 @@
 # Generated migration for FeeStructure versioning fields
 
 from django.db import migrations, models
-import django.conf.settings
+import django.conf
 
 
 class Migration(migrations.Migration):
@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
                 blank=True,
                 on_delete=models.deletion.SET_NULL,
                 related_name='created_fee_structures',
-                to=django.conf.settings.AUTH_USER_MODEL
+                to=django.conf.settings.AUTH_USER_MODEL,
             ),
         ),
         migrations.AddField(
