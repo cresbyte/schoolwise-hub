@@ -63,7 +63,7 @@ export default function AttendancePage() {
       <PageGuard permission="attendance.write">
         <PageHeader
           title="Attendance Register"
-          subtitle="Weekly matrix view — click a cell to cycle status"
+          subtitle="Weekly  view — click a cell to cycle status"
         />
         <AttendanceMatrix />
       </PageGuard>

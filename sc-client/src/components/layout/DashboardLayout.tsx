@@ -79,7 +79,7 @@ function saveCollapsedState(state: Record<string, boolean>) {
 /** Authenticated app shell with sidebar and app bar. */
 export function DashboardLayout({ children }: { children: ReactNode }) {
   useRouteGuard();
-  const { user, isAuthenticated, isLoading, logout, hasPermission } = useAuth();
+  const { user, isAuthenticated, isLoading, logout, hasPermission, isClassTeacher } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = useState(true);
@@ -228,6 +228,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
           {NAV_GROUPS.map((group) => {
             const items = group.items.filter((i: any) => {
               if (i.hiddenRoles && user && i.hiddenRoles.includes(user.role)) return false;
+              if (i.requiresClassTeacher && !isClassTeacher()) return false;
               return !i.permission || hasPermission(i.permission);
             });
             if (!items.length) return null;

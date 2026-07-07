@@ -8,7 +8,9 @@ STAFF_ROLES = [
     UserRole.HEADTEACHER, 
     UserRole.DEPUTY, 
     UserRole.HOD, 
+    UserRole.HOD, 
     UserRole.CLASS_TEACHER, 
+    UserRole.TEACHER,
     UserRole.ACCOUNTANT,
     UserRole.STAFF
 ]

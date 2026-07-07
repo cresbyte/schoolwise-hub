@@ -4,9 +4,7 @@
  */
 "use client";
 import { useEffect, useRef, useState } from "react";
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
+import {Box,Container,Typography,Grid} from "@mui/material";
 import { motion, useInView } from "framer-motion";
 import type { SchoolStat } from "@/lib/website/data";
 import { KAB } from "@/theme/websiteTheme";
@@ -99,17 +97,16 @@ export function StatsBand({ stats }: StatsBandProps) {
   return (
     <Box sx={{ bgcolor: KAB.primary, py: { xs: 5, md: 6 } }}>
       <Container maxWidth="xl">
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: { xs: "1fr 1fr", md: `repeat(${stats.length}, 1fr)` },
-            gap: { xs: 0, md: 0 },
-          }}
+        <Grid
+          container
+          spacing={2}
         >
           {stats.map((stat) => (
+            <Grid size={{xs:6, md:3}}>
             <StatItem key={stat.label} stat={stat} />
+            </Grid>
           ))}
-        </Box>
+        </Grid>
       </Container>
     </Box>
   );

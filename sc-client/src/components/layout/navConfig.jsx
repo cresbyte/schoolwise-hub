@@ -50,6 +50,7 @@ export const NAV_GROUPS = [
   {
     heading: "Students",
     items: [
+      { label: "My Class", to: "/my-class", icon: <GroupWorkIcon />, permission: "students.view", requiresClassTeacher: true },
       { label: "All Students", to: "/students", icon: <PeopleIcon />, permission: "students.view" },
       { label: "Attendance", to: "/attendance", icon: <EventAvailableIcon />, permission: "attendance.write" },
     ],

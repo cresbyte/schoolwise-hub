@@ -1386,3 +1386,35 @@ export async function getTeacherClassSummary(staffId: string): Promise<TeacherCl
     topStudents,
   });
 }
+
+// Look up class summary by class ID directly (no staff lookup needed)
+export async function getClassSummaryById(classId: string): Promise<TeacherClassSummary> {
+  // Try to match by the string ID first; fall back to the first class if no match
+  // (real backend IDs are integers; mock uses "cls-N" strings)
+  const cls = classes.find(c => c.id === classId) ?? classes[0];
+
+  const classStudents = students.filter(s => s.classId === cls.id);
+  const classExams = exams.filter(e => e.gradeLevel.includes(cls.gradeLevel));
+  const classMarks = examMarks.filter(m => m.classId === cls.id && m.marks !== null);
+
+  const avg = classMarks.length > 0
+    ? classMarks.reduce((s, m) => s + (m.marks || 0), 0) / classMarks.length
+    : 0;
+
+  const topStudents = classStudents.map(s => {
+    const sMarks = classMarks.filter(m => m.studentId === s.id);
+    const sAvg = sMarks.length > 0 ? sMarks.reduce((sum, mk) => sum + (mk.marks || 0), 0) / sMarks.length : 0;
+    return { id: s.id, name: `${s.firstName} ${s.lastName}`, mark: sAvg };
+  }).sort((a, b) => b.mark - a.mark).slice(0, 5);
+
+  return delay({
+    classId: cls.id,
+    className: cls.name,
+    studentCount: cls.studentCount,
+    attendanceRate: 94, // Mock
+    averageMarks: Math.round(avg),
+    unpaidFeesCount: classStudents.filter(s => s.feeBalance > 0).length,
+    upcomingExams: classExams.filter(e => e.status === "upcoming"),
+    topStudents,
+  });
+}

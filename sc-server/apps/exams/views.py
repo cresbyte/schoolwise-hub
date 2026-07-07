@@ -7,8 +7,9 @@ from django.db.models import Avg, Max, Min
 from django.utils import timezone
 from .models import Exam, Mark, ClassTeacherComment
 from .serializers import ExamSerializer, MarkSerializer, ClassTeacherCommentSerializer
-from apps.accounts.permissions import IsStaff, IsStaffOrParent
+from apps.accounts.permissions import IsStaff, IsStaffOrParent, SENIOR_ROLES
 from apps.accounts.models import UserRole
+from django.db.models import Q
 
 
 class ExamViewSet(viewsets.ModelViewSet):
@@ -70,6 +71,17 @@ class MarkViewSet(viewsets.ModelViewSet):
         if class_id:
             queryset = queryset.filter(student__class_room_id=class_id)
 
+        if user.role not in SENIOR_ROLES and user.role != UserRole.PARENT:
+            staff = getattr(user, "staff_profile", None)
+            if staff:
+                assignments = staff.subject_assignments.all()
+                q_obj = Q(student__class_room__class_teacher=staff)
+                for a in assignments:
+                    q_obj |= Q(student__class_room=a.class_room, subject=a.subject)
+                queryset = queryset.filter(q_obj)
+            else:
+                return queryset.none()
+
         return queryset
 
     @action(detail=False, methods=["post"], url_path="bulk-save")
@@ -84,12 +96,32 @@ class MarkViewSet(viewsets.ModelViewSet):
         if not exam_id or not marks_data:
             return Response({"detail": "examId and marks are required."}, status=status.HTTP_400_BAD_REQUEST)
 
+        user = request.user
+        staff = getattr(user, "staff_profile", None)
+        
+        # We need to verify they can write these marks
+        if user.role not in SENIOR_ROLES:
+            if not staff:
+                return Response({"detail": "Not authorized."}, status=status.HTTP_403_FORBIDDEN)
+            # Create a quick set of (class, subject) they can teach
+            allowed = set((a.class_room_id, a.subject_id) for a in staff.subject_assignments.all())
+
         saved = []
         for entry in marks_data:
+            student_id = entry["studentId"]
+            subject_id = entry["subjectId"]
+            
+            if user.role not in SENIOR_ROLES:
+                # We need student's class
+                from apps.students.models import Student
+                student = Student.objects.get(id=student_id)
+                if (student.class_room_id, subject_id) not in allowed:
+                    continue  # skip unauthorized marks
+                    
             mark, _ = Mark.objects.update_or_create(
                 exam_id=exam_id,
-                student_id=entry["studentId"],
-                subject_id=entry["subjectId"],
+                student_id=student_id,
+                subject_id=subject_id,
                 defaults={
                     "score": entry.get("score", 0),
                     "comment": entry.get("comment", ""),
@@ -126,6 +158,13 @@ class ClassTeacherCommentViewSet(viewsets.ModelViewSet):
         class_id = self.request.query_params.get("class_room")
         if class_id:
             queryset = queryset.filter(student__class_room_id=class_id)
+            
+        if user.role not in SENIOR_ROLES and user.role != UserRole.PARENT:
+            staff = getattr(user, "staff_profile", None)
+            if staff:
+                queryset = queryset.filter(student__class_room__class_teacher=staff)
+            else:
+                return queryset.none()
 
         return queryset
 
@@ -153,11 +192,21 @@ class ClassTeacherCommentViewSet(viewsets.ModelViewSet):
             )
 
         staff = getattr(request.user, "staff_profile", None)
+        is_senior = request.user.role in SENIOR_ROLES
+        
         saved = []
         for entry in comments_data:
+            student_id = entry["studentId"]
+            
+            if not is_senior:
+                from apps.students.models import Student
+                student = Student.objects.get(id=student_id)
+                if not student.class_room or student.class_room.class_teacher_id != staff.id:
+                    continue
+                    
             comment, _ = ClassTeacherComment.objects.update_or_create(
                 exam_id=exam_id,
-                student_id=entry["studentId"],
+                student_id=student_id,
                 defaults={
                     "comment": entry.get("comment", ""),
                     "author": staff,
@@ -180,11 +229,30 @@ class PerformanceReportView(APIView):
                 {"detail": "class_room and exam query params are required."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+            
+        user = request.user
+        staff = getattr(user, "staff_profile", None)
+        is_senior = user.role in SENIOR_ROLES
+        
+        is_class_teacher = False
+        taught_subjects = []
+        if not is_senior:
+            if not staff:
+                return Response({"detail": "Not authorized."}, status=403)
+            is_class_teacher = staff.classes_assigned.filter(id=class_id).exists()
+            taught_subjects = list(staff.subject_assignments.filter(class_room_id=class_id).values_list("subject_id", flat=True))
+            if not is_class_teacher and not taught_subjects:
+                return Response({"detail": "Not authorized to view performance for this class."}, status=403)
 
         marks = Mark.objects.filter(
             exam_id=exam_id,
             student__class_room_id=class_id,
-        ).select_related("subject")
+        )
+        
+        if not is_senior and not is_class_teacher:
+            marks = marks.filter(subject_id__in=taught_subjects)
+            
+        marks = marks.select_related("subject")
 
         subject_stats = []
         for sub in marks.values("subject_id", "subject__name").distinct():

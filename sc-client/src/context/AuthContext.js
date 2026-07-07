@@ -127,6 +127,8 @@ export const AuthProvider = ({ children }) => {
                     photo: decoded.photo,
                     staffId: decoded.staffId,
                     studentIds: decoded.studentIds || [],
+                    classTeacherOf: decoded.classTeacherOf || [],
+                    subjectsTaught: decoded.subjectsTaught || [],
                     email: decoded.email || "",
                 });
                 // Schedule next refresh
@@ -255,6 +257,12 @@ export const AuthProvider = ({ children }) => {
     
     const hasAnyRole = useCallback((roles) => !!user && roles.includes(user.role), [user]);
 
+    const isClassTeacher = useCallback((classId) => {
+        if (!user || !user.classTeacherOf || user.classTeacherOf.length === 0) return false;
+        if (classId) return user.classTeacherOf.includes(classId);
+        return true;
+    }, [user]);
+
     const value = useMemo(() => ({
         user,
         isAuthenticated,
@@ -268,8 +276,9 @@ export const AuthProvider = ({ children }) => {
         changePassword,
         hasPermission,
         hasRole,
-        hasAnyRole
-    }), [user, isAuthenticated, loading, logout, hasPermission, hasRole, hasAnyRole]);
+        hasAnyRole,
+        isClassTeacher
+    }), [user, isAuthenticated, loading, logout, hasPermission, hasRole, hasAnyRole, isClassTeacher]);
 
     return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
 };

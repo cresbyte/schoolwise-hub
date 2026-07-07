@@ -3,7 +3,7 @@
  * @module types
  */
 
-export type UserRole = "admin" | "headteacher" | "class_teacher" | "teacher" | "accountant" | "parent";
+export type UserRole = "admin" | "headteacher" | "deputy" | "hod" | "class_teacher" | "teacher" | "staff" | "accountant" | "parent";
 export type Curriculum = "CBC" | "844";
 export type Gender = "Male" | "Female";
 export type TermNumber = 1 | 2 | 3;

@@ -97,8 +97,11 @@ export const CURRICULUM_LABELS: Record<Curriculum, string> = {
 export const ROLE_LABELS: Record<UserRole, string> = {
   admin: "Administrator",
   headteacher: "Head Teacher",
+  deputy: "Deputy Principal",
+  hod: "Head of Department",
   class_teacher: "Class Teacher",
   teacher: "Teacher",
+  staff: "Staff",
   accountant: "Accountant",
   parent: "Parent",
 };
@@ -106,8 +109,11 @@ export const ROLE_LABELS: Record<UserRole, string> = {
 export const ROLE_COLORS: Record<UserRole, string> = {
   admin: "#C62828",
   headteacher: "#6A1B9A",
+  deputy: "#4527A0",
+  hod: "#0277BD",
   class_teacher: "#1565C0",
   teacher: "#0288D1",
+  staff: "#009688",
   accountant: "#2E7D32",
   parent: "#F57F17",
 };
@@ -130,6 +136,26 @@ export const PERMISSIONS: Record<UserRole, string[]> = {
     "fees.view",
     "messages.send",
   ],
+  deputy: [
+    "students.*",
+    "classes.*",
+    "exams.*",
+    "attendance.*",
+    "staff.view",
+    "reports.*",
+    "timetable.*",
+    "fees.view",
+    "messages.send",
+  ],
+  hod: [
+    "students.view",
+    "attendance.write",
+    "exams.marks",
+    "exams.view",
+    "timetable.view",
+    "reports.view",
+    "classes.view",
+  ],
   class_teacher: [
     "students.view",
     "attendance.write",
@@ -146,6 +172,14 @@ export const PERMISSIONS: Record<UserRole, string[]> = {
     "timetable.view",
     "classes.view",
   ],
+  staff: [
+    "students.view",
+    "attendance.write",
+    "exams.marks",
+    "exams.view",
+    "timetable.view",
+    "classes.view",
+  ],
   accountant: ["fees.*", "fees.view", "fees.write", "payroll.*", "payroll.view", "students.view", "reports.fees"],
   parent: ["portal.view"],
 };
@@ -153,8 +187,11 @@ export const PERMISSIONS: Record<UserRole, string[]> = {
 export const ROLE_HOME: Record<UserRole, string> = {
   admin: "/dashboard",
   headteacher: "/dashboard",
+  deputy: "/dashboard",
+  hod: "/dashboard",
   class_teacher: "/dashboard",
   teacher: "/dashboard",
+  staff: "/dashboard",
   accountant: "/fees/collection",
   parent: "/portal",
 };

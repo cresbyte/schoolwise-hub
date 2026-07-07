@@ -5,7 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Count, Q
 from .models import Attendance
 from .serializers import AttendanceSerializer
-from apps.accounts.permissions import IsStaff, IsStaffOrParent
+from apps.accounts.permissions import IsStaff, IsStaffOrParent, SENIOR_ROLES
 from apps.accounts.models import UserRole
 
 
@@ -47,6 +47,17 @@ class AttendanceViewSet(viewsets.ModelViewSet):
         if date_to:
             queryset = queryset.filter(date__lte=date_to)
 
+        if user.role not in SENIOR_ROLES and user.role != UserRole.PARENT:
+            staff = getattr(user, "staff_profile", None)
+            if staff:
+                taught_classes = staff.subject_assignments.values_list("class_room_id", flat=True)
+                queryset = queryset.filter(
+                    Q(student__class_room__class_teacher=staff) |
+                    Q(student__class_room_id__in=taught_classes)
+                ).distinct()
+            else:
+                return queryset.none()
+
         return queryset
 
     def perform_create(self, serializer):
@@ -73,7 +84,16 @@ class AttendanceViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        staff = getattr(request.user, "staff", None)
+        staff = getattr(request.user, "staff_profile", None)
+        is_senior = request.user.role in SENIOR_ROLES
+        
+        allowed_classes = set()
+        if not is_senior:
+            if not staff:
+                return Response({"detail": "Not authorized."}, status=status.HTTP_403_FORBIDDEN)
+            allowed_classes.update(staff.classes_assigned.values_list("id", flat=True))
+            allowed_classes.update(staff.subject_assignments.values_list("class_room_id", flat=True))
+            
         saved = []
         errors = []
 
@@ -86,6 +106,13 @@ class AttendanceViewSet(viewsets.ModelViewSet):
             if not student_id or not date:
                 errors.append({"record": record, "error": "student and date are required."})
                 continue
+                
+            if not is_senior:
+                from apps.students.models import Student
+                student = Student.objects.get(id=student_id)
+                if student.class_room_id not in allowed_classes:
+                    errors.append({"record": record, "error": "Not authorized for this student's class."})
+                    continue
 
             try:
                 obj, created = Attendance.objects.update_or_create(

@@ -15,12 +15,11 @@ import {
   AccordionSummary,
   AccordionDetails,
   Divider,
-  Collapse,
   List,
   ListItemButton,
   ListItemText,
 } from "@mui/material";
-import {Menu, Close, ExpandMore, KeyboardArrowDown, Phone, Email, Facebook, Twitter} from "@mui/icons-material";
+import { Menu, Close, ExpandMore, KeyboardArrowDown, Phone, Email, Facebook, Twitter } from "@mui/icons-material";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -30,18 +29,7 @@ import { KAB } from "@/theme/websiteTheme";
 
 // ─── Nav Config ──────────────────────────────────────────────────────────────
 
-interface NavLink {
-  label: string;
-  href: string;
-}
-
-interface NavGroup {
-  label: string;
-  href?: string;
-  columns: { heading?: string; links: NavLink[] }[];
-}
-
-const NAV_GROUPS: NavGroup[] = [
+const NAV_GROUPS = [
   {
     label: "About Us",
     href: "/about",
@@ -138,7 +126,7 @@ const NAV_GROUPS: NavGroup[] = [
   },
 ];
 
-const SOLO_LINKS: NavLink[] = [
+const SOLO_LINKS = [
   { label: "News", href: "/news" },
   { label: "Contact", href: "/contact" },
 ];
@@ -151,9 +139,9 @@ export function WebsiteNavbar() {
 
   const [scrolled, setScrolled] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [openMenu, setOpenMenu] = useState<string | null>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const closeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [openMenu, setOpenMenu] = useState(null);
+  const menuRef = useRef(null);
+  const closeTimeout = useRef(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -166,7 +154,7 @@ export function WebsiteNavbar() {
     setOpenMenu(null);
   }, [pathname]);
 
-  const handleMenuEnter = (label: string) => {
+  const handleMenuEnter = (label) => {
     if (closeTimeout.current) clearTimeout(closeTimeout.current);
     setOpenMenu(label);
   };
@@ -175,7 +163,7 @@ export function WebsiteNavbar() {
     closeTimeout.current = setTimeout(() => setOpenMenu(null), 120);
   };
 
-  const isActive = (href: string) =>
+  const isActive = (href) =>
     href !== "/" && pathname.startsWith(href.split("#")[0]);
 
   return (
@@ -299,8 +287,8 @@ export function WebsiteNavbar() {
           position: "sticky",
           top: 0,
           zIndex: 1100,
-          bgcolor: KAB.primary,
-          boxShadow: scrolled ? "0 2px 12px rgba(0,0,0,0.25)" : "none",
+          bgcolor: "#ffffff", /* Changed from KAB.primary to white */
+          boxShadow: scrolled ? "0 2px 12px rgba(0,0,0,0.05)" : "none",
           transition: "box-shadow 0.3s ease, padding 0.3s ease",
         }}
       >
@@ -325,7 +313,7 @@ export function WebsiteNavbar() {
               <Box sx={{ display: { xs: "none", sm: "block" } }}>
                 <Typography
                   sx={{
-                    color: "#fff",
+                    color: "#000000", /* Changed from #fff to black */
                     fontFamily: "'Poppins', sans-serif",
                     fontWeight: 700,
                     fontSize: scrolled ? 14 : 16,
@@ -337,7 +325,7 @@ export function WebsiteNavbar() {
                 </Typography>
                 <Typography
                   sx={{
-                    color: "rgba(255,255,255,0.7)",
+                    color: "rgba(0,0,0,0.7)", /* Changed to gray */
                     fontSize: 10,
                     letterSpacing: "0.06em",
                     textTransform: "uppercase",
@@ -372,7 +360,7 @@ export function WebsiteNavbar() {
                       gap: 0.25,
                       px: 1.5,
                       py: 1,
-                      color: isActive(group.href ?? "/___") ? KAB.secondaryLight : "#fff",
+                      color: isActive(group.href ?? "/___") ? KAB.secondaryLight : "#000000", /* Changed from #fff to black */
                       fontFamily: "'Poppins', sans-serif",
                       fontWeight: 500,
                       fontSize: 14,
@@ -487,7 +475,7 @@ export function WebsiteNavbar() {
                   sx={{
                     px: 1.5,
                     py: 1,
-                    color: isActive(link.href) ? KAB.secondaryLight : "#fff",
+                    color: isActive(link.href) ? KAB.secondaryLight : "#000000", /* Changed from #fff to black */
                     fontFamily: "'Poppins', sans-serif",
                     fontWeight: 500,
                     fontSize: 14,
@@ -511,7 +499,7 @@ export function WebsiteNavbar() {
             <IconButton
               aria-label="Open menu"
               onClick={() => setDrawerOpen(true)}
-              sx={{ display: { md: "none" }, color: "#fff" }}
+              sx={{ display: { md: "none" }, color: "#000000" }} /* Changed from #fff to black */
             >
               <Menu />
             </IconButton>

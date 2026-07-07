@@ -20,6 +20,10 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         staff_profile = getattr(user, "staff_profile", None)
         token["staffId"] = staff_profile.pk if staff_profile else None
         
+        if staff_profile:
+            token["classTeacherOf"] = list(staff_profile.classes_assigned.values_list("id", flat=True))
+            token["subjectsTaught"] = list(staff_profile.subject_assignments.values("subject__name", "class_room__id", "class_room__name", "periods_per_week"))
+        
         # Link to student IDs if parent (requires relationship mapping)
         if user.role == "parent":
             token["studentIds"] = list(user.children.values_list("id", flat=True))
@@ -43,6 +47,10 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             "staffId": staff_profile.pk if staff_profile else None,
             "isActive": self.user.is_active,
         }
+        if staff_profile:
+            user_data["classTeacherOf"] = list(staff_profile.classes_assigned.values_list("id", flat=True))
+            user_data["subjectsTaught"] = list(staff_profile.subject_assignments.values("subject__name", "class_room__id", "class_room__name", "periods_per_week"))
+        
         if self.user.role == "parent":
             user_data["studentIds"] = list(self.user.children.values_list("id", flat=True))
         data["user"] = user_data
@@ -54,19 +62,33 @@ class UserSerializer(serializers.ModelSerializer):
     birthDate = serializers.DateField(source="birth_date")
     isActive = serializers.BooleanField(source="is_active", read_only=True)
     studentIds = serializers.SerializerMethodField()
+    classTeacherOf = serializers.SerializerMethodField()
+    subjectsTaught = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = [
             "id", "name", "firstName", "lastName", "gender", "birthDate", 
             "phone", "email", "role", "photo", "isActive", "last_login", "created_at",
-            "studentIds"
+            "studentIds", "classTeacherOf", "subjectsTaught"
         ]
         read_only_fields = ["id", "last_login", "created_at"]
 
     def get_studentIds(self, obj):
         if obj.role == "parent":
             return list(obj.children.values_list("id", flat=True))
+        return []
+
+    def get_classTeacherOf(self, obj):
+        staff_profile = getattr(obj, "staff_profile", None)
+        if staff_profile:
+            return list(staff_profile.classes_assigned.values_list("id", flat=True))
+        return []
+
+    def get_subjectsTaught(self, obj):
+        staff_profile = getattr(obj, "staff_profile", None)
+        if staff_profile:
+            return list(staff_profile.subject_assignments.values("subject__name", "class_room__id", "class_room__name", "periods_per_week"))
         return []
 
 class UserCreateSerializer(serializers.ModelSerializer):

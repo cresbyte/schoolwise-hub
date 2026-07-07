@@ -13,16 +13,12 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
-import Collapse from "@mui/material/Collapse";
 import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
-import Divider from "@mui/material/Divider";
 import CircularProgress from "@mui/material/CircularProgress";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import InfoIcon from "@mui/icons-material/Info";
 import { Logo } from "@/components/common/Logo";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useAuth } from "@/context/AuthContext";
 import { ROLE_HOME } from "@/lib/constants";
 
@@ -45,7 +41,6 @@ export default function LoginPage() {
   const { login, isAuthenticated, user } = useAuth();
   const router = useRouter();
   const [showPwd, setShowPwd] = useState(false);
-  const [showHelp, setShowHelp] = useState(false);
   const [error, setError] = useState("");
 
   const { register, handleSubmit, setValue, formState } = useForm<FormValues>({
@@ -74,8 +69,10 @@ export default function LoginPage() {
       sx={{
         minHeight: "100vh",
         display: "flex",
+        flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
+        gap: 3,
         p: 2,
         backgroundImage:
           'linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("/images/Main Banner Image.jpeg")',
@@ -145,56 +142,69 @@ export default function LoginPage() {
               </Button>
             </Stack>
           </form>
-
-          <Divider sx={{ my: 3 }} />
-
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-              cursor: "pointer",
-              color: "primary.main",
-            }}
-            onClick={() => setShowHelp((s) => !s)}
-          >
-            <InfoIcon fontSize="small" />
-            <Typography variant="body2" sx={{ fontWeight: 600, flex: 1 }}>
-              Sample credentials
-            </Typography>
-            <ExpandMoreIcon
-              sx={{ transform: showHelp ? "rotate(180deg)" : "none", transition: ".2s" }}
-            />
-          </Box>
-          <Collapse in={showHelp}>
-            <Stack spacing={0.5} sx={{ mt: 1.5, bgcolor: "#1565C00A", p: 1.5, borderRadius: 2 }}>
-              {SAMPLES.map(([role, phone, pwd]) => (
-                <Box
-                  key={role}
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    cursor: "pointer",
-                    py: 0.4,
-                    "&:hover": { color: "primary.main" },
-                  }}
-                  onClick={() => {
-                    setValue("phone", phone);
-                    setValue("password", pwd);
-                  }}
-                >
-                  <Typography variant="caption" sx={{ fontWeight: 700 }}>
-                    {role}
-                  </Typography>
-                  <Typography variant="caption" sx={{ fontFamily: "monospace" }}>
-                    {phone} / {pwd}
-                  </Typography>
-                </Box>
-              ))}
-            </Stack>
-          </Collapse>
         </CardContent>
       </Card>
+
+      {/* Demo credentials footer — sits below the card, blends into the bg */}
+      <Box
+        sx={{
+          width: "100%",
+          maxWidth: 420,
+          borderRadius: 2,
+          bgcolor: "rgba(0,0,0,0.45)",
+          backdropFilter: "blur(8px)",
+          px: 2,
+          py: 1.5,
+        }}
+      >
+        <Typography
+          variant="caption"
+          sx={{
+            color: "rgba(255,255,255,0.38)",
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            display: "block",
+            mb: 0.75,
+          }}
+        >
+          Demo credentials — click to fill
+        </Typography>
+        <Stack spacing={0.2}>
+          {SAMPLES.map(([role, phone, pwd]) => (
+            <Box
+              key={role}
+              onClick={() => {
+                setValue("phone", phone);
+                setValue("password", pwd);
+              }}
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                cursor: "pointer",
+                borderRadius: 1,
+                px: 0.75,
+                py: 0.3,
+                transition: "background .15s",
+                "&:hover": { bgcolor: "rgba(255,255,255,0.08)" },
+              }}
+            >
+              <Typography
+                variant="caption"
+                sx={{ color: "rgba(255,255,255,0.65)", fontWeight: 700, minWidth: 90 }}
+              >
+                {role}
+              </Typography>
+              <Typography
+                variant="caption"
+                sx={{ color: "rgba(255,255,255,0.38)", fontFamily: "monospace" }}
+              >
+                {phone} / {pwd}
+              </Typography>
+            </Box>
+          ))}
+        </Stack>
+      </Box>
     </Box>
   );
 }

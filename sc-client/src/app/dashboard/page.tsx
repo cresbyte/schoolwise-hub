@@ -21,6 +21,7 @@ import TableRow from "@mui/material/TableRow";
 import PeopleIcon from "@mui/icons-material/People";
 import BadgeIcon from "@mui/icons-material/Badge";
 import PaymentsIcon from "@mui/icons-material/Payments";
+import GroupWorkIcon from "@mui/icons-material/GroupWork";
 import WarningIcon from "@mui/icons-material/Warning";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
@@ -56,12 +57,14 @@ import { PAYMENT_METHOD_LABELS } from "@/lib/constants";
 import type { Student, Staff, ClassRoom, TeacherClassSummary } from "@/lib/types";
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { hasAnyRole } = useAuth();
+  
+  const isSenior = hasAnyRole(["admin", "headteacher", "accountant"]);
 
   return (
     <DashboardLayout>
       <PageGuard permission="reports.view">
-        {user?.role === "class_teacher" ? <TeacherDashboard /> : <DashboardContent />}
+        {isSenior ? <DashboardContent /> : <TeacherDashboard />}
       </PageGuard>
     </DashboardLayout>
   );
@@ -323,133 +326,86 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 
 function TeacherDashboard() {
-  const { user } = useAuth();
+  const { user, isClassTeacher } = useAuth();
   const router = useRouter();
-  const { data: summary, loading, error } = useAsync(() => api.getTeacherClassSummary(user?.staffId || ""), [user]);
+  const isCT = isClassTeacher();
 
-  if (loading) return <LinearProgress />;
-  if (error) return <Alert severity="error">Error loading dashboard: {error.message}</Alert>;
-  if (!summary) return null;
+  const subjects = (user as any)?.subjectsTaught || [];
 
   return (
     <>
       <PageHeader
-        title={`Class Dashboard: ${summary.className}`}
-        subtitle={`Managing ${summary.studentCount} students · Term 2, 2026`}
+        title="Teacher Dashboard"
+        subtitle={`Term 2, 2026 · ${user?.name}`}
       />
 
-      <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" }, mb: 3 }}>
-        <StatCard
-          icon={<PeopleIcon />}
-          label="My Students"
-          value={summary.studentCount}
-          footer={<Typography variant="caption">{summary.className}</Typography>}
-        />
-        <StatCard
-          icon={<EventAvailableIcon />}
-          color="#2E7D32"
-          label="Attendance"
-          value={`${summary.attendanceRate}%`}
-          footer={<Typography variant="caption">Term Avg</Typography>}
-        />
-        <StatCard
-          icon={<EditNoteIcon />}
-          color="#1565C0"
-          label="Class Average"
-          value={`${summary.averageMarks}%`}
-          footer={<Typography variant="caption">Formative Assessment</Typography>}
-        />
-        <StatCard
-          icon={<WarningIcon />}
-          color="#C62828"
-          label="Fee Balances"
-          value={summary.unpaidFeesCount}
-          footer={<Typography variant="caption">Students with arrears</Typography>}
-        />
-      </Box>
-
-      <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", lg: "1.2fr 1fr" }, mb: 3 }}>
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h6" sx={{ mb: 2, fontWeight: 700 }}>My Subjects & Timetable</Typography>
         <Card>
           <CardContent>
-            <Typography variant="h6" sx={{ mb: 2 }}>Top Performing Students</Typography>
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={summary.topStudents} layout="vertical" margin={{ left: 40, right: 40 }}>
-                <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
-                <XAxis type="number" hide />
-                <YAxis dataKey="name" type="category" fontSize={12} width={100} />
-                <Tooltip />
-                <Bar dataKey="mark" fill="#1565C0" radius={[0, 4, 4, 0]} label={{ position: 'right', fontSize: 12 }} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent>
-            <Typography variant="h6" sx={{ mb: 2 }}>Class Quick Actions</Typography>
-            <Stack spacing={2}>
-              <Button
-                variant="contained"
-                size="large"
-                startIcon={<EventAvailableIcon />}
-                onClick={() => router.push("/attendance")}
-                fullWidth
-              >
-                Mark Attendance
-              </Button>
-              <Button
-                variant="outlined"
-                size="large"
-                startIcon={<EditNoteIcon />}
-                onClick={() => router.push("/exams/marks")}
-                fullWidth
-              >
-                Enter Exam Marks
-              </Button>
-              <Button
-                variant="outlined"
-                size="large"
-                startIcon={<QuestionAnswerIcon />}
-                onClick={() => router.push("/messages")}
-                fullWidth
-              >
-                Contact Parents
-              </Button>
-              <Button
-                variant="outlined"
-                size="large"
-                startIcon={<DescriptionIcon />}
-                onClick={() => router.push("/report-cards")}
-                fullWidth
-              >
-                Draft Comments
-              </Button>
-            </Stack>
+            {subjects.length > 0 ? (
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Subject</TableCell>
+                    <TableCell>Class</TableCell>
+                    <TableCell>Periods / Week</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {subjects.map((sub: any, i: number) => (
+                    <TableRow key={i}>
+                      <TableCell sx={{ fontWeight: 600 }}>{sub.subject__name}</TableCell>
+                      <TableCell>{sub.class_room__name}</TableCell>
+                      <TableCell>{sub.periods_per_week}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <Typography color="text.secondary">No subjects explicitly assigned to you.</Typography>
+            )}
           </CardContent>
         </Card>
       </Box>
+
+      {isCT && (
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: 700 }}>Class Teacher Shortcuts</Typography>
+          <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" } }}>
+            <Card sx={{ bgcolor: "background.paper", cursor: "pointer", "&:hover": { boxShadow: 4 } }} onClick={() => router.push("/my-class")}>
+              <CardContent sx={{ textAlign: "center", py: 3 }}>
+                <GroupWorkIcon color="primary" sx={{ fontSize: 40, mb: 1 }} />
+                <Typography variant="subtitle1" fontWeight={600}>My Class</Typography>
+                <Typography variant="caption" color="text.secondary">Roster & Details</Typography>
+              </CardContent>
+            </Card>
+            <Card sx={{ bgcolor: "background.paper", cursor: "pointer", "&:hover": { boxShadow: 4 } }} onClick={() => router.push("/attendance")}>
+              <CardContent sx={{ textAlign: "center", py: 3 }}>
+                <EventAvailableIcon color="success" sx={{ fontSize: 40, mb: 1 }} />
+                <Typography variant="subtitle1" fontWeight={600}>Attendance</Typography>
+                <Typography variant="caption" color="text.secondary">Term Tracking</Typography>
+              </CardContent>
+            </Card>
+            <Card sx={{ bgcolor: "background.paper", cursor: "pointer", "&:hover": { boxShadow: 4 } }} onClick={() => router.push("/exams")}>
+              <CardContent sx={{ textAlign: "center", py: 3 }}>
+                <EditNoteIcon color="info" sx={{ fontSize: 40, mb: 1 }} />
+                <Typography variant="subtitle1" fontWeight={600}>Exam Marks</Typography>
+                <Typography variant="caption" color="text.secondary">Formative & Summative</Typography>
+              </CardContent>
+            </Card>
+            <Card sx={{ bgcolor: "background.paper", cursor: "pointer", "&:hover": { boxShadow: 4 } }} onClick={() => router.push("/report-cards")}>
+              <CardContent sx={{ textAlign: "center", py: 3 }}>
+                <DescriptionIcon color="warning" sx={{ fontSize: 40, mb: 1 }} />
+                <Typography variant="subtitle1" fontWeight={600}>Report Cards</Typography>
+                <Typography variant="caption" color="text.secondary">Class Comments</Typography>
+              </CardContent>
+            </Card>
+          </Box>
+        </Box>
+      )}
 
       <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", lg: "1fr 1fr" }, mb: 3 }}>
-        <Card>
-          <CardContent>
-            <Typography variant="h6" sx={{ mb: 2 }}>Upcoming Exams</Typography>
-            <List sx={{ p: 0 }}>
-              {summary.upcomingExams.map(ex => (
-                <ListItemButton key={ex.id} onClick={() => router.push(`/exams/${ex.id}`)} sx={{ borderRadius: 1, mb: 1 }}>
-                  <ListItemIcon>
-                    <AssignmentIcon color="primary" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={ex.name}
-                    secondary={`Starts: ${formatDate(ex.startDate)} · ${ex.type.toUpperCase()}`}
-                  />
-                  <Chip label="Upcoming" size="small" variant="outlined" color="primary" />
-                </ListItemButton>
-              ))}
-              {summary.upcomingExams.length === 0 && <Typography color="text.secondary">No upcoming exams scheduled.</Typography>}
-            </List>
-          </CardContent>
-        </Card>
         <CommunicationWidget />
       </Box>
     </>
