@@ -52,8 +52,8 @@ const TOKENS = {
 
   font: {
     family: {
-      body: "'Poppins', 'Outfit', system-ui, -apple-system, sans-serif",
-      heading: "'Poppins', 'Merriweather', Georgia, serif",
+      body: "'Poppins', system-ui, -apple-system, sans-serif",
+      heading: "'Poppins', system-ui, -apple-system, sans-serif",
     },
     weight: {
       light: 300,
@@ -402,7 +402,7 @@ const theme = createTheme({
           borderRadius: 0,
           transition: TOKENS.transition.base,
           padding: "8px 20px",
-          ...(ownerState.variant === 'contained' && {
+          ...(ownerState.variant === "contained" && {
             boxShadow: TOKENS.shadow.xs,
             "&:hover": {
               boxShadow: TOKENS.shadow.sm,
@@ -412,31 +412,34 @@ const theme = createTheme({
               transform: "translateY(0)",
             },
           }),
-          ...(ownerState.variant === 'contained' && ownerState.color === 'primary' && {
-            background: `linear-gradient(135deg, ${TOKENS.color.primary} 0%, ${TOKENS.color.primaryLight} 100%)`,
-            "&:hover": {
-              background: `linear-gradient(135deg, ${TOKENS.color.primaryDark} 0%, ${TOKENS.color.primary} 100%)`,
-            },
-          }),
-          ...(ownerState.variant === 'contained' && ownerState.color === 'secondary' && {
-            background: `linear-gradient(135deg, ${TOKENS.color.secondary} 0%, ${TOKENS.color.secondaryLight} 100%)`,
-            color: TOKENS.color.white,
-            "&:hover": {
-              background: `linear-gradient(135deg, ${TOKENS.color.secondaryDark} 0%, ${TOKENS.color.secondary} 100%)`,
-            },
-          }),
-          ...(ownerState.variant === 'outlined' && {
+          ...(ownerState.variant === "contained" &&
+            ownerState.color === "primary" && {
+              background: `linear-gradient(135deg, ${TOKENS.color.primary} 0%, ${TOKENS.color.primaryLight} 100%)`,
+              "&:hover": {
+                background: `linear-gradient(135deg, ${TOKENS.color.primaryDark} 0%, ${TOKENS.color.primary} 100%)`,
+              },
+            }),
+          ...(ownerState.variant === "contained" &&
+            ownerState.color === "secondary" && {
+              background: `linear-gradient(135deg, ${TOKENS.color.secondary} 0%, ${TOKENS.color.secondaryLight} 100%)`,
+              color: TOKENS.color.white,
+              "&:hover": {
+                background: `linear-gradient(135deg, ${TOKENS.color.secondaryDark} 0%, ${TOKENS.color.secondary} 100%)`,
+              },
+            }),
+          ...(ownerState.variant === "outlined" && {
             borderWidth: "1.5px",
             "&:hover": { borderWidth: "1.5px" },
           }),
-          ...(ownerState.variant === 'outlined' && ownerState.color === 'primary' && {
-            borderColor: TOKENS.color.primary,
-            color: TOKENS.color.primary,
-            "&:hover": {
-              backgroundColor: TOKENS.color.primarySubtle,
-            },
-          }),
-          ...(ownerState.variant === 'text' && {
+          ...(ownerState.variant === "outlined" &&
+            ownerState.color === "primary" && {
+              borderColor: TOKENS.color.primary,
+              color: TOKENS.color.primary,
+              "&:hover": {
+                backgroundColor: TOKENS.color.primarySubtle,
+              },
+            }),
+          ...(ownerState.variant === "text" && {
             "&:hover": {
               backgroundColor: TOKENS.color.primarySubtle,
             },
@@ -514,27 +517,27 @@ const theme = createTheme({
           letterSpacing: TOKENS.font.letterSpacing.wide,
           borderRadius: 0,
           height: "24px",
-          ...(ownerState.color === 'primary' && {
+          ...(ownerState.color === "primary" && {
             backgroundColor: TOKENS.color.primarySubtle,
             color: TOKENS.color.primary,
-            ...(ownerState.variant === 'filled' && {
+            ...(ownerState.variant === "filled" && {
               backgroundColor: TOKENS.color.primary,
               color: TOKENS.color.white,
             }),
           }),
-          ...(ownerState.color === 'secondary' && {
+          ...(ownerState.color === "secondary" && {
             backgroundColor: TOKENS.color.secondarySubtle,
             color: TOKENS.color.secondaryDark,
           }),
-          ...(ownerState.color === 'success' && {
+          ...(ownerState.color === "success" && {
             backgroundColor: TOKENS.color.accentSubtle,
             color: TOKENS.color.accent,
           }),
-          ...(ownerState.color === 'warning' && {
+          ...(ownerState.color === "warning" && {
             backgroundColor: TOKENS.color.warningSubtle,
             color: TOKENS.color.warning,
           }),
-          ...(ownerState.color === 'error' && {
+          ...(ownerState.color === "error" && {
             backgroundColor: TOKENS.color.errorSubtle,
             color: TOKENS.color.error,
           }),
@@ -747,26 +750,30 @@ const theme = createTheme({
           borderRadius: 0,
           padding: "10px 16px",
           border: "1px solid",
-          ...(ownerState.variant === 'standard' && ownerState.severity === 'success' && {
-            backgroundColor: TOKENS.color.accentSubtle,
-            borderColor: TOKENS.color.accent,
-            color: TOKENS.color.accent,
-          }),
-          ...(ownerState.variant === 'standard' && ownerState.severity === 'warning' && {
-            backgroundColor: TOKENS.color.warningSubtle,
-            borderColor: TOKENS.color.warning,
-            color: TOKENS.color.warning,
-          }),
-          ...(ownerState.variant === 'standard' && ownerState.severity === 'error' && {
-            backgroundColor: TOKENS.color.errorSubtle,
-            borderColor: TOKENS.color.error,
-            color: TOKENS.color.error,
-          }),
-          ...(ownerState.variant === 'standard' && ownerState.severity === 'info' && {
-            backgroundColor: TOKENS.color.primarySubtle,
-            borderColor: TOKENS.color.primary,
-            color: TOKENS.color.primary,
-          }),
+          ...(ownerState.variant === "standard" &&
+            ownerState.severity === "success" && {
+              backgroundColor: TOKENS.color.accentSubtle,
+              borderColor: TOKENS.color.accent,
+              color: TOKENS.color.accent,
+            }),
+          ...(ownerState.variant === "standard" &&
+            ownerState.severity === "warning" && {
+              backgroundColor: TOKENS.color.warningSubtle,
+              borderColor: TOKENS.color.warning,
+              color: TOKENS.color.warning,
+            }),
+          ...(ownerState.variant === "standard" &&
+            ownerState.severity === "error" && {
+              backgroundColor: TOKENS.color.errorSubtle,
+              borderColor: TOKENS.color.error,
+              color: TOKENS.color.error,
+            }),
+          ...(ownerState.variant === "standard" &&
+            ownerState.severity === "info" && {
+              backgroundColor: TOKENS.color.primarySubtle,
+              borderColor: TOKENS.color.primary,
+              color: TOKENS.color.primary,
+            }),
         }),
         message: {
           fontWeight: TOKENS.font.weight.medium,
@@ -781,7 +788,7 @@ const theme = createTheme({
           fontWeight: TOKENS.font.weight.semibold,
           fontSize: TOKENS.font.size.sm,
           backgroundColor: TOKENS.color.primary,
-          ...(ownerState.color === 'default' && {
+          ...(ownerState.color === "default" && {
             backgroundColor: TOKENS.color.primarySubtle,
             color: TOKENS.color.primary,
           }),

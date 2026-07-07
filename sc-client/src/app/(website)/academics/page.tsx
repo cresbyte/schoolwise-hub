@@ -5,7 +5,20 @@
  * @module website/academics/page
  */
 import { useState } from "react";
-import {Box,Card, CardContent, Typography, Tabs, Tab, Table, TableBody, TableCell, TableHead, TableRow, Button } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  Tabs,
+  Tab,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Button,
+} from "@mui/material";
 import PrintIcon from "@mui/icons-material/Print";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
@@ -20,7 +33,6 @@ export default function AcademicsPage() {
 
   return (
     <>
-      
       <SectionWrapper id="cbc">
         <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 3 }}>
           <Tab label="CBC Programme" sx={{ textTransform: "none", fontWeight: 600 }} />
@@ -110,7 +122,7 @@ export default function AcademicsPage() {
               </BarChart>
             </ResponsiveContainer>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 2, textAlign: "center" }}>
-              Primrose's 2026 mean score of 8.2 places us among the top private schools in Nakuru
+              Primrose's 2026 mean score of 8.2 places us among the top private schools in Nairobi
               County.
             </Typography>
           </CardContent>

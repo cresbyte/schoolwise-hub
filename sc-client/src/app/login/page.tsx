@@ -2,20 +2,25 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
-import Alert from "@mui/material/Alert";
-import Stack from "@mui/material/Stack";
-import CircularProgress from "@mui/material/CircularProgress";
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Button,
+  IconButton,
+  InputAdornment,
+  Alert,
+  Stack,
+  CircularProgress,
+  Checkbox,
+  FormControlLabel,
+  Link,
+} from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Logo } from "@/components/common/Logo";
@@ -42,8 +47,9 @@ export default function LoginPage() {
   const router = useRouter();
   const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState("");
+  const [remember, setRemember] = useState(true);
 
-  const { register, handleSubmit, setValue, formState } = useForm<FormValues>({
+  const { control, handleSubmit, setValue, formState } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: { phone: "", password: "" },
   });
@@ -55,13 +61,21 @@ export default function LoginPage() {
   const onSubmit = async (values: FormValues) => {
     setError("");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const result = await (login as any)(values.phone, values.password);
+    const result = await (login as any)(values.phone, values.password, { remember });
     if (result.success) {
       const role = result.user?.role;
-      router.push(role ? (ROLE_HOME[role as keyof typeof ROLE_HOME] ?? "/dashboard") : "/dashboard");
+      router.push(
+        role ? (ROLE_HOME[role as keyof typeof ROLE_HOME] ?? "/dashboard") : "/dashboard",
+      );
     } else {
       setError(result.error ?? "Login failed");
     }
+  };
+
+  // Fill both fields as real, controlled updates so labels shrink correctly
+  const fillSample = (phone: string, pwd: string) => {
+    setValue("phone", phone, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+    setValue("password", pwd, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
   };
 
   return (
@@ -74,6 +88,7 @@ export default function LoginPage() {
         justifyContent: "center",
         gap: 3,
         p: 2,
+        pb: 6, // leave room for the fixed demo footer
         backgroundImage:
           'linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("/images/Main Banner Image.jpeg")',
         backgroundSize: "cover",
@@ -83,7 +98,7 @@ export default function LoginPage() {
     >
       <Card sx={{ width: "100%", maxWidth: 420, borderRadius: 3 }}>
         <CardContent sx={{ p: 4 }}>
-          <Stack spacing={1} sx={{ alignItems: "center", mb: 3 }}>
+          <Stack spacing={1} sx={{ alignItems: "center", mb: 3, textAlign: "center" }}>
             <Logo size={64} withText={false} />
             <Logo size={0} withText={true} textStyle={{ fontSize: "1.75rem" }} />
             <Typography variant="body2" color="text.secondary">
@@ -99,33 +114,71 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={2}>
-              <TextField
-                label="Phone Number"
-                placeholder="07xx xxx xxx"
-                fullWidth
-                {...register("phone")}
-                error={!!formState.errors.phone}
-                helperText={formState.errors.phone?.message}
+              <Controller
+                name="phone"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <TextField
+                    {...field}
+                    label="Phone Number"
+                    placeholder="07xx xxx xxx"
+                    fullWidth
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                    InputLabelProps={{ shrink: !!field.value || undefined }}
+                  />
+                )}
               />
-              <TextField
-                label="Password"
-                type={showPwd ? "text" : "password"}
-                fullWidth
-                {...register("password")}
-                error={!!formState.errors.password}
-                helperText={formState.errors.password?.message}
-                slotProps={{
-                  input: {
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton onClick={() => setShowPwd((s) => !s)} edge="end">
-                          {showPwd ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  },
-                }}
+              <Controller
+                name="password"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <TextField
+                    {...field}
+                    label="Password"
+                    type={showPwd ? "text" : "password"}
+                    fullWidth
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                    InputLabelProps={{ shrink: !!field.value || undefined }}
+                    slotProps={{
+                      input: {
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton onClick={() => setShowPwd((s) => !s)} edge="end">
+                              {showPwd ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      },
+                    }}
+                  />
+                )}
               />
+
+              {/* Remember me + Forgot password row */}
+              <Stack direction="row" alignItems="center" justifyContent="space-between">
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      size="small"
+                      checked={remember}
+                      onChange={(e) => setRemember(e.target.checked)}
+                    />
+                  }
+                  label={<Typography variant="body2">Remember me</Typography>}
+                />
+                <Link
+                  component="button"
+                  type="button"
+                  variant="body2"
+                  underline="hover"
+                  onClick={() => router.push("/forgot-password")}
+                >
+                  Forgot password?
+                </Link>
+              </Stack>
+
               <Button
                 type="submit"
                 variant="contained"
@@ -145,65 +198,45 @@ export default function LoginPage() {
         </CardContent>
       </Card>
 
-      {/* Demo credentials footer — sits below the card, blends into the bg */}
+      {/* ============================================================
+          TEMP: Demo credentials footer — remove this whole Box when
+          demo login shortcuts are no longer needed.
+         ============================================================ */}
       <Box
         sx={{
-          width: "100%",
-          maxWidth: 420,
-          borderRadius: 2,
-          bgcolor: "rgba(0,0,0,0.45)",
-          backdropFilter: "blur(8px)",
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: 28,
+          bgcolor: "rgba(0,0,0,0.55)",
+          backdropFilter: "blur(6px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 1.5,
           px: 2,
-          py: 1.5,
+          overflowX: "auto",
+          whiteSpace: "nowrap",
+          zIndex: (theme) => theme.zIndex.appBar,
         }}
       >
-        <Typography
-          variant="caption"
-          sx={{
-            color: "rgba(255,255,255,0.38)",
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            display: "block",
-            mb: 0.75,
-          }}
-        >
-          Demo credentials — click to fill
-        </Typography>
-        <Stack spacing={0.2}>
-          {SAMPLES.map(([role, phone, pwd]) => (
-            <Box
-              key={role}
-              onClick={() => {
-                setValue("phone", phone);
-                setValue("password", pwd);
-              }}
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                cursor: "pointer",
-                borderRadius: 1,
-                px: 0.75,
-                py: 0.3,
-                transition: "background .15s",
-                "&:hover": { bgcolor: "rgba(255,255,255,0.08)" },
-              }}
-            >
-              <Typography
-                variant="caption"
-                sx={{ color: "rgba(255,255,255,0.65)", fontWeight: 700, minWidth: 90 }}
-              >
-                {role}
-              </Typography>
-              <Typography
-                variant="caption"
-                sx={{ color: "rgba(255,255,255,0.38)", fontFamily: "monospace" }}
-              >
-                {phone} / {pwd}
-              </Typography>
-            </Box>
-          ))}
-        </Stack>
+        {SAMPLES.map(([role, phone, pwd]) => (
+          <Typography
+            key={role}
+            variant="caption"
+            onClick={() => fillSample(phone, pwd)}
+            sx={{
+              cursor: "pointer",
+              color: "rgba(255,255,255,0.45)",
+              fontSize: "0.68rem",
+              lineHeight: 1,
+              "&:hover": { color: "rgba(255,255,255,0.8)" },
+            }}
+          >
+            {role}
+          </Typography>
+        ))}
       </Box>
     </Box>
   );

@@ -33,7 +33,7 @@ export function Hero({ slides }: HeroProps) {
     <Box
       sx={{
         position: "relative",
-        height: { xs: "68vh", md: "80vh" },
+        height: { xs: "68vh", md: "86vh" },
         minHeight: { xs: 420, md: 560 },
         overflow: "hidden",
         bgcolor: "#111",
@@ -68,7 +68,7 @@ export function Hero({ slides }: HeroProps) {
       />
 
       {/* Left accent bar */}
-      <Box
+      {/* <Box
         sx={{
           position: "absolute",
           left: 0,
@@ -77,7 +77,7 @@ export function Hero({ slides }: HeroProps) {
           width: 5,
           bgcolor: KAB.primary,
         }}
-      />
+      /> */}
 
       {/* Text content */}
       <Container maxWidth="xl" sx={{ height: "100%", position: "relative", zIndex: 2 }}>

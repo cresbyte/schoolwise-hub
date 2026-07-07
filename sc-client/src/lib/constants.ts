@@ -14,8 +14,8 @@ import type {
   UserRole,
 } from "./types";
 
-export const HEADING_FONT = "'Merriweather', Georgia, serif";
-export const BODY_FONT = "'Outfit', system-ui, -apple-system, sans-serif";
+export const HEADING_FONT = "'Poppins', system-ui, -apple-system, sans-serif";
+export const BODY_FONT = "'Poppins', system-ui, -apple-system, sans-serif";
 
 export const GRADE_LEVELS: GradeLevel[] = [
   "PP1",
@@ -38,7 +38,11 @@ export const GRADE_LEVELS: GradeLevel[] = [
 export const CBC_RATINGS: { value: CBCRating; label: string; descriptor: string }[] = [
   { value: "EE", label: "Exceeding Expectation", descriptor: "Exceeds the expected standard" },
   { value: "ME", label: "Meeting Expectation", descriptor: "Meets the expected standard" },
-  { value: "AE", label: "Approaching Expectation", descriptor: "Approaching the expected standard" },
+  {
+    value: "AE",
+    label: "Approaching Expectation",
+    descriptor: "Approaching the expected standard",
+  },
   { value: "BE", label: "Below Expectation", descriptor: "Below the expected standard" },
 ];
 
@@ -165,13 +169,7 @@ export const PERMISSIONS: Record<UserRole, string[]> = {
     "reports.view",
     "classes.view",
   ],
-  teacher: [
-    "students.view",
-    "exams.marks",
-    "exams.view",
-    "timetable.view",
-    "classes.view",
-  ],
+  teacher: ["students.view", "exams.marks", "exams.view", "timetable.view", "classes.view"],
   staff: [
     "students.view",
     "attendance.write",
@@ -180,7 +178,15 @@ export const PERMISSIONS: Record<UserRole, string[]> = {
     "timetable.view",
     "classes.view",
   ],
-  accountant: ["fees.*", "fees.view", "fees.write", "payroll.*", "payroll.view", "students.view", "reports.fees"],
+  accountant: [
+    "fees.*",
+    "fees.view",
+    "fees.write",
+    "payroll.*",
+    "payroll.view",
+    "students.view",
+    "reports.fees",
+  ],
   parent: ["portal.view"],
 };
 
@@ -196,4 +202,12 @@ export const ROLE_HOME: Record<UserRole, string> = {
   parent: "/portal",
 };
 
-export const DAYS_OF_WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] as const;
+export const DAYS_OF_WEEK = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+] as const;

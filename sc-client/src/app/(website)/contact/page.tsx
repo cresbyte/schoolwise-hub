@@ -48,7 +48,7 @@ export default function ContactPage() {
   ];
   return (
     <>
-            <SectionWrapper>
+      <SectionWrapper>
         <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "1fr 1fr" }, gap: 4 }}>
           <Box>
             <Typography variant="h5" sx={{ fontFamily: HEADING_FONT, fontWeight: 700, mb: 3 }}>
@@ -105,7 +105,7 @@ export default function ContactPage() {
             mb: 4,
           }}
         >
-          <Typography color="text.secondary">Map placeholder — Milimani Road, Nakuru</Typography>
+          <Typography color="text.secondary">Map placeholder — Milimani Road, Nairobi</Typography>
         </Box>
         <Typography variant="h5" sx={{ fontFamily: HEADING_FONT, fontWeight: 700, mb: 3 }}>
           Contacts Directory

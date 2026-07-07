@@ -4,7 +4,7 @@
  * About Us page — story, vision, leadership, accreditation, facilities.
  * @module website/about/page
  */
-import {Box, Card, CardContent, Typography, Avatar, Chip} from "@mui/material";
+import { Box, Card, CardContent, Typography, Avatar, Chip } from "@mui/material";
 import { SectionWrapper } from "@/components/website/SectionWrapper";
 import { SectionHeading } from "@/components/website/SectionHeading";
 import { ImagePlaceholder } from "@/components/website/ImagePlaceholder";
@@ -26,7 +26,7 @@ const TIMELINE = [
   {
     year: "2017",
     title: "CBC Pioneer",
-    desc: "Among the first private schools in Nakuru to fully implement the Competency-Based Curriculum.",
+    desc: "Among the first private schools in Nairobi to fully implement the Competency-Based Curriculum.",
   },
   {
     year: "2020",
@@ -88,7 +88,6 @@ export default function AboutPage() {
   const SCHOOL = getSchoolInfo();
   return (
     <>
-      
       <SectionWrapper id="story">
         <SectionHeading title="Our Story" align="left" />
         <Box
@@ -101,19 +100,19 @@ export default function AboutPage() {
         >
           <Typography variant="body1" sx={{ lineHeight: 1.8, color: "text.secondary" }}>
             Founded in {SCHOOL.founded}, Primrose Private Academy began as a vision to provide
-            quality private education accessible to families in Nakuru County. What started as a
+            quality private education accessible to families in Nairobi County. What started as a
             small primary school has grown into a comprehensive institution serving over 680
             learners from PP1 to Form 4.
             <br />
             <br />
-            Today, we stand as one of Nakuru's most respected private schools, known for academic
+            Today, we stand as one of Nairobi's most respected private schools, known for academic
             rigour, character formation, and a warm Kenyan hospitality that makes every learner feel
             at home.
           </Typography>
           <ImagePlaceholder
             src={WEBSITE_IMAGES.campusBanner}
             aspectRatio="4/3"
-            alt="Aerial view of the Primrose Private Academy campus in Nakuru"
+            alt="Aerial view of the Primrose Private Academy campus in Nairobi"
           />
         </Box>
         <Box sx={{ mt: 5, position: "relative", pl: { md: 4 } }}>
@@ -154,7 +153,7 @@ export default function AboutPage() {
                 Our Vision
               </Typography>
               <Typography variant="body1" sx={{ lineHeight: 1.8 }}>
-                To be the leading private school in Nakuru County, producing globally competitive
+                To be the leading private school in Nairobi County, producing globally competitive
                 citizens rooted in Kenyan values.
               </Typography>
             </CardContent>

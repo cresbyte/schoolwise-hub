@@ -51,8 +51,8 @@ export const KAB = {
 /** Website-specific typography options */
 export const WEBSITE_TYPOGRAPHY = {
   fontFamily: {
-    heading: "'Poppins', 'Merriweather', Georgia, serif",
-    body: "'Poppins', 'Outfit', system-ui, -apple-system, sans-serif",
+    heading: "'Poppins', system-ui, -apple-system, sans-serif",
+    body: "'Poppins', system-ui, -apple-system, sans-serif",
   },
   headingStyles: {
     hero: {

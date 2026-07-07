@@ -57,7 +57,6 @@ export function WebsiteLayout({ children, hideChrome = false }: WebsiteLayoutPro
         {!hideChrome && (
           <>
             <ScrollToTop />
-            <WhatsAppButton />
           </>
         )}
       </Box>

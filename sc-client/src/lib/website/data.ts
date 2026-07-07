@@ -168,16 +168,16 @@ let _heroSlides: HeroSlide[] = [
   {
     id: "1",
     title: "Welcome to Primrose Private Academy",
-    subtitle: "Excellence Through Knowledge in the heart of Nakuru",
-    image: WEBSITE_IMAGES.campusBanner,
-    imageAlt: "Primrose Private Academy campus in Nakuru",
+    subtitle: "Excellence Through Knowledge in the heart of Nairobi",
+    image: "/hero/image1.webp",
+    imageAlt: "Primrose Private Academy campus in Nairobi",
     cta: { label: "Explore Our School", href: "/about" },
   },
   {
     id: "2",
     title: "CBC & 8-4-4 Excellence",
     subtitle: "Holistic education from PP1 through Form 4",
-    image: WEBSITE_IMAGES.classroom,
+    image:"/hero/image2.webp",
     imageAlt: "Students engaged in classroom learning at Primrose",
     cta: { label: "View Academics", href: "/academics" },
   },
@@ -185,7 +185,7 @@ let _heroSlides: HeroSlide[] = [
     id: "3",
     title: "Admissions Open — Term 3, 2026",
     subtitle: "Join a community of learners shaping Kenya's future",
-    image: WEBSITE_IMAGES.sports,
+    image:"/hero/image3.webp",
     imageAlt: "Students participating in school sports day activities",
     cta: { label: "Apply Now", href: "/admissions/apply" },
   },
@@ -244,13 +244,13 @@ export const setWhyChooseUs = (data: WhyChooseUsItem[]) => { _whyChooseUs = data
 // ─── News Articles ────────────────────────────────────────────────────────────
 
 const ARTICLE_BODY = `
-Primrose Private Academy continues to strengthen its position as one of Nakuru County's leading private institutions. Situated along Milimani Road with views of the Rift Valley, our campus provides a nurturing environment where learners from diverse backgrounds thrive academically, socially, and spiritually.
+Primrose Private Academy continues to strengthen its position as one of Nairobi County's leading private institutions. Situated along Milimani Road with views of the Rift Valley, our campus provides a nurturing environment where learners from diverse backgrounds thrive academically, socially, and spiritually.
 
 This term, we have invested in upgrading our science laboratories and expanding our digital learning resources. Form 4 candidates are benefiting from intensive revision clinics led by experienced KNEC examiners, while our Junior School learners engage in project-based CBC assessments that develop critical thinking and creativity.
 
 Our boarding section remains a cornerstone of the Primrose experience. With structured evening prep, supervised recreation, and nutritious meals prepared in our modern kitchen, boarders enjoy a home-away-from-home atmosphere. Day scholars equally benefit from extended library hours and after-school clubs ranging from robotics to debate.
 
-Community engagement remains central to our ethos. Last month, our Environmental Club partnered with Nakuru Municipality on a tree-planting initiative along the Njoro River, reinforcing our commitment to environmental stewardship. The Inter-House Athletics Championships drew families from across the county, showcasing the talent and sportsmanship of our learners.
+Community engagement remains central to our ethos. Last month, our Environmental Club partnered with Nairobi Municipality on a tree-planting initiative along the Njoro River, reinforcing our commitment to environmental stewardship. The Inter-House Athletics Championships drew families from across the county, showcasing the talent and sportsmanship of our learners.
 
 Parents appreciate our transparent fee policies and convenient M-Pesa payment options. The ShuleSmart parent portal provides real-time access to fee statements, attendance records, and academic reports — keeping families connected to their children's progress.
 
@@ -277,10 +277,10 @@ let _newsArticles: NewsArticle[] = [
   mkArticle("cbc-grade-6-assessment", "Grade 6 Learners Excel in National Assessment", "Our inaugural CBC cohort demonstrated outstanding performance in the June national assessment.", "Achievements", "2026-06-05", WEBSITE_IMAGES.classroom),
   mkArticle("new-science-lab", "State-of-the-Art Science Lab Officially Opened", "The new laboratory will enhance practical learning for Form 3 and Form 4 sciences.", "News", "2026-05-15", WEBSITE_IMAGES.classroom),
   mkArticle("inter-house-athletics", "Inter-House Athletics Championships 2026", "Blue House emerged victorious in a thrilling day of track and field events.", "Events", "2026-05-10", WEBSITE_IMAGES.sports),
-  mkArticle("debate-team-nakuru", "Debate Team Wins Nakuru County Championship", "Primrose debaters will represent the county at the national finals in Nairobi.", "Achievements", "2026-04-28", WEBSITE_IMAGES.classroom),
+  mkArticle("debate-team-Nairobi", "Debate Team Wins Nairobi County Championship", "Primrose debaters will represent the county at the national finals in Nairobi.", "Achievements", "2026-04-28", WEBSITE_IMAGES.classroom),
   mkArticle("parent-portal-launch", "ShuleSmart Parent Portal Now Live", "Parents can now view fees, attendance, and report cards online via the new portal.", "Announcements", "2026-04-15", WEBSITE_IMAGES.library),
   mkArticle("music-drama-festival", "Annual Music & Drama Festival Set for August", "Learners are rehearsing for the highly anticipated cultural showcase.", "Events", "2026-04-01", WEBSITE_IMAGES.sports),
-  mkArticle("tree-planting-initiative", "Environmental Club Plants 500 Trees", "Learners partnered with Nakuru Municipality on a reforestation project.", "News", "2026-03-20", WEBSITE_IMAGES.campusBanner),
+  mkArticle("tree-planting-initiative", "Environmental Club Plants 500 Trees", "Learners partnered with Nairobi Municipality on a reforestation project.", "News", "2026-03-20", WEBSITE_IMAGES.campusBanner),
   mkArticle("scholarship-programme-2026", "Merit Scholarship Programme Announced", "Five full scholarships available for outstanding KCPE candidates joining Form 1.", "Announcements", "2026-03-10", WEBSITE_IMAGES.classroom),
   mkArticle("staff-development-workshop", "Teachers Complete CBC Training Workshop", "All Junior School teachers certified in the latest KICD curriculum guidelines.", "News", "2026-02-28", WEBSITE_IMAGES.principal),
   mkArticle("boarding-facilities-upgrade", "Boarding Wing Renovation Complete", "Modern dormitories with improved study areas now welcome returning boarders.", "News", "2026-02-15", WEBSITE_IMAGES.campusBanner),
@@ -340,7 +340,7 @@ let _faqItems: FaqItem[] = [
   { id: "f5", question: "When are parent-teacher conferences held?", answer: "Formal conferences are held once per term. Informal meetings can be arranged through the class teacher with 48 hours' notice." },
   { id: "f6", question: "What meals are provided for boarders?", answer: "Three balanced meals daily plus an evening snack. Special dietary needs can be accommodated with medical documentation." },
   { id: "f7", question: "How are academic reports shared?", answer: "End-of-term report cards are issued physically and uploaded to the parent portal. Mid-term progress updates are sent via SMS." },
-  { id: "f8", question: "What transport options are available?", answer: "School buses serve Nakuru Town, Lanet, and Njoro routes. Route maps and fees are available from the transport coordinator." },
+  { id: "f8", question: "What transport options are available?", answer: "School buses serve Nairobi Town, Lanet, and Njoro routes. Route maps and fees are available from the transport coordinator." },
   { id: "f9", question: "How does the admission process work?", answer: "Submit an online application, attend an assessment interview, receive an offer letter, and complete enrollment with required documents and fees." },
   { id: "f10", question: "Are scholarships available?", answer: "Yes. Merit scholarships are awarded annually to outstanding KCPE candidates. Financial aid applications are reviewed by the bursar's office." },
   { id: "f11", question: "What extracurricular activities are offered?", answer: "Sports, music, drama, debate, scouting, environmental club, robotics, and Christian union among others. See our School Life page for details." },
@@ -429,7 +429,7 @@ let _contactSubmissions: ContactSubmission[] = [
     email: "esther.kamau@gmail.com",
     phone: "0722 111 222",
     subject: "Admission Inquiry",
-    message: "Good morning. I would like to inquire about available spaces for Grade 4 and Form 1 for the 2026 intake. My children are currently at Nakuru Primary and I am considering transferring them to a better school for the upcoming term.",
+    message: "Good morning. I would like to inquire about available spaces for Grade 4 and Form 1 for the 2026 intake. My children are currently at Nairobi Primary and I am considering transferring them to a better school for the upcoming term.",
     submittedAt: "2026-06-20T08:34:00Z",
     status: "unread",
   },
@@ -469,7 +469,7 @@ let _contactSubmissions: ContactSubmission[] = [
     email: "alice.wangari@gmail.com",
     phone: "0755 123 456",
     subject: "General Inquiry",
-    message: "We are a family relocating from Nairobi to Nakuru. We are looking for a reputable school for our PP2 daughter. Can we schedule a campus visit?",
+    message: "We are a family relocating from Nairobi to Nairobi. We are looking for a reputable school for our PP2 daughter. Can we schedule a campus visit?",
     submittedAt: "2026-06-15T09:20:00Z",
     status: "replied",
     repliedAt: "2026-06-16T11:00:00Z",
@@ -526,7 +526,7 @@ let _applicationSubmissions: ApplicationSubmission[] = [
     parentPhone: "0722 111 001",
     parentEmail: "daniel.kamau@gmail.com",
     relationship: "Father",
-    prevSchool: "St. Patrick's Primary, Nakuru",
+    prevSchool: "St. Patrick's Primary, Nairobi",
     prevClass: "Grade 6",
     reason: "Seeking a school with strong boarding facilities and CBC transition support.",
     submittedAt: "2026-06-01T08:00:00Z",
@@ -545,7 +545,7 @@ let _applicationSubmissions: ApplicationSubmission[] = [
     parentPhone: "0733 222 002",
     parentEmail: "rose.otieno@yahoo.com",
     relationship: "Mother",
-    prevSchool: "Nakuru DEB Primary",
+    prevSchool: "Nairobi DEB Primary",
     prevClass: "Grade 3",
     reason: "Looking for a more structured academic environment for our son.",
     submittedAt: "2026-05-28T10:30:00Z",
@@ -588,7 +588,7 @@ let _applicationSubmissions: ApplicationSubmission[] = [
     relationship: "Mother",
     prevSchool: "Rift Valley Academy, Kijabe",
     prevClass: "Form 2",
-    reason: "Family relocation from Kijabe to Nakuru. Needs boarding close to relatives.",
+    reason: "Family relocation from Kijabe to Nairobi. Needs boarding close to relatives.",
     submittedAt: "2026-05-20T09:15:00Z",
     status: "enrolled",
     notes: "All documents received. Admission number GFA-2026-0341 issued.",
@@ -606,7 +606,7 @@ let _applicationSubmissions: ApplicationSubmission[] = [
     parentPhone: "0755 555 005",
     parentEmail: "john.muthoni@gmail.com",
     relationship: "Father",
-    prevSchool: "Moi Primary, Nakuru",
+    prevSchool: "Moi Primary, Nairobi",
     prevClass: "Grade 6",
     reason: "Transition to boarding for Secondary to reduce daily commute.",
     submittedAt: "2026-05-18T11:45:00Z",
@@ -646,7 +646,7 @@ let _applicationSubmissions: ApplicationSubmission[] = [
     parentPhone: "0712 777 007",
     parentEmail: "s.njeri@gmail.com",
     relationship: "Father",
-    prevSchool: "ACK Primary, Nakuru",
+    prevSchool: "ACK Primary, Nairobi",
     prevClass: "Grade 6",
     reason: "Excellent KCPE results. Looking for a school that offers strong KCSE preparation.",
     submittedAt: "2026-06-05T07:30:00Z",
@@ -667,7 +667,7 @@ let _applicationSubmissions: ApplicationSubmission[] = [
     relationship: "Mother",
     prevSchool: "Eastleigh Primary, Nairobi",
     prevClass: "Grade 3",
-    reason: "Relocating from Nairobi. Need boarding near extended family in Nakuru.",
+    reason: "Relocating from Nairobi. Need boarding near extended family in Nairobi.",
     submittedAt: "2026-06-08T09:00:00Z",
     status: "interview_scheduled",
     interviewDate: "2026-06-28",
@@ -728,7 +728,7 @@ let _applicationSubmissions: ApplicationSubmission[] = [
     relationship: "Father",
     prevSchool: "Kisumu Girls Primary",
     prevClass: "Grade 7",
-    reason: "Father transferred to Nakuru County. Need a CBC school with boarding.",
+    reason: "Father transferred to Nairobi County. Need a CBC school with boarding.",
     submittedAt: "2026-06-12T11:00:00Z",
     status: "pending",
   },
@@ -745,9 +745,9 @@ let _applicationSubmissions: ApplicationSubmission[] = [
     parentPhone: "0755 012 012",
     parentEmail: "george.wairimu@gmail.com",
     relationship: "Father",
-    prevSchool: "Nakuru Day Secondary",
+    prevSchool: "Nairobi Day Secondary",
     prevClass: "Grade 6",
-    reason: "Excellent KCPE performance. Wants the best Form 1 environment in Nakuru.",
+    reason: "Excellent KCPE performance. Wants the best Form 1 environment in Nairobi.",
     submittedAt: "2026-06-15T08:45:00Z",
     status: "pending",
   },

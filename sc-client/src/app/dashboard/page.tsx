@@ -58,7 +58,7 @@ import type { Student, Staff, ClassRoom, TeacherClassSummary } from "@/lib/types
 
 export default function DashboardPage() {
   const { hasAnyRole } = useAuth();
-  
+
   const isSenior = hasAnyRole(["admin", "headteacher", "accountant"]);
 
   return (
@@ -164,7 +164,7 @@ function DashboardContent() {
                 <Legend />
                 <Bar dataKey="mpesa" stackId="a" fill="#1565C0" name="M-Pesa" />
                 <Bar dataKey="cash" stackId="a" fill="#2E7D32" name="Cash" />
-                <Bar dataKey="bank" stackId="a" fill="#6A1B9A" name="Bank" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="bank" stackId="a" fill="#6A1B9A" name="Bank" radius={[0, 0, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>

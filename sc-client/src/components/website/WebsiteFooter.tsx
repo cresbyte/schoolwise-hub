@@ -3,10 +3,8 @@
  * Dark multi-column layout with contact details, quick links, and copyright bar.
  * @module WebsiteFooter
  */
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
+import { Container, Typography, Box } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import Link from "next/link";
 import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
@@ -114,13 +112,7 @@ export function WebsiteFooter() {
       {/* ── Top band: contact info pills ───────────────────────────────── */}
       <Box sx={{ bgcolor: KAB.primary, py: 4 }}>
         <Container maxWidth="xl">
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: "repeat(3, 1fr)" },
-              gap: 3,
-            }}
-          >
+          <Grid container spacing={3}>
             {[
               {
                 icon: <LocationOnIcon sx={{ fontSize: 22 }} />,
@@ -141,22 +133,203 @@ export function WebsiteFooter() {
                 href: `mailto:${school.email}`,
               },
             ].map(({ icon, label, value, sub, href }) => (
-              <Box key={label} sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={label}>
+                <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
+                  <Box
+                    sx={{
+                      width: 44,
+                      height: 44,
+                      border: "2px solid rgba(255,255,255,0.4)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "#fff",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {icon}
+                  </Box>
+                  <Box>
+                    <Typography
+                      sx={{
+                        fontFamily: "'Poppins', sans-serif",
+                        fontSize: 11,
+                        fontWeight: 700,
+                        letterSpacing: "0.08em",
+                        textTransform: "uppercase",
+                        color: "rgba(255,255,255,0.55)",
+                        mb: 0.25,
+                      }}
+                    >
+                      {label}
+                    </Typography>
+                    {href ? (
+                      <Typography
+                        component="a"
+                        href={href}
+                        sx={{
+                          fontFamily: "'Poppins', sans-serif",
+                          fontSize: 14,
+                          fontWeight: 500,
+                          color: "#fff",
+                          textDecoration: "none",
+                          "&:hover": { textDecoration: "underline" },
+                        }}
+                      >
+                        {value}
+                      </Typography>
+                    ) : (
+                      <Typography
+                        sx={{
+                          fontFamily: "'Poppins', sans-serif",
+                          fontSize: 14,
+                          fontWeight: 500,
+                          color: "#fff",
+                        }}
+                      >
+                        {value}
+                      </Typography>
+                    )}
+                    {sub && (
+                      <Typography sx={{ color: "rgba(255,255,255,0.55)", fontSize: 12, mt: 0.25 }}>
+                        {sub}
+                      </Typography>
+                    )}
+                  </Box>
+                </Box>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Box>
+
+      {/* ── Main link columns ──────────────────────────────────────────── */}
+      <Box sx={{ bgcolor: KAB.dark, py: { xs: 6, md: 8 } }}>
+        <Container maxWidth="xl">
+          <Grid container spacing={{ xs: 5, md: 6 }}>
+            {/* Column 1 — Branding & about text */}
+            <Grid size={{ xs: 12, sm: 6, md: 5 }}>
+              <Box>
                 <Box
+                  component={Link}
+                  href="/"
                   sx={{
-                    width: 44,
-                    height: 44,
-                    border: "2px solid rgba(255,255,255,0.4)",
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "center",
-                    color: "#fff",
-                    flexShrink: 0,
+                    gap: 1.5,
+                    mb: 2.5,
+                    textDecoration: "none",
                   }}
                 >
-                  {icon}
+                  <Logo size={48} withText={false} />
+                  <Box>
+                    <Typography
+                      sx={{
+                        fontWeight: 700,
+                        fontSize: 16,
+                        color: "#fff",
+                        lineHeight: 1.1,
+                      }}
+                    >
+                      {school.name}
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: 10,
+                        color: "rgba(255,255,255,0.45)",
+                        letterSpacing: "0.06em",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {school.county} County, Kenya
+                    </Typography>
+                  </Box>
                 </Box>
-                <Box>
+                <Typography
+                  sx={{
+                    fontFamily: "'Poppins', sans-serif",
+                    color: "rgba(255,255,255,0.6)",
+                    fontSize: 13,
+                    lineHeight: 1.8,
+                    mb: 3,
+                    maxWidth: 280,
+                  }}
+                >
+                  {school.tagline}. A premier institution offering CBC and 8-4-4 education from PP1
+                  to Form 4 in Nairobi County.
+                </Typography>
+                {/* Social icons */}
+                <Box sx={{ display: "flex", gap: 1 }}>
+                  {[
+                    { icon: <FacebookIcon fontSize="small" />, label: "Facebook" },
+                    { icon: <TwitterIcon fontSize="small" />, label: "Twitter" },
+                    { icon: <InstagramIcon fontSize="small" />, label: "Instagram" },
+                    { icon: <YouTubeIcon fontSize="small" />, label: "YouTube" },
+                  ].map(({ icon, label }) => (
+                    <Box
+                      key={label}
+                      component="a"
+                      href="#"
+                      aria-label={label}
+                      sx={{
+                        width: 34,
+                        height: 34,
+                        border: "1px solid rgba(255,255,255,0.2)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "rgba(255,255,255,0.6)",
+                        textDecoration: "none",
+                        transition: "all 0.2s",
+                        "&:hover": {
+                          bgcolor: KAB.primary,
+                          borderColor: KAB.primary,
+                          color: "#fff",
+                        },
+                      }}
+                    >
+                      {icon}
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
+            </Grid>
+
+            {/* Column 2 — Quick Links */}
+            <Grid size={{ xs: 12, sm: 6, md: 2 }}>
+              <Box>
+                <FooterHeading>Quick Links</FooterHeading>
+                {QUICK_LINKS.map((l) => (
+                  <FooterLink key={l.href} href={l.href}>
+                    {l.label}
+                  </FooterLink>
+                ))}
+              </Box>
+            </Grid>
+
+            {/* Column 3 — Academics */}
+            <Grid size={{ xs: 12, sm: 6, md: 2 }}>
+              <Box>
+                <FooterHeading>Academics</FooterHeading>
+                {ACADEMICS_LINKS.map((l) => (
+                  <FooterLink key={l.href} href={l.href}>
+                    {l.label}
+                  </FooterLink>
+                ))}
+              </Box>
+            </Grid>
+
+            {/* Column 4 — Admissions */}
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <Box>
+                <FooterHeading>Admissions</FooterHeading>
+                {ADMISSIONS_LINKS.map((l) => (
+                  <FooterLink key={l.href} href={l.href}>
+                    {l.label}
+                  </FooterLink>
+                ))}
+                {/* Newsletter teaser */}
+                <Box sx={{ mt: 3 }}>
                   <Typography
                     sx={{
                       fontFamily: "'Poppins', sans-serif",
@@ -165,235 +338,58 @@ export function WebsiteFooter() {
                       letterSpacing: "0.08em",
                       textTransform: "uppercase",
                       color: "rgba(255,255,255,0.55)",
-                      mb: 0.25,
+                      mb: 1.5,
                     }}
                   >
-                    {label}
+                    Newsletter
                   </Typography>
-                  {href ? (
-                    <Typography
-                      component="a"
-                      href={href}
-                      sx={{
-                        fontFamily: "'Poppins', sans-serif",
-                        fontSize: 14,
-                        fontWeight: 500,
-                        color: "#fff",
-                        textDecoration: "none",
-                        "&:hover": { textDecoration: "underline" },
-                      }}
-                    >
-                      {value}
-                    </Typography>
-                  ) : (
-                    <Typography
-                      sx={{
-                        fontFamily: "'Poppins', sans-serif",
-                        fontSize: 14,
-                        fontWeight: 500,
-                        color: "#fff",
-                      }}
-                    >
-                      {value}
-                    </Typography>
-                  )}
-                  {sub && (
-                    <Typography
-                      sx={{ color: "rgba(255,255,255,0.55)", fontSize: 12, mt: 0.25 }}
-                    >
-                      {sub}
-                    </Typography>
-                  )}
-                </Box>
-              </Box>
-            ))}
-          </Box>
-        </Container>
-      </Box>
-
-      {/* ── Main link columns ──────────────────────────────────────────── */}
-      <Box sx={{ bgcolor: KAB.dark, py: { xs: 6, md: 8 } }}>
-        <Container maxWidth="xl">
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: {
-                xs: "1fr",
-                sm: "1fr 1fr",
-                md: "1.8fr 1fr 1fr 1fr",
-              },
-              gap: { xs: 5, md: 6 },
-            }}
-          >
-            {/* Column 1 — Branding & about text */}
-            <Box>
-              <Box
-                component={Link}
-                href="/"
-                sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2.5, textDecoration: "none" }}
-              >
-                <Logo size={48} />
-                <Box>
-                  <Typography
-                    sx={{
-                      fontFamily: "'Poppins', sans-serif",
-                      fontWeight: 700,
-                      fontSize: 16,
-                      color: "#fff",
-                      lineHeight: 1.1,
-                    }}
-                  >
-                    {school.name}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: 10,
-                      color: "rgba(255,255,255,0.45)",
-                      letterSpacing: "0.06em",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    {school.county} County, Kenya
-                  </Typography>
-                </Box>
-              </Box>
-              <Typography
-                sx={{
-                  fontFamily: "'Poppins', sans-serif",
-                  color: "rgba(255,255,255,0.6)",
-                  fontSize: 13,
-                  lineHeight: 1.8,
-                  mb: 3,
-                  maxWidth: 280,
-                }}
-              >
-                {school.tagline}. A premier institution offering CBC and 8-4-4 education from PP1 to Form 4 in Nakuru County.
-              </Typography>
-              {/* Social icons */}
-              <Box sx={{ display: "flex", gap: 1 }}>
-                {[
-                  { icon: <FacebookIcon fontSize="small" />, label: "Facebook" },
-                  { icon: <TwitterIcon fontSize="small" />, label: "Twitter" },
-                  { icon: <InstagramIcon fontSize="small" />, label: "Instagram" },
-                  { icon: <YouTubeIcon fontSize="small" />, label: "YouTube" },
-                ].map(({ icon, label }) => (
                   <Box
-                    key={label}
-                    component="a"
-                    href="#"
-                    aria-label={label}
-                    sx={{
-                      width: 34,
-                      height: 34,
-                      border: "1px solid rgba(255,255,255,0.2)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "rgba(255,255,255,0.6)",
-                      textDecoration: "none",
-                      transition: "all 0.2s",
-                      "&:hover": {
+                    component="form"
+                    onSubmit={(e) => e.preventDefault()}
+                    sx={{ display: "flex" }}
+                  >
+                    <Box
+                      component="input"
+                      type="email"
+                      placeholder="Your email address"
+                      sx={{
+                        flex: 1,
+                        bgcolor: "rgba(255,255,255,0.08)",
+                        border: "1px solid rgba(255,255,255,0.2)",
+                        borderRight: "none",
+                        color: "#fff",
+                        px: 1.5,
+                        py: 1,
+                        fontSize: 12,
+                        fontFamily: "'Poppins', sans-serif",
+                        outline: "none",
+                        "::placeholder": { color: "rgba(255,255,255,0.35)" },
+                        "&:focus": { borderColor: KAB.secondary },
+                      }}
+                    />
+                    <Box
+                      component="button"
+                      type="submit"
+                      sx={{
                         bgcolor: KAB.primary,
-                        borderColor: KAB.primary,
+                        border: `1px solid ${KAB.primary}`,
                         color: "#fff",
-                      },
-                    }}
-                  >
-                    {icon}
-                  </Box>
-                ))}
-              </Box>
-            </Box>
-
-            {/* Column 2 — Quick Links */}
-            <Box>
-              <FooterHeading>Quick Links</FooterHeading>
-              {QUICK_LINKS.map((l) => (
-                <FooterLink key={l.href} href={l.href}>
-                  {l.label}
-                </FooterLink>
-              ))}
-            </Box>
-
-            {/* Column 3 — Academics */}
-            <Box>
-              <FooterHeading>Academics</FooterHeading>
-              {ACADEMICS_LINKS.map((l) => (
-                <FooterLink key={l.href} href={l.href}>
-                  {l.label}
-                </FooterLink>
-              ))}
-            </Box>
-
-            {/* Column 4 — Admissions */}
-            <Box>
-              <FooterHeading>Admissions</FooterHeading>
-              {ADMISSIONS_LINKS.map((l) => (
-                <FooterLink key={l.href} href={l.href}>
-                  {l.label}
-                </FooterLink>
-              ))}
-              {/* Newsletter teaser */}
-              <Box sx={{ mt: 3 }}>
-                <Typography
-                  sx={{
-                    fontFamily: "'Poppins', sans-serif",
-                    fontSize: 11,
-                    fontWeight: 700,
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                    color: "rgba(255,255,255,0.55)",
-                    mb: 1.5,
-                  }}
-                >
-                  Newsletter
-                </Typography>
-                <Box
-                  component="form"
-                  onSubmit={(e) => e.preventDefault()}
-                  sx={{ display: "flex" }}
-                >
-                  <Box
-                    component="input"
-                    type="email"
-                    placeholder="Your email address"
-                    sx={{
-                      flex: 1,
-                      bgcolor: "rgba(255,255,255,0.08)",
-                      border: "1px solid rgba(255,255,255,0.2)",
-                      borderRight: "none",
-                      color: "#fff",
-                      px: 1.5,
-                      py: 1,
-                      fontSize: 12,
-                      fontFamily: "'Poppins', sans-serif",
-                      outline: "none",
-                      "::placeholder": { color: "rgba(255,255,255,0.35)" },
-                      "&:focus": { borderColor: KAB.secondary },
-                    }}
-                  />
-                  <Box
-                    component="button"
-                    type="submit"
-                    sx={{
-                      bgcolor: KAB.primary,
-                      border: `1px solid ${KAB.primary}`,
-                      color: "#fff",
-                      px: 2,
-                      fontFamily: "'Poppins', sans-serif",
-                      fontWeight: 600,
-                      fontSize: 12,
-                      cursor: "pointer",
-                      transition: "background 0.2s",
-                      "&:hover": { bgcolor: KAB.primaryDark },
-                    }}
-                  >
-                    Go
+                        px: 2,
+                        fontFamily: "'Poppins', sans-serif",
+                        fontWeight: 600,
+                        fontSize: 12,
+                        cursor: "pointer",
+                        transition: "background 0.2s",
+                        "&:hover": { bgcolor: KAB.primaryDark },
+                      }}
+                    >
+                      Go
+                    </Box>
                   </Box>
                 </Box>
               </Box>
-            </Box>
-          </Box>
+            </Grid>
+          </Grid>
         </Container>
       </Box>
 

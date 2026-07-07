@@ -101,9 +101,9 @@ export function StatsBand({ stats }: StatsBandProps) {
           container
           spacing={2}
         >
-          {stats.map((stat) => (
-            <Grid size={{xs:6, md:3}}>
-            <StatItem key={stat.label} stat={stat} />
+          {stats.map((stat, index) => (
+            <Grid size={{xs:6, md:3}} key={index}>
+            <StatItem stat={stat} />
             </Grid>
           ))}
         </Grid>

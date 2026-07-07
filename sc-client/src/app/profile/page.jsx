@@ -2,14 +2,14 @@
 
 import { useMemo, useState } from "react";
 import {
-  Avatar, Box, Button, Card, CardContent, Chip, Dialog, DialogActions, 
-  DialogContent, DialogTitle, Divider, IconButton, List, ListItem, 
-  ListItemIcon, ListItemText, MenuItem, Stack, Tab, Table, TableBody, 
-  TableCell, TableContainer, TableHead, TableRow, Tabs, TextField, Typography 
+  Avatar, Box, Button, Card, CardContent, Chip, Dialog, DialogActions,
+  DialogContent, DialogTitle, Divider, IconButton, List, ListItem,
+  ListItemIcon, ListItemText, MenuItem, Stack, Tab, Table, TableBody,
+  TableCell, TableContainer, TableHead, TableRow, Tabs, TextField, Typography
 } from "@mui/material";
 import {
-  Add, Badge, CloudUpload, Download, Edit, Email, LocationOn, Phone, 
-  Visibility, VisibilityOff 
+  Add, Badge, CloudUpload, Download, Edit, Email, LocationOn, Phone,
+  Visibility, VisibilityOff
 } from "@mui/icons-material";
 
 import { DataState } from "@/components/DataState";
@@ -77,7 +77,7 @@ function ProfileContent({ staff, onUpdate }) {
 
       const res = await updateProfile(formData);
       if (!res.success) throw new Error(res.error);
-      
+
       showNotification("Profile picture updated!", "success");
       onUpdate();
     } catch (err) {
@@ -90,7 +90,7 @@ function ProfileContent({ staff, onUpdate }) {
   return (
     <Box sx={{ maxWidth: 1400 }}>
       <Card sx={{ mb: 3 }}>
-        <Box sx={{ p: 4, display: "flex", flexWrap: "wrap", gap: 3, alignItems: "center", bgcolor: "primary.main", color: "primary.contrastText" }}>
+        <Box sx={{ p: 4, display: "flex", flexWrap: "wrap", gap: 3, alignItems: "center",  }}>
           <Box sx={{ position: "relative" }}>
             <Avatar src={staff.photoUrl} sx={{ width: 120, height: 120, border: "4px solid white", bgcolor: "secondary.main", fontSize: 40 }}>
               {getInitials(`${staff.firstName} ${staff.lastName}`)}

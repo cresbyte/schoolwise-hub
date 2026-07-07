@@ -7,7 +7,7 @@
 export const SCHOOL = {
   name: "Primrose Private Academy",
   shortName: "Primrose",
-  location: "Nakuru County, Kenya",
+  location: "Nairobi County, Kenya",
   motto: "Excellence Through Knowledge",
   tagline: "Nurturing Tomorrow's Leaders Today",
   curriculum: "CBC + 8-4-4 (Junior and Senior Secondary)",
@@ -17,9 +17,9 @@ export const SCHOOL = {
   whatsapp: "254712345678",
   email: "info@primroseacademy.ac.ke",
   admissionsEmail: "admissions@primroseacademy.ac.ke",
-  address: "Milimani Road, Nakuru Town",
-  postal: "P.O. Box 1245-20100, Nakuru",
-  county: "Nakuru",
+  address: "Milimani Road, Nairobi Town",
+  postal: "P.O. Box 1245-20100, Nairobi",
+  county: "Nairobi",
   knecCode: "30412104",
   principal: "Mr. Daniel Kamau",
   founded: 2008,
@@ -30,10 +30,12 @@ export const SCHOOL = {
 let _schoolInfo = { ...SCHOOL };
 export type SchoolInfo = typeof _schoolInfo;
 export const getSchoolInfo = (): SchoolInfo => ({ ..._schoolInfo });
-export const setSchoolInfo = (patch: Partial<SchoolInfo>) => { _schoolInfo = { ..._schoolInfo, ...patch }; };
+export const setSchoolInfo = (patch: Partial<SchoolInfo>) => {
+  _schoolInfo = { ..._schoolInfo, ...patch };
+};
 
-export const HEADING_FONT = "'Merriweather', Georgia, serif";
-export const BODY_FONT = "'Outfit', system-ui, -apple-system, sans-serif";
+export const HEADING_FONT = "'Poppins', system-ui, -apple-system, sans-serif";
+export const BODY_FONT = "'Poppins', system-ui, -apple-system, sans-serif";
 
 /** Website-only colour tokens (aligned with MUI theme). */
 export const WEBSITE_COLORS = {
@@ -65,10 +67,10 @@ export const WEBSITE_IMAGES = {
 /** Default SEO keywords for the school website. */
 export const DEFAULT_KEYWORDS = [
   "Primrose Private Academy",
-  "Nakuru schools",
+  "Nairobi schools",
   "Kenyan private school",
   "CBC curriculum",
   "8-4-4",
-  "boarding school Nakuru",
+  "boarding school Nairobi",
   "KCSE",
 ] as const;

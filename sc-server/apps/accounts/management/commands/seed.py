@@ -22,15 +22,15 @@ class Command(BaseCommand):
         Subject.objects.all().delete()
         User.objects.all().delete()
         School.objects.all().delete()
-        
+
         self.stdout.write("Seeding data...")
-        
+
         # 1. School
         school, _ = School.objects.get_or_create(
             name="Primrose Private Academy",
             defaults={
                 "motto": "Knowledge · Integrity · Excellence",
-                "address": "Milimani Road, Nakuru Town",
+                "address": "Milimani Road, Nairobi Town",
                 "phone": "0712345678",
                 "email": "info@primroseacademy.ac.ke",
                 "website": "www.primroseacademy.ac.ke",
@@ -73,7 +73,7 @@ class Command(BaseCommand):
             if created:
                 user.set_password(pwd)
                 user.save()
-            
+
             # Create Staff Profile
             staff_profile, _ = Staff.objects.get_or_create(
                 user=user,
@@ -95,7 +95,7 @@ class Command(BaseCommand):
             ("cls-4", "Grade 6 A", "Grade 6", "stf-7"),
             ("cls-6", "Form 1 A", "Form 1", "stf-3"),
         ]
-        
+
         class_objects = {}
         for cid, name, level, teacher_id in classes_data:
             # Note: We might need more staff for the teacher links
@@ -126,7 +126,7 @@ class Command(BaseCommand):
             ("0744567890", "parent123", "Mr. Stephen Kamau", ["std-1", "std-3"]),
             ("0755123456", "parent456", "Mrs. Lucy Mwangi", ["std-4"]),
         ]
-        
+
         students_data = [
             ("std-1", "ADM-2026-0001", "Amina Kamau", "female", "Grade 4", "cls-3"),
             ("std-3", "ADM-2026-0003", "Christine Mwangi", "female", "Grade 6", "cls-4"),
@@ -161,7 +161,7 @@ class Command(BaseCommand):
             if created:
                 parent_user.set_password(pwd)
                 parent_user.save()
-            
+
             for cid in child_ids:
                 if cid in student_objects:
                     student_objects[cid].guardians.add(parent_user)

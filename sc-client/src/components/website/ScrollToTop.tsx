@@ -31,7 +31,7 @@ export function ScrollToTop() {
         className="no-print"
         sx={{
           position: "fixed",
-          bottom: 96,
+          bottom: 24,
           right: 24,
           zIndex: 1200,
           bgcolor: "primary.main",

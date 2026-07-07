@@ -1,5 +1,5 @@
 /**
- * Realistic mock data for ShuleSmart (Primrose Private Academy, Nakuru).
+ * Realistic mock data for ShuleSmart (Primrose Private Academy, Nairobi).
  * Data is generated deterministically at module load.
  * @module mockData
  */
@@ -59,10 +59,10 @@ export const school: School = {
   registrationNumber: "P/REG/NAK/2456",
   knecCode: "30412104",
   nemisCode: "NAK-30412104",
-  postalAddress: "P.O. Box 1245-20100, Nakuru",
-  physicalAddress: "Milimani Road, Nakuru Town",
-  county: "Nakuru",
-  subCounty: "Nakuru East",
+  postalAddress: "P.O. Box 1245-20100, Nairobi",
+  physicalAddress: "Milimani Road, Nairobi Town",
+  county: "Nairobi",
+  subCounty: "Nairobi East",
   phone: "0712345678",
   email: "info@primroseacademy.ac.ke",
   website: "www.primroseacademy.ac.ke",
@@ -140,7 +140,7 @@ function mkStaff(
     otherAllowances: 0,
     bankName: pick(["KCB", "Equity Bank", "Co-operative Bank", "Absa"]),
     bankAccount: String(randInt(1000000000, 9999999999)),
-    bankBranch: "Nakuru",
+    bankBranch: "Nairobi",
     nextOfKin: { name: "Mary " + lastName, relationship: "Spouse", phone: phone() },
     avatarUrl: staffAvatarUrl(`${firstName} ${lastName}`, id),
   };
