@@ -13,12 +13,8 @@ import { ImagePlaceholder } from "@/components/website/ImagePlaceholder";
 import { KAB } from "@/theme/websiteTheme";
 import { fadeInUp, slideInLeft, slideInRight, viewportOnce } from "@/lib/motion";
 
-interface MissionBandProps {
-  image: string;
-}
-
 /** Split vision/mission section with image and text. */
-export function MissionBand({ image }: MissionBandProps) {
+export function MissionBand({ image }) {
   return (
     <Box
       component="section"
@@ -26,7 +22,7 @@ export function MissionBand({ image }: MissionBandProps) {
       aria-label="Vision and mission"
     >
       <Container maxWidth="xl">
-        <Grid container spacing={{ xs: 5, md: 8 }} alignItems="center">
+        <Grid container spacing={{ xs: 5, md: 8 }} sx={{ alignItems: "center" }}>
           {/* Image side */}
           <Grid size={{ xs: 12, md: 5 }}>
             <Box
@@ -37,7 +33,7 @@ export function MissionBand({ image }: MissionBandProps) {
               viewport={viewportOnce}
               sx={{ position: "relative" }}
             >
-              <ImagePlaceholder src={image} alt="Principal's message" aspectRatio="3/4" />
+              <ImagePlaceholder src={image} alt="Principal's message" aspectRatio="3/4"  />
               {/* Accent corner box */}
               <Box
                 sx={{
@@ -77,7 +73,7 @@ export function MissionBand({ image }: MissionBandProps) {
                 <Box sx={{ width: 32, height: 2, bgcolor: KAB.primary }} />
                 <Typography
                   sx={{
-                    fontFamily: "'Poppins', sans-serif",
+                    fontFamily: "'Outfit', sans-serif",
                     fontSize: 11,
                     fontWeight: 700,
                     letterSpacing: "0.12em",
@@ -92,7 +88,7 @@ export function MissionBand({ image }: MissionBandProps) {
               <Typography
                 component="h2"
                 sx={{
-                  fontFamily: "'Poppins', sans-serif",
+                  fontFamily: "'Outfit', sans-serif",
                   fontWeight: 800,
                   fontSize: { xs: "1.5rem", md: "2rem" },
                   color: KAB.textPrimary,
@@ -108,7 +104,7 @@ export function MissionBand({ image }: MissionBandProps) {
 
               <Typography
                 sx={{
-                  fontFamily: "'Poppins', sans-serif",
+                  fontFamily: "'Outfit', sans-serif",
                   fontSize: 14,
                   color: KAB.textSecondary,
                   lineHeight: 1.85,
@@ -123,7 +119,7 @@ export function MissionBand({ image }: MissionBandProps) {
 
               <Typography
                 sx={{
-                  fontFamily: "'Poppins', sans-serif",
+                  fontFamily: "'Outfit', sans-serif",
                   fontSize: 14,
                   color: KAB.textSecondary,
                   lineHeight: 1.85,
@@ -158,7 +154,7 @@ export function MissionBand({ image }: MissionBandProps) {
                     >
                       <Typography
                         sx={{
-                          fontFamily: "'Poppins', sans-serif",
+                          fontFamily: "'Outfit', sans-serif",
                           fontWeight: 700,
                           fontSize: 12,
                           color: KAB.primary,
@@ -171,7 +167,7 @@ export function MissionBand({ image }: MissionBandProps) {
                       </Typography>
                       <Typography
                         sx={{
-                          fontFamily: "'Poppins', sans-serif",
+                          fontFamily: "'Outfit', sans-serif",
                           fontSize: 12,
                           color: KAB.textSecondary,
                           lineHeight: 1.6,
@@ -193,7 +189,7 @@ export function MissionBand({ image }: MissionBandProps) {
                   color: "#fff",
                   px: 3.5,
                   py: 1.5,
-                  fontFamily: "'Poppins', sans-serif",
+                  fontFamily: "'Outfit', sans-serif",
                   fontWeight: 700,
                   fontSize: 14,
                   textDecoration: "none",

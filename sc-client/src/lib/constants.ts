@@ -14,8 +14,8 @@ import type {
   UserRole,
 } from "./types";
 
-export const HEADING_FONT = "'Poppins', system-ui, -apple-system, sans-serif";
-export const BODY_FONT = "'Poppins', system-ui, -apple-system, sans-serif";
+export const HEADING_FONT = "'Outfit', system-ui, -apple-system, sans-serif";
+export const BODY_FONT = "'Outfit', system-ui, -apple-system, sans-serif";
 
 export const GRADE_LEVELS: GradeLevel[] = [
   "PP1",

@@ -4,18 +4,13 @@
  */
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import {Box, Container, Typography,  } from "@mui/material";
+import {Box, Container, Typography } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import type { HeroSlide } from "@/lib/website/data";
 import { KAB } from "@/theme/websiteTheme";
 
-interface HeroProps {
-  slides: HeroSlide[];
-}
-
 /** Full-bleed hero carousel with fade cross-dissolve transitions. */
-export function Hero({ slides }: HeroProps) {
+export function Hero({ slides }) {
   const [current, setCurrent] = useState(0);
 
   const next = useCallback(() => {
@@ -111,7 +106,7 @@ export function Hero({ slides }: HeroProps) {
                 <Box sx={{ width: 24, height: 2, bgcolor: KAB.secondary }} />
                 <Typography
                   sx={{
-                    fontFamily: "'Poppins', sans-serif",
+                    fontFamily: "'Outfit', sans-serif",
                     fontSize: 11,
                     fontWeight: 700,
                     letterSpacing: "0.15em",
@@ -126,7 +121,7 @@ export function Hero({ slides }: HeroProps) {
               <Typography
                 component="h1"
                 sx={{
-                  fontFamily: "'Poppins', sans-serif",
+                  fontFamily: "'Outfit', sans-serif",
                   fontWeight: 800,
                   fontSize: { xs: "1.75rem", sm: "2.5rem", md: "3.25rem" },
                   color: "#fff",
@@ -140,7 +135,7 @@ export function Hero({ slides }: HeroProps) {
 
               <Typography
                 sx={{
-                  fontFamily: "'Poppins', sans-serif",
+                  fontFamily: "'Outfit', sans-serif",
                   fontSize: { xs: "0.95rem", md: "1.1rem" },
                   color: "rgba(255,255,255,0.85)",
                   lineHeight: 1.65,
@@ -161,7 +156,7 @@ export function Hero({ slides }: HeroProps) {
                     color: "#fff",
                     px: 3.5,
                     py: 1.5,
-                    fontFamily: "'Poppins', sans-serif",
+                    fontFamily: "'Outfit', sans-serif",
                     fontWeight: 700,
                     fontSize: 14,
                     textDecoration: "none",
@@ -181,7 +176,7 @@ export function Hero({ slides }: HeroProps) {
                     color: "#fff",
                     px: 3.5,
                     py: 1.5,
-                    fontFamily: "'Poppins', sans-serif",
+                    fontFamily: "'Outfit', sans-serif",
                     fontWeight: 600,
                     fontSize: 14,
                     textDecoration: "none",

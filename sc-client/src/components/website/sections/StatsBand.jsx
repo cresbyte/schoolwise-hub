@@ -6,14 +6,9 @@
 import { useEffect, useRef, useState } from "react";
 import {Box,Container,Typography,Grid} from "@mui/material";
 import { motion, useInView } from "framer-motion";
-import type { SchoolStat } from "@/lib/website/data";
 import { KAB } from "@/theme/websiteTheme";
 
-interface StatsBandProps {
-  stats: SchoolStat[];
-}
-
-function useCountUp(target: number, decimals = 0, active: boolean) {
+function useCountUp(target, decimals = 0, active) {
   const [value, setValue] = useState(0);
   useEffect(() => {
     if (!active) return;
@@ -33,8 +28,8 @@ function useCountUp(target: number, decimals = 0, active: boolean) {
   return decimals ? value.toFixed(decimals) : Math.floor(value);
 }
 
-function StatItem({ stat }: { stat: SchoolStat }) {
-  const ref = useRef<HTMLDivElement>(null);
+function StatItem({ stat }) {
+  const ref = useRef(null);
   const inView = useInView(ref, { once: true });
   const displayed = useCountUp(stat.value, stat.decimals ?? 0, inView);
 
@@ -61,7 +56,7 @@ function StatItem({ stat }: { stat: SchoolStat }) {
       <Typography
         component="div"
         sx={{
-          fontFamily: "'Poppins', sans-serif",
+          fontFamily: "'Outfit', sans-serif",
           fontWeight: 800,
           fontSize: { xs: "2.25rem", md: "3rem" },
           color: "#fff",
@@ -78,7 +73,7 @@ function StatItem({ stat }: { stat: SchoolStat }) {
       </Typography>
       <Typography
         sx={{
-          fontFamily: "'Poppins', sans-serif",
+          fontFamily: "'Outfit', sans-serif",
           fontSize: 13,
           fontWeight: 500,
           color: "rgba(255,255,255,0.65)",
@@ -93,17 +88,14 @@ function StatItem({ stat }: { stat: SchoolStat }) {
 }
 
 /** Animated statistics strip. */
-export function StatsBand({ stats }: StatsBandProps) {
+export function StatsBand({ stats }) {
   return (
     <Box sx={{ bgcolor: KAB.primary, py: { xs: 5, md: 6 } }}>
       <Container maxWidth="xl">
-        <Grid
-          container
-          spacing={2}
-        >
+        <Grid container spacing={2}>
           {stats.map((stat, index) => (
             <Grid size={{xs:6, md:3}} key={index}>
-            <StatItem stat={stat} />
+              <StatItem stat={stat} />
             </Grid>
           ))}
         </Grid>

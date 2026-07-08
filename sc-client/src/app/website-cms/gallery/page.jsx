@@ -30,13 +30,13 @@ export default function GalleryCmsPage() {
   const { data: items, loading, refetch } = useAsync(api.getCmsGallery);
   const { showNotification } = useNotification();
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState<any>(null);
+  const [form, setForm] = useState(null);
   const [filter, setFilter] = useState("All");
 
-  const albums = ["All", ...Array.from(new Set(items?.map(i => i.album) || []))];
-  const filtered = filter === "All" ? items : items?.filter(i => i.album === filter);
+  const albums = ["All", ...Array.from(new Set(items?.map((i) => i.album) || []))];
+  const filtered = filter === "All" ? items : items?.filter((i) => i.album === filter);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id) => {
     if (confirm("Delete this photo?")) {
       await api.deleteGalleryItem(id);
       showNotification("Item deleted", "success");
@@ -71,7 +71,7 @@ export default function GalleryCmsPage() {
           </Box>
 
           <Box sx={{ mb: 3, display: "flex", gap: 1, overflowX: "auto", pb: 1 }}>
-            {albums.map(a => (
+            {albums.map((a) => (
               <Chip key={a} label={a} onClick={() => setFilter(a)} color={filter === a ? "primary" : "default"} variant={filter === a ? "filled" : "outlined"} />
             ))}
           </Box>
@@ -106,10 +106,10 @@ export default function GalleryCmsPage() {
           <DialogContent sx={{ pt: 2, display: "flex", flexDirection: "column", gap: 2 }}>
             <TextField label="Title" fullWidth value={form?.title || ""} onChange={(e) => setForm({ ...form, title: e.target.value })} />
             <TextField select label="Album" fullWidth value={form?.album || "Campus"} onChange={(e) => setForm({ ...form, album: e.target.value })}>
-              {["Campus", "Sports", "Arts", "Events", "Classroom"].map(a => <MenuItem key={a} value={a}>{a}</MenuItem>)}
+              {["Campus", "Sports", "Arts", "Events", "Classroom"].map((a) => <MenuItem key={a} value={a}>{a}</MenuItem>)}
             </TextField>
             <TextField select label="Aspect Ratio" fullWidth value={form?.aspect || "landscape"} onChange={(e) => setForm({ ...form, aspect: e.target.value })}>
-              {["landscape", "portrait", "square"].map(a => <MenuItem key={a} value={a}>{a}</MenuItem>)}
+              {["landscape", "portrait", "square"].map((a) => <MenuItem key={a} value={a}>{a}</MenuItem>)}
             </TextField>
             <TextField label="Image URL" fullWidth value={form?.image || ""} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="https://..." />
           </DialogContent>

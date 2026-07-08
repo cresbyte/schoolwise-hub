@@ -30,19 +30,14 @@ export default function NemisPage() {
   );
 }
 
-interface NemisRow {
-  admissionNumber: string; nemisNumber?: string; firstName: string; lastName: string;
-  gender: string; dateOfBirth: string; class: string; parentName: string; parentPhone: string;
-}
-
 /** NEMIS export content. */
 function NemisContent() {
   const { showNotification } = useNotification();
-  const { data, loading, error, refetch } = useAsync<NemisRow[]>(() => api.getNEMISExport(), []);
+  const { data, loading, error, refetch } = useAsync(() => api.getNEMISExport(), []);
   const list = data ?? [];
 
   const handleExport = () => {
-    exportToCSV(list as unknown as Record<string, unknown>[], "nemis-export.csv");
+    exportToCSV(list, "nemis-export.csv");
     showNotification("NEMIS file downloaded", "success");
   };
 
@@ -55,7 +50,13 @@ function NemisContent() {
       />
       <Alert severity="info" sx={{ mb: 2 }}>This export matches the Ministry of Education NEMIS upload format. Verify NEMIS numbers before submission.</Alert>
       <Card>
-        <DataState loading={loading} error={error} data={list} onRetry={refetch} isEmpty={(d: any) => d.length === 0}>
+        <DataState
+          loading={loading}
+          error={error}
+          data={list}
+          onRetry={refetch}
+          isEmpty={(d) => d.length === 0}
+        >
           {() => (
             <TableContainer>
               <Table size="small">
@@ -72,7 +73,7 @@ function NemisContent() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {list.map((r: any) => (
+                  {list.map((r) => (
                     <TableRow key={r.admissionNumber} hover>
                       <TableCell sx={{ fontFamily: "monospace", fontSize: 12 }}>{r.admissionNumber}</TableCell>
                       <TableCell sx={{ fontFamily: "monospace", fontSize: 12 }}>{r.nemisNumber ?? "—"}</TableCell>

@@ -11,18 +11,17 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { SectionHeading } from "@/components/website/SectionHeading";
 import { ImagePlaceholder } from "@/components/website/ImagePlaceholder";
-import type { NewsArticle } from "@/lib/website/data";
 import { KAB } from "@/theme/websiteTheme";
 import { fadeInUp, staggerContainer, staggerItem, viewportOnce } from "@/lib/motion";
 
-const CATEGORY_COLORS: Record<string, string> = {
+const CATEGORY_COLORS = {
   News: KAB.primary,
   Events: KAB.secondary,
   Achievements: "#C8922A",
   Announcements: "#555",
 };
 
-function CategoryBadge({ category }: { category: string }) {
+function CategoryBadge({ category }) {
   return (
     <Box
       sx={{
@@ -30,7 +29,7 @@ function CategoryBadge({ category }: { category: string }) {
         bgcolor: CATEGORY_COLORS[category] ?? KAB.primary,
         color: "#fff",
         fontSize: 10,
-        fontFamily: "'Poppins', sans-serif",
+        fontFamily: "'Outfit', sans-serif",
         fontWeight: 700,
         letterSpacing: "0.08em",
         textTransform: "uppercase",
@@ -43,14 +42,8 @@ function CategoryBadge({ category }: { category: string }) {
   );
 }
 
-interface NewsGridProps {
-  articles: NewsArticle[];
-  /** Number of articles to display (default 6) */
-  limit?: number;
-}
-
 /** News + events section with featured article and staggered secondary cards. */
-export function NewsGrid({ articles, limit = 6 }: NewsGridProps) {
+export function NewsGrid({ articles, limit = 6 }) {
   const displayed = articles.slice(0, limit);
   const [featured, ...rest] = displayed;
 
@@ -81,7 +74,7 @@ export function NewsGrid({ articles, limit = 6 }: NewsGridProps) {
             component={Link}
             href="/news"
             sx={{
-              fontFamily: "'Poppins', sans-serif",
+              fontFamily: "'Outfit', sans-serif",
               fontWeight: 600,
               fontSize: 13,
               color: KAB.primary,
@@ -95,7 +88,7 @@ export function NewsGrid({ articles, limit = 6 }: NewsGridProps) {
           </Box>
         </Box>
 
-        <Grid container spacing={3} alignItems="flex-start">
+        <Grid container spacing={3} sx={{ alignItems: "flex-start" }}>
           {/* Featured article */}
           {featured && (
             <Grid size={{ xs: 12, md: 7 }}>
@@ -126,7 +119,7 @@ export function NewsGrid({ articles, limit = 6 }: NewsGridProps) {
                       <CategoryBadge category={featured.category} />
                       <Typography
                         sx={{
-                          fontFamily: "'Poppins', sans-serif",
+                          fontFamily: "'Outfit', sans-serif",
                           fontSize: 12,
                           color: KAB.textMuted,
                         }}
@@ -136,7 +129,7 @@ export function NewsGrid({ articles, limit = 6 }: NewsGridProps) {
                     </Box>
                     <Typography
                       sx={{
-                        fontFamily: "'Poppins', sans-serif",
+                        fontFamily: "'Outfit', sans-serif",
                         fontWeight: 700,
                         fontSize: { xs: 18, md: 22 },
                         color: KAB.textPrimary,
@@ -150,7 +143,7 @@ export function NewsGrid({ articles, limit = 6 }: NewsGridProps) {
                     </Typography>
                     <Typography
                       sx={{
-                        fontFamily: "'Poppins', sans-serif",
+                        fontFamily: "'Outfit', sans-serif",
                         fontSize: 14,
                         color: KAB.textSecondary,
                         lineHeight: 1.7,
@@ -197,7 +190,7 @@ export function NewsGrid({ articles, limit = 6 }: NewsGridProps) {
                         </Box>
                         <Typography
                           sx={{
-                            fontFamily: "'Poppins', sans-serif",
+                            fontFamily: "'Outfit', sans-serif",
                             fontWeight: 600,
                             fontSize: 13,
                             color: KAB.textPrimary,
@@ -212,7 +205,7 @@ export function NewsGrid({ articles, limit = 6 }: NewsGridProps) {
                         </Typography>
                         <Typography
                           sx={{
-                            fontFamily: "'Poppins', sans-serif",
+                            fontFamily: "'Outfit', sans-serif",
                             fontSize: 11,
                             color: KAB.textMuted,
                             mt: 0.5,

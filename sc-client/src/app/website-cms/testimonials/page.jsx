@@ -38,9 +38,9 @@ export default function TestimonialsCmsPage() {
   const { data: testimonials, loading, refetch } = useAsync(api.getCmsTestimonials);
   const { showNotification } = useNotification();
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState<any>(null);
+  const [form, setForm] = useState(null);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id) => {
     if (confirm("Delete this testimonial?")) {
       await api.deleteTestimonial(id);
       showNotification("Testimonial deleted", "success");
@@ -66,10 +66,21 @@ export default function TestimonialsCmsPage() {
         <Box sx={{ p: 3 }}>
           <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
             <Box>
-              <Typography variant="h4" sx={{ fontWeight: 700 }}>Testimonials</Typography>
-              <Typography variant="body2" color="text.secondary">What parents and alumni say about Primrose.</Typography>
+              <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                Testimonials
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                What parents and alumni say about Primrose.
+              </Typography>
             </Box>
-            <Button variant="contained" startIcon={<AddIcon />} onClick={() => { setForm({ name: "", role: "Parent", quote: "", gradient: GRADIENTS[0] }); setOpen(true); }}>
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() => {
+                setForm({ name: "", role: "Parent", quote: "", gradient: GRADIENTS[0] });
+                setOpen(true);
+              }}
+            >
               Add Testimonial
             </Button>
           </Box>
@@ -81,18 +92,41 @@ export default function TestimonialsCmsPage() {
                   <Card sx={{ height: "100%", position: "relative" }}>
                     <Box sx={{ height: 8, background: t.gradient }} />
                     <CardContent>
-                      <FormatQuoteIcon sx={{ color: "primary.light", opacity: 0.3, fontSize: 40 }} />
+                      <FormatQuoteIcon
+                        sx={{ color: "primary.light", opacity: 0.3, fontSize: 40 }}
+                      />
                       <Typography variant="body1" sx={{ fontStyle: "italic", mb: 2, mt: -2 }}>
                         "{t.quote}"
                       </Typography>
-                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
                         <Box>
-                          <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>{t.name}</Typography>
-                          <Typography variant="caption" color="text.secondary">{t.role}</Typography>
+                          <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                            {t.name}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {t.role}
+                          </Typography>
                         </Box>
                         <Stack direction="row">
-                          <IconButton size="small" color="primary" onClick={() => { setForm(t); setOpen(true); }}><EditIcon fontSize="small" /></IconButton>
-                          <IconButton size="small" color="error" onClick={() => handleDelete(t.id)}><DeleteIcon fontSize="small" /></IconButton>
+                          <IconButton
+                            size="small"
+                            color="primary"
+                            onClick={() => {
+                              setForm(t);
+                              setOpen(true);
+                            }}
+                          >
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                          <IconButton size="small" color="error" onClick={() => handleDelete(t.id)}>
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
                         </Stack>
                       </Box>
                     </CardContent>
@@ -106,10 +140,34 @@ export default function TestimonialsCmsPage() {
         <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
           <DialogTitle>{form?.id ? "Edit Testimonial" : "Add Testimonial"}</DialogTitle>
           <DialogContent sx={{ pt: 2, display: "flex", flexDirection: "column", gap: 2 }}>
-            <TextField label="Name" fullWidth value={form?.name || ""} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-            <TextField label="Role" fullWidth value={form?.role || ""} onChange={(e) => setForm({ ...form, role: e.target.value })} placeholder="e.g. Parent, Grade 4" />
-            <TextField label="Testimonial" multiline rows={4} fullWidth value={form?.quote || ""} onChange={(e) => setForm({ ...form, quote: e.target.value })} />
-            <TextField select label="Accent Gradient" fullWidth value={form?.gradient || GRADIENTS[0]} onChange={(e) => setForm({ ...form, gradient: e.target.value })}>
+            <TextField
+              label="Name"
+              fullWidth
+              value={form?.name || ""}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+            />
+            <TextField
+              label="Role"
+              fullWidth
+              value={form?.role || ""}
+              onChange={(e) => setForm({ ...form, role: e.target.value })}
+              placeholder="e.g. Parent, Grade 4"
+            />
+            <TextField
+              label="Testimonial"
+              multiline
+              rows={4}
+              fullWidth
+              value={form?.quote || ""}
+              onChange={(e) => setForm({ ...form, quote: e.target.value })}
+            />
+            <TextField
+              select
+              label="Accent Gradient"
+              fullWidth
+              value={form?.gradient || GRADIENTS[0]}
+              onChange={(e) => setForm({ ...form, gradient: e.target.value })}
+            >
               {GRADIENTS.map((g, i) => (
                 <MenuItem key={i} value={g}>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
@@ -122,7 +180,9 @@ export default function TestimonialsCmsPage() {
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setOpen(false)}>Cancel</Button>
-            <Button onClick={handleSave} variant="contained">Save</Button>
+            <Button onClick={handleSave} variant="contained">
+              Save
+            </Button>
           </DialogActions>
         </Dialog>
       </RoleGuard>

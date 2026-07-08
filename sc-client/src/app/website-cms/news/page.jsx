@@ -39,13 +39,13 @@ export default function NewsCmsPage() {
   const { data: news, loading: nl, refetch: rn } = useAsync(api.getCmsNews);
   const { data: events, loading: el, refetch: re } = useAsync(api.getCmsEvents);
   const { showNotification } = useNotification();
-  
-  const [openNews, setOpenNews] = useState(false);
-  const [newsForm, setNewsForm] = useState<any>(null);
-  const [openEvent, setOpenEvent] = useState(false);
-  const [eventForm, setEventForm] = useState<any>(null);
 
-  const handleDeleteNews = async (slug: string) => {
+  const [openNews, setOpenNews] = useState(false);
+  const [newsForm, setNewsForm] = useState(null);
+  const [openEvent, setOpenEvent] = useState(false);
+  const [eventForm, setEventForm] = useState(null);
+
+  const handleDeleteNews = async (slug) => {
     if (confirm("Delete this article?")) {
       await api.deleteNewsArticle(slug);
       showNotification("Article deleted", "success");
@@ -53,7 +53,7 @@ export default function NewsCmsPage() {
     }
   };
 
-  const handleDeleteEvent = async (id: string) => {
+  const handleDeleteEvent = async (id) => {
     if (confirm("Delete this event?")) {
       await api.deleteEvent(id);
       showNotification("Event deleted", "success");
@@ -178,7 +178,7 @@ export default function NewsCmsPage() {
             <TextField label="Title" fullWidth value={newsForm?.title || ""} onChange={(e) => setNewsForm({ ...newsForm, title: e.target.value })} />
             <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
               <TextField select label="Category" fullWidth value={newsForm?.category || "News"} onChange={(e) => setNewsForm({ ...newsForm, category: e.target.value })}>
-                {["News", "Events", "Achievements", "Announcements"].map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
+                {["News", "Events", "Achievements", "Announcements"].map((c) => <MenuItem key={c} value={c}>{c}</MenuItem>)}
               </TextField>
               <TextField label="Date" type="date" fullWidth value={newsForm?.date || ""} onChange={(e) => setNewsForm({ ...newsForm, date: e.target.value })} slotProps={{ inputLabel: { shrink: true } }} />
             </Box>

@@ -24,16 +24,20 @@ import { useNotification } from "@/context/NotificationContext";
 export default function ContactsCmsPage() {
   const [tab, setTab] = useState(0);
   const statusFilter = tab === 0 ? "unread" : "read";
-  const { data: messages, loading, refetch } = useAsync(() => api.getContactSubmissions(statusFilter as any), [tab]);
+  const {
+    data: messages,
+    loading,
+    refetch,
+  } = useAsync(() => api.getContactSubmissions(statusFilter), [tab]);
   const { showNotification } = useNotification();
 
-  const handleStatus = async (id: string, read: boolean) => {
+  const handleStatus = async (id, read) => {
     await api.updateContactStatus(id, read ? "read" : "unread");
     showNotification(read ? "Marked as read" : "Marked as unread", "success");
     refetch();
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id) => {
     if (confirm("Delete this message?")) {
       await api.deleteContactSubmission(id);
       showNotification("Message deleted", "success");
@@ -45,7 +49,9 @@ export default function ContactsCmsPage() {
     <DashboardLayout>
       <RoleGuard permission="settings.view">
         <Box sx={{ p: 3 }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Contact Messages</Typography>
+          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+            Contact Messages
+          </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
             Read and manage inquiries from the public contact form.
           </Typography>
@@ -63,34 +69,58 @@ export default function ContactsCmsPage() {
                 </Box>
               ) : (
                 messages.map((msg) => (
-                  <Card key={msg.id} variant="outlined" sx={{ borderLeft: 4, borderColor: msg.status === "unread" ? "primary.main" : "divider" }}>
+                  <Card
+                    key={msg.id}
+                    variant="outlined"
+                    sx={{
+                      borderLeft: 4,
+                      borderColor: msg.status === "unread" ? "primary.main" : "divider",
+                    }}
+                  >
                     <Box sx={{ p: 2 }}>
-                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "flex-start",
+                        }}
+                      >
                         <Box>
-                          <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>{msg.subject}</Typography>
+                          <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>
+                            {msg.subject}
+                          </Typography>
                           <Typography variant="body2">
-                            <strong>From:</strong> {msg.name} ({msg.email}) {msg.phone && `· ${msg.phone}`}
+                            <strong>From:</strong> {msg.name} ({msg.email}){" "}
+                            {msg.phone && `· ${msg.phone}`}
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
-                            Submitted on {format(new Date(msg.submittedAt), "MMM dd, yyyy 'at' hh:mm a")}
+                            Submitted on{" "}
+                            {format(new Date(msg.submittedAt), "MMM dd, yyyy 'at' hh:mm a")}
                           </Typography>
                         </Box>
                         <Stack direction="row" spacing={1}>
-                          <Button 
-                            size="small" 
-                            variant="outlined" 
+                          <Button
+                            size="small"
+                            variant="outlined"
                             startIcon={msg.status === "read" ? <MailOutlined /> : <DraftsIcon />}
                             onClick={() => handleStatus(msg.id, msg.status === "unread")}
                           >
                             Mark as {msg.status === "read" ? "Unread" : "Read"}
                           </Button>
-                          <IconButton color="error" size="small" onClick={() => handleDelete(msg.id)}>
+                          <IconButton
+                            color="error"
+                            size="small"
+                            onClick={() => handleDelete(msg.id)}
+                          >
                             <DeleteIcon fontSize="small" />
                           </IconButton>
                         </Stack>
                       </Box>
                       <Divider sx={{ my: 1.5 }} />
-                      <Typography variant="body1" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
+                      <Typography
+                        variant="body1"
+                        sx={{ color: "text.primary", whiteSpace: "pre-line" }}
+                      >
                         {msg.message}
                       </Typography>
                     </Box>

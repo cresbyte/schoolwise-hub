@@ -42,7 +42,7 @@ export default function SettingsPage() {
 function SettingsContent() {
   const { data, loading, error, refetch } = useAsync(() => api.getSchoolSettings(), []);
   const integrations = useAsync(() => api.getIntegrationsStatus(), []);
-  
+
   return (
     <>
       <PageHeader title="School Settings" subtitle="Manage your school profile" />
@@ -71,7 +71,7 @@ function SettingsForm({ school, integrations }) {
 
   const handlePaymentMethodToggle = (method) => {
     if (enabledPaymentMethods.includes(method)) {
-      setValue("enabledPaymentMethods", enabledPaymentMethods.filter(m => m !== method), { shouldDirty: true });
+      setValue("enabledPaymentMethods", enabledPaymentMethods.filter((m) => m !== method), { shouldDirty: true });
     } else {
       setValue("enabledPaymentMethods", [...enabledPaymentMethods, method], { shouldDirty: true });
     }
@@ -188,7 +188,7 @@ function SettingsForm({ school, integrations }) {
               <TextField label="Email From Address" size="small" {...register("emailFromAddress")} />
               <TextField label="SMS Sender ID" size="small" {...register("smsSenderId")} />
             </Box>
-            
+
             <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 2 }}>Integration Status (Read-Only)</Typography>
             <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", mb: 3 }}>
               <Chip label={`Email: ${integrations?.emailConfigured ? "Configured" : "Not configured"}`} color={integrations?.emailConfigured ? "success" : "default"} />

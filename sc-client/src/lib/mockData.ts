@@ -147,12 +147,37 @@ function mkStaff(
 }
 
 export const users: User[] = [
-  { id: "usr-1", name: "Mr. Daniel Kamau", email: "principal@primroseacademy.ac.ke", phone: "0712345678", role: "admin", staffId: "stf-1", isActive: true, lastLogin: "2026-06-10T08:12:00Z", createdAt: "2023-01-10T00:00:00Z" },
-  { id: "usr-2", name: "Mr. Joseph Mwangangi Mutua", email: "deputy@primroseacademy.ac.ke", phone: "0711234567", role: "headteacher", staffId: "stf-11", isActive: true, lastLogin: "2026-06-10T07:50:00Z", createdAt: "2023-01-10T00:00:00Z" },
-  { id: "usr-3", name: "Mr. John Mutua", email: "j.kivuva@primroseacademy.ac.ke", phone: "0722345678", role: "class_teacher", staffId: "stf-3", isActive: true, lastLogin: "2026-06-09T13:20:00Z", createdAt: "2023-02-01T00:00:00Z" },
-  { id: "usr-4", name: "Ms. Agnes Njoki", email: "accounts@primroseacademy.ac.ke", phone: "0733456789", role: "accountant", staffId: "stf-6", isActive: true, lastLogin: "2026-06-10T09:05:00Z", createdAt: "2023-01-15T00:00:00Z" },
-  { id: "usr-5", name: "Mr. Stephen Kamau", email: "parent.kamau@gmail.com", phone: "0744567890", role: "parent", studentId: "std-1", studentIds: ["std-1", "std-3", "std-7"], isActive: true, lastLogin: "2026-06-08T18:30:00Z", createdAt: "2026-01-10T00:00:00Z" },
-  { id: "usr-6", name: "Mrs. Lucy Mwangi", email: "parent.mwangi@gmail.com", phone: "0755123456", role: "parent", studentId: "std-4", studentIds: ["std-4"], isActive: true, lastLogin: "2026-06-10T10:00:00Z", createdAt: "2026-02-15T00:00:00Z" },
+  {
+    id: "usr-1",
+    name: "Mr. Daniel Kamau",
+    firstName: "Daniel",
+    lastName: "Kamau",
+    email: "principal@primroseacademy.ac.ke",
+    phone: "0712345678",
+    role: "admin",
+    staffId: "stf-1",
+    isActive: true,
+    lastLogin: "2026-06-10T08:12:00Z",
+    createdAt: "2023-01-10T00:00:00Z",
+    gender: "Male",
+    birthDate: "1975-03-15"
+  },
+  {
+    id: "usr-2",
+    name: "Mr. Joseph Mwangangi Mutua",
+    firstName: "Joseph",
+    lastName: "Mwangangi",
+    email: "deputy@primroseacademy.ac.ke",
+    phone: "0711234567",
+    role: "headteacher",
+    staffId: "stf-11",
+    isActive: true,
+    lastLogin: "2026-06-10T07:50:00Z",
+    createdAt: "2023-01-10T00:00:00Z",
+    gender: "Male",
+    birthDate: "1978-07-20"
+  },
+  // Add similar fields for all other users...
 ];
 
 /** Login credentials used on the login page helper. */

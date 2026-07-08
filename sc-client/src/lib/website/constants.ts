@@ -34,8 +34,8 @@ export const setSchoolInfo = (patch: Partial<SchoolInfo>) => {
   _schoolInfo = { ..._schoolInfo, ...patch };
 };
 
-export const HEADING_FONT = "'Poppins', system-ui, -apple-system, sans-serif";
-export const BODY_FONT = "'Poppins', system-ui, -apple-system, sans-serif";
+export const HEADING_FONT = "'Outfit', system-ui, -apple-system, sans-serif";
+export const BODY_FONT = "'Outfit', system-ui, -apple-system, sans-serif";
 
 /** Website-only colour tokens (aligned with MUI theme). */
 export const WEBSITE_COLORS = {

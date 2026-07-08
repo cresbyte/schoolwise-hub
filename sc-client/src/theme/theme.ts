@@ -52,8 +52,8 @@ const TOKENS = {
 
   font: {
     family: {
-      body: "'Poppins', system-ui, -apple-system, sans-serif",
-      heading: "'Poppins', system-ui, -apple-system, sans-serif",
+      body: "'Outfit', system-ui, -apple-system, sans-serif",
+      heading: "'Outfit', system-ui, -apple-system, sans-serif",
     },
     weight: {
       light: 300,

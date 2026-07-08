@@ -294,22 +294,52 @@ function FeeTab({ studentId }) {
     <DataState loading={inv.loading} error={inv.error} data={inv.data} onRetry={inv.refetch}>
       {(i) => (
         <>
-          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(3,1fr)" }, gap: 2, mb: 3 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "repeat(3,1fr)" },
+              gap: 2,
+              mb: 3,
+            }}
+          >
             <Card variant="outlined" sx={{ p: 2 }}>
-              <Typography variant="caption" color="text.secondary">Total Invoiced (All Time)</Typography>
-              <Typography variant="h6" sx={{ fontWeight: 800 }}>{formatKES(i.totalCharged + 45000)}</Typography>
+              <Typography variant="caption" color="text.secondary">
+                Total Invoiced (All Time)
+              </Typography>
+              <Typography variant="h6" sx={{ fontWeight: 800 }}>
+                {formatKES((i.totalCharged ?? 0) + 45000)}
+              </Typography>
             </Card>
             <Card variant="outlined" sx={{ p: 2 }}>
-              <Typography variant="caption" color="text.secondary">Total Paid (All Time)</Typography>
-              <Typography variant="h6" sx={{ fontWeight: 800 }}>{formatKES(i.totalPaid + 40000)}</Typography>
+              <Typography variant="caption" color="text.secondary">
+                Total Paid (All Time)
+              </Typography>
+              <Typography variant="h6" sx={{ fontWeight: 800 }}>
+                {formatKES((i.totalPaid ?? 0) + 40000)}
+              </Typography>
             </Card>
-            <Card variant="outlined" sx={{ p: 2, bgcolor: i.balance > 0 ? "#C6282808" : "transparent" }}>
-              <Typography variant="caption" color="text.secondary">Current Balance</Typography>
-              <Typography variant="h6" sx={{ fontWeight: 800, color: i.balance > 0 ? "error.main" : "success.main" }}>{formatKES(i.balance)}</Typography>
+            <Card
+              variant="outlined"
+              sx={{ p: 2, bgcolor: (i.balance ?? 0) > 0 ? "#C6282808" : "transparent" }}
+            >
+              <Typography variant="caption" color="text.secondary">
+                Current Balance
+              </Typography>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 800,
+                  color: (i.balance ?? 0) > 0 ? "error.main" : "success.main",
+                }}
+              >
+                {formatKES(i.balance ?? 0)}
+              </Typography>
             </Card>
           </Box>
 
-          <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700 }}>Current Term Invoice: {i.invoiceNumber}</Typography>
+          <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700 }}>
+            Current Term Invoice: {i.invoiceNumber}
+          </Typography>
           <TableContainer sx={{ border: 1, borderColor: "divider", borderRadius: 1, mb: 4 }}>
             <Table size="small">
               <TableHead sx={{ bgcolor: "action.hover" }}>
@@ -327,14 +357,24 @@ function FeeTab({ studentId }) {
                 ))}
                 <TableRow sx={{ bgcolor: "action.hover" }}>
                   <TableCell sx={{ fontWeight: 700 }}>Total Term Charge</TableCell>
-                  <TableCell align="right" sx={{ fontWeight: 700 }}>{formatKES(i.totalCharged)}</TableCell>
+                  <TableCell align="right" sx={{ fontWeight: 700 }}>
+                    {formatKES(i.totalCharged)}
+                  </TableCell>
                 </TableRow>
               </TableBody>
             </Table>
           </TableContainer>
 
-          <Typography variant="subtitle2" sx={{ mt: 4, mb: 1, fontWeight: 700 }}>Special Levies & Ad-hoc Charges</Typography>
-          <DataState loading={levies.loading} error={levies.error} data={levies.data} isEmpty={(d) => d.length === 0} emptyMessage="No special levies for this student">
+          <Typography variant="subtitle2" sx={{ mt: 4, mb: 1, fontWeight: 700 }}>
+            Special Levies & Ad-hoc Charges
+          </Typography>
+          <DataState
+            loading={levies.loading}
+            error={levies.error}
+            data={levies.data}
+            isEmpty={(d) => d.length === 0}
+            emptyMessage="No special levies for this student"
+          >
             {(studentLevies) => (
               <TableContainer sx={{ border: 1, borderColor: "divider", borderRadius: 1, mb: 4 }}>
                 <Table size="small">
@@ -352,7 +392,9 @@ function FeeTab({ studentId }) {
                     {studentLevies.map((sl) => (
                       <TableRow key={sl.levy.id}>
                         <TableCell>{sl.levy.title}</TableCell>
-                        <TableCell><Chip label={sl.levy.category} size="small" /></TableCell>
+                        <TableCell>
+                          <Chip label={sl.levy.category} size="small" />
+                        </TableCell>
                         <TableCell align="right">{formatKES(sl.levy.amount)}</TableCell>
                         <TableCell>{formatDate(sl.levy.dueDate)}</TableCell>
                         <TableCell>
@@ -366,7 +408,10 @@ function FeeTab({ studentId }) {
                           {!sl.paid && (
                             <Button
                               size="small"
-                              onClick={() => { setSelectedLevy(sl.levy); setPayLevyOpen(true); }}
+                              onClick={() => {
+                                setSelectedLevy(sl.levy);
+                                setPayLevyOpen(true);
+                              }}
                             >
                               Pay
                             </Button>
@@ -381,13 +426,26 @@ function FeeTab({ studentId }) {
           </DataState>
 
           {selectedLevy && (
-            <Dialog open={payLevyOpen} onClose={() => setPayLevyOpen(false)} fullWidth maxWidth="xs">
+            <Dialog
+              open={payLevyOpen}
+              onClose={() => setPayLevyOpen(false)}
+              fullWidth
+              maxWidth="xs"
+            >
               <DialogTitle>Record Levy Payment</DialogTitle>
               <DialogContent>
                 <Typography variant="body2" sx={{ mb: 2 }}>
-                  Recording payment of <strong>{formatKES(selectedLevy.amount)}</strong> for <strong>{selectedLevy.title}</strong>.
+                  Recording payment of <strong>{formatKES(selectedLevy.amount)}</strong> for{" "}
+                  <strong>{selectedLevy.title}</strong>.
                 </Typography>
-                <TextField select fullWidth label="Method" size="small" defaultValue="cash" sx={{ mt: 1 }}>
+                <TextField
+                  select
+                  fullWidth
+                  label="Method"
+                  size="small"
+                  defaultValue="cash"
+                  sx={{ mt: 1 }}
+                >
                   <MenuItem value="cash">Cash</MenuItem>
                   <MenuItem value="mpesa">M-Pesa</MenuItem>
                   <MenuItem value="bank">Bank Transfer</MenuItem>
@@ -395,30 +453,41 @@ function FeeTab({ studentId }) {
               </DialogContent>
               <DialogActions>
                 <Button onClick={() => setPayLevyOpen(false)}>Cancel</Button>
-                <Button variant="contained" onClick={async () => {
-                  if (!selectedLevy) return;
-                  await api.recordLevyPayment({
-                    levyId: selectedLevy.id,
-                    levyTitle: selectedLevy.title,
-                    studentId: studentId,
-                    studentName: "Student",
-                    amount: selectedLevy.amount,
-                    paidAt: new Date().toISOString(),
-                    paymentMethod: "cash",
-                    recordedBy: "Admin",
-                  });
-                  showNotification("Payment recorded", "success");
-                  setPayLevyOpen(false);
-                  levies.refetch();
-                }}>
+                <Button
+                  variant="contained"
+                  onClick={async () => {
+                    if (!selectedLevy) return;
+                    await api.recordLevyPayment({
+                      levyId: selectedLevy.id,
+                      levyTitle: selectedLevy.title,
+                      studentId: studentId,
+                      studentName: "Student",
+                      amount: selectedLevy.amount,
+                      paidAt: new Date().toISOString(),
+                      paymentMethod: "cash",
+                      recordedBy: "Admin",
+                    });
+                    showNotification("Payment recorded", "success");
+                    setPayLevyOpen(false);
+                    levies.refetch();
+                  }}
+                >
                   Confirm Payment
                 </Button>
               </DialogActions>
             </Dialog>
           )}
 
-          <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700 }}>Full Statement of Account (All Periods)</Typography>
-          <DataState loading={pays.loading} error={pays.error} data={pays.data} isEmpty={(d) => d.length === 0} emptyMessage="No transactions found">
+          <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700 }}>
+            Full Statement of Account (All Periods)
+          </Typography>
+          <DataState
+            loading={pays.loading}
+            error={pays.error}
+            data={pays.data}
+            isEmpty={(d) => d.length === 0}
+            emptyMessage="No transactions found"
+          >
             {(payments) => (
               <TableContainer sx={{ border: 1, borderColor: "divider", borderRadius: 1 }}>
                 <Table size="small">
@@ -435,7 +504,9 @@ function FeeTab({ studentId }) {
                     {/* Simulated historical row */}
                     <TableRow sx={{ bgcolor: "rgba(0,0,0,0.02)" }}>
                       <TableCell>05/01/2026</TableCell>
-                      <TableCell><em>Opening Balance (from 2025)</em></TableCell>
+                      <TableCell>
+                        <em>Opening Balance (from 2025)</em>
+                      </TableCell>
                       <TableCell>B/F</TableCell>
                       <TableCell align="right">{formatKES(5000)}</TableCell>
                       <TableCell align="right">—</TableCell>
@@ -453,9 +524,13 @@ function FeeTab({ studentId }) {
                       <TableRow key={p.id}>
                         <TableCell>{formatDate(p.paymentDate)}</TableCell>
                         <TableCell>Fee Payment — {p.paymentMethod}</TableCell>
-                        <TableCell sx={{ fontFamily: "monospace", fontSize: 12 }}>{p.receiptNumber}</TableCell>
+                        <TableCell sx={{ fontFamily: "monospace", fontSize: 12 }}>
+                          {p.receiptNumber}
+                        </TableCell>
                         <TableCell align="right">—</TableCell>
-                        <TableCell align="right" sx={{ fontWeight: 700, color: "success.main" }}>{formatKES(p.amount)}</TableCell>
+                        <TableCell align="right" sx={{ fontWeight: 700, color: "success.main" }}>
+                          {formatKES(p.amount)}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

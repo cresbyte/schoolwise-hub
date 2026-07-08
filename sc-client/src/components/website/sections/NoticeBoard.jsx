@@ -13,17 +13,11 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import DownloadIcon from "@mui/icons-material/Download";
 import { SectionHeading } from "@/components/website/SectionHeading";
-import type { UpcomingEvent, DownloadItem } from "@/lib/website/data";
 import { KAB } from "@/theme/websiteTheme";
 import { fadeInUp, viewportOnce } from "@/lib/motion";
 
-interface NoticeBoardProps {
-  events: UpcomingEvent[];
-  downloads: DownloadItem[];
-}
-
 /** Events + downloads noticeboard section. */
-export function NoticeBoard({ events, downloads }: NoticeBoardProps) {
+export function NoticeBoard({ events, downloads }) {
   return (
     <Box
       component="section"
@@ -64,7 +58,7 @@ export function NoticeBoard({ events, downloads }: NoticeBoardProps) {
             >
               <Typography
                 sx={{
-                  fontFamily: "'Poppins', sans-serif",
+                  fontFamily: "'Outfit', sans-serif",
                   fontWeight: 700,
                   fontSize: 16,
                   color: KAB.textPrimary,
@@ -76,7 +70,7 @@ export function NoticeBoard({ events, downloads }: NoticeBoardProps) {
                 component={Link}
                 href="/news#events"
                 sx={{
-                  fontFamily: "'Poppins', sans-serif",
+                  fontFamily: "'Outfit', sans-serif",
                   fontSize: 12,
                   fontWeight: 600,
                   color: KAB.primary,
@@ -121,7 +115,7 @@ export function NoticeBoard({ events, downloads }: NoticeBoardProps) {
                   >
                     <Typography
                       sx={{
-                        fontFamily: "'Poppins', sans-serif",
+                        fontFamily: "'Outfit', sans-serif",
                         fontWeight: 800,
                         fontSize: 22,
                         lineHeight: 1,
@@ -131,7 +125,7 @@ export function NoticeBoard({ events, downloads }: NoticeBoardProps) {
                     </Typography>
                     <Typography
                       sx={{
-                        fontFamily: "'Poppins', sans-serif",
+                        fontFamily: "'Outfit', sans-serif",
                         fontSize: 10,
                         fontWeight: 600,
                         letterSpacing: "0.06em",
@@ -145,7 +139,7 @@ export function NoticeBoard({ events, downloads }: NoticeBoardProps) {
                   <Box sx={{ flex: 1 }}>
                     <Typography
                       sx={{
-                        fontFamily: "'Poppins', sans-serif",
+                        fontFamily: "'Outfit', sans-serif",
                         fontWeight: 600,
                         fontSize: 14,
                         color: KAB.textPrimary,
@@ -194,7 +188,7 @@ export function NoticeBoard({ events, downloads }: NoticeBoardProps) {
             >
               <Typography
                 sx={{
-                  fontFamily: "'Poppins', sans-serif",
+                  fontFamily: "'Outfit', sans-serif",
                   fontWeight: 700,
                   fontSize: 16,
                   color: KAB.textPrimary,
@@ -242,7 +236,7 @@ export function NoticeBoard({ events, downloads }: NoticeBoardProps) {
                 <Box sx={{ flex: 1, minWidth: 0 }}>
                   <Typography
                     sx={{
-                      fontFamily: "'Poppins', sans-serif",
+                      fontFamily: "'Outfit', sans-serif",
                       fontWeight: 600,
                       fontSize: 13,
                       color: KAB.textPrimary,

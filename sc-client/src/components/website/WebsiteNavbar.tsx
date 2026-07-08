@@ -314,7 +314,7 @@ export function WebsiteNavbar() {
                 <Typography
                   sx={{
                     color: "#000000", /* Changed from #fff to black */
-                    fontFamily: "'Poppins', sans-serif",
+                    fontFamily: "'Outfit', sans-serif",
                     fontWeight: 700,
                     fontSize: scrolled ? 14 : 16,
                     lineHeight: 1.1,
@@ -361,7 +361,7 @@ export function WebsiteNavbar() {
                       px: 1.5,
                       py: 1,
                       color: isActive(group.href ?? "/___") ? KAB.secondaryLight : "#000000", /* Changed from #fff to black */
-                      fontFamily: "'Poppins', sans-serif",
+                      fontFamily: "'Outfit', sans-serif",
                       fontWeight: 500,
                       fontSize: 14,
                       textDecoration: "none",
@@ -421,7 +421,7 @@ export function WebsiteNavbar() {
                           {col.heading && (
                             <Typography
                               sx={{
-                                fontFamily: "'Poppins', sans-serif",
+                                fontFamily: "'Outfit', sans-serif",
                                 fontWeight: 700,
                                 fontSize: 11,
                                 letterSpacing: "0.1em",
@@ -442,7 +442,7 @@ export function WebsiteNavbar() {
                                 display: "block",
                                 py: "6px",
                                 color: KAB.textPrimary,
-                                fontFamily: "'Poppins', sans-serif",
+                                fontFamily: "'Outfit', sans-serif",
                                 fontSize: 13,
                                 textDecoration: "none",
                                 fontWeight: isActive(link.href) ? 600 : 400,
@@ -476,7 +476,7 @@ export function WebsiteNavbar() {
                     px: 1.5,
                     py: 1,
                     color: isActive(link.href) ? KAB.secondaryLight : "#000000", /* Changed from #fff to black */
-                    fontFamily: "'Poppins', sans-serif",
+                    fontFamily: "'Outfit', sans-serif",
                     fontWeight: 500,
                     fontSize: 14,
                     textDecoration: "none",
@@ -537,7 +537,7 @@ export function WebsiteNavbar() {
           <Typography
             sx={{
               color: "#fff",
-              fontFamily: "'Poppins', sans-serif",
+              fontFamily: "'Outfit', sans-serif",
               fontWeight: 700,
               fontSize: 15,
             }}
@@ -566,7 +566,7 @@ export function WebsiteNavbar() {
               <AccordionSummary expandIcon={<ExpandMore />}>
                 <Typography
                   sx={{
-                    fontFamily: "'Poppins', sans-serif",
+                    fontFamily: "'Outfit', sans-serif",
                     fontWeight: 600,
                     fontSize: 14,
                     color: KAB.textPrimary,
@@ -597,7 +597,7 @@ export function WebsiteNavbar() {
                         primary={
                           <Typography
                             sx={{
-                              fontFamily: "'Poppins', sans-serif",
+                              fontFamily: "'Outfit', sans-serif",
                               fontSize: 13,
                               fontWeight: isActive(link.href) ? 600 : 400,
                               color: "inherit",
@@ -631,7 +631,7 @@ export function WebsiteNavbar() {
                 primary={
                   <Typography
                     sx={{
-                      fontFamily: "'Poppins', sans-serif",
+                      fontFamily: "'Outfit', sans-serif",
                       fontWeight: 600,
                       fontSize: 14,
                       color: "inherit",
@@ -656,7 +656,7 @@ export function WebsiteNavbar() {
               bgcolor: KAB.primary,
               color: "#fff",
               py: 1.25,
-              fontFamily: "'Poppins', sans-serif",
+              fontFamily: "'Outfit', sans-serif",
               fontWeight: 700,
               fontSize: 14,
               textDecoration: "none",
@@ -675,7 +675,7 @@ export function WebsiteNavbar() {
               border: `1px solid ${KAB.border}`,
               color: KAB.textPrimary,
               py: 1.25,
-              fontFamily: "'Poppins', sans-serif",
+              fontFamily: "'Outfit', sans-serif",
               fontWeight: 600,
               fontSize: 14,
               textDecoration: "none",

@@ -16,22 +16,22 @@ interface ClassSelectProps {
 }
 
 /** Dropdown of all classes. */
-export function ClassSelect({ 
-  value, 
-  onChange, 
-  label = "Class", 
-  allOption = true, 
+export function ClassSelect({
+  value,
+  onChange,
+  label = "Class",
+  allOption = true,
   width = 200,
-  disabled = false
+  disabled = false,
 }: ClassSelectProps) {
   const { data } = useClasses();
   return (
-    <TextField 
-      select 
-      size="small" 
-      label={label} 
-      value={value} 
-      onChange={(e) => onChange(e.target.value)} 
+    <TextField
+      select
+      size="small"
+      label={label}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
       sx={{ width }}
       disabled={disabled}
     >

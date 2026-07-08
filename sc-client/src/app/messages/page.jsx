@@ -39,7 +39,6 @@ import { useAsync } from "@/hooks/useAsync";
 import { useNotification } from "@/context/NotificationContext";
 import { api } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
-import type { SchoolMessage, ParentReply, ClassRoom, Student } from "@/lib/types";
 
 export default function MessagesPage() {
   return (
@@ -54,33 +53,33 @@ export default function MessagesPage() {
 function MessagesContent() {
   const { showNotification } = useNotification();
   const [tab, setTab] = useState(0);
-  
+
   const { data: sentMessagesRes, loading: loadingSent, refetch: refetchSent } = useAsync(() => api.getMessages());
   const { data: repliesRes, loading: loadingReplies, refetch: refetchReplies } = useAsync(() => api.getParentReplies());
-  
+
   const sentMessages = sentMessagesRes || [];
   const replies = repliesRes || [];
-  const unreadReplies = replies.filter(r => !r.readByStaff).length;
+  const unreadReplies = replies.filter((r) => !r.readByStaff).length;
 
   const [composeOpen, setComposeOpen] = useState(false);
-  const [viewDialog, setViewDialog] = useState<{ open: boolean, message?: SchoolMessage, reply?: ParentReply }>({ open: false });
+  const [viewDialog, setViewDialog] = useState({ open: false, message: null, reply: null });
 
-  const handleCompose = async (data: any) => {
+  const handleCompose = async (data) => {
     try {
       await api.sendMessage({
         ...data,
-        sentBy: "Daniel Njoroge", 
+        sentBy: "Daniel Njoroge",
         sentById: "stf-1",
       });
       showNotification(`Message sent`, "success");
       setComposeOpen(false);
       refetchSent();
-    } catch (err: any) {
+    } catch (err) {
       showNotification(err.message || "Failed to send message", "error");
     }
   };
 
-  const handleMarkRead = async (replyId: string) => {
+  const handleMarkRead = async (replyId) => {
     await api.markReplyRead(replyId);
     refetchReplies();
   };
@@ -99,12 +98,12 @@ function MessagesContent() {
 
       <Card sx={{ mb: 2 }}>
         <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ px: 2, borderBottom: 1, borderColor: "divider" }}>
-          <Tab 
+          <Tab
             label={
               <Badge badgeContent={unreadReplies} color="error">
                 Parent Replies
               </Badge>
-            } 
+            }
           />
           <Tab label="Sent Messages" />
         </Tabs>
@@ -125,7 +124,7 @@ function MessagesContent() {
                   </TableHead>
                   <TableBody>
                     {replies.map((r) => {
-                      const original = sentMessages.find(m => m.id === r.messageId);
+                      const original = sentMessages.find((m) => m.id === r.messageId);
                       return (
                         <TableRow key={r.id} hover sx={{ bgcolor: !r.readByStaff ? "action.hover" : "transparent" }}>
                           <TableCell>
@@ -200,27 +199,27 @@ function MessagesContent() {
       </Card>
 
       {composeOpen && (
-        <ComposeMessageDialog 
-          open={composeOpen} 
-          onClose={() => setComposeOpen(false)} 
-          onSend={handleCompose} 
+        <ComposeMessageDialog
+          open={composeOpen}
+          onClose={() => setComposeOpen(false)}
+          onSend={handleCompose}
         />
       )}
 
       {viewDialog.open && (
-        <MessageDetailDialog 
-          open={viewDialog.open} 
-          message={viewDialog.message} 
+        <MessageDetailDialog
+          open={viewDialog.open}
+          message={viewDialog.message}
           reply={viewDialog.reply}
-          onClose={() => setViewDialog({ open: false })} 
-          onMarkRead={viewDialog.reply && !viewDialog.reply.readByStaff ? () => handleMarkRead(viewDialog.reply!.id) : undefined}
+          onClose={() => setViewDialog({ open: false, message: null, reply: null })}
+          onMarkRead={viewDialog.reply && !viewDialog.reply.readByStaff ? () => handleMarkRead(viewDialog.reply.id) : undefined}
         />
       )}
     </>
   );
 }
 
-function ComposeMessageDialog({ open, onClose, onSend }: { open: boolean, onClose: () => void, onSend: (data: any) => void }) {
+function ComposeMessageDialog({ open, onClose, onSend }) {
   const [form, setForm] = useState({
     subject: "",
     body: "",
@@ -237,7 +236,7 @@ function ComposeMessageDialog({ open, onClose, onSend }: { open: boolean, onClos
   const students = studentsRes || [];
 
   const canSend = form.subject && form.body && (
-    form.recipientType === "all_parents" || 
+    form.recipientType === "all_parents" ||
     (form.recipientType === "class_parents" && form.classId) ||
     (form.recipientType === "individual_parent" && form.studentId)
   );
@@ -247,45 +246,45 @@ function ComposeMessageDialog({ open, onClose, onSend }: { open: boolean, onClos
       <DialogTitle>Compose Message</DialogTitle>
       <DialogContent sx={{ pt: 1 }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
-          <TextField label="Subject" fullWidth size="small" value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} />
-          
+          <TextField label="Subject" fullWidth size="small" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} />
+
           <Box sx={{ display: "flex", gap: 2 }}>
-            <TextField select label="Recipients" sx={{ flex: 1 }} size="small" value={form.recipientType} onChange={e => setForm({ ...form, recipientType: e.target.value })}>
+            <TextField select label="Recipients" sx={{ flex: 1 }} size="small" value={form.recipientType} onChange={(e) => setForm({ ...form, recipientType: e.target.value })}>
               <MenuItem value="all_parents">All Parents</MenuItem>
               <MenuItem value="class_parents">Class Parents</MenuItem>
               <MenuItem value="individual_parent">Individual Parent</MenuItem>
             </TextField>
-            
+
             {form.recipientType === "class_parents" && (
-              <TextField select label="Select Class" sx={{ flex: 1 }} size="small" value={form.classId} onChange={e => setForm({ ...form, classId: e.target.value })}>
-                {classes.map(c => <MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>)}
+              <TextField select label="Select Class" sx={{ flex: 1 }} size="small" value={form.classId} onChange={(e) => setForm({ ...form, classId: e.target.value })}>
+                {classes.map((c) => <MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>)}
               </TextField>
             )}
 
             {form.recipientType === "individual_parent" && (
-              <TextField select label="Select Student" sx={{ flex: 1 }} size="small" value={form.studentId} onChange={e => setForm({ ...form, studentId: e.target.value })}>
-                {students.map(s => <MenuItem key={s.id} value={s.id}>{s.firstName} {s.lastName}</MenuItem>)}
+              <TextField select label="Select Student" sx={{ flex: 1 }} size="small" value={form.studentId} onChange={(e) => setForm({ ...form, studentId: e.target.value })}>
+                {students.map((s) => <MenuItem key={s.id} value={s.id}>{s.firstName} {s.lastName}</MenuItem>)}
               </TextField>
             )}
           </Box>
 
-          <TextField select label="Channel" fullWidth size="small" value={form.channel} onChange={e => setForm({ ...form, channel: e.target.value as any })}>
+          <TextField select label="Channel" fullWidth size="small" value={form.channel} onChange={(e) => setForm({ ...form, channel: e.target.value })}>
             <MenuItem value="announcement">Announcement</MenuItem>
             <MenuItem value="circular">Circular</MenuItem>
             <MenuItem value="sms_alert">SMS Alert</MenuItem>
           </TextField>
 
-          <TextField label="Message Body" multiline rows={4} fullWidth size="small" value={form.body} onChange={e => setForm({ ...form, body: e.target.value })} />
+          <TextField label="Message Body" multiline rows={4} fullWidth size="small" value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} />
         </Box>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
         <Button variant="contained" startIcon={<SendIcon />} onClick={() => {
-          const cls = classes.find(c => c.id === form.classId);
-          const std = students.find(s => s.id === form.studentId);
-          onSend({ 
-            ...form, 
-            className: cls?.name, 
+          const cls = classes.find((c) => c.id === form.classId);
+          const std = students.find((s) => s.id === form.studentId);
+          onSend({
+            ...form,
+            className: cls?.name,
             studentName: std ? `${std.firstName} ${std.lastName}` : undefined,
             parentName: std ? std.parent.primaryContactName : undefined
           });
@@ -295,7 +294,7 @@ function ComposeMessageDialog({ open, onClose, onSend }: { open: boolean, onClos
   );
 }
 
-function MessageDetailDialog({ open, message, reply, onClose, onMarkRead }: { open: boolean, message?: SchoolMessage, reply?: ParentReply, onClose: () => void, onMarkRead?: () => void }) {
+function MessageDetailDialog({ open, message, reply, onClose, onMarkRead }) {
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>{reply ? "Parent Response" : "Message Detail"}</DialogTitle>
@@ -307,7 +306,7 @@ function MessageDetailDialog({ open, message, reply, onClose, onMarkRead }: { op
             <Typography variant="body2" color="text.secondary">{message.body}</Typography>
           </Box>
         )}
-        
+
         {reply && (
           <Box sx={{ p: 2, borderLeft: 4, borderColor: "secondary.main", bgcolor: "secondary.light", borderRadius: "0 4px 4px 0" }}>
             <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>

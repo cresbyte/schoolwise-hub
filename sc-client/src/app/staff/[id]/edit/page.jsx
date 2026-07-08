@@ -26,7 +26,6 @@ import { useNotification } from "@/context/NotificationContext";
 import { useAsync } from "@/hooks/useAsync";
 import * as api from "@/lib/mockApi";
 import { CONTRACT_TYPES } from "@/lib/constants";
-import type { Staff } from "@/lib/types";
 
 const schema = z.object({
   firstName: z.string().min(2, "Required"),
@@ -53,33 +52,32 @@ const schema = z.object({
   status: z.enum(["active", "on_leave", "suspended", "terminated"]),
   subjectsTeaching: z.array(z.string()),
 });
-type FormValues = z.infer<typeof schema>;
 
 export default function EditStaffPage() {
   const params = useParams();
-  const id = params.id as string;
+  const id = params.id;
   const staff = useStaffMember(id);
 
   return (
     <DashboardLayout>
       <PageHeader title="Edit Staff" subtitle={staff.data ? `Updating ${staff.data.firstName} ${staff.data.lastName}` : "Updating staff information"} />
       <DataState loading={staff.loading} error={staff.error} data={staff.data} onRetry={staff.refetch}>
-        {(s: Staff) => <EditStaffForm staff={s} />}
+        {(s) => <EditStaffForm staff={s} />}
       </DataState>
     </DashboardLayout>
   );
 }
 
-function EditStaffForm({ staff }: { staff: Staff }) {
+function EditStaffForm({ staff }) {
   const router = useRouter();
   const { showNotification } = useNotification();
 
-  const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormValues>({
+  const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       firstName: staff.firstName,
       lastName: staff.lastName,
-      gender: staff.gender as any,
+      gender: staff.gender,
       dateOfBirth: staff.dateOfBirth,
       phone: staff.phone,
       email: staff.email || "",
@@ -107,7 +105,7 @@ function EditStaffForm({ staff }: { staff: Staff }) {
   const designations = useAsync(() => api.getDesignations(staff.id), [staff.id]);
 
   const onSubmit = handleSubmit(async (v) => {
-    const payload: Partial<Staff> = {
+    const payload = {
       firstName: v.firstName,
       lastName: v.lastName,
       gender: v.gender,
@@ -118,11 +116,11 @@ function EditStaffForm({ staff }: { staff: Staff }) {
       kraPin: v.kraPin,
       nssfNumber: v.nssfNumber,
       shifNumber: v.shifNumber,
-      contractType: v.contractType as any,
+      contractType: v.contractType,
       designation: v.designation,
       department: v.department,
       dateJoined: v.dateJoined,
-      status: v.status as any,
+      status: v.status,
       basicSalary: v.basicSalary,
       subjectsTeaching: v.subjectsTeaching,
       houseAllowance: v.houseAllowance,
@@ -177,7 +175,7 @@ function EditStaffForm({ staff }: { staff: Staff }) {
             </TextField>
           )} />
           <Controller name="department" control={control} render={({ field }) => <TextField {...field} label="Department" size="small" />} />
-          
+
           <Box sx={{ gridColumn: { lg: "span 3" } }}>
             <Controller
               name="subjectsTeaching"
@@ -187,9 +185,9 @@ function EditStaffForm({ staff }: { staff: Staff }) {
                   multiple
                   id="subjects-teaching"
                   options={subjects.data || []}
-                  getOptionLabel={(option: any) => `${option.name} (${option.code})`}
-                  value={(subjects.data || []).filter((s: any) => field.value?.includes(s.id))}
-                  onChange={(_, val) => field.onChange(val.map((v: any) => v.id))}
+                  getOptionLabel={(option) => `${option.name} (${option.code})`}
+                  value={(subjects.data || []).filter((s) => field.value?.includes(s.id))}
+                  onChange={(_, val) => field.onChange(val.map((v) => v.id))}
                   renderInput={(params) => (
                     <TextField {...params} label="Subjects Teaching" placeholder="Select subjects..." size="small" />
                   )}

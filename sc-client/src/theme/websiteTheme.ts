@@ -51,18 +51,18 @@ export const KAB = {
 /** Website-specific typography options */
 export const WEBSITE_TYPOGRAPHY = {
   fontFamily: {
-    heading: "'Poppins', system-ui, -apple-system, sans-serif",
-    body: "'Poppins', system-ui, -apple-system, sans-serif",
+    heading: "'Outfit', system-ui, -apple-system, sans-serif",
+    body: "'Outfit', system-ui, -apple-system, sans-serif",
   },
   headingStyles: {
     hero: {
-      fontFamily: "'Poppins', sans-serif",
+      fontFamily: "'Outfit', sans-serif",
       fontWeight: 700,
       lineHeight: 1.15,
       letterSpacing: "-0.02em",
     },
     section: {
-      fontFamily: "'Poppins', sans-serif",
+      fontFamily: "'Outfit', sans-serif",
       fontWeight: 700,
       lineHeight: 1.25,
     },

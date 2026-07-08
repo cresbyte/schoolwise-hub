@@ -8,14 +8,27 @@ import Divider from "@mui/material/Divider";
 import SchoolIcon from "@mui/icons-material/School";
 import { school } from "@/lib/mockData";
 import { formatDateTime } from "@/lib/utils";
+import Image from "next/image";
+
 
 /** School header for printed documents. */
 export function Letterhead({ title }: { title?: string }) {
   return (
     <Box sx={{ mb: 2 }}>
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-        <Box sx={{ width: 56, height: 56, borderRadius: "50%", bgcolor: "primary.main", color: "common.white", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <SchoolIcon fontSize="large" />
+        <Box
+          sx={{
+            width: 56,
+            height: 56,
+            borderRadius: "50%",
+            bgcolor: "primary.main",
+            color: "common.white",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Image src="/school-logo.png" alt="School Logo" width={60} height={60} priority />
         </Box>
         <Box sx={{ flex: 1 }}>
           <Typography variant="h5" sx={{ fontWeight: 800, color: "primary.main" }}>
@@ -33,7 +46,10 @@ export function Letterhead({ title }: { title?: string }) {
         </Typography>
       </Box>
       {title && (
-        <Typography variant="h6" sx={{ mt: 1.5, textAlign: "center", textTransform: "uppercase", letterSpacing: 1 }}>
+        <Typography
+          variant="h6"
+          sx={{ mt: 1.5, textAlign: "center", textTransform: "uppercase", letterSpacing: 1 }}
+        >
           {title}
         </Typography>
       )}

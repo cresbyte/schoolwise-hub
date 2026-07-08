@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Box from "@mui/material/Box";
+import { Box } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
@@ -36,7 +36,6 @@ import { useAsync } from "@/hooks/useAsync";
 import { useNotification } from "@/context/NotificationContext";
 import * as api from "@/lib/mockApi";
 import { formatKES, formatDate } from "@/lib/utils";
-import type { SpecialLevy, LevyScope, Student } from "@/lib/types";
 
 export default function LeviesPage() {
   return (
@@ -51,13 +50,18 @@ export default function LeviesPage() {
 function LeviesContent() {
   const { showNotification } = useNotification();
   const [filters, setFilters] = useState({ status: "active", term: 2 });
-  const { data: levies = [], loading, error, refetch } = useAsync(() => api.getAllLevies(filters), [filters]);
+  const {
+    data: levies = [],
+    loading,
+    error,
+    refetch,
+  } = useAsync(() => api.getAllLevies(filters), [filters]);
 
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedLevy, setSelectedLevy] = useState<SpecialLevy | null>(null);
+  const [selectedLevy, setSelectedLevy] = useState(null);
   const [detailOpen, setDetailOpen] = useState(false);
 
-  const handleCancelLevy = async (id: string) => {
+  const handleCancelLevy = async (id) => {
     if (confirm("Are you sure you want to cancel this levy?")) {
       await api.cancelLevy(id);
       showNotification("Levy cancelled", "success");
@@ -108,7 +112,13 @@ function LeviesContent() {
             </TextField>
           </Stack>
 
-          <DataState loading={loading} error={error} data={levies} isEmpty={(d) => d.length === 0} emptyMessage="No levies found matching filters">
+          <DataState
+            loading={loading}
+            error={error}
+            data={levies}
+            isEmpty={(d) => d.length === 0}
+            emptyMessage="No levies found matching filters"
+          >
             {(items) => (
               <Table>
                 <TableHead>
@@ -126,30 +136,60 @@ function LeviesContent() {
                   {items.map((l) => (
                     <TableRow key={l.id}>
                       <TableCell>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>{l.title}</Typography>
-                        <Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>{l.description.substring(0, 40)}...</Typography>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                          {l.title}
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ display: "block" }}
+                        >
+                          {l.description.substring(0, 40)}...
+                        </Typography>
                       </TableCell>
                       <TableCell>
                         <Chip label={l.category} size="small" variant="outlined" />
                       </TableCell>
                       <TableCell>
-                        <Typography variant="body2" sx={{ textTransform: "capitalize" }}>{l.scope}</Typography>
-                        {l.className && <Typography variant="caption" color="text.secondary">{l.className}</Typography>}
-                        {l.gradeLevel && <Typography variant="caption" color="text.secondary">{l.gradeLevel}</Typography>}
+                        <Typography variant="body2" sx={{ textTransform: "capitalize" }}>
+                          {l.scope}
+                        </Typography>
+                        {l.className && (
+                          <Typography variant="caption" color="text.secondary">
+                            {l.className}
+                          </Typography>
+                        )}
+                        {l.gradeLevel && (
+                          <Typography variant="caption" color="text.secondary">
+                            {l.gradeLevel}
+                          </Typography>
+                        )}
                       </TableCell>
                       <TableCell align="right">{formatKES(l.amount)}</TableCell>
                       <TableCell>{formatDate(l.dueDate)}</TableCell>
                       <TableCell>
-                        <Chip 
-                          label={l.status.toUpperCase()} 
-                          size="small" 
-                          color={l.status === 'active' ? 'success' : l.status === 'closed' ? 'default' : 'error'} 
+                        <Chip
+                          label={l.status.toUpperCase()}
+                          size="small"
+                          color={
+                            l.status === "active"
+                              ? "success"
+                              : l.status === "closed"
+                                ? "default"
+                                : "error"
+                          }
                         />
                       </TableCell>
                       <TableCell align="right">
                         <Stack direction="row" spacing={1} sx={{ justifyContent: "flex-end" }}>
                           <Tooltip title="View Collection">
-                            <IconButton size="small" onClick={() => { setSelectedLevy(l); setDetailOpen(true); }}>
+                            <IconButton
+                              size="small"
+                              onClick={() => {
+                                setSelectedLevy(l);
+                                setDetailOpen(true);
+                              }}
+                            >
                               <VisibilityIcon fontSize="small" />
                             </IconButton>
                           </Tooltip>
@@ -158,7 +198,11 @@ function LeviesContent() {
                               <IconButton size="small">
                                 <EditIcon fontSize="small" />
                               </IconButton>
-                              <IconButton size="small" color="error" onClick={() => handleCancelLevy(l.id)}>
+                              <IconButton
+                                size="small"
+                                color="error"
+                                onClick={() => handleCancelLevy(l.id)}
+                              >
                                 <CancelIcon fontSize="small" />
                               </IconButton>
                             </>
@@ -174,16 +218,26 @@ function LeviesContent() {
         </CardContent>
       </Card>
 
-      <NewLevyDialog open={openDialog} onClose={() => setOpenDialog(false)} onSuccess={() => refetch()} />
-      {selectedLevy && <LevyDetailDialog open={detailOpen} onClose={() => setDetailOpen(false)} levy={selectedLevy} />}
+      <NewLevyDialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        onSuccess={() => refetch()}
+      />
+      {selectedLevy && (
+        <LevyDetailDialog
+          open={detailOpen}
+          onClose={() => setDetailOpen(false)}
+          levy={selectedLevy}
+        />
+      )}
     </Box>
   );
 }
 
-function NewLevyDialog({ open, onClose, onSuccess }: { open: boolean, onClose: () => void, onSuccess: () => void }) {
+function NewLevyDialog({ open, onClose, onSuccess }) {
   const { showNotification } = useNotification();
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<Partial<SpecialLevy>>({
+  const [formData, setFormData] = useState({
     title: "",
     description: "",
     category: "activity",
@@ -202,7 +256,7 @@ function NewLevyDialog({ open, onClose, onSuccess }: { open: boolean, onClose: (
     if (!formData.title || !formData.amount) return;
     setLoading(true);
     try {
-      await api.createLevy(formData as any);
+      await api.createLevy(formData);
       showNotification("Special levy created successfully", "success");
       onSuccess();
       onClose();
@@ -216,27 +270,27 @@ function NewLevyDialog({ open, onClose, onSuccess }: { open: boolean, onClose: (
       <DialogTitle>New Special Levy</DialogTitle>
       <DialogContent sx={{ pt: 1 }}>
         <Stack spacing={2} sx={{ mt: 1 }}>
-          <TextField 
-            label="Levy Title" 
-            fullWidth 
-            required 
-            value={formData.title} 
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })} 
+          <TextField
+            label="Levy Title"
+            fullWidth
+            required
+            value={formData.title}
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
           />
-          <TextField 
-            label="Description" 
-            fullWidth 
-            multiline 
-            rows={2} 
-            value={formData.description} 
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })} 
+          <TextField
+            label="Description"
+            fullWidth
+            multiline
+            rows={2}
+            value={formData.description}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           />
           <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
-            <TextField 
-              select 
-              label="Category" 
-              value={formData.category} 
-              onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
+            <TextField
+              select
+              label="Category"
+              value={formData.category}
+              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
             >
               <MenuItem value="trip">Trip</MenuItem>
               <MenuItem value="kit">Kit</MenuItem>
@@ -245,53 +299,57 @@ function NewLevyDialog({ open, onClose, onSuccess }: { open: boolean, onClose: (
               <MenuItem value="stationery">Stationery</MenuItem>
               <MenuItem value="other">Other</MenuItem>
             </TextField>
-            <TextField 
-              label="Amount (KES)" 
-              type="number" 
-              required 
-              value={formData.amount} 
-              onChange={(e) => setFormData({ ...formData, amount: Number(e.target.value) })} 
+            <TextField
+              label="Amount (KES)"
+              type="number"
+              required
+              value={formData.amount}
+              onChange={(e) => setFormData({ ...formData, amount: Number(e.target.value) })}
             />
           </Box>
           <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
-            <TextField 
-              select 
-              label="Scope" 
-              value={formData.scope} 
-              onChange={(e) => setFormData({ ...formData, scope: e.target.value as LevyScope })}
+            <TextField
+              select
+              label="Scope"
+              value={formData.scope}
+              onChange={(e) => setFormData({ ...formData, scope: e.target.value })}
             >
               <MenuItem value="all">All Students</MenuItem>
               <MenuItem value="class">Specific Class</MenuItem>
               <MenuItem value="grade">Specific Grade</MenuItem>
               <MenuItem value="individual">Individual Students</MenuItem>
             </TextField>
-            {formData.scope === 'class' && (
-              <TextField 
-                select 
-                label="Class" 
-                value={formData.classId || ''} 
+            {formData.scope === "class" && (
+              <TextField
+                select
+                label="Class"
+                value={formData.classId || ""}
                 onChange={(e) => {
-                  const cls = classes.find(c => c.id === e.target.value);
+                  const cls = classes.find((c) => c.id === e.target.value);
                   setFormData({ ...formData, classId: e.target.value, className: cls?.name });
                 }}
               >
-                {classes.map(c => <MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>)}
+                {classes.map((c) => (
+                  <MenuItem key={c.id} value={c.id}>
+                    {c.name}
+                  </MenuItem>
+                ))}
               </TextField>
             )}
           </Box>
           <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
-            <TextField 
-              label="Due Date" 
-              type="date" 
-              slotProps={{ inputLabel: { shrink: true } }} 
-              value={formData.dueDate} 
-              onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })} 
+            <TextField
+              label="Due Date"
+              type="date"
+              slotProps={{ inputLabel: { shrink: true } }}
+              value={formData.dueDate}
+              onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
             />
-            <TextField 
-              select 
-              label="Term" 
-              value={formData.term} 
-              onChange={(e) => setFormData({ ...formData, term: Number(e.target.value) as any })}
+            <TextField
+              select
+              label="Term"
+              value={formData.term}
+              onChange={(e) => setFormData({ ...formData, term: Number(e.target.value) })}
             >
               <MenuItem value={1}>Term 1</MenuItem>
               <MenuItem value={2}>Term 2</MenuItem>
@@ -302,7 +360,11 @@ function NewLevyDialog({ open, onClose, onSuccess }: { open: boolean, onClose: (
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button variant="contained" onClick={handleSubmit} disabled={loading || !formData.title || !formData.amount}>
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          disabled={loading || !formData.title || !formData.amount}
+        >
           Create Levy
         </Button>
       </DialogActions>
@@ -310,10 +372,14 @@ function NewLevyDialog({ open, onClose, onSuccess }: { open: boolean, onClose: (
   );
 }
 
-function LevyDetailDialog({ open, onClose, levy }: { open: boolean, onClose: () => void, levy: SpecialLevy }) {
-  const { data: summary, loading, refetch } = useAsync(() => api.getLevyCollectionSummary(levy.id), [levy.id]);
+function LevyDetailDialog({ open, onClose, levy }) {
+  const {
+    data: summary,
+    loading,
+    refetch,
+  } = useAsync(() => api.getLevyCollectionSummary(levy.id), [levy.id]);
   const [payDialogOpen, setPayDialogOpen] = useState(false);
-  const [selectedStudent, setSelectedStudent] = useState<any>(null);
+  const [selectedStudent, setSelectedStudent] = useState(null);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
@@ -324,29 +390,55 @@ function LevyDetailDialog({ open, onClose, levy }: { open: boolean, onClose: () 
             <>
               <Box sx={{ mb: 3, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 2 }}>
                 <Box>
-                  <Typography variant="caption" color="text.secondary">Total Target</Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Total Target
+                  </Typography>
                   <Typography variant="h6">{s.totalStudents} Students</Typography>
                 </Box>
                 <Box>
-                  <Typography variant="caption" color="text.secondary">Collection Rate</Typography>
-                  <Typography variant="h6">{Math.round((s.paid / s.totalStudents) * 100)}%</Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Collection Rate
+                  </Typography>
+                  <Typography variant="h6">
+                    {Math.round((s.paid / s.totalStudents) * 100)}%
+                  </Typography>
                 </Box>
                 <Box>
-                  <Typography variant="caption" color="text.secondary">Total Collected</Typography>
-                  <Typography variant="h6" color="success.main">{formatKES(s.totalCollected)}</Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Total Collected
+                  </Typography>
+                  <Typography variant="h6" color="success.main">
+                    {formatKES(s.totalCollected)}
+                  </Typography>
                 </Box>
-              </Box>
-              
-              <Box sx={{ mb: 3 }}>
-                <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
-                  <Typography variant="body2">{s.paid} / {s.totalStudents} Students Paid</Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatKES(s.totalCollected)} / {formatKES(s.totalStudents * levy.amount)}</Typography>
-                </Box>
-                <LinearProgress variant="determinate" value={(s.paid / s.totalStudents) * 100} sx={{ height: 8, borderRadius: 4 }} />
               </Box>
 
-              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700 }}>Student Payment Status</Typography>
-              <StudentPaymentList levyId={levy.id} onRecordPayment={(student) => { setSelectedStudent(student); setPayDialogOpen(true); }} />
+              <Box sx={{ mb: 3 }}>
+                <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
+                  <Typography variant="body2">
+                    {s.paid} / {s.totalStudents} Students Paid
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                    {formatKES(s.totalCollected)} / {formatKES(s.totalStudents * levy.amount)}
+                  </Typography>
+                </Box>
+                <LinearProgress
+                  variant="determinate"
+                  value={(s.paid / s.totalStudents) * 100}
+                  sx={{ height: 8, borderRadius: 4 }}
+                />
+              </Box>
+
+              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700 }}>
+                Student Payment Status
+              </Typography>
+              <StudentPaymentList
+                levyId={levy.id}
+                onRecordPayment={(student) => {
+                  setSelectedStudent(student);
+                  setPayDialogOpen(true);
+                }}
+              />
             </>
           )}
         </DataState>
@@ -356,31 +448,37 @@ function LevyDetailDialog({ open, onClose, levy }: { open: boolean, onClose: () 
       </DialogActions>
 
       {selectedStudent && (
-        <RecordPaymentDialog 
-          open={payDialogOpen} 
-          onClose={() => setPayDialogOpen(false)} 
-          levy={levy} 
-          student={selectedStudent} 
-          onSuccess={() => { refetch(); }} 
+        <RecordPaymentDialog
+          open={payDialogOpen}
+          onClose={() => setPayDialogOpen(false)}
+          levy={levy}
+          student={selectedStudent}
+          onSuccess={() => {
+            refetch();
+          }}
         />
       )}
     </Dialog>
   );
 }
 
-function StudentPaymentList({ levyId, onRecordPayment }: { levyId: string, onRecordPayment: (s: any) => void }) {
-  const { data: summary, loading: summaryLoading } = useAsync(() => api.getLevyCollectionSummary(levyId), [levyId]);
+function StudentPaymentList({ levyId, onRecordPayment }) {
+  const { data: summary, loading: summaryLoading } = useAsync(
+    () => api.getLevyCollectionSummary(levyId),
+    [levyId],
+  );
   const { data: studentsData, loading: studentsLoading } = useAsync(async () => {
     const l = await api.getAllLevies();
-    const target = l.find(x => x.id === levyId);
+    const target = l.find((x) => x.id === levyId);
     if (!target) return [];
-    if (target.scope === "class") return api.getStudentsByClass(target.classId!);
+    if (target.scope === "class") return api.getStudentsByClass(target.classId);
     if (target.scope === "grade") {
       const all = await api.getStudents();
-      return all.filter(s => s.gradeLevel === (target as any).gradeLevel);
+      return all.filter((s) => s.gradeLevel === target.gradeLevel);
     }
     if (target.scope === "all") return api.getStudents();
-    if (target.scope === "individual") return Promise.all((target.studentIds || []).map(id => api.getStudentById(id)));
+    if (target.scope === "individual")
+      return Promise.all((target.studentIds || []).map((id) => api.getStudentById(id)));
     return [];
   }, [levyId]);
 
@@ -399,13 +497,17 @@ function StudentPaymentList({ levyId, onRecordPayment }: { levyId: string, onRec
         </TableRow>
       </TableHead>
       <TableBody>
-        {students.map((st: Student) => {
-          const payment = summary?.payments.find(p => p.studentId === st.id);
+        {students.map((st) => {
+          const payment = summary?.payments.find((p) => p.studentId === st.id);
           return (
             <TableRow key={st.id}>
               <TableCell>
-                <Typography variant="body2">{st.firstName} {st.lastName}</Typography>
-                <Typography variant="caption" color="text.secondary">{st.admissionNumber}</Typography>
+                <Typography variant="body2">
+                  {st.firstName} {st.lastName}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {st.admissionNumber}
+                </Typography>
               </TableCell>
               <TableCell>
                 {payment ? (
@@ -414,12 +516,14 @@ function StudentPaymentList({ levyId, onRecordPayment }: { levyId: string, onRec
                   <Chip label="UNPAID" size="small" color="error" variant="outlined" />
                 )}
               </TableCell>
-              <TableCell>
-                {payment ? formatDate(payment.paidAt) : "-"}
-              </TableCell>
+              <TableCell>{payment ? formatDate(payment.paidAt) : "-"}</TableCell>
               <TableCell align="right">
                 {!payment && (
-                  <Button size="small" startIcon={<ReceiptIcon />} onClick={() => onRecordPayment(st)}>
+                  <Button
+                    size="small"
+                    startIcon={<ReceiptIcon />}
+                    onClick={() => onRecordPayment(st)}
+                  >
                     Record Payment
                   </Button>
                 )}
@@ -432,7 +536,7 @@ function StudentPaymentList({ levyId, onRecordPayment }: { levyId: string, onRec
   );
 }
 
-function RecordPaymentDialog({ open, onClose, levy, student, onSuccess }: { open: boolean, onClose: () => void, levy: SpecialLevy, student: Student, onSuccess: () => void }) {
+function RecordPaymentDialog({ open, onClose, levy, student, onSuccess }) {
   const { showNotification } = useNotification();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -451,7 +555,7 @@ function RecordPaymentDialog({ open, onClose, levy, student, onSuccess }: { open
         studentName: `${student.firstName} ${student.lastName}`,
         amount: formData.amount,
         paidAt: new Date().toISOString(),
-        paymentMethod: formData.paymentMethod as any,
+        paymentMethod: formData.paymentMethod,
         mpesaCode: formData.mpesaCode,
         recordedBy: "Accountant",
       });
@@ -468,24 +572,44 @@ function RecordPaymentDialog({ open, onClose, levy, student, onSuccess }: { open
       <DialogTitle>Record Levy Payment</DialogTitle>
       <DialogContent>
         <Typography variant="body2" sx={{ mb: 2 }}>
-          <strong>Student:</strong> {student.firstName} {student.lastName}<br />
+          <strong>Student:</strong> {student.firstName} {student.lastName}
+          <br />
           <strong>Levy:</strong> {levy.title}
         </Typography>
         <Stack spacing={2}>
-          <TextField label="Amount" type="number" fullWidth value={formData.amount} onChange={e => setFormData({ ...formData, amount: Number(e.target.value) })} />
-          <TextField select label="Payment Method" fullWidth value={formData.paymentMethod} onChange={e => setFormData({ ...formData, paymentMethod: e.target.value })}>
+          <TextField
+            label="Amount"
+            type="number"
+            fullWidth
+            value={formData.amount}
+            onChange={(e) => setFormData({ ...formData, amount: Number(e.target.value) })}
+          />
+          <TextField
+            select
+            label="Payment Method"
+            fullWidth
+            value={formData.paymentMethod}
+            onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
+          >
             <MenuItem value="mpesa">M-Pesa</MenuItem>
             <MenuItem value="cash">Cash</MenuItem>
             <MenuItem value="bank_transfer">Bank Transfer</MenuItem>
           </TextField>
-          {formData.paymentMethod === 'mpesa' && (
-            <TextField label="M-Pesa Code" fullWidth value={formData.mpesaCode} onChange={e => setFormData({ ...formData, mpesaCode: e.target.value })} />
+          {formData.paymentMethod === "mpesa" && (
+            <TextField
+              label="M-Pesa Code"
+              fullWidth
+              value={formData.mpesaCode}
+              onChange={(e) => setFormData({ ...formData, mpesaCode: e.target.value })}
+            />
           )}
         </Stack>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button variant="contained" onClick={handleRecord} disabled={loading}>Record Payment</Button>
+        <Button variant="contained" onClick={handleRecord} disabled={loading}>
+          Record Payment
+        </Button>
       </DialogActions>
     </Dialog>
   );

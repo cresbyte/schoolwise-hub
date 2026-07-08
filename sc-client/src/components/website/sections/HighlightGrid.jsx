@@ -8,12 +8,11 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import { motion } from "framer-motion";
 import { SectionHeading } from "@/components/website/SectionHeading";
-import type { WhyChooseUsItem } from "@/lib/website/data";
 import { KAB } from "@/theme/websiteTheme";
 import { staggerContainer, staggerItem, viewportOnce } from "@/lib/motion";
 
 // Map icon names to Material Symbols / emoji fallbacks
-const ICON_MAP: Record<string, string> = {
+const ICON_MAP = {
   school: "🎓",
   groups: "👩‍🏫",
   apartment: "🏫",
@@ -22,12 +21,8 @@ const ICON_MAP: Record<string, string> = {
   family_restroom: "👨‍👩‍👧",
 };
 
-interface HighlightGridProps {
-  items: WhyChooseUsItem[];
-}
-
 /** Staggered card grid highlighting what makes the school unique. */
-export function HighlightGrid({ items }: HighlightGridProps) {
+export function HighlightGrid({ items }) {
   return (
     <Box
       component="section"
@@ -91,7 +86,7 @@ export function HighlightGrid({ items }: HighlightGridProps) {
               </Box>
               <Typography
                 sx={{
-                  fontFamily: "'Poppins', sans-serif",
+                  fontFamily: "'Outfit', sans-serif",
                   fontWeight: 700,
                   fontSize: 15,
                   color: KAB.textPrimary,
@@ -102,7 +97,7 @@ export function HighlightGrid({ items }: HighlightGridProps) {
               </Typography>
               <Typography
                 sx={{
-                  fontFamily: "'Poppins', sans-serif",
+                  fontFamily: "'Outfit', sans-serif",
                   fontSize: 13,
                   color: KAB.textSecondary,
                   lineHeight: 1.7,

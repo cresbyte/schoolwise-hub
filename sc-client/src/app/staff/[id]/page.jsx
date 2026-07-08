@@ -40,11 +40,12 @@ import { useNotification } from "@/context/NotificationContext";
 import * as api from "@/lib/mockApi";
 import { formatDate, formatKES, getInitials } from "@/lib/utils";
 import { CONTRACT_TYPES, LEAVE_TYPES } from "@/lib/constants";
-import type { Staff } from "@/lib/types";
+import * as db from "@/lib/mockData";
+import { clone } from "@/lib/mockApi";
 
 export default function StaffDetailsPage() {
   const params = useParams();
-  const id = params.id as string;
+  const id = params.id;
   return (
     <DashboardLayout>
       <PageGuard permission="staff.view">
@@ -54,7 +55,7 @@ export default function StaffDetailsPage() {
   );
 }
 
-function Field({ label, value }: { label: string; value?: string | number }) {
+function Field({ label, value }) {
   return (
     <Box>
       <Typography variant="caption" color="text.secondary">{label}</Typography>
@@ -63,14 +64,14 @@ function Field({ label, value }: { label: string; value?: string | number }) {
   );
 }
 
-function StaffDetailContent({ id }: { id: string }) {
+function StaffDetailContent({ id }) {
   const router = useRouter();
   const { data, loading, error, refetch } = useAsync(() => api.getStaffById(id), [id]);
   const [tab, setTab] = useState(0);
 
   return (
     <DataState loading={loading} error={error} data={data} onRetry={refetch}>
-      {(s: Staff) => (
+      {(s) => (
         <>
           <Button startIcon={<ArrowBackIcon />} onClick={() => router.push("/staff")} sx={{ mb: 2 }}>
             Back to Staff
@@ -79,8 +80,8 @@ function StaffDetailContent({ id }: { id: string }) {
           <Card sx={{ mb: 2 }}>
             <CardContent>
               <Box sx={{ display: "flex", gap: 3, alignItems: "center", flexWrap: "wrap" }}>
-                <Avatar 
-                  src={s.avatarUrl || s.photo} 
+                <Avatar
+                  src={s.avatarUrl || s.photo}
                   alt={`${s.firstName} ${s.lastName}`}
                   sx={{ width: 84, height: 84, fontSize: 28, bgcolor: "secondary.main" }}
                 >
@@ -122,7 +123,7 @@ function StaffDetailContent({ id }: { id: string }) {
   );
 }
 
-function PersonalTab({ s }: { s: Staff }) {
+function PersonalTab({ s }) {
   return (
     <Box>
       <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1.5 }}>Employment Details</Typography>
@@ -152,7 +153,7 @@ function PersonalTab({ s }: { s: Staff }) {
         <Field label="Next of Kin" value={s.nextOfKin?.name} />
         <Field label="Next of Kin Phone" value={s.nextOfKin?.phone} />
       </Box>
-      
+
       {s.subjectsTeaching && s.subjectsTeaching.length > 0 && (
         <>
           <Divider sx={{ my: 2 }} />
@@ -168,11 +169,13 @@ function PersonalTab({ s }: { s: Staff }) {
   );
 }
 
-function TeachingLoadTab({ staffId }: { staffId: string }) {
+const classes = clone(db.classes); // We need classes for names
+
+function TeachingLoadTab({ staffId }) {
   const { data, loading, error, refetch } = useAsync(() => api.getTeacherLoad(staffId), [staffId]);
   const assignments = data?.classSubjects ?? [];
   const totalPeriods = data?.totalPeriods ?? 0;
-  const classesCount = new Set(assignments.map(a => a.classId)).size;
+  const classesCount = new Set(assignments.map((a) => a.classId)).size;
 
   return (
     <DataState loading={loading} error={error} data={assignments} onRetry={refetch} isEmpty={(d) => d.length === 0} emptyMessage="No subject assignments yet">
@@ -190,9 +193,9 @@ function TeachingLoadTab({ staffId }: { staffId: string }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {assignments.map((a: any) => (
+              {assignments.map((a) => (
                 <TableRow key={a.id} hover>
-                  <TableCell sx={{ fontWeight: 600 }}>{classes.find((c: any) => c.id === a.classId)?.name || a.classId}</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>{classes.find((c) => c.id === a.classId)?.name || a.classId}</TableCell>
                   <TableCell>{a.subjectName}</TableCell>
                   <TableCell>{a.periodsPerWeek} periods</TableCell>
                 </TableRow>
@@ -205,9 +208,7 @@ function TeachingLoadTab({ staffId }: { staffId: string }) {
   );
 }
 
-const classes = clone(db.classes); // We need classes for names
-
-function TimetableTab({ staffId }: { staffId: string }) {
+function TimetableTab({ staffId }) {
   const timetable = useAsync(() => api.getTeacherTimetable(staffId), [staffId]);
   const list = timetable.data ?? [];
   const classIds = [...new Set(list.map((s) => s.classId))];
@@ -229,7 +230,7 @@ function TimetableTab({ staffId }: { staffId: string }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {list.map((slot: any, i: number) => (
+              {list.map((slot, i) => (
                 <TableRow key={i} hover>
                   <TableCell sx={{ fontWeight: 600 }}>{slot.classId}</TableCell>
                   <TableCell>{slot.subjectName}</TableCell>
@@ -245,20 +246,17 @@ function TimetableTab({ staffId }: { staffId: string }) {
   );
 }
 
-import * as db from "@/lib/mockData";
-import { clone } from "@/lib/mockApi";
-
-function LeaveTab({ staffId }: { staffId: string }) {
+function LeaveTab({ staffId }) {
   const { showNotification } = useNotification();
   const leave = useAsync(() => api.getLeaveRequests({ staffId }), [staffId]);
   const list = leave.data ?? [];
 
-  const approve = async (id: string) => {
+  const approve = async (id) => {
     await api.updateLeaveStatus(id, "approved");
     leave.refetch();
     showNotification("Leave approved", "success");
   };
-  const reject = async (id: string) => {
+  const reject = async (id) => {
     await api.updateLeaveStatus(id, "rejected", "Does not meet leave criteria");
     leave.refetch();
     showNotification("Leave rejected", "info");
@@ -280,7 +278,7 @@ function LeaveTab({ staffId }: { staffId: string }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {list.map((lv: any) => (
+            {list.map((lv) => (
               <TableRow key={lv.id} hover>
                 <TableCell sx={{ fontWeight: 600 }}>{LEAVE_TYPES.find((t) => t.value === lv.leaveType)?.label ?? lv.leaveType}</TableCell>
                 <TableCell>{formatDate(lv.startDate)}</TableCell>
@@ -307,7 +305,7 @@ function LeaveTab({ staffId }: { staffId: string }) {
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-function PayrollTab({ staffId, staffName, staffNumber }: { staffId: string; staffName: string; staffNumber: string }) {
+function PayrollTab({ staffId, staffName, staffNumber }) {
   const [month, setMonth] = useState(6);
   const [year] = useState(2026);
   const [p9Open, setP9Open] = useState(false);
@@ -383,8 +381,8 @@ function PayrollTab({ staffId, staffName, staffNumber }: { staffId: string; staf
               <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2, flexWrap: "wrap", gap: 1 }}>
                 <Typography variant="body2"><strong>Employee:</strong> {staffName}</Typography>
                 <Typography variant="body2"><strong>Staff No:</strong> {staffNumber}</Typography>
-                <Typography variant="body2"><strong>KRA PIN:</strong> {(p9.data as any).staff?.kraPin ?? "—"}</Typography>
-                <Typography variant="body2"><strong>ID No:</strong> {(p9.data as any).staff?.idNumber ?? "—"}</Typography>
+                <Typography variant="body2"><strong>KRA PIN:</strong> {p9.data.staff?.kraPin ?? "—"}</Typography>
+                <Typography variant="body2"><strong>ID No:</strong> {p9.data.staff?.idNumber ?? "—"}</Typography>
               </Box>
               <Table size="small">
                 <TableHead>
@@ -396,7 +394,7 @@ function PayrollTab({ staffId, staffName, staffNumber }: { staffId: string; staf
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {(p9.data as any).months.map((m: any) => (
+                  {p9.data.months.map((m) => (
                     <TableRow key={m.month}>
                       <TableCell>{MONTHS[m.month - 1]}</TableCell>
                       <TableCell align="right">{formatKES(m.gross)}</TableCell>
@@ -406,15 +404,15 @@ function PayrollTab({ staffId, staffName, staffNumber }: { staffId: string; staf
                   ))}
                   <TableRow sx={{ bgcolor: "action.hover" }}>
                     <TableCell sx={{ fontWeight: 700 }}>TOTAL</TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 700 }}>{formatKES((p9.data as any).annualGross)}</TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 700 }}>{formatKES((p9.data as any).annualPaye)}</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 700 }}>{formatKES(p9.data.annualGross)}</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 700 }}>{formatKES(p9.data.annualPaye)}</TableCell>
                     <TableCell />
                   </TableRow>
                 </TableBody>
               </Table>
               <Box sx={{ mt: 2 }}>
-                <Typography variant="body2"><strong>Personal Relief:</strong> {formatKES((p9.data as any).personalRelief)}</Typography>
-                <Typography variant="body2"><strong>Taxable Income:</strong> {formatKES((p9.data as any).annualGross)}</Typography>
+                <Typography variant="body2"><strong>Personal Relief:</strong> {formatKES(p9.data.personalRelief)}</Typography>
+                <Typography variant="body2"><strong>Taxable Income:</strong> {formatKES(p9.data.annualGross)}</Typography>
               </Box>
             </Box>
           ) : null}

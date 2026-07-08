@@ -37,7 +37,6 @@ import { useAsync } from "@/hooks/useAsync";
 import * as api from "@/lib/mockApi";
 import { formatKES, getInitials, exportToCSV } from "@/lib/utils";
 import { CONTRACT_TYPES } from "@/lib/constants";
-import type { Staff } from "@/lib/types";
 
 export default function StaffPage() {
   return (
@@ -59,7 +58,15 @@ function StaffContent() {
 
   const handleExport = () =>
     exportToCSV(
-      list.map((s) => ({ StaffNo: s.staffNumber, Name: `${s.firstName} ${s.lastName}`, Designation: s.designation, Department: s.department ?? "", Contract: s.contractType, Phone: s.phone, Status: s.status })),
+      list.map((s) => ({
+        StaffNo: s.staffNumber,
+        Name: `${s.firstName} ${s.lastName}`,
+        Designation: s.designation,
+        Department: s.department ?? "",
+        Contract: s.contractType,
+        Phone: s.phone,
+        Status: s.status
+      })),
       "staff.csv",
     );
 
@@ -111,8 +118,8 @@ function StaffContent() {
                       <TableCell sx={{ fontFamily: "monospace", fontSize: 13 }}>{s.staffNumber}</TableCell>
                       <TableCell>
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                          <Avatar 
-                            src={s.avatarUrl || s.photo} 
+                          <Avatar
+                            src={s.avatarUrl || s.photo}
                             alt={`${s.firstName} ${s.lastName}`}
                             sx={{ width: 32, height: 32, fontSize: 12, bgcolor: "secondary.main" }}
                           >
@@ -130,7 +137,7 @@ function StaffContent() {
                         </Box>
                       </TableCell>
                       <TableCell>{s.phone}</TableCell>
-                      <TableCell align="right">{formatKES(s.basicSalary)}</TableCell>
+                      <TableCell align="right">{formatKES(s.basicSalary ?? 0)}</TableCell>
                       <TableCell><StatusChip status={s.status} /></TableCell>
                       <TableCell align="right">
                         <IconButton size="small" onClick={() => router.push(`/staff/${s.id}`)}><VisibilityIcon fontSize="small" /></IconButton>
@@ -148,17 +155,17 @@ function StaffContent() {
   );
 }
 
-function StaffSubjectChips({ staff }: { staff: Staff }) {
+function StaffSubjectChips({ staff }) {
   const subjects = useAsync(() => api.getSubjects(), []);
   const allSubs = subjects.data || [];
   const teaching = staff.subjectsTeaching || [];
-  
+
   if (teaching.length === 0) return <Typography variant="caption" color="text.secondary">No specializations</Typography>;
-  
+
   return (
     <>
       {teaching.slice(0, 3).map((subId) => {
-        const sub = allSubs.find(s => s.id === subId);
+        const sub = allSubs.find((s) => s.id === subId);
         return <Chip key={subId} size="small" label={sub?.name || subId} sx={{ fontSize: 10, height: 20 }} color="primary" variant="outlined" />;
       })}
       {teaching.length > 3 && (

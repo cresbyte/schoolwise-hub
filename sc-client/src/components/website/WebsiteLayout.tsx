@@ -16,7 +16,7 @@ import { WhatsAppButton } from "./WhatsAppButton";
 import { ScrollToTop } from "./ScrollToTop";
 import { BODY_FONT, HEADING_FONT } from "@/lib/website/constants";
 
-/** Extended theme: Poppins for all headings and body text on the public website. */
+/** Extended theme: Outfit for all headings and body text on the public website. */
 const websiteTheme = createTheme(theme, {
   typography: {
     fontFamily: BODY_FONT,

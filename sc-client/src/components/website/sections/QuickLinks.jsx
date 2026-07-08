@@ -129,7 +129,7 @@ export function QuickLinks() {
                 <Box sx={{ mb: 1.5 }}>{tile.icon}</Box>
                 <Typography
                   sx={{
-                    fontFamily: "'Poppins', sans-serif",
+                    fontFamily: "'Outfit', sans-serif",
                     fontWeight: 700,
                     fontSize: 13,
                     lineHeight: 1.3,
@@ -140,7 +140,7 @@ export function QuickLinks() {
                 </Typography>
                 <Typography
                   sx={{
-                    fontFamily: "'Poppins', sans-serif",
+                    fontFamily: "'Outfit', sans-serif",
                     fontSize: 11,
                     opacity: 0.75,
                     lineHeight: 1.4,

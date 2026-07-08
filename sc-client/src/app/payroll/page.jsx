@@ -36,7 +36,6 @@ import { useAsync } from "@/hooks/useAsync";
 import { useNotification } from "@/context/NotificationContext";
 import * as api from "@/lib/mockApi";
 import { formatKES } from "@/lib/utils";
-import type { PayrollRecord } from "@/lib/types";
 
 export default function PayrollPage() {
   return (
@@ -55,13 +54,13 @@ function PayrollContent() {
   const { showNotification } = useNotification();
   const [month, setMonth] = useState(6);
   const year = 2026;
-  const [payslip, setPayslip] = useState<PayrollRecord | null>(null);
+  const [payslip, setPayslip] = useState(null);
   const [busy, setBusy] = useState(false);
   const payroll = useAsync(() => api.getPayroll(month, year), [month]);
   const list = payroll.data ?? [];
 
-  const totalNet = list.reduce((s, p) => s + p.netPay, 0);
-  const totalGross = list.reduce((s, p) => s + p.grossPay, 0);
+  const totalNet = list.reduce((s, p) => s + (p.netPay ?? 0), 0);
+  const totalGross = list.reduce((s, p) => s + (p.grossPay ?? 0), 0);
 
   const run = async () => {
     setBusy(true);
@@ -114,7 +113,14 @@ function PayrollContent() {
         </TextField>
       </Card>
       <Card>
-        <DataState loading={payroll.loading} error={payroll.error} data={list} onRetry={payroll.refetch} isEmpty={(d: any) => d.length === 0} emptyMessage="Payroll not yet run for this month">
+        <DataState
+          loading={payroll.loading}
+          error={payroll.error}
+          data={list}
+          onRetry={payroll.refetch}
+          isEmpty={(d) => d.length === 0}
+          emptyMessage="Payroll not yet run for this month"
+        >
           {() => (
             <Box sx={{ overflowX: "auto" }}>
               <Table size="small" sx={{ minWidth: 900 }}>
@@ -132,15 +138,18 @@ function PayrollContent() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {list.map((p: any) => (
+                  {list.map((p) => (
                     <TableRow key={p.id} hover>
-                      <TableCell><Typography variant="body2" sx={{ fontWeight: 600 }}>{p.staffName}</Typography><Typography variant="caption" color="text.secondary">{p.staffNumber}</Typography></TableCell>
-                      <TableCell align="right">{formatKES(p.grossPay)}</TableCell>
-                      <TableCell align="right">{formatKES(p.paye)}</TableCell>
-                      <TableCell align="right">{formatKES(p.nssf)}</TableCell>
-                      <TableCell align="right">{formatKES(p.shif)}</TableCell>
-                      <TableCell align="right">{formatKES(p.housingLevy)}</TableCell>
-                      <TableCell align="right" sx={{ fontWeight: 700 }}>{formatKES(p.netPay)}</TableCell>
+                      <TableCell>
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{p.staffName}</Typography>
+                        <Typography variant="caption" color="text.secondary">{p.staffNumber}</Typography>
+                      </TableCell>
+                      <TableCell align="right">{formatKES(p.grossPay ?? 0)}</TableCell>
+                      <TableCell align="right">{formatKES(p.paye ?? 0)}</TableCell>
+                      <TableCell align="right">{formatKES(p.nssf ?? 0)}</TableCell>
+                      <TableCell align="right">{formatKES(p.shif ?? 0)}</TableCell>
+                      <TableCell align="right">{formatKES(p.housingLevy ?? 0)}</TableCell>
+                      <TableCell align="right" sx={{ fontWeight: 700 }}>{formatKES(p.netPay ?? 0)}</TableCell>
                       <TableCell><StatusChip status={p.paymentStatus} /></TableCell>
                       <TableCell><Button size="small" onClick={() => setPayslip(p)}>Payslip</Button></TableCell>
                     </TableRow>
@@ -157,13 +166,14 @@ function PayrollContent() {
 }
 
 /** Printable payslip. */
-function PayslipDialog({ payslip, month, year, onClose }: { payslip: PayrollRecord | null; month: number; year: number; onClose: () => void }) {
-  const Row = ({ label, value, bold }: { label: string; value: string; bold?: boolean }) => (
+function PayslipDialog({ payslip, month, year, onClose }) {
+  const Row = ({ label, value, bold }) => (
     <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.75 }}>
       <Typography variant="body2" sx={{ fontWeight: bold ? 700 : 400 }}>{label}</Typography>
       <Typography variant="body2" sx={{ fontWeight: bold ? 700 : 400 }}>{value}</Typography>
     </Box>
   );
+
   return (
     <Dialog open={!!payslip} onClose={onClose} maxWidth="sm" fullWidth>
       {payslip && (
@@ -176,22 +186,22 @@ function PayslipDialog({ payslip, month, year, onClose }: { payslip: PayrollReco
                 <Typography variant="body2"><strong>Staff No:</strong> {payslip.staffNumber}</Typography>
               </Box>
               <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>Earnings</Typography>
-              <Row label="Basic Salary" value={formatKES(payslip.basicSalary)} />
-              <Row label="House Allowance" value={formatKES(payslip.houseAllowance)} />
-              <Row label="Transport Allowance" value={formatKES(payslip.transportAllowance)} />
-              <Row label="Other Allowances" value={formatKES(payslip.otherAllowances)} />
-              <Row label="Gross Pay" value={formatKES(payslip.grossPay)} bold />
+              <Row label="Basic Salary" value={formatKES(payslip.basicSalary ?? 0)} />
+              <Row label="House Allowance" value={formatKES(payslip.houseAllowance ?? 0)} />
+              <Row label="Transport Allowance" value={formatKES(payslip.transportAllowance ?? 0)} />
+              <Row label="Other Allowances" value={formatKES(payslip.otherAllowances ?? 0)} />
+              <Row label="Gross Pay" value={formatKES(payslip.grossPay ?? 0)} bold />
               <Divider sx={{ my: 1.5 }} />
               <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>Statutory Deductions</Typography>
-              <Row label="PAYE" value={formatKES(payslip.paye)} />
-              <Row label="NSSF" value={formatKES(payslip.nssf)} />
-              <Row label="SHIF" value={formatKES(payslip.shif)} />
-              <Row label="Housing Levy" value={formatKES(payslip.housingLevy)} />
-              {payslip.loanDeduction > 0 && <Row label="Loan Deduction" value={formatKES(payslip.loanDeduction)} />}
-              <Row label="Total Deductions" value={formatKES(payslip.totalDeductions)} bold />
+              <Row label="PAYE" value={formatKES(payslip.paye ?? 0)} />
+              <Row label="NSSF" value={formatKES(payslip.nssf ?? 0)} />
+              <Row label="SHIF" value={formatKES(payslip.shif ?? 0)} />
+              <Row label="Housing Levy" value={formatKES(payslip.housingLevy ?? 0)} />
+              {(payslip.loanDeduction ?? 0) > 0 && <Row label="Loan Deduction" value={formatKES(payslip.loanDeduction ?? 0)} />}
+              <Row label="Total Deductions" value={formatKES(payslip.totalDeductions ?? 0)} bold />
               <Divider sx={{ my: 1.5 }} />
               <Box sx={{ p: 1.5, bgcolor: "action.hover", borderRadius: 1 }}>
-                <Row label="NET PAY" value={formatKES(payslip.netPay)} bold />
+                <Row label="NET PAY" value={formatKES(payslip.netPay ?? 0)} bold />
               </Box>
               <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 2 }}>Processed by: {payslip.processedBy}</Typography>
             </Box>

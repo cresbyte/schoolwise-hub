@@ -54,7 +54,7 @@ function FooterHeading({ children }: { children: React.ReactNode }) {
     <Box>
       <Typography
         sx={{
-          fontFamily: "'Poppins', sans-serif",
+          fontFamily: "'Outfit', sans-serif",
           fontWeight: 700,
           fontSize: 13,
           letterSpacing: "0.1em",
@@ -85,7 +85,7 @@ function FooterLink({ href, children }: { href: string; children: React.ReactNod
       sx={{
         display: "block",
         color: "rgba(255,255,255,0.65)",
-        fontFamily: "'Poppins', sans-serif",
+        fontFamily: "'Outfit', sans-serif",
         fontSize: 13,
         textDecoration: "none",
         mb: 1,
@@ -152,7 +152,7 @@ export function WebsiteFooter() {
                   <Box>
                     <Typography
                       sx={{
-                        fontFamily: "'Poppins', sans-serif",
+                        fontFamily: "'Outfit', sans-serif",
                         fontSize: 11,
                         fontWeight: 700,
                         letterSpacing: "0.08em",
@@ -168,7 +168,7 @@ export function WebsiteFooter() {
                         component="a"
                         href={href}
                         sx={{
-                          fontFamily: "'Poppins', sans-serif",
+                          fontFamily: "'Outfit', sans-serif",
                           fontSize: 14,
                           fontWeight: 500,
                           color: "#fff",
@@ -181,7 +181,7 @@ export function WebsiteFooter() {
                     ) : (
                       <Typography
                         sx={{
-                          fontFamily: "'Poppins', sans-serif",
+                          fontFamily: "'Outfit', sans-serif",
                           fontSize: 14,
                           fontWeight: 500,
                           color: "#fff",
@@ -247,7 +247,7 @@ export function WebsiteFooter() {
                 </Box>
                 <Typography
                   sx={{
-                    fontFamily: "'Poppins', sans-serif",
+                    fontFamily: "'Outfit', sans-serif",
                     color: "rgba(255,255,255,0.6)",
                     fontSize: 13,
                     lineHeight: 1.8,
@@ -332,7 +332,7 @@ export function WebsiteFooter() {
                 <Box sx={{ mt: 3 }}>
                   <Typography
                     sx={{
-                      fontFamily: "'Poppins', sans-serif",
+                      fontFamily: "'Outfit', sans-serif",
                       fontSize: 11,
                       fontWeight: 700,
                       letterSpacing: "0.08em",
@@ -361,7 +361,7 @@ export function WebsiteFooter() {
                         px: 1.5,
                         py: 1,
                         fontSize: 12,
-                        fontFamily: "'Poppins', sans-serif",
+                        fontFamily: "'Outfit', sans-serif",
                         outline: "none",
                         "::placeholder": { color: "rgba(255,255,255,0.35)" },
                         "&:focus": { borderColor: KAB.secondary },
@@ -375,7 +375,7 @@ export function WebsiteFooter() {
                         border: `1px solid ${KAB.primary}`,
                         color: "#fff",
                         px: 2,
-                        fontFamily: "'Poppins', sans-serif",
+                        fontFamily: "'Outfit', sans-serif",
                         fontWeight: 600,
                         fontSize: 12,
                         cursor: "pointer",
@@ -413,7 +413,7 @@ export function WebsiteFooter() {
           >
             <Typography
               sx={{
-                fontFamily: "'Poppins', sans-serif",
+                fontFamily: "'Outfit', sans-serif",
                 color: "rgba(255,255,255,0.4)",
                 fontSize: 12,
               }}
@@ -431,7 +431,7 @@ export function WebsiteFooter() {
                   component={Link}
                   href={l.href}
                   sx={{
-                    fontFamily: "'Poppins', sans-serif",
+                    fontFamily: "'Outfit', sans-serif",
                     fontSize: 12,
                     color: "rgba(255,255,255,0.4)",
                     textDecoration: "none",

@@ -31,7 +31,6 @@ const schema = z.object({
   phone: z.string().min(10, "Enter a valid phone number"),
   password: z.string().min(1, "Password is required"),
 });
-type FormValues = z.infer<typeof schema>;
 
 const SAMPLES = [
   ["Admin", "0712345678", "admin123"],
@@ -49,31 +48,35 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [remember, setRemember] = useState(true);
 
-  const { control, handleSubmit, setValue, formState } = useForm<FormValues>({
+  const { control, handleSubmit, setValue, formState } = useForm({
     resolver: zodResolver(schema),
     defaultValues: { phone: "", password: "" },
   });
 
   useEffect(() => {
-    if (isAuthenticated && user) router.push(ROLE_HOME[user.role]);
+    if (isAuthenticated && user) {
+      const roleHome = ROLE_HOME[user.role];
+      if (roleHome) {
+        router.push(roleHome);
+      } else {
+        router.push("/dashboard");
+      }
+    }
   }, [isAuthenticated, user, router]);
 
-  const onSubmit = async (values: FormValues) => {
+  const onSubmit = async (values) => {
     setError("");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const result = await (login as any)(values.phone, values.password, { remember });
+    const result = await login(values.phone, values.password, { remember });
     if (result.success) {
       const role = result.user?.role;
-      router.push(
-        role ? (ROLE_HOME[role as keyof typeof ROLE_HOME] ?? "/dashboard") : "/dashboard",
-      );
+      router.push(role ? (ROLE_HOME[role] ?? "/dashboard") : "/dashboard");
     } else {
       setError(result.error ?? "Login failed");
     }
   };
 
   // Fill both fields as real, controlled updates so labels shrink correctly
-  const fillSample = (phone: string, pwd: string) => {
+  const fillSample = (phone, pwd) => {
     setValue("phone", phone, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
     setValue("password", pwd, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
   };

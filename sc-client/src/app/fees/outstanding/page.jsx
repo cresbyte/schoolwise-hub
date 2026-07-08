@@ -6,7 +6,7 @@
  */
 import { useState } from "react";
 import Card from "@mui/material/Card";
-import Box from "@mui/material/Box";
+import {Grid} from "@mui/material";
 import Button from "@mui/material/Button";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -49,11 +49,17 @@ function OutstandingContent() {
     [classId],
   );
   const list = data ?? [];
-  const total = list.reduce((s, i) => s + i.balance, 0);
+  const total = list.reduce((s, i) => s + (i.balance ?? 0), 0);
 
   const handleExport = () =>
     exportToCSV(
-      list.map((i) => ({ Admission: i.admissionNumber, Name: i.studentName, Class: i.className, Balance: i.balance, Status: i.status })),
+      list.map((i) => ({
+        Admission: i.admissionNumber,
+        Name: i.studentName,
+        Class: i.className,
+        Balance: i.balance ?? 0,
+        Status: i.status,
+      })),
       "outstanding-fees.csv",
     );
 
@@ -61,17 +67,42 @@ function OutstandingContent() {
     <>
       <PageHeader
         title="Outstanding Fees"
-        actions={<Button startIcon={<DownloadIcon />} variant="outlined" onClick={handleExport}>Export</Button>}
+        actions={
+          <Button startIcon={<DownloadIcon />} variant="outlined" onClick={handleExport}>
+            Export
+          </Button>
+        }
       />
-      <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, mb: 2 }}>
-        <StatCard icon={<WarningIcon />} color="#C62828" label="Total Outstanding" value={formatKES(total)} />
-        <StatCard icon={<PeopleIcon />} color="#EF6C00" label="Students with Balance" value={list.length} />
-      </Box>
+      <Grid container sx={{mb:2}}
+       spacing={2}
+      >
+        <Grid size={{ xs: 12, sm: 6 }}> <StatCard
+          icon={<WarningIcon />}
+          color="#C62828"
+          label="Total Outstanding"
+          value={formatKES(total)}
+        /></Grid>
+        <Grid size={{xs:12, sm:6}}><StatCard
+          icon={<PeopleIcon />}
+          color="#EF6C00"
+          label="Students with Balance"
+          value={list.length}
+        /></Grid>
+
+
+      </Grid>
       <Card sx={{ p: 2, mb: 2 }}>
         <ClassSelect value={classId} onChange={setClassId} />
       </Card>
       <Card>
-        <DataState loading={loading} error={error} data={list} onRetry={refetch} isEmpty={(d: any) => d.length === 0} emptyMessage="No outstanding balances — well done!">
+        <DataState
+          loading={loading}
+          error={error}
+          data={list}
+          onRetry={refetch}
+          isEmpty={(d) => d.length === 0}
+          emptyMessage="No outstanding balances — well done!"
+        >
           {() => (
             <TableContainer>
               <Table>
@@ -88,17 +119,32 @@ function OutstandingContent() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {list.map((i: any) => (
+                  {list.map((i) => (
                     <TableRow key={i.id} hover>
-                      <TableCell sx={{ fontFamily: "monospace", fontSize: 13 }}>{i.admissionNumber}</TableCell>
+                      <TableCell sx={{ fontFamily: "monospace", fontSize: 13 }}>
+                        {i.admissionNumber}
+                      </TableCell>
                       <TableCell sx={{ fontWeight: 600 }}>{i.studentName}</TableCell>
                       <TableCell>{i.className}</TableCell>
-                      <TableCell align="right">{formatKES(i.totalCharged)}</TableCell>
-                      <TableCell align="right">{formatKES(i.totalPaid)}</TableCell>
-                      <TableCell align="right" sx={{ fontWeight: 700, color: "error.main" }}>{formatKES(i.balance)}</TableCell>
-                      <TableCell><StatusChip status={i.status} /></TableCell>
+                      <TableCell align="right">{formatKES(i.totalCharged ?? 0)}</TableCell>
+                      <TableCell align="right">{formatKES(i.totalPaid ?? 0)}</TableCell>
+                      <TableCell align="right" sx={{ fontWeight: 700, color: "error.main" }}>
+                        {formatKES(i.balance ?? 0)}
+                      </TableCell>
+                      <TableCell>
+                        <StatusChip status={i.status} />
+                      </TableCell>
                       <TableCell align="right">
-                        <Button size="small" startIcon={<SmsIcon />} onClick={() => showNotification(`SMS reminder sent to ${i.studentName}'s parent`, "success")}>
+                        <Button
+                          size="small"
+                          startIcon={<SmsIcon />}
+                          onClick={() =>
+                            showNotification(
+                              `SMS reminder sent to ${i.studentName}'s parent`,
+                              "success",
+                            )
+                          }
+                        >
                           Remind
                         </Button>
                       </TableCell>

@@ -22,13 +22,13 @@ import { useNotification } from "@/context/NotificationContext";
 export default function HomepageCmsPage() {
   const [tab, setTab] = useState(0);
   const { showNotification } = useNotification();
-  
+
   const { data: slides, loading: sl, refetch: rs } = useAsync(api.getCmsHeroSlides);
   const { data: stats, loading: stl, refetch: rst } = useAsync(api.getCmsSchoolStats);
   const { data: features, loading: fl, refetch: rf } = useAsync(api.getCmsWhyChooseUs);
 
-  const [localStats, setLocalStats] = useState<any[]>([]);
-  const [localFeatures, setLocalFeatures] = useState<any[]>([]);
+  const [localStats, setLocalStats] = useState([]);
+  const [localFeatures, setLocalFeatures] = useState([]);
 
   useEffect(() => {
     if (stats) setLocalStats(stats);
@@ -38,7 +38,7 @@ export default function HomepageCmsPage() {
     if (features) setLocalFeatures(features);
   }, [features]);
 
-  const handleUpdateSlide = async (id: string, patch: any) => {
+  const handleUpdateSlide = async (id, patch) => {
     await api.updateHeroSlide(id, patch);
     showNotification("Slide updated", "success");
     rs();
@@ -104,18 +104,18 @@ export default function HomepageCmsPage() {
                       <Card variant="outlined">
                         <CardContent>
                           <TextField label="Label" fullWidth size="small" value={stat.label} onChange={(e) => {
-                            const ns = [...(localStats.length > 0 ? localStats : stats!)];
+                            const ns = [...(localStats.length > 0 ? localStats : stats)];
                             ns[idx].label = e.target.value;
                             setLocalStats(ns);
                           }} sx={{ mb: 2 }} />
                           <Stack direction="row" spacing={1}>
                             <TextField label="Value" fullWidth size="small" type="number" value={stat.value} onChange={(e) => {
-                              const ns = [...(localStats.length > 0 ? localStats : stats!)];
+                              const ns = [...(localStats.length > 0 ? localStats : stats)];
                               ns[idx].value = parseFloat(e.target.value);
                               setLocalStats(ns);
                             }} />
                             <TextField label="Suffix" sx={{ width: 80 }} size="small" value={stat.suffix} onChange={(e) => {
-                              const ns = [...(localStats.length > 0 ? localStats : stats!)];
+                              const ns = [...(localStats.length > 0 ? localStats : stats)];
                               ns[idx].suffix = e.target.value;
                               setLocalStats(ns);
                             }} />
@@ -139,17 +139,17 @@ export default function HomepageCmsPage() {
                       <Card variant="outlined">
                         <CardContent>
                           <TextField label="Title" fullWidth size="small" value={f.title} onChange={(e) => {
-                            const nf = [...(localFeatures.length > 0 ? localFeatures : features!)];
+                            const nf = [...(localFeatures.length > 0 ? localFeatures : features)];
                             nf[idx].title = e.target.value;
                             setLocalFeatures(nf);
                           }} sx={{ mb: 2 }} />
                           <TextField label="Description" fullWidth size="small" multiline rows={3} value={f.description} onChange={(e) => {
-                            const nf = [...(localFeatures.length > 0 ? localFeatures : features!)];
+                            const nf = [...(localFeatures.length > 0 ? localFeatures : features)];
                             nf[idx].description = e.target.value;
                             setLocalFeatures(nf);
                           }} sx={{ mb: 2 }} />
                           <TextField label="Icon Name (Material)" fullWidth size="small" value={f.icon} onChange={(e) => {
-                            const nf = [...(localFeatures.length > 0 ? localFeatures : features!)];
+                            const nf = [...(localFeatures.length > 0 ? localFeatures : features)];
                             nf[idx].icon = e.target.value;
                             setLocalFeatures(nf);
                           }} />
