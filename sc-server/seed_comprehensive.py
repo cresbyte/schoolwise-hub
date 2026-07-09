@@ -5,7 +5,7 @@ from decimal import Decimal
 from django.core.files.base import ContentFile
 from pathlib import Path
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.development')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 django.setup()
 
 from apps.accounts.models import User

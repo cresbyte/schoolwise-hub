@@ -2,7 +2,7 @@ import os
 import django
 from decimal import Decimal
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.development')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 django.setup()
 
 from apps.accounts.models import User

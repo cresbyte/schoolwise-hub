@@ -13,7 +13,7 @@ import django
 import random
 from datetime import date, timedelta
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.development")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 django.setup()
 
 from apps.academics.models import ClassRoom, Subject

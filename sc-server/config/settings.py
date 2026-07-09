@@ -5,9 +5,20 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Since settings.py is under config/ settings, BASE_DIR points to the root directory (sc-server).
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-d2ebh277b#xb!o%0z+n2)toz3o=o^_4_ygq1(16-j0tu27dugq")
+
+DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
+
+ALLOWED_HOSTS = [
+    "72.62.182.26",
+    "localhost",
+    "127.0.0.1",
+    "*",
+]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -99,6 +110,27 @@ SIMPLE_JWT = {
     "USER_ID_CLAIM": "user_id",
     "TOKEN_OBTAIN_SERIALIZER": "apps.accounts.serializers.CustomTokenObtainPairSerializer",
 }
+
+# Database settings
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
+
+# CORS & CSRF Settings
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://72.62.182.26:8082",
+]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://72.62.182.26:8082",
+]
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"

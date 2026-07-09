@@ -6,7 +6,7 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.development')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
     # Set default port to 8082 when running runserver
     if len(sys.argv) >= 2 and sys.argv[1] == 'runserver':

@@ -1,7 +1,7 @@
 /**
  * Real API integration for SchoolWise Hub.
  */
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://72.62.182.26:8082/api";
 
 async function request(path: string, options: RequestInit = {}) {
   const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
