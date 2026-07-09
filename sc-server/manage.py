@@ -7,6 +7,19 @@ import sys
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.development')
+
+    # Set default port to 8082 when running runserver
+    if len(sys.argv) >= 2 and sys.argv[1] == 'runserver':
+        # If no port specified, add 8082
+        if len(sys.argv) == 2:
+            sys.argv.append('8082')
+        # If default port 8000 is specified, change to 8082
+        elif len(sys.argv) == 3 and sys.argv[2] == '8000':
+            sys.argv[2] = '8082'
+        # If there are flags like --noreload but no port
+        elif len(sys.argv) == 3 and sys.argv[2].startswith('--'):
+            sys.argv.insert(2, '8082')
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
