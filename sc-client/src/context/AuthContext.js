@@ -48,7 +48,8 @@ export const AuthProvider = ({ children }) => {
                     const refreshToken = localStorage.getItem('refreshToken');
                     if (refreshToken) {
                         try {
-                            const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/";
+                            const rawBaseURL = process.env.NEXT_PUBLIC_API_URL;
+                            const baseURL = rawBaseURL.endsWith("/") ? rawBaseURL : `${rawBaseURL}/`;
                             const response = await fetch(`${baseURL}auth/refresh/`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
@@ -56,10 +57,10 @@ export const AuthProvider = ({ children }) => {
                             });
                             if (!response.ok) throw new Error('Refresh failed');
                             const data = await response.json();
-                            
+
                             localStorage.setItem('accessToken', data.access);
                             if (data.refresh) localStorage.setItem('refreshToken', data.refresh);
-                            
+
                             window.dispatchEvent(
                               new CustomEvent("tokenRefreshed", {
                                 detail: { access: data.access },
@@ -88,7 +89,8 @@ export const AuthProvider = ({ children }) => {
                     const refreshToken = localStorage.getItem('refreshToken');
                     if (refreshToken) {
                         try {
-                            const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/";
+                            const rawBaseURL = process.env.NEXT_PUBLIC_API_URL;
+                            const baseURL = rawBaseURL.endsWith("/") ? rawBaseURL : `${rawBaseURL}/`;
                             const response = await fetch(`${baseURL}auth/refresh/`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
@@ -96,11 +98,11 @@ export const AuthProvider = ({ children }) => {
                             });
                             if (!response.ok) throw new Error('Refresh failed');
                             const data = await response.json();
-                            
+
                             token = data.access;
                             localStorage.setItem('accessToken', token);
                             if (data.refresh) localStorage.setItem('refreshToken', data.refresh);
-                            
+
                             decoded = jwtDecode(token);
                         } catch (err) {
                             console.error("Failed to silently refresh expired token:", err);
@@ -112,7 +114,7 @@ export const AuthProvider = ({ children }) => {
                         return;
                     }
                 }
-                
+
                 setIsAuthenticated(true);
                 // Map full user profile from token
                 setUser({
@@ -254,7 +256,7 @@ export const AuthProvider = ({ children }) => {
     }, [user]);
 
     const hasRole = useCallback((role) => user?.role === role, [user]);
-    
+
     const hasAnyRole = useCallback((roles) => !!user && roles.includes(user.role), [user]);
 
     const isClassTeacher = useCallback((classId) => {
