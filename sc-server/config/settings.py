@@ -13,7 +13,14 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-d2ebh277b#xb!o%0z+n2)
 
 DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
 
-ALLOWED_HOSTS = ["72.62.182.26", "localhost", "127.0.0.1", "*", "primrose.cresbyte.com"]
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "primapi.cresbyte.com",
+    "primrose.cresbyte.com",
+    "72.62.182.26",
+    "*",
+]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -121,12 +128,14 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://72.62.182.26:8082",
     "https://primrose.cresbyte.com",
+    "https://primapi.cresbyte.com",
 ]
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://72.62.182.26:8082",
     "https://primrose.cresbyte.com",
+    "https://primapi.cresbyte.com",
 ]
 
 MEDIA_URL = "/media/"
