@@ -28,7 +28,7 @@ const TILES = [
   {
     label: "Parent Portal",
     sub: "View fees, marks & attendance",
-    href: "/login",
+    href: "/parent-portal",
     icon: <PersonIcon sx={{ fontSize: 32 }} />,
     color: KAB.secondary,
   },

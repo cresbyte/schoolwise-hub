@@ -36,7 +36,7 @@ export function PortalLayout({ children }: { children: ReactNode }) {
    const unreadCount = (messages || []).filter(m => m.status !== "read").length;
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) router.push("/login");
+    if (!isLoading && !isAuthenticated) router.push("/parent-portal");
   }, [isLoading, isAuthenticated, router]);
 
   if (isLoading || !user) {
@@ -51,7 +51,7 @@ export function PortalLayout({ children }: { children: ReactNode }) {
 
   const handleLogout = async () => {
     await logout();
-    router.push("/login");
+    router.push("/parent-portal");
   };
 
   return (

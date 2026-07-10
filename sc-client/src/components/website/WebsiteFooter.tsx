@@ -44,7 +44,7 @@ const ADMISSIONS_LINKS = [
   { label: "Available Spaces", href: "/admissions#spaces" },
   { label: "Scholarships", href: "/admissions#scholarships" },
   { label: "Apply Online", href: "/admissions/apply" },
-  { label: "Parent Portal", href: "/login" },
+  { label: "Parent Portal", href: "/parent-portal" },
 ];
 
 // ─── Sub-components ───────────────────────────────────────────────────────────

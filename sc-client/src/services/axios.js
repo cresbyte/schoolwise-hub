@@ -73,7 +73,7 @@ api.interceptors.response.use(
 
           // Dispatch logout event
           window.dispatchEvent(new Event("authLogout"));
-          window.location.href = "/login";
+          window.location.href = "/parent-portal";
         }
       } else {
         localStorage.removeItem("accessToken");
@@ -81,7 +81,7 @@ api.interceptors.response.use(
 
         // Dispatch logout event
         window.dispatchEvent(new Event("authLogout"));
-        window.location.href = "/login";
+        window.location.href = "/parent-portal";
       }
     }
     return Promise.reject(error);

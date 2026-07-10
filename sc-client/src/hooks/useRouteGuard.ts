@@ -29,7 +29,7 @@ export function useRouteGuard() {
 
     // Not logged in → go to login
     if (!isAuthenticated || !user) {
-      router.replace("/login");
+      router.replace("/parent-portal");
       return;
     }
 

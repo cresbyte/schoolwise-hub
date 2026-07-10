@@ -250,7 +250,7 @@ export function WebsiteNavbar() {
               />
               <Typography
                 component={Link}
-                href="/login"
+                href="/parent-portal"
                 sx={{
                   fontSize: 12,
                   color: "rgba(255,255,255,0.82)",
@@ -261,6 +261,24 @@ export function WebsiteNavbar() {
               >
                 Parent Portal
               </Typography>
+              <Typography
+                component={Link}
+                href="/staff-portal"
+                sx={{
+                  fontSize: 12,
+                  color: "rgba(255,255,255,0.82)",
+                  textDecoration: "none",
+                  fontWeight: 500,
+                  "&:hover": { color: "#fff" },
+                }}
+              >
+                Staff Portal
+              </Typography>
+              <Divider
+                orientation="vertical"
+                flexItem
+                sx={{ borderColor: "rgba(255,255,255,0.2)", my: "4px" }}
+              />
               <Typography
                 component={Link}
                 href="/admissions/apply"
@@ -667,22 +685,48 @@ export function WebsiteNavbar() {
             Apply Now
           </Box>
           <Box
-            component={Link}
-            href="/login"
-            sx={{
-              display: "block",
-              textAlign: "center",
-              border: `1px solid ${KAB.border}`,
-              color: KAB.textPrimary,
-              py: 1.25,
-              fontFamily: "'Outfit', sans-serif",
-              fontWeight: 600,
-              fontSize: 14,
-              textDecoration: "none",
-              "&:hover": { bgcolor: KAB.bgMuted },
-            }}
+            sx={{ display: "flex", gap: 1, mt: 1 }}
           >
-            Parent Portal
+            <Box
+              component={Link}
+              href="/parent-portal"
+              sx={{
+                flex: 1,
+                display: "block",
+                textAlign: "center",
+                border: `1px solid #008264`,
+                color: "#005a46",
+                py: 1.25,
+                fontFamily: "'Outfit', sans-serif",
+                fontWeight: 600,
+                fontSize: 13,
+                textDecoration: "none",
+                borderRadius: 1,
+                "&:hover": { bgcolor: "rgba(0,130,100,0.06)" },
+              }}
+            >
+              Parent Portal
+            </Box>
+            <Box
+              component={Link}
+              href="/staff-portal"
+              sx={{
+                flex: 1,
+                display: "block",
+                textAlign: "center",
+                border: `1px solid #1a3a7a`,
+                color: "#1a3a7a",
+                py: 1.25,
+                fontFamily: "'Outfit', sans-serif",
+                fontWeight: 600,
+                fontSize: 13,
+                textDecoration: "none",
+                borderRadius: 1,
+                "&:hover": { bgcolor: "rgba(26,58,122,0.06)" },
+              }}
+            >
+              Staff Portal
+            </Box>
           </Box>
         </Box>
       </Drawer>

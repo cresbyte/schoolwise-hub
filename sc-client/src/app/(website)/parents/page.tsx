@@ -19,7 +19,7 @@ import { HEADING_FONT } from "@/lib/website/constants";
 import { getFaqItems, getDownloadItems } from "@/lib/website/data";
 
 const QUICK_LINKS = [
-  { title: "Parent Portal", desc: "View fees, attendance, and report cards", href: "/login" },
+  { title: "Parent Portal", desc: "View fees, attendance, and report cards", href: "/parent-portal" },
   {
     title: "Fee Structure",
     desc: "Current term fees and payment methods",
@@ -115,7 +115,7 @@ export default function ParentsPage() {
             </Typography>
             <Button
               LinkComponent={Link}
-              href="/login"
+              href="/parent-portal"
               variant="contained"
               startIcon={<LoginIcon />}
             >
