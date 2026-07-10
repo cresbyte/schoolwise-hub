@@ -328,7 +328,7 @@ export function WebsiteNavbar() {
               sx={{ display: "flex", alignItems: "center", gap: 1.5, textDecoration: "none" }}
             >
               <Logo size={scrolled ? 36 : 44} withText={false} />
-              <Box sx={{ display: { xs: "none", sm: "block" } }}>
+              <Box sx={{ display: {  sm: "block" } }}>
                 <Typography
                   sx={{
                     color: "#000000", /* Changed from #fff to black */
