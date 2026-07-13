@@ -140,7 +140,7 @@ export function PortalLayout({ children }: { children: ReactNode }) {
         anchor="right"
         open={msgDrawerOpen}
         onClose={() => setMsgDrawerOpen(false)}
-        PaperProps={{ sx: { width: { xs: "100vw", sm: 400 }, maxWidth: "100vw" } }}
+        slotProps={{ paper: { sx: { width: { xs: "100vw", sm: 400 }, maxWidth: "100vw" } } }}
       >
         <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
           {/* Drawer header */}

@@ -886,7 +886,7 @@ function ThisTermTab({ student, onSwitchTab }) {
                         ) : isOngoing ? (
                           <Chip label="Ongoing" size="small" color="warning" sx={{ fontWeight: 700 }} />
                         ) : (
-                          <Stack spacing={1} direction={{ xs: "row", sm: "column" }} alignItems={{ xs: "center", sm: "flex-end" }}>
+                          <Stack spacing={1} direction={{ xs: "row", sm: "column" }} alignitems={{ xs: "center", sm: "flex-end" }}>
                             <Chip label="Results Available" size="small" color="success" sx={{ fontWeight: 700 }} />
                             <Button size="small" onClick={() => onSwitchTab(1)}>View Full Results</Button>
                           </Stack>
