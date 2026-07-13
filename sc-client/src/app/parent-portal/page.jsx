@@ -45,12 +45,31 @@ const FEATURES = [
   { icon: <MessageIcon sx={{ fontSize: 20 }} />, text: "Communicate with teachers" },
 ];
 
-const SAMPLES = [
+// ── Demo parent accounts (linked to real mock students) ──────────────────────
+const DEMO_PARENTS = [
+  {
+    name: "Mr. Stephen Odhiambo",
+    child: "Brian Odhiambo · Form 2 A",
+    phone: "0744567890",
+    password: "parent123",
+    color: "#005a46",
+    avatar: "SO",
+  },
+  {
+    name: "Mrs. Lucy Kamau",
+    child: "Amina Kamau · Grade 4 A",
+    phone: "0755123456",
+    password: "parent456",
+    color: "#7b3fa0",
+    avatar: "LK",
+  },
+];
+
+const STAFF_SAMPLES = [
   ["Admin", "0712345678", "admin123"],
   ["Headteacher", "0711234567", "head123"],
   ["Teacher", "0722345678", "teacher123"],
   ["Accountant", "0733456789", "accounts123"],
-  ["Parent", "0744567890", "parent123"],
 ];
 
 /** Dedicated parent portal login page. */
@@ -93,15 +112,9 @@ export default function ParentPortalPage() {
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        display: "flex",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      {/* ── Left Panel — Branding ───────────────────────────────────────── */}
+    <Box sx={{ minHeight: "100vh", display: "flex", position: "relative", overflow: "hidden" }}>
+
+      {/* ── Left Panel — Branding ───────────────────────────────────────────── */}
       <Box
         sx={{
           display: { xs: "none", lg: "flex" },
@@ -118,57 +131,15 @@ export default function ParentPortalPage() {
           py: 8,
         }}
       >
-        {/* Decorative circles */}
-        <Box
-          sx={{
-            position: "absolute",
-            top: -80,
-            right: -80,
-            width: 300,
-            height: 300,
-            borderRadius: "50%",
-            bgcolor: "rgba(255,255,255,0.06)",
-          }}
-        />
-        <Box
-          sx={{
-            position: "absolute",
-            bottom: -60,
-            left: -60,
-            width: 240,
-            height: 240,
-            borderRadius: "50%",
-            bgcolor: "rgba(255,255,255,0.05)",
-          }}
-        />
+        <Box sx={{ position: "absolute", top: -80, right: -80, width: 300, height: 300, borderRadius: "50%", bgcolor: "rgba(255,255,255,0.06)" }} />
+        <Box sx={{ position: "absolute", bottom: -60, left: -60, width: 240, height: 240, borderRadius: "50%", bgcolor: "rgba(255,255,255,0.05)" }} />
 
-        {/* Logo + name */}
-        <Box sx={{ mb: 6 }}>
-          <Logo size={52} withText={false} />
-        </Box>
+        <Box sx={{ mb: 6 }}><Logo size={52} withText={false} /></Box>
 
-        <Typography
-          sx={{
-            color: "#fff",
-            fontFamily: "'Outfit', sans-serif",
-            fontWeight: 800,
-            fontSize: "2.1rem",
-            lineHeight: 1.15,
-            mb: 1.5,
-          }}
-        >
+        <Typography sx={{ color: "#fff", fontFamily: "'Outfit', sans-serif", fontWeight: 800, fontSize: "2.1rem", lineHeight: 1.15, mb: 1.5 }}>
           Parent Portal
         </Typography>
-        <Typography
-          sx={{
-            color: "rgba(255,255,255,0.78)",
-            fontFamily: "'Outfit', sans-serif",
-            fontSize: "1rem",
-            lineHeight: 1.6,
-            mb: 4,
-            maxWidth: 360,
-          }}
-        >
+        <Typography sx={{ color: "rgba(255,255,255,0.78)", fontFamily: "'Outfit', sans-serif", fontSize: "1rem", lineHeight: 1.6, mb: 4, maxWidth: 360 }}>
           Stay connected with your child's academic journey — grades, fees, attendance and communication all in one place.
         </Typography>
 
@@ -176,68 +147,28 @@ export default function ParentPortalPage() {
 
         <Stack spacing={2}>
           {FEATURES.map((f, i) => (
-            <Box
-              key={i}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 1.5,
-                color: "rgba(255,255,255,0.9)",
-              }}
-            >
-              <Box
-                sx={{
-                  width: 36,
-                  height: 36,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexShrink: 0,
-                  borderRadius: "10px",
-                }}
-              >
+            <Box key={i} sx={{ display: "flex", alignItems: "center", gap: 1.5, color: "rgba(255,255,255,0.9)" }}>
+              <Box sx={{ width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, borderRadius: "10px" }}>
                 {f.icon}
               </Box>
-              <Typography
-                sx={{
-                  fontFamily: "'Outfit', sans-serif",
-                  fontSize: "0.92rem",
-                  color: "rgba(255,255,255,0.85)",
-                }}
-              >
+              <Typography sx={{ fontFamily: "'Outfit', sans-serif", fontSize: "0.92rem", color: "rgba(255,255,255,0.85)" }}>
                 {f.text}
               </Typography>
             </Box>
           ))}
         </Stack>
 
-        {/* Staff portal link */}
         <Box sx={{ mt: "auto", pt: 5 }}>
-          <Typography
-            sx={{
-              color: "rgba(255,255,255,0.55)",
-              fontFamily: "'Outfit', sans-serif",
-              fontSize: "0.8rem",
-            }}
-          >
+          <Typography sx={{ color: "rgba(255,255,255,0.55)", fontFamily: "'Outfit', sans-serif", fontSize: "0.8rem" }}>
             Are you a staff member?{" "}
-            <Box
-              component={Link}
-              href="/staff-portal"
-              sx={{
-                color: "rgba(255,255,255,0.85)",
-                fontWeight: 600,
-                textDecoration: "none",
-                "&:hover": { textDecoration: "underline" },
-              }}
-            >
+            <Box component={Link} href="/staff-portal" sx={{ color: "rgba(255,255,255,0.85)", fontWeight: 600, textDecoration: "none", "&:hover": { textDecoration: "underline" } }}>
               Go to Staff Portal →
             </Box>
           </Typography>
         </Box>
       </Box>
 
-      {/* ── Right Panel — Login Form ─────────────────────────────────────── */}
+      {/* ── Right Panel — Login Form ─────────────────────────────────────────── */}
       <Box
         sx={{
           flex: 1,
@@ -251,65 +182,37 @@ export default function ParentPortalPage() {
           px: { xs: 3, sm: 6, lg: 8 },
           py: 6,
           minHeight: "100vh",
+          // leave room for the demo footer
+          pb: { xs: "120px", sm: "90px" },
         }}
       >
         {/* Mobile logo */}
-        <Box
-          sx={{
-            display: { lg: "none" },
-            mb: 4,
-            textAlign: "center",
-          }}
-        >
+        <Box sx={{ display: { lg: "none" }, mb: 4, textAlign: "center" }}>
           <Logo size={48} withText={true} textStyle={{ fontSize: "1.4rem" }} />
           <Chip
             label="Parent Portal"
             size="small"
             icon={<FamilyRestroomIcon sx={{ fontSize: 14 }} />}
-            sx={{
-              mt: 1.5,
-              bgcolor: "#005a46",
-              color: "#fff",
-              fontFamily: "'Outfit', sans-serif",
-              "& .MuiChip-icon": { color: "#fff" },
-            }}
+            sx={{ mt: 1.5, bgcolor: "#005a46", color: "#fff", fontFamily: "'Outfit', sans-serif", "& .MuiChip-icon": { color: "#fff" } }}
           />
         </Box>
 
         <Card
           elevation={0}
-          sx={{
-            width: "100%",
-            maxWidth: 440,
-            borderRadius: 4,
-            border: "1px solid rgba(0,160,120,0.15)",
-            boxShadow: "0 8px 40px rgba(0,130,100,0.1)",
-          }}
+          sx={{ width: "100%", maxWidth: 440, borderRadius: 4, border: "1px solid rgba(0,160,120,0.15)", boxShadow: "0 8px 40px rgba(0,130,100,0.1)" }}
         >
           <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
             <Stack spacing={0.5} sx={{ mb: 3.5 }}>
-              <Typography
-                sx={{
-                  fontFamily: "'Outfit', sans-serif",
-                  fontWeight: 700,
-                  fontSize: "1.45rem",
-                  color: "#005a46",
-                }}
-              >
+              <Typography sx={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, fontSize: "1.45rem", color: "#005a46" }}>
                 Welcome Back
               </Typography>
-              <Typography
-                variant="body2"
-                sx={{ color: "text.secondary", fontFamily: "'Outfit', sans-serif" }}
-              >
+              <Typography variant="body2" sx={{ color: "text.secondary", fontFamily: "'Outfit', sans-serif" }}>
                 Sign in with your registered phone number to access your child's information.
               </Typography>
             </Stack>
 
             {error && (
-              <Alert severity="error" sx={{ mb: 2.5 }} onClose={() => setError("")}>
-                {error}
-              </Alert>
+              <Alert severity="error" sx={{ mb: 2.5 }} onClose={() => setError("")}>{error}</Alert>
             )}
 
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -327,14 +230,8 @@ export default function ParentPortalPage() {
                       helperText={fieldState.error?.message}
                       InputLabelProps={{ shrink: !!field.value || undefined }}
                       sx={{
-                        "& .MuiOutlinedInput-root": {
-                          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                            borderColor: "#008264",
-                          },
-                        },
-                        "& .MuiInputLabel-root.Mui-focused": {
-                          color: "#008264",
-                        },
+                        "& .MuiOutlinedInput-root": { "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#008264" } },
+                        "& .MuiInputLabel-root.Mui-focused": { color: "#008264" },
                       }}
                     />
                   )}
@@ -352,14 +249,8 @@ export default function ParentPortalPage() {
                       helperText={fieldState.error?.message}
                       InputLabelProps={{ shrink: !!field.value || undefined }}
                       sx={{
-                        "& .MuiOutlinedInput-root": {
-                          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                            borderColor: "#008264",
-                          },
-                        },
-                        "& .MuiInputLabel-root.Mui-focused": {
-                          color: "#008264",
-                        },
+                        "& .MuiOutlinedInput-root": { "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#008264" } },
+                        "& .MuiInputLabel-root.Mui-focused": { color: "#008264" },
                       }}
                       slotProps={{
                         input: {
@@ -382,16 +273,10 @@ export default function ParentPortalPage() {
                       size="small"
                       checked={remember}
                       onChange={(e) => setRemember(e.target.checked)}
-                      sx={{
-                        "&.Mui-checked": { color: "#008264" },
-                      }}
+                      sx={{ "&.Mui-checked": { color: "#008264" } }}
                     />
                   }
-                  label={
-                    <Typography variant="body2" sx={{ fontFamily: "'Outfit', sans-serif" }}>
-                      Keep me signed in
-                    </Typography>
-                  }
+                  label={<Typography variant="body2" sx={{ fontFamily: "'Outfit', sans-serif" }}>Keep me signed in</Typography>}
                 />
 
                 <Button
@@ -400,11 +285,7 @@ export default function ParentPortalPage() {
                   size="large"
                   fullWidth
                   disabled={formState.isSubmitting}
-                  startIcon={
-                    formState.isSubmitting ? (
-                      <CircularProgress size={18} color="inherit" />
-                    ) : undefined
-                  }
+                  startIcon={formState.isSubmitting ? <CircularProgress size={18} color="inherit" /> : undefined}
                   sx={{
                     bgcolor: "#005a46",
                     py: 1.4,
@@ -424,69 +305,128 @@ export default function ParentPortalPage() {
           </CardContent>
         </Card>
 
-        {/* Back link */}
-        <Typography
-          sx={{
-            mt: 3,
-            fontFamily: "'Outfit', sans-serif",
-            fontSize: "0.85rem",
-            color: "text.secondary",
-          }}
-        >
-          <Box
-            component={Link}
-            href="/"
-            sx={{
-              color: "#005a46",
-              fontWeight: 600,
-              textDecoration: "none",
-              "&:hover": { textDecoration: "underline" },
-            }}
-          >
+        <Typography sx={{ mt: 3, fontFamily: "'Outfit', sans-serif", fontSize: "0.85rem", color: "text.secondary" }}>
+          <Box component={Link} href="/" sx={{ color: "#005a46", fontWeight: 600, textDecoration: "none", "&:hover": { textDecoration: "underline" } }}>
             ← Back to website
           </Box>
         </Typography>
       </Box>
 
-      {/* ============================================================
-          TEMP: Demo credentials footer — remove this whole Box when
-          demo login shortcuts are no longer needed.
-         ============================================================ */}
+      {/* ══════════════════════════════════════════════════════════════════════
+          Demo credentials bar — click a card to auto-fill the login form
+         ══════════════════════════════════════════════════════════════════════ */}
       <Box
         sx={{
           position: "fixed",
           bottom: 0,
           left: 0,
           right: 0,
-          height: 28,
-          bgcolor: "rgba(0,0,0,0.55)",
-          backdropFilter: "blur(6px)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 1.5,
-          px: 2,
-          overflowX: "auto",
-          whiteSpace: "nowrap",
+          bgcolor: "rgba(8, 8, 8, 0.88)",
+          backdropFilter: "blur(12px)",
+          borderTop: "1px solid rgba(255,255,255,0.08)",
           zIndex: (theme) => theme.zIndex.appBar,
+          px: { xs: 2, sm: 3 },
+          pt: 1,
+          pb: 1.25,
         }}
       >
-        {SAMPLES.map(([role, phone, pwd]) => (
-          <Typography
-            key={role}
-            variant="caption"
-            onClick={() => fillSample(phone, pwd)}
-            sx={{
-              cursor: "pointer",
-              color: "rgba(255,255,255,0.45)",
-              fontSize: "0.68rem",
-              lineHeight: 1,
-              "&:hover": { color: "rgba(255,255,255,0.8)" },
-            }}
-          >
-            {role}
+        {/* Header label */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: 0.75 }}>
+          <Box sx={{ width: 6, height: 6, borderRadius: "50%", bgcolor: "#22c55e", animation: "pulse 2s infinite", "@keyframes pulse": { "0%,100%": { opacity: 1 }, "50%": { opacity: 0.4 } } }} />
+          <Typography sx={{ color: "rgba(255,255,255,0.38)", fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1.2 }}>
+            Demo accounts — click to auto-fill
           </Typography>
-        ))}
+        </Box>
+
+        {/* Scrollable row */}
+        <Box sx={{ display: "flex", gap: 1.5, overflowX: "auto", pb: 0.25, alignItems: "center" }}>
+          {/* Parent demo cards */}
+          {DEMO_PARENTS.map((p) => (
+            <Box
+              key={p.phone}
+              onClick={() => fillSample(p.phone, p.password)}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1.25,
+                px: 1.5,
+                py: 0.75,
+                borderRadius: 2,
+                bgcolor: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                cursor: "pointer",
+                flexShrink: 0,
+                transition: "all 0.15s ease",
+                "&:hover": {
+                  bgcolor: "rgba(255,255,255,0.13)",
+                  borderColor: "rgba(255,255,255,0.28)",
+                  transform: "translateY(-2px)",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
+                },
+                "&:active": { transform: "translateY(0)" },
+              }}
+            >
+              {/* Avatar circle */}
+              <Box
+                sx={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: "50%",
+                  bgcolor: p.color,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                  boxShadow: `0 0 0 2px ${p.color}44`,
+                }}
+              >
+                <Typography sx={{ color: "#fff", fontSize: "0.65rem", fontWeight: 800 }}>{p.avatar}</Typography>
+              </Box>
+
+              {/* Text info */}
+              <Box>
+                <Typography sx={{ color: "rgba(255,255,255,0.92)", fontSize: "0.72rem", fontWeight: 700, lineHeight: 1.25, whiteSpace: "nowrap" }}>
+                  {p.name}
+                </Typography>
+                <Typography sx={{ color: "rgba(255,255,255,0.42)", fontSize: "0.62rem", lineHeight: 1.3, whiteSpace: "nowrap" }}>
+                  {p.child}
+                </Typography>
+                <Typography sx={{ color: "rgba(255,255,255,0.28)", fontSize: "0.59rem", fontFamily: "monospace", letterSpacing: 0.4, whiteSpace: "nowrap" }}>
+                  {p.phone} · {p.password}
+                </Typography>
+              </Box>
+            </Box>
+          ))}
+
+          {/* Vertical separator */}
+          <Box sx={{ width: 1, alignSelf: "stretch", bgcolor: "rgba(255,255,255,0.1)", mx: 0.5, flexShrink: 0 }} />
+
+          {/* Staff quick-fill chips */}
+          {STAFF_SAMPLES.map(([role, phone, pwd]) => (
+            <Box
+              key={role}
+              onClick={() => fillSample(phone, pwd)}
+              sx={{
+                px: 1.25,
+                py: 0.6,
+                borderRadius: 1.5,
+                bgcolor: "rgba(255,255,255,0.05)",
+                border: "1px solid rgba(255,255,255,0.08)",
+                cursor: "pointer",
+                flexShrink: 0,
+                transition: "all 0.12s ease",
+                "&:hover": { bgcolor: "rgba(255,255,255,0.11)", borderColor: "rgba(255,255,255,0.18)" },
+              }}
+            >
+              <Typography sx={{ color: "rgba(255,255,255,0.55)", fontSize: "0.65rem", fontWeight: 600, lineHeight: 1.2, whiteSpace: "nowrap" }}>
+                {role}
+              </Typography>
+              <Typography sx={{ color: "rgba(255,255,255,0.28)", fontSize: "0.58rem", fontFamily: "monospace", whiteSpace: "nowrap" }}>
+                {phone}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
       </Box>
     </Box>
   );

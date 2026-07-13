@@ -160,7 +160,7 @@ export const users: User[] = [
     lastLogin: "2026-06-10T08:12:00Z",
     createdAt: "2023-01-10T00:00:00Z",
     gender: "Male",
-    birthDate: "1975-03-15"
+    birthDate: "1975-03-15",
   },
   {
     id: "usr-2",
@@ -175,9 +175,70 @@ export const users: User[] = [
     lastLogin: "2026-06-10T07:50:00Z",
     createdAt: "2023-01-10T00:00:00Z",
     gender: "Male",
-    birthDate: "1978-07-20"
+    birthDate: "1978-07-20",
   },
-  // Add similar fields for all other users...
+  {
+    id: "usr-3",
+    name: "Mr. John Mutua Kivuva",
+    firstName: "John",
+    lastName: "Kivuva",
+    email: "john.kivuva@primroseacademy.ac.ke",
+    phone: "0722345678",
+    role: "teacher",
+    staffId: "stf-3",
+    isActive: true,
+    lastLogin: "2026-06-10T07:30:00Z",
+    createdAt: "2023-01-10T00:00:00Z",
+    gender: "Male",
+    birthDate: "1980-05-12",
+  },
+  {
+    id: "usr-4",
+    name: "Ms. Agnes Njoki Kariuki",
+    firstName: "Agnes",
+    lastName: "Kariuki",
+    email: "agnes.kariuki@primroseacademy.ac.ke",
+    phone: "0733456789",
+    role: "accountant",
+    staffId: "stf-6",
+    isActive: true,
+    lastLogin: "2026-06-10T08:00:00Z",
+    createdAt: "2023-01-10T00:00:00Z",
+    gender: "Female",
+    birthDate: "1983-09-22",
+  },
+  {
+    // Demo parent — Mr. Stephen Odhiambo (father of Brian Odhiambo, Form 2A)
+    id: "usr-5",
+    name: "Mr. Stephen Odhiambo",
+    firstName: "Stephen",
+    lastName: "Odhiambo",
+    email: "stephen.odhiambo@gmail.com",
+    phone: "0744567890",
+    role: "parent",
+    isActive: true,
+    lastLogin: "2026-06-12T07:00:00Z",
+    createdAt: "2024-01-15T00:00:00Z",
+    gender: "Male",
+    birthDate: "1982-04-18",
+    studentIds: ["std-2"],   // Brian Odhiambo — Form 2 A (844 curriculum)
+  },
+  {
+    // Demo parent — Mrs. Lucy Kamau (mother of Amina Kamau, Grade 4A)
+    id: "usr-6",
+    name: "Mrs. Lucy Kamau",
+    firstName: "Lucy",
+    lastName: "Kamau",
+    email: "lucy.kamau@gmail.com",
+    phone: "0755123456",
+    role: "parent",
+    isActive: true,
+    lastLogin: "2026-06-11T09:00:00Z",
+    createdAt: "2024-02-01T00:00:00Z",
+    gender: "Female",
+    birthDate: "1985-11-03",
+    studentIds: ["std-1"],   // Amina Kamau — Grade 4 A (CBC curriculum)
+  },
 ];
 
 /** Login credentials used on the login page helper. */
