@@ -63,7 +63,6 @@ function ClassesContent() {
                 <TableHead>
                   <TableRow>
                     <TableCell>Class</TableCell>
-                    <TableCell>Curriculum</TableCell>
                     <TableCell>Class Teacher</TableCell>
                     <TableCell>Room</TableCell>
                     <TableCell sx={{ minWidth: 200 }}>Capacity</TableCell>
@@ -76,7 +75,6 @@ function ClassesContent() {
                     return (
                       <TableRow key={c.id} hover>
                         <TableCell sx={{ fontWeight: 600 }}>{c.name}</TableCell>
-                        <TableCell><Chip size="small" variant="outlined" label={CURRICULUM_LABELS[c.curriculum]} /></TableCell>
                         <TableCell>{c.classTeacherName ?? "—"}</TableCell>
                         <TableCell>{c.room ?? "—"}</TableCell>
                         <TableCell>

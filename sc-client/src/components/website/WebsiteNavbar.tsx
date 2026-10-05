@@ -19,7 +19,16 @@ import {
   ListItemButton,
   ListItemText,
 } from "@mui/material";
-import { Menu, Close, ExpandMore, KeyboardArrowDown, Phone, Email, Facebook, Twitter } from "@mui/icons-material";
+import {
+  Menu,
+  Close,
+  ExpandMore,
+  KeyboardArrowDown,
+  Phone,
+  Email,
+  Facebook,
+  Twitter,
+} from "@mui/icons-material";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -163,8 +172,7 @@ export function WebsiteNavbar() {
     closeTimeout.current = setTimeout(() => setOpenMenu(null), 120);
   };
 
-  const isActive = (href) =>
-    href !== "/" && pathname.startsWith(href.split("#")[0]);
+  const isActive = (href) => href !== "/" && pathname.startsWith(href.split("#")[0]);
 
   return (
     <>
@@ -305,7 +313,7 @@ export function WebsiteNavbar() {
           position: "sticky",
           top: 0,
           zIndex: 1100,
-          bgcolor: "#ffffff", /* Changed from KAB.primary to white */
+          bgcolor: "#ffffff" /* Changed from KAB.primary to white */,
           boxShadow: scrolled ? "0 2px 12px rgba(0,0,0,0.05)" : "none",
           transition: "box-shadow 0.3s ease, padding 0.3s ease",
         }}
@@ -328,10 +336,10 @@ export function WebsiteNavbar() {
               sx={{ display: "flex", alignItems: "center", gap: 1.5, textDecoration: "none" }}
             >
               <Logo size={scrolled ? 36 : 44} withText={false} />
-              <Box sx={{ display: {  sm: "block" } }}>
+              <Box sx={{ display: { sm: "block" } }}>
                 <Typography
                   sx={{
-                    color: "#000000", /* Changed from #fff to black */
+                    color: "#000000" /* Changed from #fff to black */,
                     fontFamily: "'Outfit', sans-serif",
                     fontWeight: 700,
                     fontSize: scrolled ? 14 : 16,
@@ -343,13 +351,13 @@ export function WebsiteNavbar() {
                 </Typography>
                 <Typography
                   sx={{
-                    color: "rgba(0,0,0,0.7)", /* Changed to gray */
+                    color: "rgba(0,0,0,0.7)" /* Changed to gray */,
                     fontSize: 10,
                     letterSpacing: "0.06em",
                     textTransform: "uppercase",
                   }}
                 >
-                  Private Academy
+                  Elites Academy
                 </Typography>
               </Box>
             </Box>
@@ -378,7 +386,9 @@ export function WebsiteNavbar() {
                       gap: 0.25,
                       px: 1.5,
                       py: 1,
-                      color: isActive(group.href ?? "/___") ? KAB.secondaryLight : "#000000", /* Changed from #fff to black */
+                      color: isActive(group.href ?? "/___")
+                        ? KAB.secondaryLight
+                        : "#000000" /* Changed from #fff to black */,
                       fontFamily: "'Outfit', sans-serif",
                       fontWeight: 500,
                       fontSize: 14,
@@ -493,7 +503,9 @@ export function WebsiteNavbar() {
                   sx={{
                     px: 1.5,
                     py: 1,
-                    color: isActive(link.href) ? KAB.secondaryLight : "#000000", /* Changed from #fff to black */
+                    color: isActive(link.href)
+                      ? KAB.secondaryLight
+                      : "#000000" /* Changed from #fff to black */,
                     fontFamily: "'Outfit', sans-serif",
                     fontWeight: 500,
                     fontSize: 14,
@@ -562,10 +574,7 @@ export function WebsiteNavbar() {
           >
             {school.shortName}
           </Typography>
-          <IconButton
-            onClick={() => setDrawerOpen(false)}
-            sx={{ color: "rgba(255,255,255,0.8)" }}
-          >
+          <IconButton onClick={() => setDrawerOpen(false)} sx={{ color: "rgba(255,255,255,0.8)" }}>
             <Close fontSize="small" />
           </IconButton>
         </Box>
@@ -626,7 +635,7 @@ export function WebsiteNavbar() {
                         }
                       />
                     </ListItemButton>
-                  ))
+                  )),
                 )}
               </AccordionDetails>
             </Accordion>
@@ -684,9 +693,7 @@ export function WebsiteNavbar() {
           >
             Apply Now
           </Box>
-          <Box
-            sx={{ display: "flex", gap: 1, mt: 1 }}
-          >
+          <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
             <Box
               component={Link}
               href="/parent-portal"

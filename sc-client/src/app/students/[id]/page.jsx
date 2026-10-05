@@ -21,6 +21,8 @@ import { api } from "@/lib/api";
 import { calculateAge, formatDate, formatKES, getInitials } from "@/lib/utils";
 import { useNotification } from "@/context/NotificationContext";
 import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+
+
 export default function StudentDetailsPage() {
   const params = useParams();
   const id = params.id;
@@ -104,6 +106,10 @@ function StudentDetail({ id }) {
 }
 
 function PersonalTab({ s }) {
+  const parents = s.parents ?? [];
+  const father = parents.find((p) => p.relationship === "father");
+  const mother = parents.find((p) => p.relationship === "mother");
+
   return (
     <Box>
       <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1.5 }}>Bio Data</Typography>
@@ -119,20 +125,29 @@ function PersonalTab({ s }) {
       </Box>
       <Divider sx={{ my: 2 }} />
       <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1.5 }}>Parent / Guardian</Typography>
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 2 }}>
-        <Card variant="outlined" sx={{ p: 2 }}>
-          <Typography variant="caption" color="primary" sx={{ fontWeight: 700 }}>FATHER</Typography>
-          <Field label="Name" value={s.parent?.fatherName} />
-          <Field label="Phone" value={s.parent?.fatherPhone} />
-          <Field label="Occupation" value={s.parent?.fatherOccupation} />
-        </Card>
-        <Card variant="outlined" sx={{ p: 2 }}>
-          <Typography variant="caption" color="primary" sx={{ fontWeight: 700 }}>MOTHER</Typography>
-          <Field label="Name" value={s.parent?.motherName} />
-          <Field label="Phone" value={s.parent?.motherPhone} />
-          <Field label="Occupation" value={s.parent?.motherOccupation} />
-        </Card>
-      </Box>
+      {parents.length === 0 ? (
+        <Typography variant="body2" color="text.secondary">No parents on record.</Typography>
+      ) : (
+        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 2 }}>
+          {[father, mother].map((p, idx) => {
+            const label = idx === 0 ? "FATHER" : "MOTHER";
+            if (!p) return (
+              <Card key={label} variant="outlined" sx={{ p: 2 }}>
+                <Typography variant="caption" color="primary" sx={{ fontWeight: 700 }}>{label}</Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>No record</Typography>
+              </Card>
+            );
+            return (
+              <Card key={p.id} variant="outlined" sx={{ p: 2 }}>
+                <Typography variant="caption" color="primary" sx={{ fontWeight: 700 }}>{label}</Typography>
+                <Field label="Name" value={p.name} />
+                <Field label="Phone" value={p.phone} />
+                <Field label="Email" value={p.email} />
+              </Card>
+            );
+          })}
+        </Box>
+      )}
     </Box>
   );
 }

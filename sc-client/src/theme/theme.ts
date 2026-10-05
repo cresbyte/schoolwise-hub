@@ -2,26 +2,65 @@
  * ShuleSmart central MUI theme.
  * ALL design decisions live here. Edit this file to retheme the
  * entire application — zero inline styles required elsewhere.
+ *
+ * To onboard a new school: add an entry to BRANDS below and change
+ * ACTIVE_BRAND. Nothing else in this file needs to be touched.
  */
 import { createTheme } from "@mui/material/styles";
+
+// ─── SCHOOL BRANDS ────────────────────────────────────────────────
+// Pick exact hex values from each school's logo with an eyedropper.
+
+const BRANDS = {
+  // Kibaraa Elitess Academy — royal blue shield, taupe crest, red book
+  kea: {
+    name: "Kibaraa Elitess Academy",
+    shortName: "KEA",
+    motto: "Explore to Excel",
+    logo: "/logos/kea.svg", // put the school's logo file here
+
+    primary: {
+      main: "#1F5FAE",
+      dark: "#174A8A",
+      light: "#3F7FCB",
+      subtle: "#F0F5FB",
+    },
+    secondary: {
+      main: "#7A6A63",
+      dark: "#5E504A",
+      light: "#9A8B84",
+      subtle: "#F6F3F2",
+    },
+    accent: {
+      main: "#D62828",
+      subtle: "#FDECEC",
+    },
+  },
+} as const;
+
+type BrandKey = keyof typeof BRANDS;
+
+const ACTIVE_BRAND_KEY: BrandKey = "kea";
+const BRAND = BRANDS[ACTIVE_BRAND_KEY];
 
 // ─── DESIGN TOKENS ────────────────────────────────────────────────
 
 const TOKENS = {
-  // Brand colours — inspired by Kabarak's deep navy/maroon + green + gold palette
   color: {
-    primary: "#95191c",
-    primaryDark: "#7a1215",
-    primaryLight: "#b42d31",
-    primarySubtle: "#fdf4f4",
+    primary: BRAND.primary.main,
+    primaryDark: BRAND.primary.dark,
+    primaryLight: BRAND.primary.light,
+    primarySubtle: BRAND.primary.subtle,
 
-    secondary: "#59ac46",
-    secondaryDark: "#428233",
-    secondaryLight: "#7bc66a",
-    secondarySubtle: "#f5faf3",
+    secondary: BRAND.secondary.main,
+    secondaryDark: BRAND.secondary.dark,
+    secondaryLight: BRAND.secondary.light,
+    secondarySubtle: BRAND.secondary.subtle,
 
-    accent: "#C8922A",
-    accentSubtle: "#fef7e9",
+    // Accent is decorative only (highlights, badges, emphasis).
+    // Never use it for errors or success states.
+    accent: BRAND.accent.main,
+    accentSubtle: BRAND.accent.subtle,
 
     neutral900: "#222222",
     neutral800: "#333333",
@@ -34,14 +73,15 @@ const TOKENS = {
     neutral100: "#f2f2f2",
     neutral50: "#fafafa",
 
-    success: "#59ac46",
-    successSubtle: "#f5faf3",
+    // Status colours are independent of the brand so they always read correctly
+    success: "#2E7D32",
+    successSubtle: "#EEF7EE",
     warning: "#B45309",
     warningSubtle: "#FEF3C7",
     error: "#B91C1C",
     errorSubtle: "#FEE2E2",
-    info: "#95191c",
-    infoSubtle: "#fdf4f4",
+    info: BRAND.primary.main,
+    infoSubtle: BRAND.primary.subtle,
 
     white: "#FFFFFF",
     surface: "#FFFFFF",
@@ -162,7 +202,7 @@ const theme = createTheme({
     },
     success: {
       main: TOKENS.color.success,
-      light: TOKENS.color.accentSubtle,
+      light: TOKENS.color.successSubtle,
       contrastText: TOKENS.color.white,
     },
     warning: {
@@ -530,8 +570,8 @@ const theme = createTheme({
             color: TOKENS.color.secondaryDark,
           }),
           ...(ownerState.color === "success" && {
-            backgroundColor: TOKENS.color.accentSubtle,
-            color: TOKENS.color.accent,
+            backgroundColor: TOKENS.color.successSubtle,
+            color: TOKENS.color.success,
           }),
           ...(ownerState.color === "warning" && {
             backgroundColor: TOKENS.color.warningSubtle,
@@ -611,7 +651,8 @@ const theme = createTheme({
         },
         indicator: {
           height: "2px",
-          backgroundColor: TOKENS.color.secondary,
+          // Brand accent (red) gives a clear active marker against the blue/white UI
+          backgroundColor: TOKENS.color.accent,
           borderRadius: "2px 2px 0 0",
         },
       },
@@ -752,9 +793,9 @@ const theme = createTheme({
           border: "1px solid",
           ...(ownerState.variant === "standard" &&
             ownerState.severity === "success" && {
-              backgroundColor: TOKENS.color.accentSubtle,
-              borderColor: TOKENS.color.accent,
-              color: TOKENS.color.accent,
+              backgroundColor: TOKENS.color.successSubtle,
+              borderColor: TOKENS.color.success,
+              color: TOKENS.color.success,
             }),
           ...(ownerState.variant === "standard" &&
             ownerState.severity === "warning" && {
@@ -902,7 +943,7 @@ const theme = createTheme({
             color: TOKENS.color.primary,
           },
           "&.Mui-completed": {
-            color: TOKENS.color.accent,
+            color: TOKENS.color.success,
           },
         },
       },
@@ -913,7 +954,7 @@ const theme = createTheme({
         root: {
           color: TOKENS.color.neutral300,
           "&.Mui-active": { color: TOKENS.color.primary },
-          "&.Mui-completed": { color: TOKENS.color.accent },
+          "&.Mui-completed": { color: TOKENS.color.success },
         },
         text: {
           fontFamily: TOKENS.font.family.body,
@@ -979,4 +1020,4 @@ const theme = createTheme({
 });
 
 export default theme;
-export { TOKENS };
+export { TOKENS, BRANDS, BRAND };

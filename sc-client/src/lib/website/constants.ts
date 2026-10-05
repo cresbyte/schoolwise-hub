@@ -1,12 +1,12 @@
 /**
- * Public website constants for Primrose Private Academy.
+ * Public website constants for Kabraas Elites Academy.
  * @module website/constants
  */
 
 /** School identity and contact details for the public website. */
 export const SCHOOL = {
-  name: "Primrose Private Academy",
-  shortName: "Primrose",
+  name: "Kabraas Elites Academy",
+  shortName: "Kibaara",
   location: "Nairobi County, Kenya",
   motto: "Excellence Through Knowledge",
   tagline: "Nurturing Tomorrow's Leaders Today",
@@ -15,8 +15,8 @@ export const SCHOOL = {
   phone: "0712 345 678",
   phoneRaw: "254712345678",
   whatsapp: "254712345678",
-  email: "info@primroseacademy.ac.ke",
-  admissionsEmail: "admissions@primroseacademy.ac.ke",
+  email: "info@kibaara.elite.ac.ke",
+  admissionsEmail: "admissions@kibaara.elite.ac.ke",
   address: "Milimani Road, Nairobi Town",
   postal: "P.O. Box 1245-20100, Nairobi",
   county: "Nairobi",
@@ -66,7 +66,7 @@ export const WEBSITE_IMAGES = {
 
 /** Default SEO keywords for the school website. */
 export const DEFAULT_KEYWORDS = [
-  "Primrose Private Academy",
+  "Kabraas Elites Academy",
   "Nairobi schools",
   "Kenyan private school",
   "CBC curriculum",

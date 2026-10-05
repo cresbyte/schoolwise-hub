@@ -31,6 +31,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import LockResetIcon from "@mui/icons-material/LockReset";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { alpha, useTheme } from "@mui/material/styles";
 import { ROLE_LABELS } from "@/lib/constants";
 import { Logo } from "@/components/common/Logo";
 import { useAuth } from "@/context/AuthContext";
@@ -39,8 +40,8 @@ import { NotificationBell } from "./NotificationBell";
 import { getInitials } from "@/lib/utils";
 import { useRouteGuard } from "@/hooks/useRouteGuard";
 
-const FULL = 252;
-const RAIL = 68;
+const FULL = 240;
+const RAIL = 64;
 
 /** Returns true if the nav item should be considered active. */
 function isItemActive(pathname: string, to: string, exact?: boolean): boolean {
@@ -82,6 +83,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
   const { user, isAuthenticated, isLoading, logout, hasPermission, isClassTeacher } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const theme = useTheme();
   const [open, setOpen] = useState(true);
   const [anchor, setAnchor] = useState<null | HTMLElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -202,14 +204,31 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
           "& .MuiDrawer-paper": {
             width,
             overflowX: "hidden",
-            transition: "width .2s",
-            overflowY: "hidden", // we handle overflow in inner box
+            transition: "width 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+            overflowY: "hidden",
             display: "flex",
             flexDirection: "column",
+            borderRight: 1,
+            borderColor: "divider",
+            bgcolor: "background.paper",
           },
         }}
       >
-        <Toolbar />
+        {/* Compact Sidebar Header */}
+        <Box
+          sx={{
+            height: 64,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: open ? "flex-start" : "center",
+            px: open ? 2 : 0,
+            flexShrink: 0,
+            borderBottom: 1,
+            borderColor: "divider",
+          }}
+        >
+          <Logo size={open ? 28 : 32} />
+        </Box>
 
         {/* Scrollable sidebar body — scroll position is preserved via ref */}
         <Box
@@ -219,7 +238,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
             overflowY: "auto",
             overflowX: "hidden",
             flex: 1,
-            py: 1,
+            py: 0.5,
             // Custom thin scrollbar
             "&::-webkit-scrollbar": { width: 4 },
             "&::-webkit-scrollbar-thumb": { bgcolor: "divider", borderRadius: 2 },
@@ -237,7 +256,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
             const expanded = groupOpen[group.heading] ?? true;
 
             return (
-              <Box key={group.heading}>
+              <Box key={group.heading} sx={{ mb: 0.5 }}>
                 {open ? (
                   <>
                     {/* Group header row — clicking toggles collapse */}
@@ -247,39 +266,39 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
-                        px: 2,
-                        py: 0.5,
+                        px: 1.5,
+                        py: 0.75,
                         mt: 1,
                         cursor: "pointer",
                         userSelect: "none",
-                        "&:hover .sidebar-group-label": { color: "text.primary" },
+                        borderRadius: 1,
+                        mx: 1,
+                        "&:hover": { bgcolor: "action.hover" },
                       }}
                     >
                       <Typography
-                        className="sidebar-section-label sidebar-group-label"
                         variant="caption"
                         sx={{
                           fontWeight: 700,
-                          fontSize: 10,
-                          letterSpacing: "0.08em",
+                          fontSize: 10.5,
+                          letterSpacing: "0.06em",
                           textTransform: "uppercase",
-                          color: anyActive ? "primary.main" : "text.disabled",
-                          transition: "color .15s",
+                          color: anyActive ? "primary.main" : "text.secondary",
                         }}
                       >
                         {group.heading}
                       </Typography>
-                      <Box sx={{ color: "text.disabled", display: "flex", alignItems: "center" }}>
+                      <Box sx={{ color: anyActive ? "primary.main" : "text.secondary", display: "flex", alignItems: "center" }}>
                         {expanded ? (
-                          <ExpandLessIcon sx={{ fontSize: 14 }} />
+                          <ExpandLessIcon sx={{ fontSize: 16 }} />
                         ) : (
-                          <ExpandMoreIcon sx={{ fontSize: 14 }} />
+                          <ExpandMoreIcon sx={{ fontSize: 16 }} />
                         )}
                       </Box>
                     </Box>
 
-                    <Collapse in={expanded} timeout={150} unmountOnExit>
-                      <List dense sx={{ px: 1, pb: 0.5 }}>
+                    <Collapse in={expanded} timeout={200} unmountOnExit>
+                      <List dense sx={{ px: 1, py: 0.5 }}>
                         {items.map((item: any) => {
                           const active = isItemActive(pathname, item.to, item.exact);
                           return (
@@ -289,19 +308,29 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                               href={item.to}
                               selected={active}
                               sx={{
-                                minHeight: 40,
-                                borderRadius: 1.5,
-                                mb: 0.25,
+                                minHeight: 36,
+                                borderRadius: 1,
+                                mb: 0.125,
                                 px: 1.5,
+                                bgcolor: active ? alpha(theme.palette.primary.main, 0.08) : "transparent",
+                                color: active ? theme.palette.primary.main : "text.primary",
+                                "&:hover": {
+                                  bgcolor: active ? alpha(theme.palette.primary.main, 0.12) : "action.hover",
+                                },
+                                "& .MuiListItemIcon-root": {
+                                  color: active ? theme.palette.primary.main : "text.secondary",
+                                  minWidth: 32,
+                                },
+                                "& .MuiListItemText-primary": {
+                                  fontWeight: active ? 600 : 500,
+                                  fontSize: 13,
+                                }
                               }}
                             >
-                              <ListItemIcon sx={{ minWidth: 34, color: active ? "primary.main" : "inherit" }}>
+                              <ListItemIcon>
                                 {item.icon}
                               </ListItemIcon>
-                              <ListItemText
-                                primary={item.label}
-                                slotProps={{ primary: { sx: { fontWeight: active ? 700 : 500, fontSize: 13.5 } } }}
-                              />
+                              <ListItemText primary={item.label} />
                             </ListItemButton>
                           );
                         })}
@@ -310,7 +339,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                   </>
                 ) : (
                   // Rail mode — no groups, just icons with tooltips
-                  <List dense sx={{ px: 0.5, pb: 0.5 }}>
+                  <List dense sx={{ px: 0.5, py: 0.5 }}>
                     {items.map((item: any) => {
                       const active = isItemActive(pathname, item.to, item.exact);
                       return (
@@ -320,14 +349,24 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                             href={item.to}
                             selected={active}
                             sx={{
-                              minHeight: 44,
+                              minHeight: 40,
                               justifyContent: "center",
-                              borderRadius: 1.5,
-                              mb: 0.25,
+                              borderRadius: 1,
+                              mb: 0.125,
                               px: 0,
+                              bgcolor: active ? alpha(theme.palette.primary.main, 0.08) : "transparent",
+                              color: active ? theme.palette.primary.main : "text.primary",
+                              "&:hover": {
+                                bgcolor: active ? alpha(theme.palette.primary.main, 0.12) : "action.hover",
+                              },
+                              "& .MuiListItemIcon-root": {
+                                color: active ? theme.palette.primary.main : "text.secondary",
+                                minWidth: 0,
+                                justifyContent: "center",
+                              }
                             }}
                           >
-                            <ListItemIcon sx={{ minWidth: 0, justifyContent: "center", color: active ? "primary.main" : "inherit" }}>
+                            <ListItemIcon>
                               {item.icon}
                             </ListItemIcon>
                           </ListItemButton>

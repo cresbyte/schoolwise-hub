@@ -55,7 +55,24 @@ export const NAV_GROUPS = [
       { label: "Attendance", to: "/attendance", icon: <EventAvailableIcon />, permission: "attendance.write" },
     ],
   },
-
+{
+    heading: "Finance",
+    items: [
+      { label: "Fee Structures", to: "/fees/structures", icon: <ReceiptIcon />, permission: "fees.view" },
+      { label: "Special Levies", to: "/fees/levies", icon: <ReceiptLongIcon />, permission: "fees.view" },
+      { label: "Fee Collection", to: "/fees/collection", icon: <PaymentsIcon />, permission: "fees.view" },
+      { label: "Outstanding Fees", to: "/fees/outstanding", icon: <WarningIcon />, permission: "fees.view" },
+      { label: "Payroll", to: "/payroll", icon: <AccountBalanceWalletIcon />, permission: "payroll.view" },
+    ],
+   },
+  // ,{
+  //   heading: "Reports",
+  //   items: [
+  //     { label: "Academic Reports", to: "/reports/academic", icon: <BarChartIcon />, permission: "reports.view", hiddenRoles: ["class_teacher"] },
+  //     { label: "NEMIS Export", to: "/reports/nemis", icon: <DownloadIcon />, permission: "reports.view", hiddenRoles: ["class_teacher"] },
+  //     { label: "Audit Trail", to: "/reports/audit", icon: <HistoryIcon />, permission: "reports.view", hiddenRoles: ["class_teacher"] },
+  //   ],
+  // },
   {
     heading: "Academics",
     items: [
@@ -69,16 +86,7 @@ export const NAV_GROUPS = [
     heading: "Communication",
     items: [{ label: "Messages", to: "/messages", icon: <MessageIcon />, permission: "reports.view" }],
   },
-  {
-    heading: "Finance",
-    items: [
-      { label: "Fee Structures", to: "/fees/structures", icon: <ReceiptIcon />, permission: "fees.view" },
-      { label: "Special Levies", to: "/fees/levies", icon: <ReceiptLongIcon />, permission: "fees.view" },
-      { label: "Fee Collection", to: "/fees/collection", icon: <PaymentsIcon />, permission: "fees.view" },
-      { label: "Outstanding Fees", to: "/fees/outstanding", icon: <WarningIcon />, permission: "fees.view" },
-      { label: "Payroll", to: "/payroll", icon: <AccountBalanceWalletIcon />, permission: "payroll.view" },
-    ],
-  },
+
   {
     heading: "Staff",
     items: [
@@ -87,13 +95,6 @@ export const NAV_GROUPS = [
     ],
   },
   {
-    heading: "Reports",
-    items: [
-      { label: "Academic Reports", to: "/reports/academic", icon: <BarChartIcon />, permission: "reports.view", hiddenRoles: ["class_teacher"] },
-      { label: "NEMIS Export", to: "/reports/nemis", icon: <DownloadIcon />, permission: "reports.view", hiddenRoles: ["class_teacher"] },
-      { label: "Audit Trail", to: "/reports/audit", icon: <HistoryIcon />, permission: "reports.view", hiddenRoles: ["class_teacher"] },
-    ],
-  },{
     heading: "Settings",
     items: [
       { label: "Classes", to: "/settings/classes", icon: <MeetingRoomIcon />, permission: "classes.view" },

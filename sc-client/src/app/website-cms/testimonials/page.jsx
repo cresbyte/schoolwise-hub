@@ -70,7 +70,7 @@ export default function TestimonialsCmsPage() {
                 Testimonials
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                What parents and alumni say about Primrose.
+                What parents and alumni say about Kibaara.
               </Typography>
             </Box>
             <Button

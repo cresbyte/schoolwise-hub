@@ -40,6 +40,7 @@ export const api = {
     return request(`/staff/${query}`);
   },
   getStaffById: (id: string) => request(`/staff/${id}/`),
+  createStaff: (data: any) => request("/staff/", { method: "POST", body: JSON.stringify(data) }),
 
   // Finance
   getFeeCollectionSummary: () => request("/fees/summary/").catch(() => ({ collectionRate: 0, totalInvoiced: 0, totalCollected: 0 })),
@@ -79,13 +80,10 @@ export const api = {
     if (!payload.id) payload.id = `std-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
     if (!payload.admissionNumber) payload.admissionNumber = `ADM-2026-${Math.floor(10000 + Math.random() * 90000)}`;
 
-    // Flatten parent fields if they are nested in the frontend but flat in the backend serializer Meta.fields
-    if (payload.parent) {
-      payload.father_name = payload.parent.fatherName;
-      payload.mother_name = payload.parent.motherName;
-      payload.primary_contact_name = payload.parent.primaryContactName;
-      payload.primary_contact_phone = payload.parent.primaryContactPhone;
-      delete payload.parent;
+    // Rename parents to parents_data for the backend
+    if (payload.parents) {
+      payload.parents_data = payload.parents;
+      delete payload.parents;
     }
 
     if (typeof payload.photo === "string") {
@@ -96,7 +94,13 @@ export const api = {
       const formData = new FormData();
       Object.entries(payload).forEach(([k, v]) => {
         if (v !== undefined && v !== null) {
-          formData.append(k, v instanceof Blob ? v : String(v));
+          if (v instanceof Blob) {
+            formData.append(k, v);
+          } else if (typeof v === "object") {
+            formData.append(k, JSON.stringify(v));
+          } else {
+            formData.append(k, String(v));
+          }
         }
       });
       return request("/students/", { method: "POST", body: formData });
@@ -107,12 +111,10 @@ export const api = {
   updateStudent: (id: string, data: any) => {
     const payload = { ...data };
 
-    if (payload.parent) {
-      payload.father_name = payload.parent.fatherName;
-      payload.mother_name = payload.parent.motherName;
-      payload.primary_contact_name = payload.parent.primaryContactName;
-      payload.primary_contact_phone = payload.parent.primaryContactPhone;
-      delete payload.parent;
+    // Rename parents to parents_data for the backend
+    if (payload.parents) {
+      payload.parents_data = payload.parents;
+      delete payload.parents;
     }
 
     if (typeof payload.photo === "string") {
@@ -123,7 +125,13 @@ export const api = {
       const formData = new FormData();
       Object.entries(payload).forEach(([k, v]) => {
         if (v !== undefined && v !== null) {
-          formData.append(k, v instanceof Blob ? v : String(v));
+          if (v instanceof Blob) {
+            formData.append(k, v);
+          } else if (typeof v === "object") {
+            formData.append(k, JSON.stringify(v));
+          } else {
+            formData.append(k, String(v));
+          }
         }
       });
       return request(`/students/${id}/`, { method: "PATCH", body: formData });
@@ -133,6 +141,20 @@ export const api = {
   },
   deleteStudent: (id: string) => request(`/students/${id}/`, { method: "DELETE" }),
   updateStudentAvatar: (id: string, photoUrl: string) => request(`/students/${id}/`, { method: "PATCH", body: JSON.stringify({ photo: photoUrl }) }),
+
+  /**
+   * Look up a user by their phone number (local format: 07XXXXXXXX or 01XXXXXXXX).
+   * Uses the dedicated /auth/parents/lookup/ endpoint which does an exact phone match
+   * and returns { id, name, email, role, children } or null if not found.
+   */
+  findParentByPhone: async (phone: string) => {
+    try {
+      const res = await request(`/auth/parents/lookup/?phone=${encodeURIComponent(phone)}`);
+      return res ?? null;
+    } catch {
+      return null;
+    }
+  },
 
   // Classes
   getClasses: () => request("/academics/classes/"),
@@ -450,7 +472,7 @@ export const api = {
    * regardless of what's left over in the browser from a previous session.
    */
   submitApplication: async (data: any) => {
-    const response = await fetch(`${BASE_URL}/students/applications/`, {
+    const response = await fetch(`${BASE_URL}/applications/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -463,24 +485,55 @@ export const api = {
   },
   getApplications: (status?: string) => {
     const query = status ? `?status=${status}` : "";
-    return request(`/students/applications/${query}`).catch(() => []);
+    return request(`/applications/${query}`).catch(() => []);
   },
-  getApplication: (id: string | number) => request(`/students/applications/${id}/`),
+  getApplication: (id: string | number) => request(`/applications/${id}/`),
   /** Non-terminal transitions: interview_scheduled | offered | rejected | withdrawn. */
   updateApplicationStatus: (id: string | number, statusValue: string, extra?: any) =>
-    request(`/students/applications/${id}/status/`, {
+    request(`/applications/${id}/status/`, {
       method: "POST",
       body: JSON.stringify({ status: statusValue, ...extra }),
     }),
   /** Converts an offered application into a real Student + parent account. */
   convertApplication: (id: string | number, classId: string) =>
-    request(`/students/applications/${id}/convert/`, {
+    request(`/applications/${id}/convert/`, {
       method: "POST",
       body: JSON.stringify({ classId }),
     }),
   updateApplication: (id: string | number, data: any) =>
-    request(`/students/applications/${id}/`, {
+    request(`/applications/${id}/`, {
       method: "PATCH",
       body: JSON.stringify(data),
     }),
+
+  // Fees (Structures and Levies)
+  getGrades: () => request("/academics/classes/"),
+  
+  getFeeStructure: ({ year }: { year: number }) => 
+    request(`/fees/structures/?year=${year}`),
+
+  createFeeStructure: ({ year, copyFromYear }: { year: number, copyFromYear?: number | null }) => 
+    request("/fees/structures/", { method: "POST", body: JSON.stringify({ year, copyFromYear }) }),
+
+  updateFeeStructure: ({ year, changes, reason, status }: { year: number, changes: any[], reason: string, status?: string }) => 
+    request(`/fees/structures/${year}/`, { method: "PATCH", body: JSON.stringify({ changes, reason, status }) }),
+
+  getChangeHistory: ({ year }: { year: number }) => 
+    request(`/fees/history/?year=${year}`),
+
+  getAdditionalCharges: ({ year, term }: { year: number, term?: number | null }) => {
+    const termQuery = term ? `&term=${term}` : "";
+    return request(`/fees/levies/?year=${year}${termQuery}`);
+  },
+
+  saveAdditionalCharge: (chargeData: any) => {
+    if (chargeData.id) {
+      return request(`/fees/levies/${chargeData.id}/`, { method: "PATCH", body: JSON.stringify(chargeData) });
+    } else {
+      return request("/fees/levies/", { method: "POST", body: JSON.stringify(chargeData) });
+    }
+  },
+
+  removeAdditionalCharge: (id: string | number) => 
+    request(`/fees/levies/${id}/`, { method: "DELETE" }),
 };

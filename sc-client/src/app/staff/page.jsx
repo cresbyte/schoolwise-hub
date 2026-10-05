@@ -34,7 +34,7 @@ import { RoleGuard } from "@/components/RoleGuard";
 import { PageGuard } from "@/components/common/PageGuard";
 import { useStaff } from "@/hooks/domain";
 import { useAsync } from "@/hooks/useAsync";
-import * as api from "@/lib/mockApi";
+import { api } from "@/lib/api";
 import { formatKES, getInitials, exportToCSV } from "@/lib/utils";
 import { CONTRACT_TYPES } from "@/lib/constants";
 
@@ -59,11 +59,11 @@ function StaffContent() {
   const handleExport = () =>
     exportToCSV(
       list.map((s) => ({
-        StaffNo: s.staffNumber,
-        Name: `${s.firstName} ${s.lastName}`,
+        StaffNo: s.staffNumber || s.staff_id,
+        Name: s.name,
         Designation: s.designation,
         Department: s.department ?? "",
-        Contract: s.contractType,
+        Contract: s.contractType || s.contract_type || "",
         Phone: s.phone,
         Status: s.status
       })),
@@ -115,17 +115,17 @@ function StaffContent() {
                 <TableBody>
                   {list.map((s) => (
                     <TableRow key={s.id} hover>
-                      <TableCell sx={{ fontFamily: "monospace", fontSize: 13 }}>{s.staffNumber}</TableCell>
+                      <TableCell sx={{ fontFamily: "monospace", fontSize: 13 }}>{s.staffNumber || s.staff_id}</TableCell>
                       <TableCell>
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                           <Avatar
                             src={s.avatarUrl || s.photo}
-                            alt={`${s.firstName} ${s.lastName}`}
+                            alt={s.name}
                             sx={{ width: 32, height: 32, fontSize: 12, bgcolor: "secondary.main" }}
                           >
-                            {getInitials(`${s.firstName} ${s.lastName}`)}
+                            {getInitials(s.name || "")}
                           </Avatar>
-                          <span style={{ fontWeight: 600 }}>{s.firstName} {s.lastName}</span>
+                          <span style={{ fontWeight: 600 }}>{s.name}</span>
                         </Box>
                       </TableCell>
                       <TableCell>{s.designation}</TableCell>

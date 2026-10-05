@@ -19,7 +19,11 @@ import { HEADING_FONT } from "@/lib/website/constants";
 import { getFaqItems, getDownloadItems } from "@/lib/website/data";
 
 const QUICK_LINKS = [
-  { title: "Parent Portal", desc: "View fees, attendance, and report cards", href: "/parent-portal" },
+  {
+    title: "Parent Portal",
+    desc: "View fees, attendance, and report cards",
+    href: "/parent-portal",
+  },
   {
     title: "Fee Structure",
     desc: "Current term fees and payment methods",
@@ -33,7 +37,6 @@ const QUICK_LINKS = [
 export default function ParentsPage() {
   return (
     <>
-      
       <SectionWrapper>
         <SectionHeading title="Quick Access" />
         <Box
@@ -130,7 +133,7 @@ export default function ParentsPage() {
               <Typography sx={{ opacity: 0.9, mb: 2 }}>
                 Contact the accounts office for portal credentials or password resets.
               </Typography>
-              <Typography variant="body2">accounts@primroseacademy.ac.ke</Typography>
+              <Typography variant="body2">accounts@kibaara.elite.ac.ke</Typography>
               <Typography variant="body2">0733 456 789</Typography>
             </CardContent>
           </Card>

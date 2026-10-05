@@ -40,22 +40,13 @@ const CURRICULUM_OPTIONS = [
   { value: "844", label: "8-4-4 (Legacy)" },
 ];
 
-// Default grading templates per curriculum
-const DEFAULT_GRADING = {
-  CBC: [
-    { grade: "EE", min: 76, max: 100, color: "#2e7d32", comment: "Exceeds Expectations — excellent mastery of the learning outcomes." },
-    { grade: "ME", min: 51, max: 75, color: "#8bc34a", comment: "Meets Expectations — good understanding with minor gaps." },
-    { grade: "AE", min: 26, max: 50, color: "#ff9800", comment: "Approaching Expectations — progressing but needs more support." },
-    { grade: "BE", min: 0, max: 25, color: "#c62828", comment: "Below Expectations — requires intensive intervention." },
-  ],
-  "844": [
-    { grade: "A", min: 80, max: 100, color: "#2e7d32", comment: "Excellent performance." },
-    { grade: "B", min: 60, max: 79, color: "#8bc34a", comment: "Good performance." },
-    { grade: "C", min: 50, max: 59, color: "#ff9800", comment: "Average performance, needs improvement." },
-    { grade: "D", min: 40, max: 49, color: "#e64a19", comment: "Below average, requires support." },
-    { grade: "E", min: 0, max: 39, color: "#c62828", comment: "Poor performance, needs urgent intervention." },
-  ],
-};
+// Default grading templates
+const DEFAULT_GRADING = [
+  { grade: "EE", min: 76, max: 100, color: "#2e7d32", comment: "Exceeds Expectations — excellent mastery of the learning outcomes." },
+  { grade: "ME", min: 51, max: 75, color: "#8bc34a", comment: "Meets Expectations — good understanding with minor gaps." },
+  { grade: "AE", min: 26, max: 50, color: "#ff9800", comment: "Approaching Expectations — progressing but needs more support." },
+  { grade: "BE", min: 0, max: 25, color: "#c62828", comment: "Below Expectations — requires intensive intervention." },
+];
 
 export default function GradeSubjectSetupPage() {
   return <SetupContent />;
@@ -63,18 +54,17 @@ export default function GradeSubjectSetupPage() {
 
 function SetupContent() {
   const { showNotification } = useNotification();
-  const [curriculum, setCurriculum] = useState("CBC");
   const [gradeLevel, setGradeLevel] = useState("");
   const [allSubjects, setAllSubjects] = useState([]);
   const [subjectStates, setSubjectStates] = useState({}); // { subjectId: { enabled, gradingSystem, expanded } }
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(null); // subjectId being saved
 
-  // Load subjects whenever curriculum changes
+  // Load subjects
   useEffect(() => {
     let active = true;
     setLoading(true);
-    api.getSubjects({ curriculum }).then((res) => {
+    api.getSubjects().then((res) => {
       if (!active) return;
       const subjects = res.results || res || [];
       setAllSubjects(subjects);
@@ -94,7 +84,7 @@ function SetupContent() {
       if (active) setLoading(false);
     });
     return () => { active = false; };
-  }, [curriculum]);
+  }, []);
 
   // When grade level changes, update enabled flags from each subject's grade_levels
   useEffect(() => {
@@ -130,7 +120,7 @@ function SetupContent() {
       ...prev,
       [subjectId]: {
         ...prev[subjectId],
-        gradingSystem: DEFAULT_GRADING[curriculum].map((r) => ({ ...r })),
+        gradingSystem: DEFAULT_GRADING.map((r) => ({ ...r })),
       },
     }));
   };
@@ -262,25 +252,13 @@ function SetupContent() {
         }
       />
 
-      {/* Step 1: Pick curriculum & grade */}
+      {/* Step 1: Pick grade */}
       <Card sx={{ mb: 3 }}>
         <CardContent>
           <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 2, fontWeight: 600, textTransform: "uppercase", fontSize: 11, letterSpacing: 0.5 }}>
-            Step 1 — Select Curriculum &amp; Grade Level
+            Step 1 — Select Grade Level
           </Typography>
           <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-            <TextField
-              select
-              size="small"
-              label="Curriculum"
-              value={curriculum}
-              onChange={(e) => { setCurriculum(e.target.value); setGradeLevel(""); }}
-              sx={{ minWidth: 220 }}
-            >
-              {CURRICULUM_OPTIONS.map((o) => (
-                <MenuItem key={o.value} value={o.value}>{o.label}</MenuItem>
-              ))}
-            </TextField>
             <TextField
               select
               size="small"
@@ -300,13 +278,13 @@ function SetupContent() {
       {/* Step 2: Subject list */}
       {!gradeLevel ? (
         <Alert severity="info" icon={<InfoOutlinedIcon />}>
-          Select a curriculum and grade level above to configure its subjects and grading.
+          Select a grade level above to configure its subjects and grading.
         </Alert>
       ) : loading ? (
         <Typography color="text.secondary">Loading subjects…</Typography>
       ) : allSubjects.length === 0 ? (
         <Alert severity="warning">
-          No subjects found for <strong>{curriculum}</strong> curriculum. Add subjects first from the Subjects page.
+          No subjects found. Add subjects first from the Subjects page.
         </Alert>
       ) : (
         <>
@@ -316,7 +294,7 @@ function SetupContent() {
             </Typography>
           </Box>
 
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(400px, 1fr))", gap: 2, alignItems: "start" }}>
             {allSubjects.map((subject) => {
               const state = subjectStates[subject.id] || { enabled: false, gradingSystem: [], expanded: false };
               return (
@@ -397,13 +375,13 @@ function SetupContent() {
                           variant="outlined"
                           onClick={() => applyDefaultGrading(subject.id)}
                         >
-                          Apply {curriculum} Default
+                          Apply Default
                         </Button>
                       </Box>
 
                       {state.gradingSystem?.length === 0 && (
                         <Alert severity="info" sx={{ mb: 2 }}>
-                          No grading bands set. Click &quot;Apply {curriculum} Default&quot; or add bands manually.
+                          No grading bands set. Click &quot;Apply Default&quot; or add bands manually.
                         </Alert>
                       )}
 

@@ -21,7 +21,7 @@ const SECTIONS = [
     items: ["Football", "Basketball", "Athletics", "Swimming", "Rugby", "Volleyball"],
     desc: "Our sports programme competes at county and national levels. Inter-house competitions foster teamwork and school spirit.",
     image: WEBSITE_IMAGES.sports,
-    imageAlt: "Primrose students competing in inter-house athletics and sports day events",
+    imageAlt: "Kibaara students competing in inter-house athletics and sports day events",
   },
   {
     id: "clubs",
@@ -56,7 +56,6 @@ export default function SchoolLifePage() {
 
   return (
     <>
-      
       <SectionWrapper>
         <Tabs
           value={tab}
@@ -73,7 +72,11 @@ export default function SchoolLifePage() {
               sx={{ textTransform: "none", fontWeight: 600 }}
             />
           ))}
-          <Tab label="Boarding" value={SECTIONS.length} sx={{ textTransform: "none", fontWeight: 600 }} />
+          <Tab
+            label="Boarding"
+            value={SECTIONS.length}
+            sx={{ textTransform: "none", fontWeight: 600 }}
+          />
         </Tabs>
 
         {tab < SECTIONS.length ? (
@@ -106,11 +109,7 @@ export default function SchoolLifePage() {
                   ))}
                 </Box>
               </Box>
-              <ImagePlaceholder
-                src={section.image}
-                aspectRatio="4/3"
-                alt={section.imageAlt}
-              />
+              <ImagePlaceholder src={section.image} aspectRatio="4/3" alt={section.imageAlt} />
             </Box>
           </Box>
         ) : (
@@ -121,7 +120,7 @@ export default function SchoolLifePage() {
               <ImagePlaceholder
                 src={WEBSITE_IMAGES.campusBanner}
                 aspectRatio="4/3"
-                alt="Primrose boarding wing and campus accommodation facilities"
+                alt="Kibaara boarding wing and campus accommodation facilities"
               />
               <Box>
                 <Typography variant="h5" sx={{ fontFamily: HEADING_FONT, fontWeight: 700, mb: 2 }}>

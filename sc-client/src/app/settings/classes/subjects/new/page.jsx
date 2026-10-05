@@ -25,7 +25,6 @@ import { GRADE_LEVELS } from "@/lib/constants";
 const schema = z.object({
   name: z.string().min(2, "Required"),
   code: z.string().min(2, "Required"),
-  curriculum: z.enum(["CBC", "844"]),
   gradeLevel: z.array(z.string()).min(1, "Select at least one grade"),
   isCore: z.boolean(),
   learningArea: z.string().optional(),
@@ -38,7 +37,6 @@ export default function NewSubjectPage() {
   const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      curriculum: "CBC",
       gradeLevel: [],
       isCore: true,
     },
@@ -48,7 +46,6 @@ export default function NewSubjectPage() {
     const payload = {
       name: v.name,
       code: v.code,
-      curriculum: v.curriculum,
       grade_levels: v.gradeLevel,
       gradeLevel: v.gradeLevel,
       is_core: v.isCore,
@@ -60,7 +57,7 @@ export default function NewSubjectPage() {
     };
     await api.createSubject(payload);
     showNotification(`Subject ${v.name} added successfully`, "success");
-    router.push("/subjects");
+    router.push("/settings/classes/subjects");
   });
 
   return (
@@ -71,12 +68,6 @@ export default function NewSubjectPage() {
           <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" } }}>
             <Controller name="name" control={control} render={({ field }) => <TextField {...field} label="Subject Name" size="small" error={!!errors.name} helperText={errors.name?.message} />} />
             <Controller name="code" control={control} render={({ field }) => <TextField {...field} label="Subject Code" size="small" error={!!errors.code} helperText={errors.code?.message} />} />
-            <Controller name="curriculum" control={control} render={({ field }) => (
-              <TextField {...field} select label="Curriculum" size="small">
-                <MenuItem value="CBC">CBC</MenuItem>
-                <MenuItem value="844">8-4-4</MenuItem>
-              </TextField>
-            )} />
             <Controller name="learningArea" control={control} render={({ field }) => <TextField {...field} label="Learning Area / Category" size="small" placeholder="e.g. Sciences, Languages" />} />
             <Controller name="gradeLevel" control={control} render={({ field }) => (
               <TextField {...field} select label="Applicable Grades" size="small" slotProps={{ select: { multiple: true } }} error={!!errors.gradeLevel} helperText={errors.gradeLevel?.message}>

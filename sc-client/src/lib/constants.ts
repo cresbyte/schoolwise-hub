@@ -18,6 +18,7 @@ export const HEADING_FONT = "'Outfit', system-ui, -apple-system, sans-serif";
 export const BODY_FONT = "'Outfit', system-ui, -apple-system, sans-serif";
 
 export const GRADE_LEVELS: GradeLevel[] = [
+  "Play Group",
   "PP1",
   "PP2",
   "Grade 1",
@@ -29,10 +30,6 @@ export const GRADE_LEVELS: GradeLevel[] = [
   "Grade 7",
   "Grade 8",
   "Grade 9",
-  "Form 1",
-  "Form 2",
-  "Form 3",
-  "Form 4",
 ];
 
 export const CBC_RATINGS: { value: CBCRating; label: string; descriptor: string }[] = [
@@ -95,7 +92,6 @@ export const LEAVE_TYPES: { value: LeaveType; label: string }[] = [
 
 export const CURRICULUM_LABELS: Record<Curriculum, string> = {
   CBC: "CBC",
-  "844": "8-4-4",
 };
 
 export const ROLE_LABELS: Record<UserRole, string> = {

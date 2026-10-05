@@ -4,7 +4,7 @@
  */
 
 export type UserRole = "admin" | "headteacher" | "deputy" | "hod" | "class_teacher" | "teacher" | "staff" | "accountant" | "parent";
-export type Curriculum = "CBC" | "844";
+export type Curriculum = "CBC";
 export type Gender = "Male" | "Female";
 export type TermNumber = 1 | 2 | 3;
 export type GradeLevel =
@@ -18,11 +18,7 @@ export type GradeLevel =
   | "Grade 6"
   | "Grade 7"
   | "Grade 8"
-  | "Grade 9"
-  | "Form 1"
-  | "Form 2"
-  | "Form 3"
-  | "Form 4";
+  | "Grade 9";
 export type CBCRating = "EE" | "ME" | "AE" | "BE";
 export type AttendanceStatus = "present" | "absent" | "late" | "excused";
 export type FeeStatus = "paid" | "partial" | "unpaid" | "overpaid";

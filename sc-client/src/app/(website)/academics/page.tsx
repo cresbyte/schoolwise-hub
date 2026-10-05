@@ -122,7 +122,7 @@ export default function AcademicsPage() {
               </BarChart>
             </ResponsiveContainer>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 2, textAlign: "center" }}>
-              Primrose's 2026 mean score of 8.2 places us among the top private schools in Nairobi
+              Kibaara's 2026 mean score of 8.2 places us among the top private schools in Nairobi
               County.
             </Typography>
           </CardContent>

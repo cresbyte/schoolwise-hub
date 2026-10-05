@@ -62,7 +62,7 @@ export const MAIN_NAV = [
     href: "/admissions",
     children: [
       {
-        label: "Why Primrose",
+        label: "Why Kibaara",
         href: "/admissions#why-primrose",
         description: "What makes us the right choice for your child",
       },
@@ -124,7 +124,7 @@ export const FOOTER_LINKS = {
   ],
   admissions: [
     { label: "Apply Now", href: "/admissions/apply" },
-    { label: "Why Primrose", href: "/admissions#why-primrose" },
+    { label: "Why Kibaara", href: "/admissions#why-primrose" },
     { label: "Fees", href: "/admissions#fees" },
   ],
   parents: [

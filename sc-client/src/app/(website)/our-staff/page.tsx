@@ -35,7 +35,7 @@ export default function OurStaffPage() {
 
   return (
     <>
-            <SectionWrapper>
+      <SectionWrapper>
         <Tabs value={filter} onChange={(_, v) => setFilter(v)} sx={{ mb: 3 }}>
           {FILTERS.map((f) => (
             <Tab key={f} label={f} value={f} sx={{ textTransform: "none", fontWeight: 600 }} />
@@ -70,8 +70,13 @@ export default function OurStaffPage() {
                 <Typography variant="body2" color="primary" sx={{ fontWeight: 600, mb: 1 }}>
                   {s.designation}
                 </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 1 }}>
-                  {STAFF_QUALIFICATIONS[s.id as keyof typeof STAFF_QUALIFICATIONS] ?? "Qualified educator"}
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ display: "block", mb: 1 }}
+                >
+                  {STAFF_QUALIFICATIONS[s.id as keyof typeof STAFF_QUALIFICATIONS] ??
+                    "Qualified educator"}
                 </Typography>
                 {s.classAssigned && (
                   <Typography variant="caption" color="text.secondary">
@@ -91,8 +96,8 @@ export default function OurStaffPage() {
             subtitle="We're always looking for passionate educators and support staff."
           />
           <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-            Send your CV and cover letter to careers@primroseacademy.ac.ke or visit our Contact
-            page for more information.
+            Send your CV and cover letter to careers@kibaara.elite.ac.ke or visit our Contact page
+            for more information.
           </Typography>
           <Button LinkComponent={Link} href="/contact" variant="contained">
             Get in Touch

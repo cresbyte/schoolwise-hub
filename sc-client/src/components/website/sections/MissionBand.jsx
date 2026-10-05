@@ -33,7 +33,7 @@ export function MissionBand({ image }) {
               viewport={viewportOnce}
               sx={{ position: "relative" }}
             >
-              <ImagePlaceholder src={image} alt="Principal's message" aspectRatio="3/4"  />
+              <ImagePlaceholder src={image} alt="Principal's message" aspectRatio="3/4" />
               {/* Accent corner box */}
               <Box
                 sx={{
@@ -111,7 +111,7 @@ export function MissionBand({ image }) {
                   mb: 2.5,
                 }}
               >
-                At Primrose Private Academy, we are committed to providing a world-class education
+                At Kabraas Elites Academy, we are committed to providing a world-class education
                 that prepares every learner for the demands of the 21st century. Our dual CBC and
                 8-4-4 curriculum ensures seamless progression from Early Childhood to Senior
                 Secondary.
@@ -127,7 +127,7 @@ export function MissionBand({ image }) {
                 }}
               >
                 We nurture intellectual curiosity, moral integrity, and leadership qualities —
-                ensuring every student leaves Primrose ready to make a meaningful contribution to
+                ensuring every student leaves Kibaara ready to make a meaningful contribution to
                 society.
               </Typography>
 

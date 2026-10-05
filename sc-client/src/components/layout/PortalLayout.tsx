@@ -282,7 +282,9 @@ export function PortalLayout({ children }: { children: ReactNode }) {
         </Box>
       </Drawer>
 
-      <Box sx={{ maxWidth: 1000, mx: "auto", p: { xs: 2, md: 3 } }}>{children}</Box>
+      <Box sx={{ maxWidth: 1000, mx: "auto", pt: { xs: 2, md: 3 } }}>
+        {children}
+      </Box>
     </Box>
   );
 }

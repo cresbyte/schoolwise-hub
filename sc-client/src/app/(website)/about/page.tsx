@@ -16,7 +16,7 @@ const TIMELINE = [
   {
     year: "2008",
     title: "Foundation",
-    desc: "Primrose Private Academy established with 45 learners in rented premises along Milimani Road.",
+    desc: "Kabraas Elites Academy established with 45 learners in rented premises along Milimani Road.",
   },
   {
     year: "2012",
@@ -61,7 +61,7 @@ const FACILITIES = [
     title: "Library",
     desc: "Over 8,000 volumes, study carrels, and e-learning resources.",
     image: WEBSITE_IMAGES.library,
-    imageAlt: "Primrose Private Academy library reading area",
+    imageAlt: "Kabraas Elites Academy library reading area",
   },
   {
     title: "Sports Complex",
@@ -73,13 +73,13 @@ const FACILITIES = [
     title: "Boarding Houses",
     desc: "Separate boys' and girls' dormitories with study halls and recreation areas.",
     image: WEBSITE_IMAGES.campusBanner,
-    imageAlt: "Primrose campus buildings housing boarding facilities",
+    imageAlt: "Kibaara campus buildings housing boarding facilities",
   },
   {
     title: "Dining Hall",
     desc: "Nutritious meals prepared daily by qualified catering staff.",
     image: WEBSITE_IMAGES.campusBanner,
-    imageAlt: "Primrose campus facilities including the dining hall",
+    imageAlt: "Kibaara campus facilities including the dining hall",
   },
 ];
 
@@ -99,10 +99,10 @@ export default function AboutPage() {
           }}
         >
           <Typography variant="body1" sx={{ lineHeight: 1.8, color: "text.secondary" }}>
-            Founded in {SCHOOL.founded}, Primrose Private Academy began as a vision to provide
-            quality private education accessible to families in Nairobi County. What started as a
-            small primary school has grown into a comprehensive institution serving over 680
-            learners from PP1 to Form 4.
+            Founded in {SCHOOL.founded}, Kabraas Elites Academy began as a vision to provide quality
+            private education accessible to families in Nairobi County. What started as a small
+            primary school has grown into a comprehensive institution serving over 680 learners from
+            PP1 to Form 4.
             <br />
             <br />
             Today, we stand as one of Nairobi's most respected private schools, known for academic
@@ -112,7 +112,7 @@ export default function AboutPage() {
           <ImagePlaceholder
             src={WEBSITE_IMAGES.campusBanner}
             aspectRatio="4/3"
-            alt="Aerial view of the Primrose Private Academy campus in Nairobi"
+            alt="Aerial view of the Kabraas Elites Academy campus in Nairobi"
           />
         </Box>
         <Box sx={{ mt: 5, position: "relative", pl: { md: 4 } }}>
@@ -195,7 +195,7 @@ export default function AboutPage() {
       <SectionWrapper id="leadership">
         <SectionHeading
           title="School Leadership"
-          subtitle="Meet the team guiding Primrose's vision."
+          subtitle="Meet the team guiding Kibaara's vision."
         />
         <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 3 }}>
           {LEADERS.map((s) => (

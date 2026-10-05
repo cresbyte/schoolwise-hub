@@ -37,10 +37,9 @@ export default function SubjectsPage() {
 /** Subject catalogue content. */
 function SubjectsContent() {
   const router = useRouter();
-  const [curriculum, setCurriculum] = useState("");
   const { data, loading, error, refetch } = useAsync(
-    () => api.getSubjects(curriculum ? { curriculum } : undefined),
-    [curriculum],
+    () => api.getSubjects(),
+    [],
   );
   const list = data ?? [];
   return (
@@ -56,15 +55,6 @@ function SubjectsContent() {
           </RoleGuard>
         }
       />
-      <Card sx={{ p: 2, mb: 2 }}>
-        <Box sx={{ display: "flex", gap: 1.5 }}>
-          <TextField select size="small" label="Curriculum" value={curriculum} onChange={(e) => setCurriculum(e.target.value)} sx={{ width: 180 }}>
-            <MenuItem value="">All</MenuItem>
-            <MenuItem value="CBC">CBC</MenuItem>
-            <MenuItem value="844">8-4-4</MenuItem>
-          </TextField>
-        </Box>
-      </Card>
       <Card>
         <DataState loading={loading} error={error} data={list} onRetry={refetch} isEmpty={(d) => d.length === 0}>
           {() => (
@@ -74,7 +64,6 @@ function SubjectsContent() {
                   <TableRow>
                     <TableCell>Code</TableCell>
                     <TableCell>Subject</TableCell>
-                    <TableCell>Curriculum</TableCell>
                     <TableCell>Learning Area</TableCell>
                     <TableCell>Type</TableCell>
                     <TableCell align="right">Actions</TableCell>
@@ -85,7 +74,6 @@ function SubjectsContent() {
                     <TableRow key={s.id} hover>
                       <TableCell sx={{ fontFamily: "monospace", fontSize: 13 }}>{s.code}</TableCell>
                       <TableCell sx={{ fontWeight: 600 }}>{s.name}</TableCell>
-                      <TableCell><Chip size="small" variant="outlined" label={CURRICULUM_LABELS[s.curriculum]} /></TableCell>
                       <TableCell>{s.learningArea ?? "—"}</TableCell>
                       <TableCell>
                         <Chip size="small" label={s.isCore ? "Core" : "Optional"} color={s.isCore ? "primary" : "default"} variant={s.isCore ? "filled" : "outlined"} />

@@ -1,10 +1,17 @@
 /**
- * Primrose Private Academy — public homepage.
+ * Kabraas Elites Academy — public homepage.
  * Assembled from modular section components, config-driven, Kabarak-style.
  * @module website/page
  */
 import type { Metadata } from "next";
-import { getHeroSlides, getSchoolStats, getWhyChooseUs, getNewsArticles, getUpcomingEvents, getDownloadItems } from "@/lib/website/data";
+import {
+  getHeroSlides,
+  getSchoolStats,
+  getWhyChooseUs,
+  getNewsArticles,
+  getUpcomingEvents,
+  getDownloadItems,
+} from "@/lib/website/data";
 import { WEBSITE_IMAGES, SCHOOL, DEFAULT_KEYWORDS } from "@/lib/website/constants";
 import { Hero } from "@/components/website/sections/Hero";
 import { StatsBand } from "@/components/website/sections/StatsBand";

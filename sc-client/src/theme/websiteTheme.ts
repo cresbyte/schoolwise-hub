@@ -1,17 +1,17 @@
 /**
  * Website-specific theme tokens.
- * Primrose University-inspired design system for the public website.
+ * Kibaraa University-inspired design system for the public website.
  * These tokens supplement the main theme.ts for website-specific styling.
  */
 
-/** Primrose-style color palette for the public website */
+/** Kibaraa-style color palette for the public website */
 export const KAB = {
-  // Primary brand — Primrose maroon/dark red
+  // Primary brand — Kibaraa maroon/dark red
   primary: "#95191c",
   primaryDark: "#7a1215",
   primaryLight: "#b42d31",
 
-  // Secondary — Primrose green
+  // Secondary — Kibaraa green
   secondary: "#59ac46",
   secondaryDark: "#428233",
   secondaryLight: "#7bc66a",

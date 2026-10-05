@@ -1,5 +1,5 @@
 /**
- * Realistic mock data for ShuleSmart (Primrose Private Academy, Nairobi).
+ * Realistic mock data for ShuleSmart (Kabraas Elites Academy, Nairobi).
  * Data is generated deterministically at module load.
  * @module mockData
  */
@@ -54,7 +54,7 @@ function phone(): string {
 
 export const school: School = {
   id: "sch-1",
-  name: "Primrose Private Academy",
+  name: "Kabraas Elites Academy",
   motto: "Knowledge · Integrity · Excellence",
   registrationNumber: "P/REG/NAK/2456",
   knecCode: "30412104",
@@ -64,8 +64,8 @@ export const school: School = {
   county: "Nairobi",
   subCounty: "Nairobi East",
   phone: "0712345678",
-  email: "info@primroseacademy.ac.ke",
-  website: "www.primroseacademy.ac.ke",
+  email: "info@kibaara.elite.ac.ke",
+  website: "www.kibaara.elite.ac.ke",
   principalName: "Mr. Daniel Kamau",
   curriculum: ["CBC", "844"],
   mpesaPaybill: "522533",
@@ -123,7 +123,7 @@ function mkStaff(
     gender,
     dateOfBirth: `19${randInt(75, 95)}-0${randInt(1, 9)}-1${randInt(0, 9)}`,
     phone: phone(),
-    email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@primroseacademy.ac.ke`,
+    email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@kibaara.elite.ac.ke`,
     idNumber: String(randInt(20000000, 39999999)),
     kraPin: `A0${randInt(10000000, 99999999)}X`,
     nssfNumber: String(randInt(1000000, 9999999)),
@@ -152,7 +152,7 @@ export const users: User[] = [
     name: "Mr. Daniel Kamau",
     firstName: "Daniel",
     lastName: "Kamau",
-    email: "principal@primroseacademy.ac.ke",
+    email: "principal@kibaara.elite.ac.ke",
     phone: "0712345678",
     role: "admin",
     staffId: "stf-1",
@@ -167,7 +167,7 @@ export const users: User[] = [
     name: "Mr. Joseph Mwangangi Mutua",
     firstName: "Joseph",
     lastName: "Mwangangi",
-    email: "deputy@primroseacademy.ac.ke",
+    email: "deputy@kibaara.elite.ac.ke",
     phone: "0711234567",
     role: "headteacher",
     staffId: "stf-11",
@@ -182,7 +182,7 @@ export const users: User[] = [
     name: "Mr. John Mutua Kivuva",
     firstName: "John",
     lastName: "Kivuva",
-    email: "john.kivuva@primroseacademy.ac.ke",
+    email: "john.kivuva@kibaara.elite.ac.ke",
     phone: "0722345678",
     role: "teacher",
     staffId: "stf-3",
@@ -197,7 +197,7 @@ export const users: User[] = [
     name: "Ms. Agnes Njoki Kariuki",
     firstName: "Agnes",
     lastName: "Kariuki",
-    email: "agnes.kariuki@primroseacademy.ac.ke",
+    email: "agnes.kariuki@kibaara.elite.ac.ke",
     phone: "0733456789",
     role: "accountant",
     staffId: "stf-6",

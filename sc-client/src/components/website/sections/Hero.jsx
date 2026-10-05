@@ -4,7 +4,7 @@
  */
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import {Box, Container, Typography } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { KAB } from "@/theme/websiteTheme";
@@ -114,7 +114,7 @@ export function Hero({ slides }) {
                     color: KAB.secondaryLight,
                   }}
                 >
-                  Primrose Private Academy
+                  Kabraas Elites Academy
                 </Typography>
               </Box>
 

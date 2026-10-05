@@ -117,7 +117,7 @@ function DashboardContent() {
 
   return (
     <>
-      <PageHeader title="Dashboard" subtitle="Primrose Private Academy · Term 2, 2026" />
+      <PageHeader title="Dashboard" subtitle="Kabraas Elites Academy · Term 2, 2026" />
 
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
@@ -218,56 +218,64 @@ function DashboardContent() {
         </Grid>
       </Grid>
 
-      <Grid container spacing={2}
-        sx={{ mb: 3 }}
-      >
-        <Grid size={{ xs: 12, lg: 7 }}> <Card>
-          <CardContent>
-            <Typography variant="h6" sx={{ mb: 2 }}>
-              Fee Collection (last 6 months)
-            </Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={COLLECTION_TREND}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="month" fontSize={12} />
-                <YAxis fontSize={12} tickFormatter={(v) => `${v / 1000}k`} />
-                <Tooltip formatter={(v) => formatKES(v)} />
-                <Legend />
-                <Bar dataKey="mpesa" stackId="a" fill="#1565C0" name="M-Pesa" />
-                <Bar dataKey="cash" stackId="a" fill="#2E7D32" name="Cash" />
-                <Bar dataKey="bank" stackId="a" fill="#6A1B9A" name="Bank" radius={[0, 0, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card></Grid>
-        <Grid size={{ xs: 12, lg: 5 }}> <Card>
-          <CardContent>
-            <Typography variant="h6" sx={{ mb: 2 }}>
-              Class Enrollment
-            </Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={enrollment}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={95}
-                  label
-                >
-                  {enrollment.map((entry, i) => (
-                    <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend wrapperStyle={{ fontSize: 12 }} />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card></Grid>
-
-
+      <Grid container spacing={2} sx={{ mb: 3 }}>
+        <Grid size={{ xs: 12, lg: 7 }}>
+          {" "}
+          <Card>
+            <CardContent>
+              <Typography variant="h6" sx={{ mb: 2 }}>
+                Fee Collection (last 6 months)
+              </Typography>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={COLLECTION_TREND}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis dataKey="month" fontSize={12} />
+                  <YAxis fontSize={12} tickFormatter={(v) => `${v / 1000}k`} />
+                  <Tooltip formatter={(v) => formatKES(v)} />
+                  <Legend />
+                  <Bar dataKey="mpesa" stackId="a" fill="#1565C0" name="M-Pesa" />
+                  <Bar dataKey="cash" stackId="a" fill="#2E7D32" name="Cash" />
+                  <Bar
+                    dataKey="bank"
+                    stackId="a"
+                    fill="#6A1B9A"
+                    name="Bank"
+                    radius={[0, 0, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid size={{ xs: 12, lg: 5 }}>
+          {" "}
+          <Card>
+            <CardContent>
+              <Typography variant="h6" sx={{ mb: 2 }}>
+                Class Enrollment
+              </Typography>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={enrollment}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={95}
+                    label
+                  >
+                    {enrollment.map((entry, i) => (
+                      <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend wrapperStyle={{ fontSize: 12 }} />
+                </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </Grid>
       </Grid>
 
       <Grid container spacing={2} sx={{ mb: 3 }}>
