@@ -193,7 +193,7 @@ function StudentsContent() {
                       <TableCell>Class</TableCell>
                       <TableCell>Gender</TableCell>
                       <TableCell>Status</TableCell>
-                      <TableCell align="right">Fee balance</TableCell>
+                      {/* <TableCell align="right">Fee balance</TableCell> */}
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -225,7 +225,7 @@ function StudentsContent() {
                               color={st?.color ?? "default"}
                             />
                           </TableCell>
-                          <TableCell
+                          {/* <TableCell
                             align="right"
                             sx={{
                               fontWeight: balance !== null && balance > 0 ? 700 : 400,
@@ -233,7 +233,7 @@ function StudentsContent() {
                             }}
                           >
                             {formatBalance(s.feeBalance)}
-                          </TableCell>
+                          </TableCell> */}
                         </TableRow>
                       );
                     })}
