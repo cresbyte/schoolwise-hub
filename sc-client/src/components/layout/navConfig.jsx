@@ -1,9 +1,14 @@
 /**
- * Sidebar navigation configuration with role-based visibility.
- * Migrated from navConfig.tsx — TypeScript types removed.
- * @module navConfig
+ * Sidebar navigation, grouped by section.
+ *
+ * Item fields:
+ *   label                 text shown in the sidebar
+ *   to                    route path
+ *   icon                  an MUI icon component (not an element)
+ *   permission            permission needed to see the item
+ *   exact                 (optional) only highlight on an exact path match
+ *   requiresClassTeacher  (optional) only show to class teachers
  */
-import { LibraryBooks, Report } from "@mui/icons-material";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import ArticleIcon from "@mui/icons-material/Article";
 import AssignmentIcon from "@mui/icons-material/Assignment";
@@ -14,10 +19,12 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import DescriptionIcon from "@mui/icons-material/Description";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import FormatQuoteIcon from "@mui/icons-material/FormatQuote";
+import GradingIcon from "@mui/icons-material/Report";
 import GroupWorkIcon from "@mui/icons-material/GroupWork";
 import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
 import LanguageIcon from "@mui/icons-material/Language";
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import MailIcon from "@mui/icons-material/Mail";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
@@ -31,15 +38,11 @@ import SchoolIcon from "@mui/icons-material/School";
 import SettingsIcon from "@mui/icons-material/Settings";
 import WarningIcon from "@mui/icons-material/Warning";
 
-/**
- * NAV_GROUPS — array of navigation groups, each with a heading and items.
- * Each item has: label, to (path), icon, permission, hiddenRoles (optional).
- */
 export const NAV_GROUPS = [
   {
     heading: "Overview",
     items: [
-      { label: "Dashboard", to: "/dashboard", icon: <DashboardIcon />, permission: "reports.view" },
+      { label: "Dashboard", to: "/dashboard", icon: DashboardIcon, permission: "reports.view" },
     ],
   },
   {
@@ -48,15 +51,15 @@ export const NAV_GROUPS = [
       {
         label: "My Class",
         to: "/my-class",
-        icon: <GroupWorkIcon />,
+        icon: GroupWorkIcon,
         permission: "students.view",
         requiresClassTeacher: true,
       },
-      { label: "All Students", to: "/students", icon: <PeopleIcon />, permission: "students.view" },
+      { label: "All Students", to: "/students", icon: PeopleIcon, permission: "students.view" },
       {
         label: "Attendance",
         to: "/attendance",
-        icon: <EventAvailableIcon />,
+        icon: EventAvailableIcon,
         permission: "attendance.write",
       },
     ],
@@ -67,100 +70,51 @@ export const NAV_GROUPS = [
       {
         label: "Fee Structures",
         to: "/fees/structures",
-        icon: <ReceiptIcon />,
+        icon: AccountBalanceWalletIcon,
         permission: "fees.view",
       },
-      {
-        label: "Invoices",
-        to: "/finance/invoices",
-        icon: <ReceiptIcon />,
-        permission: "fees.view",
-      },
+      { label: "Invoices", to: "/finance/invoices", icon: ReceiptIcon, permission: "fees.view" },
       {
         label: "Special Levies",
         to: "/fees/levies",
-        icon: <ReceiptLongIcon />,
+        icon: ReceiptLongIcon,
         permission: "fees.view",
       },
-      // {
-      //   label: "Fee Collection",
-      //   to: "/fees/collection",
-      //   icon: <PaymentsIcon />,
-      //   permission: "fees.view",
-      // },
       {
         label: "Outstanding Fees",
         to: "/fees/outstanding",
-        icon: <WarningIcon />,
+        icon: WarningIcon,
         permission: "fees.view",
       },
-      // {
-      //   label: "Payroll",
-      //   to: "/payroll",
-      //   icon: <AccountBalanceWalletIcon />,
-      //   permission: "payroll.view",
-      // },
     ],
   },
-  // ,{
-  //   heading: "Reports",
-  //   items: [
-  //     { label: "Academic Reports", to: "/reports/academic", icon: <BarChartIcon />, permission: "reports.view", hiddenRoles: ["class_teacher"] },
-  //     { label: "NEMIS Export", to: "/reports/nemis", icon: <DownloadIcon />, permission: "reports.view", hiddenRoles: ["class_teacher"] },
-  //     { label: "Audit Trail", to: "/reports/audit", icon: <HistoryIcon />, permission: "reports.view", hiddenRoles: ["class_teacher"] },
-  //   ],
-  // },
   {
     heading: "Academics",
     items: [
-      { label: "Examinations", to: "/exams", icon: <AssignmentIcon />, permission: "exams.marks" },
-      {
-        label: "Report Cards",
-        to: "/reports",
-        icon: <DescriptionIcon />,
-        permission: "exams.view",
-      },
-      {
-        label: "Grading",
-        to: "/staff/grading",
-        icon: <Report />,
-        permission: "exams.view",
-      },
-      {
-        label: "Timetable",
-        to: "/timetable",
-        icon: <ScheduleIcon />,
-        permission: "timetable.view",
-      },
+      { label: "Examinations", to: "/exams", icon: AssignmentIcon, permission: "exams.marks" },
+      { label: "Report Cards", to: "/reports", icon: DescriptionIcon, permission: "exams.view" },
+      { label: "Grading", to: "/staff/grading", icon: GradingIcon, permission: "exams.view" },
+      { label: "Timetable", to: "/timetable", icon: ScheduleIcon, permission: "timetable.view" },
       {
         label: "Term Planner",
         to: "/term-planner",
-        icon: <CalendarMonthIcon />,
+        icon: CalendarMonthIcon,
         permission: "classes.view",
       },
     ],
   },
   {
     heading: "Communication",
-    items: [
-      { label: "Messages", to: "/messages", icon: <MessageIcon />, permission: "reports.view" },
-    ],
+    items: [{ label: "Messages", to: "/messages", icon: MessageIcon, permission: "reports.view" }],
   },
-
   {
     heading: "Staff",
     items: [
-      {
-        label: "All Staff",
-        to: "/staff",
-        icon: <BadgeIcon />,
-        permission: "staff.view",
-        exact: true,
-      },
+      { label: "All Staff", to: "/staff", icon: BadgeIcon, permission: "staff.view", exact: true },
       {
         label: "Leave Management",
         to: "/staff/leave",
-        icon: <BeachAccessIcon />,
+        icon: BeachAccessIcon,
         permission: "staff.view",
       },
     ],
@@ -171,26 +125,26 @@ export const NAV_GROUPS = [
       {
         label: "Classes",
         to: "/settings/classes",
-        icon: <MeetingRoomIcon />,
+        icon: MeetingRoomIcon,
         permission: "classes.view",
       },
       {
         label: "Subjects",
         to: "/settings/subjects",
-        icon: <LibraryBooks />,
+        icon: LibraryBooksIcon,
         permission: "classes.view",
       },
       {
         label: "School Settings",
         to: "/settings",
-        icon: <SettingsIcon />,
+        icon: SettingsIcon,
         permission: "settings.view",
         exact: true,
       },
       {
         label: "User Management",
         to: "/settings/users",
-        icon: <ManageAccountsIcon />,
+        icon: ManageAccountsIcon,
         permission: "settings.view",
       },
     ],
@@ -201,50 +155,50 @@ export const NAV_GROUPS = [
       {
         label: "Overview",
         to: "/website-cms",
-        icon: <LanguageIcon />,
+        icon: LanguageIcon,
         permission: "settings.view",
         exact: true,
       },
       {
         label: "News & Events",
         to: "/website-cms/news",
-        icon: <ArticleIcon />,
+        icon: ArticleIcon,
         permission: "settings.view",
       },
       {
         label: "Gallery",
         to: "/website-cms/gallery",
-        icon: <PhotoLibraryIcon />,
+        icon: PhotoLibraryIcon,
         permission: "settings.view",
       },
       {
         label: "Applications",
         to: "/website-cms/applications",
-        icon: <SchoolIcon />,
+        icon: SchoolIcon,
         permission: "settings.view",
       },
       {
         label: "Contact Messages",
         to: "/website-cms/contacts",
-        icon: <MailIcon />,
+        icon: MailIcon,
         permission: "settings.view",
       },
       {
         label: "Testimonials",
         to: "/website-cms/testimonials",
-        icon: <FormatQuoteIcon />,
+        icon: FormatQuoteIcon,
         permission: "settings.edit",
       },
       {
         label: "Homepage Content",
         to: "/website-cms/homepage",
-        icon: <HomeIcon />,
+        icon: HomeIcon,
         permission: "settings.edit",
       },
       {
         label: "School Info",
         to: "/website-cms/school-info",
-        icon: <InfoIcon />,
+        icon: InfoIcon,
         permission: "settings.edit",
       },
     ],

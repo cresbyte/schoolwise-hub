@@ -4,7 +4,7 @@
  * @module DashboardLayout
  */
 "use client";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import Box from "@mui/material/Box";
@@ -44,7 +44,7 @@ const FULL = 240;
 const RAIL = 64;
 
 /** Returns true if the nav item should be considered active. */
-function isItemActive(pathname: string, to: string, exact?: boolean): boolean {
+function isItemActive(pathname, to, exact) {
   if (exact) return pathname === to;
   if (pathname === to) return true;
   // Only activate on prefix match if to is not a generic parent that would
@@ -53,14 +53,11 @@ function isItemActive(pathname: string, to: string, exact?: boolean): boolean {
 }
 
 /** Returns true if any item in the group is currently active. */
-function isGroupActive(
-  pathname: string,
-  items: Array<{ to: string; exact?: boolean }>
-): boolean {
+function isGroupActive(pathname, items) {
   return items.some((i) => isItemActive(pathname, i.to, i.exact));
 }
 
-function loadCollapsedState(): Record<string, boolean> {
+function loadCollapsedState() {
   if (typeof window === "undefined") return {};
   try {
     return JSON.parse(localStorage.getItem("sidebar_collapsed") || "{}");
@@ -69,7 +66,7 @@ function loadCollapsedState(): Record<string, boolean> {
   }
 }
 
-function saveCollapsedState(state: Record<string, boolean>) {
+function saveCollapsedState(state) {
   try {
     localStorage.setItem("sidebar_collapsed", JSON.stringify(state));
   } catch {
@@ -78,22 +75,22 @@ function saveCollapsedState(state: Record<string, boolean>) {
 }
 
 /** Authenticated app shell with sidebar and app bar. */
-export function DashboardLayout({ children }: { children: ReactNode }) {
+export function DashboardLayout({ children }) {
   useRouteGuard();
   const { user, isAuthenticated, isLoading, logout, hasPermission, isClassTeacher } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const theme = useTheme();
   const [open, setOpen] = useState(true);
-  const [anchor, setAnchor] = useState<null | HTMLElement>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const [anchor, setAnchor] = useState(null);
+  const scrollRef = useRef(null);
   const scrollPos = useRef(0);
 
   // Per-group collapsed state (open = true means expanded/visible)
-  const [groupOpen, setGroupOpen] = useState<Record<string, boolean>>(() => {
+  const [groupOpen, setGroupOpen] = useState(() => {
     const saved = loadCollapsedState();
     // Default: all groups expanded
-    const defaults: Record<string, boolean> = {};
+    const defaults = {};
     NAV_GROUPS.forEach((g) => {
       defaults[g.heading] = saved[g.heading] !== undefined ? saved[g.heading] : true;
     });
@@ -113,7 +110,9 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
 
   if (isLoading || !isAuthenticated || !user) {
     return (
-      <Box sx={{ display: "flex", height: "100vh", alignItems: "center", justifyContent: "center" }}>
+      <Box
+        sx={{ display: "flex", height: "100vh", alignItems: "center", justifyContent: "center" }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -126,7 +125,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
     router.push("/login");
   };
 
-  const toggleGroup = (heading: string) => {
+  const toggleGroup = (heading) => {
     setGroupOpen((prev) => {
       const next = { ...prev, [heading]: !prev[heading] };
       saveCollapsedState(next);
@@ -161,7 +160,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
             onClick={(e) => setAnchor(e.currentTarget)}
           >
             <Avatar
-              src={(user as any).avatarUrl || (user as any).photo}
+              src={user.avatarUrl || user.photo}
               alt={user.name}
               sx={{ width: 34, height: 34, bgcolor: "primary.main", fontSize: 14 }}
             >
@@ -177,17 +176,28 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
             </Box>
           </Box>
           <Menu anchorEl={anchor} open={!!anchor} onClose={() => setAnchor(null)}>
-            <MenuItem onClick={() => { setAnchor(null); router.push("/profile"); }}>
-              <ListItemIcon><PersonIcon fontSize="small" /></ListItemIcon>
+            <MenuItem
+              onClick={() => {
+                setAnchor(null);
+                router.push("/profile");
+              }}
+            >
+              <ListItemIcon>
+                <PersonIcon fontSize="small" />
+              </ListItemIcon>
               Profile
             </MenuItem>
             <MenuItem onClick={() => setAnchor(null)}>
-              <ListItemIcon><LockResetIcon fontSize="small" /></ListItemIcon>
+              <ListItemIcon>
+                <LockResetIcon fontSize="small" />
+              </ListItemIcon>
               Change Password
             </MenuItem>
             <Divider />
             <MenuItem onClick={handleLogout}>
-              <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon>
+              <ListItemIcon>
+                <LogoutIcon fontSize="small" />
+              </ListItemIcon>
               Logout
             </MenuItem>
           </Menu>
@@ -233,7 +243,9 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
         {/* Scrollable sidebar body — scroll position is preserved via ref */}
         <Box
           ref={scrollRef}
-          onScroll={() => { scrollPos.current = scrollRef.current?.scrollTop ?? 0; }}
+          onScroll={() => {
+            scrollPos.current = scrollRef.current?.scrollTop ?? 0;
+          }}
           sx={{
             overflowY: "auto",
             overflowX: "hidden",
@@ -245,7 +257,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
           }}
         >
           {NAV_GROUPS.map((group) => {
-            const items = group.items.filter((i: any) => {
+            const items = group.items.filter((i) => {
               if (i.hiddenRoles && user && i.hiddenRoles.includes(user.role)) return false;
               if (i.requiresClassTeacher && !isClassTeacher()) return false;
               return !i.permission || hasPermission(i.permission);
@@ -288,7 +300,13 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                       >
                         {group.heading}
                       </Typography>
-                      <Box sx={{ color: anyActive ? "primary.main" : "text.secondary", display: "flex", alignItems: "center" }}>
+                      <Box
+                        sx={{
+                          color: anyActive ? "primary.main" : "text.secondary",
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
                         {expanded ? (
                           <ExpandLessIcon sx={{ fontSize: 16 }} />
                         ) : (
@@ -299,8 +317,10 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
 
                     <Collapse in={expanded} timeout={200} unmountOnExit>
                       <List dense sx={{ px: 1, py: 0.5 }}>
-                        {items.map((item: any) => {
+                        {items.map((item) => {
                           const active = isItemActive(pathname, item.to, item.exact);
+                          // Destructure the icon component so JSX treats it as a component.
+                          const Icon = item.icon;
                           return (
                             <ListItemButton
                               key={item.to}
@@ -312,10 +332,14 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                                 borderRadius: 1,
                                 mb: 0.125,
                                 px: 1.5,
-                                bgcolor: active ? alpha(theme.palette.primary.main, 0.08) : "transparent",
+                                bgcolor: active
+                                  ? alpha(theme.palette.primary.main, 0.08)
+                                  : "transparent",
                                 color: active ? theme.palette.primary.main : "text.primary",
                                 "&:hover": {
-                                  bgcolor: active ? alpha(theme.palette.primary.main, 0.12) : "action.hover",
+                                  bgcolor: active
+                                    ? alpha(theme.palette.primary.main, 0.12)
+                                    : "action.hover",
                                 },
                                 "& .MuiListItemIcon-root": {
                                   color: active ? theme.palette.primary.main : "text.secondary",
@@ -324,11 +348,11 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                                 "& .MuiListItemText-primary": {
                                   fontWeight: active ? 600 : 500,
                                   fontSize: 13,
-                                }
+                                },
                               }}
                             >
                               <ListItemIcon>
-                                {item.icon}
+                                <Icon />
                               </ListItemIcon>
                               <ListItemText primary={item.label} />
                             </ListItemButton>
@@ -340,8 +364,9 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                 ) : (
                   // Rail mode — no groups, just icons with tooltips
                   <List dense sx={{ px: 0.5, py: 0.5 }}>
-                    {items.map((item: any) => {
+                    {items.map((item) => {
                       const active = isItemActive(pathname, item.to, item.exact);
+                      const Icon = item.icon;
                       return (
                         <Tooltip key={item.to} title={item.label} placement="right">
                           <ListItemButton
@@ -354,20 +379,24 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                               borderRadius: 1,
                               mb: 0.125,
                               px: 0,
-                              bgcolor: active ? alpha(theme.palette.primary.main, 0.08) : "transparent",
+                              bgcolor: active
+                                ? alpha(theme.palette.primary.main, 0.08)
+                                : "transparent",
                               color: active ? theme.palette.primary.main : "text.primary",
                               "&:hover": {
-                                bgcolor: active ? alpha(theme.palette.primary.main, 0.12) : "action.hover",
+                                bgcolor: active
+                                  ? alpha(theme.palette.primary.main, 0.12)
+                                  : "action.hover",
                               },
                               "& .MuiListItemIcon-root": {
                                 color: active ? theme.palette.primary.main : "text.secondary",
                                 minWidth: 0,
                                 justifyContent: "center",
-                              }
+                              },
                             }}
                           >
                             <ListItemIcon>
-                              {item.icon}
+                              <Icon />
                             </ListItemIcon>
                           </ListItemButton>
                         </Tooltip>
