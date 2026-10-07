@@ -274,7 +274,7 @@ export default function AttendanceEntryPage() {
         <Stack
           direction={{ xs: "column", sm: "row" }}
           spacing={2}
-          alignItems="center"
+          alignitems="center"
           flexWrap="wrap"
         >
           <FormControl size="small" sx={{ minWidth: 200 }}>
