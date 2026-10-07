@@ -220,10 +220,13 @@ function MessagesContent() {
 }
 
 function ComposeMessageDialog({ open, onClose, onSend }) {
+  const { user, hasAnyRole } = useAuth();
+  const isAdmin = hasAnyRole(["admin", "headteacher", "deputy"]);
+
   const [form, setForm] = useState({
     subject: "",
     body: "",
-    recipientType: "all_parents",
+    recipientType: isAdmin ? "all_parents" : "class_parents",
     channel: "announcement",
     priority: "normal",
     classId: "",
@@ -232,38 +235,86 @@ function ComposeMessageDialog({ open, onClose, onSend }) {
 
   const { data: classesRes } = useAsync(api.getClasses);
   const { data: studentsRes } = useAsync(() => api.getStudents());
-  const classes = classesRes || [];
+  const allClassList = classesRes || [];
   const students = studentsRes || [];
 
-  const canSend = form.subject && form.body && (
-    form.recipientType === "all_parents" ||
-    (form.recipientType === "class_parents" && form.classId) ||
-    (form.recipientType === "individual_parent" && form.studentId)
-  );
+  // Filter classes if user is teacher
+  const classes = isAdmin
+    ? allClassList
+    : allClassList.filter((c) => {
+        const isCT =
+          String(c.classTeacherId || c.class_teacher_id) === String(user?.id) ||
+          String(c.classTeacherId) === String(user?.staffId) ||
+          user?.classTeacherOf?.includes(c.id);
+        const isST = String(c.teacherId) === String(user?.id) || String(c.teacherId) === String(user?.staffId);
+        return isCT || isST;
+      });
+
+  const canSend =
+    form.subject &&
+    form.body &&
+    (form.recipientType === "all_parents" ||
+      (form.recipientType === "class_parents" && form.classId) ||
+      (form.recipientType === "individual_parent" && form.studentId));
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>Compose Message</DialogTitle>
       <DialogContent sx={{ pt: 1 }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
-          <TextField label="Subject" fullWidth size="small" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} />
+          <TextField
+            label="Subject"
+            fullWidth
+            size="small"
+            value={form.subject}
+            onChange={(e) => setForm({ ...form, subject: e.target.value })}
+          />
 
           <Box sx={{ display: "flex", gap: 2 }}>
-            <TextField select label="Recipients" sx={{ flex: 1 }} size="small" value={form.recipientType} onChange={(e) => setForm({ ...form, recipientType: e.target.value })}>
-              <MenuItem value="all_parents">All Parents</MenuItem>
+            <TextField
+              select
+              label="Recipients"
+              sx={{ flex: 1 }}
+              size="small"
+              value={form.recipientType}
+              onChange={(e) => setForm({ ...form, recipientType: e.target.value })}
+            >
+              {isAdmin && <MenuItem value="all_parents">All Parents (School-wide)</MenuItem>}
               <MenuItem value="class_parents">Class Parents</MenuItem>
               <MenuItem value="individual_parent">Individual Parent</MenuItem>
             </TextField>
 
             {form.recipientType === "class_parents" && (
-              <TextField select label="Select Class" sx={{ flex: 1 }} size="small" value={form.classId} onChange={(e) => setForm({ ...form, classId: e.target.value })}>
-                {classes.map((c) => <MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>)}
+              <TextField
+                select
+                label="Select Class"
+                sx={{ flex: 1 }}
+                size="small"
+                value={form.classId}
+                onChange={(e) => setForm({ ...form, classId: e.target.value })}
+              >
+                {classes.map((c) => (
+                  <MenuItem key={c.id} value={c.id}>
+                    {c.name}
+                  </MenuItem>
+                ))}
               </TextField>
             )}
 
             {form.recipientType === "individual_parent" && (
-              <TextField select label="Select Student" sx={{ flex: 1 }} size="small" value={form.studentId} onChange={(e) => setForm({ ...form, studentId: e.target.value })}>
-                {students.map((s) => <MenuItem key={s.id} value={s.id}>{s.firstName} {s.lastName}</MenuItem>)}
+              <TextField
+                select
+                label="Select Student"
+                sx={{ flex: 1 }}
+                size="small"
+                value={form.studentId}
+                onChange={(e) => setForm({ ...form, studentId: e.target.value })}
+              >
+                {students.map((s) => (
+                  <MenuItem key={s.id} value={s.id}>
+                    {s.firstName} {s.lastName}
+                  </MenuItem>
+                ))}
               </TextField>
             )}
           </Box>

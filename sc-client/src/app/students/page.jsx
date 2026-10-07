@@ -128,7 +128,7 @@ function StudentsContent() {
         title="Students"
         subtitle={countLabel}
         actions={
-          <Stack direction="row" spacing={1} alignItems="center">
+          <Stack direction="row" spacing={1} alignitems="center">
             <RoleGuard roles={["admin", "headteacher"]}>
               <Button startIcon={<AddIcon />} variant="contained" onClick={() => router.push("/students/new")}>
                 Add student

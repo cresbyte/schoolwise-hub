@@ -54,18 +54,16 @@ import {
   YAxis,
 } from "recharts";
 
+import { TeacherDashboard } from "@/components/dashboard/TeacherDashboard";
+
 export default function DashboardPage() {
-  const { hasAnyRole, user, isClassTeacher } = useAuth();
-  const isSenior = hasAnyRole(["admin", "headteacher", "accountant"]);
+  const { hasAnyRole } = useAuth();
+  const isSenior = hasAnyRole(["admin", "headteacher", "accountant", "deputy"]);
 
   return (
     <DashboardLayout>
       <PageGuard permission="reports.view">
-        {isSenior ? (
-          <DashboardContent />
-        ) : (
-          <TeacherDashboard user={user} isClassTeacher={isClassTeacher} />
-        )}
+        {isSenior ? <DashboardContent /> : <TeacherDashboard />}
       </PageGuard>
     </DashboardLayout>
   );
@@ -525,153 +523,4 @@ function DashboardContent() {
   );
 }
 
-/** Teacher Dashboard Content */
-function TeacherDashboard({ user, isClassTeacher }) {
-  const router = useRouter();
-  const isCT = isClassTeacher();
 
-  const { data: gradingTasks, loading } = useAsync(() => api.exams.getMyGrading(), []);
-  const tasks = gradingTasks || [];
-
-  return (
-    <>
-      <PageHeader title="Teacher Dashboard" subtitle={`Welcome back, ${user?.name || "Teacher"}`} />
-
-      {isCT && (
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="h6" sx={{ mb: 2, fontWeight: 700 }}>
-            Class Teacher Shortcuts
-          </Typography>
-          <Box
-            sx={{
-              display: "grid",
-              gap: 2,
-              gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" },
-            }}
-          >
-            {[
-              {
-                icon: <GroupWorkIcon color="primary" sx={{ fontSize: 40, mb: 1 }} />,
-                title: "My Class",
-                desc: "Roster & Details",
-                path: "/students",
-              },
-              {
-                icon: <EventAvailableIcon color="success" sx={{ fontSize: 40, mb: 1 }} />,
-                title: "Attendance",
-                desc: "Mark Weekly",
-                path: "/attendance/entry",
-              },
-              {
-                icon: <EditNoteIcon color="info" sx={{ fontSize: 40, mb: 1 }} />,
-                title: "Exam Marks",
-                desc: "Enter Scores",
-                path: "/staff/grading",
-              },
-              {
-                icon: <DescriptionIcon color="warning" sx={{ fontSize: 40, mb: 1 }} />,
-                title: "Report Cards",
-                desc: "Class Comments",
-                path: "/exams/comments",
-              },
-            ].map((item, i) => (
-              <Card
-                key={i}
-                sx={{ bgcolor: "background.paper", cursor: "pointer", "&:hover": { boxShadow: 4 } }}
-                onClick={() => router.push(item.path)}
-              >
-                <CardContent sx={{ textAlign: "center", py: 3 }}>
-                  {item.icon}
-                  <Typography variant="subtitle1" fontWeight={600}>
-                    {item.title}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {item.desc}
-                  </Typography>
-                </CardContent>
-              </Card>
-            ))}
-          </Box>
-        </Box>
-      )}
-
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h6" sx={{ mb: 2, fontWeight: 700 }}>
-          My Grading Tasks
-        </Typography>
-        <Card>
-          <CardContent>
-            <DataState
-              loading={loading}
-              data={tasks}
-              isEmpty={(d) => d.length === 0}
-              emptyMessage="No grading tasks assigned to you."
-            >
-              {(data) => (
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Exam</TableCell>
-                      <TableCell>Class</TableCell>
-                      <TableCell>Subject</TableCell>
-                      <TableCell>Progress</TableCell>
-                      <TableCell align="right">Action</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {data.slice(0, 5).map((task) => {
-                      const pct =
-                        task.totalCount > 0
-                          ? Math.round((task.gradedCount / task.totalCount) * 100)
-                          : 0;
-                      const isComplete =
-                        task.gradedCount === task.totalCount && task.totalCount > 0;
-                      return (
-                        <TableRow key={task.examSubjectId} hover>
-                          <TableCell>{task.examName}</TableCell>
-                          <TableCell>{task.className}</TableCell>
-                          <TableCell>{task.subjectName}</TableCell>
-                          <TableCell sx={{ minWidth: 150 }}>
-                            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                              <Typography
-                                variant="body2"
-                                fontWeight={isComplete ? "bold" : "normal"}
-                                color={isComplete ? "success.main" : "text.primary"}
-                              >
-                                {task.gradedCount}/{task.totalCount}
-                              </Typography>
-                              <LinearProgress
-                                variant="determinate"
-                                value={pct}
-                                color={isComplete ? "success" : "primary"}
-                                sx={{ flex: 1, height: 6, borderRadius: 3 }}
-                              />
-                            </Box>
-                          </TableCell>
-                          <TableCell align="right">
-                            <Button
-                              size="small"
-                              variant="outlined"
-                              disabled={isComplete || task.status === "published"}
-                              onClick={() =>
-                                router.push(
-                                  `/exams/${task.examId}/scores?subjectId=${task.examSubjectId}`,
-                                )
-                              }
-                            >
-                              {isComplete ? "Done" : "Enter Scores"}
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              )}
-            </DataState>
-          </CardContent>
-        </Card>
-      </Box>
-    </>
-  );
-}

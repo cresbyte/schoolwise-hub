@@ -32,6 +32,9 @@ import { useAsync } from "@/hooks/useAsync";
 import { api } from "@/lib/api";
 import { calculateAge, formatDate, formatKES, getInitials } from "@/lib/utils";
 
+import { RoleGuard } from "@/components/RoleGuard";
+import { useAuth } from "@/context/AuthContext";
+
 export default function StudentDetailsPage() {
   const params = useParams();
   const id = params.id;
@@ -46,6 +49,8 @@ export default function StudentDetailsPage() {
 
 function StudentDetail({ id }) {
   const router = useRouter();
+  const { hasAnyRole } = useAuth();
+  const canViewFees = hasAnyRole(["admin", "headteacher", "deputy", "accountant"]);
   const { data, loading, error, refetch } = useStudent(id);
   const [tab, setTab] = useState(0);
 
@@ -87,13 +92,15 @@ function StudentDetail({ id }) {
                     {calculateAge(s.dateOfBirth)} yrs)
                   </Typography>
                 </Box>
-                <Button
-                  variant="outlined"
-                  startIcon={<EditIcon />}
-                  onClick={() => router.push(`/students/${s.id}/edit`)}
-                >
-                  Edit
-                </Button>
+                <RoleGuard roles={["admin", "headteacher", "deputy"]}>
+                  <Button
+                    variant="outlined"
+                    startIcon={<EditIcon />}
+                    onClick={() => router.push(`/students/${s.id}/edit`)}
+                  >
+                    Edit
+                  </Button>
+                </RoleGuard>
               </Box>
             </CardContent>
           </Card>
@@ -109,13 +116,13 @@ function StudentDetail({ id }) {
               <Tab label="Personal Info" />
               <Tab label="Exam Results" />
               <Tab label="Attendance" />
-              <Tab label="Fee Account" />
+              {canViewFees && <Tab label="Fee Account" />}
             </Tabs>
             <CardContent>
               {tab === 0 && <PersonalTab s={s} />}
               {tab === 1 && <ResultsTab studentId={s.id} />}
               {tab === 2 && <AttendanceTab studentId={s.id} />}
-              {tab === 3 && <FeeTab studentId={s.id} />}
+              {tab === 3 && canViewFees && <FeeTab studentId={s.id} />}
             </CardContent>
           </Card>
         </>
@@ -125,7 +132,10 @@ function StudentDetail({ id }) {
 }
 
 function PersonalTab({ s }) {
+  const { hasAnyRole } = useAuth();
+  const canViewContacts = hasAnyRole(["admin", "headteacher", "deputy", "accountant"]);
   const parents = s.parents ?? [];
+
   return (
     <Box>
       <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1.5 }}>
@@ -164,8 +174,8 @@ function PersonalTab({ s }) {
                 {p.relationship.toUpperCase()}
               </Typography>
               <Field label="Name" value={p.name} />
-              <Field label="Phone" value={p.phone} />
-              <Field label="Email" value={p.email} />
+              <Field label="Phone" value={canViewContacts ? p.phone : "[Restricted]"} />
+              <Field label="Email" value={canViewContacts ? p.email : "[Restricted]"} />
             </Card>
           ))}
         </Box>

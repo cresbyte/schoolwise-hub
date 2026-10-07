@@ -55,7 +55,13 @@ export const NAV_GROUPS = [
         permission: "students.view",
         requiresClassTeacher: true,
       },
-      { label: "All Students", to: "/students", icon: PeopleIcon, permission: "students.view" },
+      {
+        label: "All Students",
+        to: "/students",
+        icon: PeopleIcon,
+        permission: "students.view",
+        hiddenRoles: ["teacher", "class_teacher"],
+      },
       {
         label: "Attendance",
         to: "/attendance",
@@ -91,9 +97,16 @@ export const NAV_GROUPS = [
   {
     heading: "Academics",
     items: [
-      { label: "Examinations", to: "/exams", icon: AssignmentIcon, permission: "exams.marks" },
+      { label: "Examinations", to: "/exams", icon: AssignmentIcon, permission: "exams.create" },
+      { label: "My Grading", to: "/staff/grading", icon: GradingIcon, permission: "exams.marks" },
+      {
+        label: "Class Comments",
+        to: "/exams/comments",
+        icon: DescriptionIcon,
+        permission: "exams.marks",
+        requiresClassTeacher: true,
+      },
       { label: "Report Cards", to: "/reports", icon: DescriptionIcon, permission: "exams.view" },
-      { label: "Grading", to: "/staff/grading", icon: GradingIcon, permission: "exams.view" },
       { label: "Timetable", to: "/timetable", icon: ScheduleIcon, permission: "timetable.view" },
       {
         label: "Term Planner",
@@ -105,7 +118,7 @@ export const NAV_GROUPS = [
   },
   {
     heading: "Communication",
-    items: [{ label: "Messages", to: "/messages", icon: MessageIcon, permission: "reports.view" }],
+    items: [{ label: "Messages", to: "/messages", icon: MessageIcon, permission: "messages.view" }],
   },
   {
     heading: "Staff",
@@ -126,13 +139,13 @@ export const NAV_GROUPS = [
         label: "Classes",
         to: "/settings/classes",
         icon: MeetingRoomIcon,
-        permission: "classes.view",
+        permission: "settings.view",
       },
       {
         label: "Subjects",
         to: "/settings/subjects",
         icon: LibraryBooksIcon,
-        permission: "classes.view",
+        permission: "settings.view",
       },
       {
         label: "School Settings",

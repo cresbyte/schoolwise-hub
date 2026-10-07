@@ -4,7 +4,7 @@
  * @module DashboardLayout
  */
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import Box from "@mui/material/Box";
@@ -117,6 +117,27 @@ export function DashboardLayout({ children }) {
       </Box>
     );
   }
+
+  const isTeacherRole = user && ["teacher", "class_teacher"].includes(user.role);
+
+  // Flat list of nav items for teacher users (ungrouped)
+  const flatTeacherItems = useMemo(() => {
+    if (!isTeacherRole) return [];
+    const items: any[] = [];
+    const seen = new Set();
+    NAV_GROUPS.forEach((group) => {
+      group.items.forEach((item) => {
+        if (item.hiddenRoles && user && item.hiddenRoles.includes(user.role)) return;
+        if (item.requiresClassTeacher && !isClassTeacher()) return;
+        if (item.permission && !hasPermission(item.permission)) return;
+        if (!seen.has(item.to)) {
+          seen.add(item.to);
+          items.push(item);
+        }
+      });
+    });
+    return items;
+  }, [isTeacherRole, user, isClassTeacher, hasPermission]);
 
   const width = open ? FULL : RAIL;
 
@@ -256,82 +277,213 @@ export function DashboardLayout({ children }) {
             "&::-webkit-scrollbar-thumb": { bgcolor: "divider", borderRadius: 2 },
           }}
         >
-          {NAV_GROUPS.map((group) => {
-            const items = group.items.filter((i) => {
-              if (i.hiddenRoles && user && i.hiddenRoles.includes(user.role)) return false;
-              if (i.requiresClassTeacher && !isClassTeacher()) return false;
-              return !i.permission || hasPermission(i.permission);
-            });
-            if (!items.length) return null;
-
-            const anyActive = isGroupActive(pathname, items);
-            const expanded = groupOpen[group.heading] ?? true;
-
-            return (
-              <Box key={group.heading} sx={{ mb: 0.5 }}>
-                {open ? (
-                  <>
-                    {/* Group header row — clicking toggles collapse */}
-                    <Box
-                      onClick={() => toggleGroup(group.heading)}
+          {isTeacherRole && open ? (
+            <List dense sx={{ px: 1, py: 0.5 }}>
+              {flatTeacherItems.map((item) => {
+                const active = isItemActive(pathname, item.to, item.exact);
+                const Icon = item.icon;
+                return (
+                  <ListItemButton
+                    key={item.to}
+                    component={Link}
+                    href={item.to}
+                    selected={active}
+                    sx={{
+                      minHeight: 38,
+                      borderRadius: 1,
+                      mb: 0.25,
+                      px: 1.5,
+                      bgcolor: active
+                        ? alpha(theme.palette.primary.main, 0.08)
+                        : "transparent",
+                      color: active ? theme.palette.primary.main : "text.primary",
+                      "&:hover": {
+                        bgcolor: active
+                          ? alpha(theme.palette.primary.main, 0.12)
+                          : "action.hover",
+                      },
+                      "& .MuiListItemIcon-root": {
+                        color: active ? theme.palette.primary.main : "text.secondary",
+                        minWidth: 32,
+                      },
+                      "& .MuiListItemText-primary": {
+                        fontWeight: active ? 600 : 500,
+                        fontSize: 13,
+                      },
+                    }}
+                  >
+                    <ListItemIcon>
+                      <Icon />
+                    </ListItemIcon>
+                    <ListItemText primary={item.label} />
+                  </ListItemButton>
+                );
+              })}
+            </List>
+          ) : isTeacherRole && !open ? (
+            <List dense sx={{ px: 0.5, py: 0.5 }}>
+              {flatTeacherItems.map((item) => {
+                const active = isItemActive(pathname, item.to, item.exact);
+                const Icon = item.icon;
+                return (
+                  <Tooltip key={item.to} title={item.label} placement="right">
+                    <ListItemButton
+                      component={Link}
+                      href={item.to}
+                      selected={active}
                       sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        px: 1.5,
-                        py: 0.75,
-                        mt: 1,
-                        cursor: "pointer",
-                        userSelect: "none",
+                        minHeight: 40,
+                        justifyContent: "center",
                         borderRadius: 1,
-                        mx: 1,
-                        "&:hover": { bgcolor: "action.hover" },
+                        mb: 0.125,
+                        px: 0,
+                        bgcolor: active
+                          ? alpha(theme.palette.primary.main, 0.08)
+                          : "transparent",
+                        color: active ? theme.palette.primary.main : "text.primary",
+                        "&:hover": {
+                          bgcolor: active
+                            ? alpha(theme.palette.primary.main, 0.12)
+                            : "action.hover",
+                        },
+                        "& .MuiListItemIcon-root": {
+                          color: active ? theme.palette.primary.main : "text.secondary",
+                          minWidth: 0,
+                          justifyContent: "center",
+                        },
                       }}
                     >
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          fontWeight: 700,
-                          fontSize: 10.5,
-                          letterSpacing: "0.06em",
-                          textTransform: "uppercase",
-                          color: anyActive ? "primary.main" : "text.secondary",
-                        }}
-                      >
-                        {group.heading}
-                      </Typography>
+                      <ListItemIcon>
+                        <Icon />
+                      </ListItemIcon>
+                    </ListItemButton>
+                  </Tooltip>
+                );
+              })}
+            </List>
+          ) : (
+            NAV_GROUPS.map((group) => {
+              const items = group.items.filter((i) => {
+                if (i.hiddenRoles && user && i.hiddenRoles.includes(user.role)) return false;
+                if (i.requiresClassTeacher && !isClassTeacher()) return false;
+                return !i.permission || hasPermission(i.permission);
+              });
+              if (!items.length) return null;
+
+              const anyActive = isGroupActive(pathname, items);
+              const expanded = groupOpen[group.heading] ?? true;
+
+              return (
+                <Box key={group.heading} sx={{ mb: 0.5 }}>
+                  {open ? (
+                    <>
+                      {/* Group header row — clicking toggles collapse */}
                       <Box
+                        onClick={() => toggleGroup(group.heading)}
                         sx={{
-                          color: anyActive ? "primary.main" : "text.secondary",
                           display: "flex",
                           alignItems: "center",
+                          justifyContent: "space-between",
+                          px: 1.5,
+                          py: 0.75,
+                          mt: 1,
+                          cursor: "pointer",
+                          userSelect: "none",
+                          borderRadius: 1,
+                          mx: 1,
+                          "&:hover": { bgcolor: "action.hover" },
                         }}
                       >
-                        {expanded ? (
-                          <ExpandLessIcon sx={{ fontSize: 16 }} />
-                        ) : (
-                          <ExpandMoreIcon sx={{ fontSize: 16 }} />
-                        )}
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            fontWeight: 700,
+                            fontSize: 10.5,
+                            letterSpacing: "0.06em",
+                            textTransform: "uppercase",
+                            color: anyActive ? "primary.main" : "text.secondary",
+                          }}
+                        >
+                          {group.heading}
+                        </Typography>
+                        <Box
+                          sx={{
+                            color: anyActive ? "primary.main" : "text.secondary",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          {expanded ? (
+                            <ExpandLessIcon sx={{ fontSize: 16 }} />
+                          ) : (
+                            <ExpandMoreIcon sx={{ fontSize: 16 }} />
+                          )}
+                        </Box>
                       </Box>
-                    </Box>
 
-                    <Collapse in={expanded} timeout={200} unmountOnExit>
-                      <List dense sx={{ px: 1, py: 0.5 }}>
-                        {items.map((item) => {
-                          const active = isItemActive(pathname, item.to, item.exact);
-                          // Destructure the icon component so JSX treats it as a component.
-                          const Icon = item.icon;
-                          return (
+                      <Collapse in={expanded} timeout={200} unmountOnExit>
+                        <List dense sx={{ px: 1, py: 0.5 }}>
+                          {items.map((item) => {
+                            const active = isItemActive(pathname, item.to, item.exact);
+                            const Icon = item.icon;
+                            return (
+                              <ListItemButton
+                                key={item.to}
+                                component={Link}
+                                href={item.to}
+                                selected={active}
+                                sx={{
+                                  minHeight: 36,
+                                  borderRadius: 1,
+                                  mb: 0.125,
+                                  px: 1.5,
+                                  bgcolor: active
+                                    ? alpha(theme.palette.primary.main, 0.08)
+                                    : "transparent",
+                                  color: active ? theme.palette.primary.main : "text.primary",
+                                  "&:hover": {
+                                    bgcolor: active
+                                      ? alpha(theme.palette.primary.main, 0.12)
+                                      : "action.hover",
+                                  },
+                                  "& .MuiListItemIcon-root": {
+                                    color: active ? theme.palette.primary.main : "text.secondary",
+                                    minWidth: 32,
+                                  },
+                                  "& .MuiListItemText-primary": {
+                                    fontWeight: active ? 600 : 500,
+                                    fontSize: 13,
+                                  },
+                                }}
+                              >
+                                <ListItemIcon>
+                                  <Icon />
+                                </ListItemIcon>
+                                <ListItemText primary={item.label} />
+                              </ListItemButton>
+                            );
+                          })}
+                        </List>
+                      </Collapse>
+                    </>
+                  ) : (
+                    // Rail mode — no groups, just icons with tooltips
+                    <List dense sx={{ px: 0.5, py: 0.5 }}>
+                      {items.map((item) => {
+                        const active = isItemActive(pathname, item.to, item.exact);
+                        const Icon = item.icon;
+                        return (
+                          <Tooltip key={item.to} title={item.label} placement="right">
                             <ListItemButton
-                              key={item.to}
                               component={Link}
                               href={item.to}
                               selected={active}
                               sx={{
-                                minHeight: 36,
+                                minHeight: 40,
+                                justifyContent: "center",
                                 borderRadius: 1,
                                 mb: 0.125,
-                                px: 1.5,
+                                px: 0,
                                 bgcolor: active
                                   ? alpha(theme.palette.primary.main, 0.08)
                                   : "transparent",
@@ -343,70 +495,24 @@ export function DashboardLayout({ children }) {
                                 },
                                 "& .MuiListItemIcon-root": {
                                   color: active ? theme.palette.primary.main : "text.secondary",
-                                  minWidth: 32,
-                                },
-                                "& .MuiListItemText-primary": {
-                                  fontWeight: active ? 600 : 500,
-                                  fontSize: 13,
+                                  minWidth: 0,
+                                  justifyContent: "center",
                                 },
                               }}
                             >
                               <ListItemIcon>
                                 <Icon />
                               </ListItemIcon>
-                              <ListItemText primary={item.label} />
                             </ListItemButton>
-                          );
-                        })}
-                      </List>
-                    </Collapse>
-                  </>
-                ) : (
-                  // Rail mode — no groups, just icons with tooltips
-                  <List dense sx={{ px: 0.5, py: 0.5 }}>
-                    {items.map((item) => {
-                      const active = isItemActive(pathname, item.to, item.exact);
-                      const Icon = item.icon;
-                      return (
-                        <Tooltip key={item.to} title={item.label} placement="right">
-                          <ListItemButton
-                            component={Link}
-                            href={item.to}
-                            selected={active}
-                            sx={{
-                              minHeight: 40,
-                              justifyContent: "center",
-                              borderRadius: 1,
-                              mb: 0.125,
-                              px: 0,
-                              bgcolor: active
-                                ? alpha(theme.palette.primary.main, 0.08)
-                                : "transparent",
-                              color: active ? theme.palette.primary.main : "text.primary",
-                              "&:hover": {
-                                bgcolor: active
-                                  ? alpha(theme.palette.primary.main, 0.12)
-                                  : "action.hover",
-                              },
-                              "& .MuiListItemIcon-root": {
-                                color: active ? theme.palette.primary.main : "text.secondary",
-                                minWidth: 0,
-                                justifyContent: "center",
-                              },
-                            }}
-                          >
-                            <ListItemIcon>
-                              <Icon />
-                            </ListItemIcon>
-                          </ListItemButton>
-                        </Tooltip>
-                      );
-                    })}
-                  </List>
-                )}
-              </Box>
-            );
-          })}
+                          </Tooltip>
+                        );
+                      })}
+                    </List>
+                  )}
+                </Box>
+              );
+            })
+          )}
         </Box>
       </Drawer>
 

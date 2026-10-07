@@ -31,10 +31,14 @@ import { useNotification } from "@/context/NotificationContext";
 import { api } from "@/lib/api";
 import { GRADE_LEVELS, getTeachers, gradeRank } from "@/lib/grades";
 
+import { PageGuard } from "@/components/common/PageGuard";
+
 export default function ClassesPage() {
   return (
     <DashboardLayout>
-      <ClassesContent />
+      <PageGuard permission="settings.view">
+        <ClassesContent />
+      </PageGuard>
     </DashboardLayout>
   );
 }

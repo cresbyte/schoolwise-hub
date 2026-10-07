@@ -33,10 +33,14 @@ import { useNotification } from "@/context/NotificationContext";
 import { api } from "@/lib/api";
 import { GRADE_LEVELS, gradeRank } from "@/lib/grades";
 
+import { PageGuard } from "@/components/common/PageGuard";
+
 export default function SubjectsPage() {
   return (
     <DashboardLayout>
-      <SubjectsContent />
+      <PageGuard permission="settings.view">
+        <SubjectsContent />
+      </PageGuard>
     </DashboardLayout>
   );
 }

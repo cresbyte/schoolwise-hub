@@ -100,11 +100,22 @@ export default function AttendanceEntryPage() {
     if (["admin", "headteacher", "deputy"].includes(user.role)) {
       return classList;
     }
+    // Teachers and class teachers can only record attendance for the class they ARE the class teacher of
     return classList.filter((c) => {
-      const teacherId = c.classTeacherId || c.class_teacher_id || c.class_teacher;
-      return String(teacherId) === String(user.id);
+      return (
+        String(c.classTeacherId || c.class_teacher_id || c.class_teacher) === String(user.id) ||
+        String(c.classTeacherId) === String(user.staffId) ||
+        user.classTeacherOf?.includes(c.id)
+      );
     });
   }, [classList, user]);
+
+  // Auto-select initial class
+  useEffect(() => {
+    if (!selectedClassId && myClasses.length > 0) {
+      setSelectedClassId(myClasses[0].id);
+    }
+  }, [myClasses, selectedClassId]);
 
   const weekDates = useMemo(() => getWeekDates(weekStart), [weekStart]);
   const weekEnd = weekDates[4];
@@ -275,7 +286,7 @@ export default function AttendanceEntryPage() {
           direction={{ xs: "column", sm: "row" }}
           spacing={2}
           alignitems="center"
-          flexWrap="wrap"
+          flexwrap="wrap"
         >
           <FormControl size="small" sx={{ minWidth: 200 }}>
             <InputLabel>Class</InputLabel>

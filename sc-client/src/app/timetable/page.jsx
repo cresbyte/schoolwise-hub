@@ -19,6 +19,11 @@ import { useClasses } from "@/hooks/domain";
 import { api } from "@/lib/api";
 import { DAYS_OF_WEEK } from "@/lib/constants";
 
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Stack from "@mui/material/Stack";
+import { useAuth } from "@/context/AuthContext";
+
 export default function TimetablePage() {
   return (
     <DashboardLayout>
@@ -28,7 +33,9 @@ export default function TimetablePage() {
 }
 
 function TimetableContent() {
+  const { user } = useAuth();
   const { data: classes = [] } = useClasses();
+  const [viewMode, setViewMode] = useState("personal"); // "personal" | "class"
   const [classId, setClassId] = useState("");
 
   useEffect(() => {
@@ -37,25 +44,60 @@ function TimetableContent() {
     }
   }, [classes, classId]);
 
-  const tt = useAsync(() => classId ? api.getTimetable(classId) : Promise.resolve([]), [classId]);
+  const tt = useAsync(
+    () =>
+      viewMode === "personal"
+        ? api.getTeacherTimetable(user?.staffId || user?.id || "")
+        : classId
+          ? api.getTimetable(classId)
+          : Promise.resolve([]),
+    [viewMode, classId, user],
+  );
+
   const slots = tt.data ?? [];
   const periods = Array.from(new Set(slots.map((s) => s.periodNumber))).sort((a, b) => a - b);
 
   return (
     <>
-      <PageHeader title="Timetable" subtitle="Weekly class timetable" />
-      <Card sx={{ p: 2, mb: 2 }}>
-        <ClassSelect value={classId} onChange={setClassId} allOption={false} label="Select Class" />
+      <PageHeader
+        title="Timetable"
+        subtitle={viewMode === "personal" ? "My Personal Teaching Schedule (Read-Only)" : "Class Timetable (Read-Only)"}
+      />
+      <Card sx={{ mb: 2 }}>
+        <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems="center" sx={{ px: 2, pt: 1 }}>
+          <Tabs value={viewMode} onChange={(_, v) => setViewMode(v)}>
+            <Tab label="My Personal Schedule" value="personal" />
+            <Tab label="Class Timetables" value="class" />
+          </Tabs>
+
+          {viewMode === "class" && (
+            <Box sx={{ pb: 1, pt: { xs: 1, sm: 0 } }}>
+              <ClassSelect value={classId} onChange={setClassId} allOption={false} label="Select Class" />
+            </Box>
+          )}
+        </Stack>
       </Card>
+
       <Card>
         <CardContent sx={{ overflowX: "auto" }}>
-          <DataState loading={tt.loading} error={tt.error} data={slots} onRetry={tt.refetch} isEmpty={(d) => d.length === 0}>
+          <DataState
+            loading={tt.loading}
+            error={tt.error}
+            data={slots}
+            onRetry={tt.refetch}
+            isEmpty={(d) => d.length === 0}
+            emptyMessage={viewMode === "personal" ? "No lessons assigned to your timetable schedule." : "No slots defined for this class."}
+          >
             {() => (
               <Table size="small" sx={{ minWidth: 720 }}>
                 <TableHead>
                   <TableRow>
                     <TableCell sx={{ fontWeight: 700 }}>Period</TableCell>
-                    {DAYS_OF_WEEK.map((d) => <TableCell key={d} sx={{ fontWeight: 700 }}>{d}</TableCell>)}
+                    {DAYS_OF_WEEK.map((d) => (
+                      <TableCell key={d} sx={{ fontWeight: 700 }}>
+                        {d}
+                      </TableCell>
+                    ))}
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -64,18 +106,40 @@ function TimetableContent() {
                     return (
                       <TableRow key={p}>
                         <TableCell sx={{ whiteSpace: "nowrap" }}>
-                          <Typography variant="caption" sx={{ fontWeight: 700, display: "block" }}>P{p}</Typography>
-                          <Typography variant="caption" color="text.secondary">{sample?.startTime}–{sample?.endTime}</Typography>
+                          <Typography variant="caption" sx={{ fontWeight: 700, display: "block" }}>
+                            P{p}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {sample?.startTime}–{sample?.endTime}
+                          </Typography>
                         </TableCell>
                         {DAYS_OF_WEEK.map((d) => {
                           const slot = slots.find((s) => s.day === d && s.periodNumber === p);
                           if (!slot) return <TableCell key={d}>—</TableCell>;
-                          if (slot.isBreak) return <TableCell key={d}><Box sx={{ bgcolor: "action.hover", borderRadius: 1, p: 0.75, textAlign: "center" }}><Typography variant="caption" sx={{ fontWeight: 600 }}>{slot.breakName ?? "Break"}</Typography></Box></TableCell>;
+                          if (slot.isBreak)
+                            return (
+                              <TableCell key={d}>
+                                <Box sx={{ bgcolor: "action.hover", borderRadius: 1, p: 0.75, textAlign: "center" }}>
+                                  <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                                    {slot.breakName ?? "Break"}
+                                  </Typography>
+                                </Box>
+                              </TableCell>
+                            );
                           return (
                             <TableCell key={d}>
                               <Box sx={{ bgcolor: "primary.main", color: "#fff", borderRadius: 1, p: 0.75 }}>
-                                <Typography variant="caption" sx={{ fontWeight: 700, display: "block" }}>{slot.subjectName}</Typography>
-                                <Typography variant="caption" sx={{ opacity: 0.85 }}>{slot.teacherName}</Typography>
+                                <Typography variant="caption" sx={{ fontWeight: 700, display: "block" }}>
+                                  {slot.subjectName}
+                                </Typography>
+                                <Typography variant="caption" sx={{ opacity: 0.85, display: "block" }}>
+                                  {viewMode === "personal" ? slot.className : slot.teacherName}
+                                </Typography>
+                                {slot.roomName && (
+                                  <Typography variant="caption" sx={{ opacity: 0.7, fontSize: 10 }}>
+                                    📍 {slot.roomName}
+                                  </Typography>
+                                )}
                               </Box>
                             </TableCell>
                           );
