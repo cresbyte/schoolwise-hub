@@ -1,5 +1,5 @@
 /**
- * Mutable in-memory content store for the Kibaara public website.
+ * Mutable in-memory content store for the Kibaraa public website.
  * All arrays are wrapped in module-level variables; call the getter
  * functions so CMS mutations are reflected on the public site.
  * @module website/data
@@ -177,21 +177,23 @@ let _heroSlides: HeroSlide[] = [
     id: "2",
     title: "CBC & 8-4-4 Excellence",
     subtitle: "Holistic education from PP1 through Form 4",
-    image:"/hero/image2.webp",
-    imageAlt: "Students engaged in classroom learning at Kibaara",
+    image: "/hero/image2.webp",
+    imageAlt: "Students engaged in classroom learning at Kibaraa",
     cta: { label: "View Academics", href: "/academics" },
   },
   {
     id: "3",
     title: "Admissions Open — Term 3, 2026",
     subtitle: "Join a community of learners shaping Kenya's future",
-    image:"/hero/image3.webp",
+    image: "/hero/image3.webp",
     imageAlt: "Students participating in school sports day activities",
     cta: { label: "Apply Now", href: "/admissions/apply" },
   },
 ];
 export const getHeroSlides = (): HeroSlide[] => [..._heroSlides];
-export const setHeroSlides = (data: HeroSlide[]) => { _heroSlides = data; };
+export const setHeroSlides = (data: HeroSlide[]) => {
+  _heroSlides = data;
+};
 
 // ─── School Stats ─────────────────────────────────────────────────────────────
 
@@ -202,7 +204,9 @@ let _schoolStats: SchoolStat[] = [
   { label: "KCSE Mean Score", value: 8.2, suffix: "", decimals: 1 },
 ];
 export const getSchoolStats = (): SchoolStat[] => [..._schoolStats];
-export const setSchoolStats = (data: SchoolStat[]) => { _schoolStats = data; };
+export const setSchoolStats = (data: SchoolStat[]) => {
+  _schoolStats = data;
+};
 
 // ─── Why Choose Us ────────────────────────────────────────────────────────────
 
@@ -239,7 +243,9 @@ let _whyChooseUs: WhyChooseUsItem[] = [
   },
 ];
 export const getWhyChooseUs = (): WhyChooseUsItem[] => [..._whyChooseUs];
-export const setWhyChooseUs = (data: WhyChooseUsItem[]) => { _whyChooseUs = data; };
+export const setWhyChooseUs = (data: WhyChooseUsItem[]) => {
+  _whyChooseUs = data;
+};
 
 // ─── News Articles ────────────────────────────────────────────────────────────
 
@@ -248,7 +254,7 @@ Kabraas Elites Academy continues to strengthen its position as one of Nairobi Co
 
 This term, we have invested in upgrading our science laboratories and expanding our digital learning resources. Form 4 candidates are benefiting from intensive revision clinics led by experienced KNEC examiners, while our Junior School learners engage in project-based CBC assessments that develop critical thinking and creativity.
 
-Our boarding section remains a cornerstone of the Kibaara experience. With structured evening prep, supervised recreation, and nutritious meals prepared in our modern kitchen, boarders enjoy a home-away-from-home atmosphere. Day scholars equally benefit from extended library hours and after-school clubs ranging from robotics to debate.
+Our boarding section remains a cornerstone of the Kibaraa experience. With structured evening prep, supervised recreation, and nutritious meals prepared in our modern kitchen, boarders enjoy a home-away-from-home atmosphere. Day scholars equally benefit from extended library hours and after-school clubs ranging from robotics to debate.
 
 Community engagement remains central to our ethos. Last month, our Environmental Club partnered with Nairobi Municipality on a tree-planting initiative along the Njoro River, reinforcing our commitment to environmental stewardship. The Inter-House Athletics Championships drew families from across the county, showcasing the talent and sportsmanship of our learners.
 
@@ -256,7 +262,7 @@ Parents appreciate our transparent fee policies and convenient M-Pesa payment op
 
 As we look ahead to Term 3, we invite prospective families to attend our Open Day on 15 July. Tours will include our ICT centre, dormitories, and newly refurbished art studio. Admissions for limited spaces in Form 1 and Grade 4 are now open.
 
-At Kibaara, we believe every child deserves an education that unlocks their full potential. Join us in nurturing tomorrow's leaders today.
+At Kibaraa, we believe every child deserves an education that unlocks their full potential. Join us in nurturing tomorrow's leaders today.
 `.trim();
 
 function mkArticle(
@@ -266,27 +272,123 @@ function mkArticle(
   category: NewsArticle["category"],
   date: string,
   image: string,
-  author = "Kibaara Communications",
+  author = "Kibaraa Communications",
 ): NewsArticle {
-  return { slug, title, excerpt, category, date, author, readMinutes: 4, image, content: ARTICLE_BODY };
+  return {
+    slug,
+    title,
+    excerpt,
+    category,
+    date,
+    author,
+    readMinutes: 4,
+    image,
+    content: ARTICLE_BODY,
+  };
 }
 
 let _newsArticles: NewsArticle[] = [
-  mkArticle("primrose-kcse-2026-results", "Kibaara Celebrates Strong KCSE 2026 Performance", "Our Form 4 class achieved a mean score of 8.2, with 12 students earning straight A grades.", "Achievements", "2026-05-20", WEBSITE_IMAGES.classroom),
-  mkArticle("open-day-july-2026", "Open Day & Campus Tour — 15 July 2026", "Prospective families are invited to tour our facilities and meet our leadership team.", "Events", "2026-06-01", WEBSITE_IMAGES.campusBanner),
-  mkArticle("cbc-grade-6-assessment", "Grade 6 Learners Excel in National Assessment", "Our inaugural CBC cohort demonstrated outstanding performance in the June national assessment.", "Achievements", "2026-06-05", WEBSITE_IMAGES.classroom),
-  mkArticle("new-science-lab", "State-of-the-Art Science Lab Officially Opened", "The new laboratory will enhance practical learning for Form 3 and Form 4 sciences.", "News", "2026-05-15", WEBSITE_IMAGES.classroom),
-  mkArticle("inter-house-athletics", "Inter-House Athletics Championships 2026", "Blue House emerged victorious in a thrilling day of track and field events.", "Events", "2026-05-10", WEBSITE_IMAGES.sports),
-  mkArticle("debate-team-Nairobi", "Debate Team Wins Nairobi County Championship", "Kibaara debaters will represent the county at the national finals in Nairobi.", "Achievements", "2026-04-28", WEBSITE_IMAGES.classroom),
-  mkArticle("parent-portal-launch", "ShuleSmart Parent Portal Now Live", "Parents can now view fees, attendance, and report cards online via the new portal.", "Announcements", "2026-04-15", WEBSITE_IMAGES.library),
-  mkArticle("music-drama-festival", "Annual Music & Drama Festival Set for August", "Learners are rehearsing for the highly anticipated cultural showcase.", "Events", "2026-04-01", WEBSITE_IMAGES.sports),
-  mkArticle("tree-planting-initiative", "Environmental Club Plants 500 Trees", "Learners partnered with Nairobi Municipality on a reforestation project.", "News", "2026-03-20", WEBSITE_IMAGES.campusBanner),
-  mkArticle("scholarship-programme-2026", "Merit Scholarship Programme Announced", "Five full scholarships available for outstanding KCPE candidates joining Form 1.", "Announcements", "2026-03-10", WEBSITE_IMAGES.classroom),
-  mkArticle("staff-development-workshop", "Teachers Complete CBC Training Workshop", "All Junior School teachers certified in the latest KICD curriculum guidelines.", "News", "2026-02-28", WEBSITE_IMAGES.principal),
-  mkArticle("boarding-facilities-upgrade", "Boarding Wing Renovation Complete", "Modern dormitories with improved study areas now welcome returning boarders.", "News", "2026-02-15", WEBSITE_IMAGES.campusBanner),
+  mkArticle(
+    "primrose-kcse-2026-results",
+    "Kibaraa Celebrates Strong KCSE 2026 Performance",
+    "Our Form 4 class achieved a mean score of 8.2, with 12 students earning straight A grades.",
+    "Achievements",
+    "2026-05-20",
+    WEBSITE_IMAGES.classroom,
+  ),
+  mkArticle(
+    "open-day-july-2026",
+    "Open Day & Campus Tour — 15 July 2026",
+    "Prospective families are invited to tour our facilities and meet our leadership team.",
+    "Events",
+    "2026-06-01",
+    WEBSITE_IMAGES.campusBanner,
+  ),
+  mkArticle(
+    "cbc-grade-6-assessment",
+    "Grade 6 Learners Excel in National Assessment",
+    "Our inaugural CBC cohort demonstrated outstanding performance in the June national assessment.",
+    "Achievements",
+    "2026-06-05",
+    WEBSITE_IMAGES.classroom,
+  ),
+  mkArticle(
+    "new-science-lab",
+    "State-of-the-Art Science Lab Officially Opened",
+    "The new laboratory will enhance practical learning for Form 3 and Form 4 sciences.",
+    "News",
+    "2026-05-15",
+    WEBSITE_IMAGES.classroom,
+  ),
+  mkArticle(
+    "inter-house-athletics",
+    "Inter-House Athletics Championships 2026",
+    "Blue House emerged victorious in a thrilling day of track and field events.",
+    "Events",
+    "2026-05-10",
+    WEBSITE_IMAGES.sports,
+  ),
+  mkArticle(
+    "debate-team-Nairobi",
+    "Debate Team Wins Nairobi County Championship",
+    "Kibaraa debaters will represent the county at the national finals in Nairobi.",
+    "Achievements",
+    "2026-04-28",
+    WEBSITE_IMAGES.classroom,
+  ),
+  mkArticle(
+    "parent-portal-launch",
+    "ShuleSmart Parent Portal Now Live",
+    "Parents can now view fees, attendance, and report cards online via the new portal.",
+    "Announcements",
+    "2026-04-15",
+    WEBSITE_IMAGES.library,
+  ),
+  mkArticle(
+    "music-drama-festival",
+    "Annual Music & Drama Festival Set for August",
+    "Learners are rehearsing for the highly anticipated cultural showcase.",
+    "Events",
+    "2026-04-01",
+    WEBSITE_IMAGES.sports,
+  ),
+  mkArticle(
+    "tree-planting-initiative",
+    "Environmental Club Plants 500 Trees",
+    "Learners partnered with Nairobi Municipality on a reforestation project.",
+    "News",
+    "2026-03-20",
+    WEBSITE_IMAGES.campusBanner,
+  ),
+  mkArticle(
+    "scholarship-programme-2026",
+    "Merit Scholarship Programme Announced",
+    "Five full scholarships available for outstanding KCPE candidates joining Form 1.",
+    "Announcements",
+    "2026-03-10",
+    WEBSITE_IMAGES.classroom,
+  ),
+  mkArticle(
+    "staff-development-workshop",
+    "Teachers Complete CBC Training Workshop",
+    "All Junior School teachers certified in the latest KICD curriculum guidelines.",
+    "News",
+    "2026-02-28",
+    WEBSITE_IMAGES.principal,
+  ),
+  mkArticle(
+    "boarding-facilities-upgrade",
+    "Boarding Wing Renovation Complete",
+    "Modern dormitories with improved study areas now welcome returning boarders.",
+    "News",
+    "2026-02-15",
+    WEBSITE_IMAGES.campusBanner,
+  ),
 ];
 export const getNewsArticles = (): NewsArticle[] => [..._newsArticles];
-export const setNewsArticles = (data: NewsArticle[]) => { _newsArticles = data; };
+export const setNewsArticles = (data: NewsArticle[]) => {
+  _newsArticles = data;
+};
 
 // ─── Gallery Items ────────────────────────────────────────────────────────────
 
@@ -299,55 +401,189 @@ const ALBUM_IMAGES: Record<GalleryItem["album"], string> = {
 };
 const ALBUMS: GalleryItem["album"][] = ["Campus", "Sports", "Arts", "Events", "Classroom"];
 const ASPECTS: GalleryItem["aspect"][] = ["landscape", "portrait", "square"];
-const TITLES = ["Morning Assembly", "Science Practical", "Football Match", "Art Exhibition", "Library Session", "Boarding Dorm", "Graduation Day", "Chemistry Lab"];
+const TITLES = [
+  "Morning Assembly",
+  "Science Practical",
+  "Football Match",
+  "Art Exhibition",
+  "Library Session",
+  "Boarding Dorm",
+  "Graduation Day",
+  "Chemistry Lab",
+];
 
 let _galleryItems: GalleryItem[] = Array.from({ length: 24 }, (_, i) => {
   const album = ALBUMS[i % ALBUMS.length];
-  return { id: `g${i + 1}`, title: TITLES[i % 8], album, image: ALBUM_IMAGES[album], aspect: ASPECTS[i % ASPECTS.length] };
+  return {
+    id: `g${i + 1}`,
+    title: TITLES[i % 8],
+    album,
+    image: ALBUM_IMAGES[album],
+    aspect: ASPECTS[i % ASPECTS.length],
+  };
 });
 export const getGalleryItems = (): GalleryItem[] => [..._galleryItems];
-export const setGalleryItems = (data: GalleryItem[]) => { _galleryItems = data; };
+export const setGalleryItems = (data: GalleryItem[]) => {
+  _galleryItems = data;
+};
 
 // ─── Testimonials ─────────────────────────────────────────────────────────────
 
 let _testimonials: Testimonial[] = [
-  { id: "t1", name: "Grace Wanjiku", role: "Parent, Grade 6", quote: "Kibaara has transformed my daughter's confidence. The teachers genuinely care about every child.", gradient: "linear-gradient(135deg, #1565C0, #42A5F5)" },
-  { id: "t2", name: "James Otieno", role: "Alumnus, KCSE 2023 — A", quote: "The discipline and mentorship I received here prepared me for university. I am forever grateful.", gradient: "linear-gradient(135deg, #2E7D32, #66BB6A)" },
-  { id: "t3", name: "Faith Chemutai", role: "Parent, Form 2 Boarder", quote: "As a working parent in Nairobi, I trust Kibaara's boarding programme completely. Excellent pastoral care.", gradient: "linear-gradient(135deg, #F57F17, #FFB74D)" },
-  { id: "t4", name: "Peter Kariuki", role: "Parent, PP2", quote: "The CBC approach is well implemented. My son loves going to school every morning!", gradient: "linear-gradient(135deg, #6A1B9A, #AB47BC)" },
+  {
+    id: "t1",
+    name: "Grace Wanjiku",
+    role: "Parent, Grade 6",
+    quote:
+      "Kibaraa has transformed my daughter's confidence. The teachers genuinely care about every child.",
+    gradient: "linear-gradient(135deg, #1565C0, #42A5F5)",
+  },
+  {
+    id: "t2",
+    name: "James Otieno",
+    role: "Alumnus, KCSE 2023 — A",
+    quote:
+      "The discipline and mentorship I received here prepared me for university. I am forever grateful.",
+    gradient: "linear-gradient(135deg, #2E7D32, #66BB6A)",
+  },
+  {
+    id: "t3",
+    name: "Faith Chemutai",
+    role: "Parent, Form 2 Boarder",
+    quote:
+      "As a working parent in Nairobi, I trust Kibaraa's boarding programme completely. Excellent pastoral care.",
+    gradient: "linear-gradient(135deg, #F57F17, #FFB74D)",
+  },
+  {
+    id: "t4",
+    name: "Peter Kariuki",
+    role: "Parent, PP2",
+    quote: "The CBC approach is well implemented. My son loves going to school every morning!",
+    gradient: "linear-gradient(135deg, #6A1B9A, #AB47BC)",
+  },
 ];
 export const getTestimonials = (): Testimonial[] => [..._testimonials];
-export const setTestimonials = (data: Testimonial[]) => { _testimonials = data; };
+export const setTestimonials = (data: Testimonial[]) => {
+  _testimonials = data;
+};
 
 // ─── Upcoming Events ──────────────────────────────────────────────────────────
 
 let _upcomingEvents: UpcomingEvent[] = [
-  { id: "e1", title: "Open Day & Campus Tour", date: "15 Jul 2026", time: "9:00 AM", location: "Main Hall" },
-  { id: "e2", title: "Inter-House Athletics", date: "22 Jul 2026", time: "8:00 AM", location: "Sports Ground" },
-  { id: "e3", title: "Parent-Teacher Conference", date: "3 Aug 2026", time: "2:00 PM", location: "Classrooms" },
-  { id: "e4", title: "Music & Drama Festival", date: "10 Aug 2026", time: "10:00 AM", location: "Amphitheatre" },
+  {
+    id: "e1",
+    title: "Open Day & Campus Tour",
+    date: "15 Jul 2026",
+    time: "9:00 AM",
+    location: "Main Hall",
+  },
+  {
+    id: "e2",
+    title: "Inter-House Athletics",
+    date: "22 Jul 2026",
+    time: "8:00 AM",
+    location: "Sports Ground",
+  },
+  {
+    id: "e3",
+    title: "Parent-Teacher Conference",
+    date: "3 Aug 2026",
+    time: "2:00 PM",
+    location: "Classrooms",
+  },
+  {
+    id: "e4",
+    title: "Music & Drama Festival",
+    date: "10 Aug 2026",
+    time: "10:00 AM",
+    location: "Amphitheatre",
+  },
 ];
 export const getUpcomingEvents = (): UpcomingEvent[] => [..._upcomingEvents];
-export const setUpcomingEvents = (data: UpcomingEvent[]) => { _upcomingEvents = data; };
+export const setUpcomingEvents = (data: UpcomingEvent[]) => {
+  _upcomingEvents = data;
+};
 
 // ─── FAQs ─────────────────────────────────────────────────────────────────────
 
 let _faqItems: FaqItem[] = [
-  { id: "f1", question: "How do I access the parent portal?", answer: "Visit the Parent Portal link on our website or go to /login. Use the credentials provided during admission. Contact the office if you need a password reset." },
-  { id: "f2", question: "What are the school fees payment methods?", answer: "We accept M-Pesa (Paybill 522533), bank transfer, and cash at the accounts office. Always use your child's admission number as the reference." },
-  { id: "f3", question: "What is the school uniform policy?", answer: "Full uniform is required Monday–Thursday. PE kit on Wednesdays. Boarders have additional house wear. Uniforms are available at the school shop." },
-  { id: "f4", question: "How do I report my child's absence?", answer: "Call the class teacher or send an SMS to 0712 345 678 before 8:00 AM. For extended absence, submit a written note to the deputy principal." },
-  { id: "f5", question: "When are parent-teacher conferences held?", answer: "Formal conferences are held once per term. Informal meetings can be arranged through the class teacher with 48 hours' notice." },
-  { id: "f6", question: "What meals are provided for boarders?", answer: "Three balanced meals daily plus an evening snack. Special dietary needs can be accommodated with medical documentation." },
-  { id: "f7", question: "How are academic reports shared?", answer: "End-of-term report cards are issued physically and uploaded to the parent portal. Mid-term progress updates are sent via SMS." },
-  { id: "f8", question: "What transport options are available?", answer: "School buses serve Nairobi Town, Lanet, and Njoro routes. Route maps and fees are available from the transport coordinator." },
-  { id: "f9", question: "How does the admission process work?", answer: "Submit an online application, attend an assessment interview, receive an offer letter, and complete enrollment with required documents and fees." },
-  { id: "f10", question: "Are scholarships available?", answer: "Yes. Merit scholarships are awarded annually to outstanding KCPE candidates. Financial aid applications are reviewed by the bursar's office." },
-  { id: "f11", question: "What extracurricular activities are offered?", answer: "Sports, music, drama, debate, scouting, environmental club, robotics, and Christian union among others. See our School Life page for details." },
-  { id: "f12", question: "How can I contact the principal?", answer: "Email principal@kibaara.elite.ac.ke or call 0712 345 678 ext. 101. Appointments can be scheduled through the school secretary." },
+  {
+    id: "f1",
+    question: "How do I access the parent portal?",
+    answer:
+      "Visit the Parent Portal link on our website or go to /login. Use the credentials provided during admission. Contact the office if you need a password reset.",
+  },
+  {
+    id: "f2",
+    question: "What are the school fees payment methods?",
+    answer:
+      "We accept M-Pesa (Paybill 522533), bank transfer, and cash at the accounts office. Always use your child's admission number as the reference.",
+  },
+  {
+    id: "f3",
+    question: "What is the school uniform policy?",
+    answer:
+      "Full uniform is required Monday–Thursday. PE kit on Wednesdays. Boarders have additional house wear. Uniforms are available at the school shop.",
+  },
+  {
+    id: "f4",
+    question: "How do I report my child's absence?",
+    answer:
+      "Call the class teacher or send an SMS to 0712 345 678 before 8:00 AM. For extended absence, submit a written note to the deputy principal.",
+  },
+  {
+    id: "f5",
+    question: "When are parent-teacher conferences held?",
+    answer:
+      "Formal conferences are held once per term. Informal meetings can be arranged through the class teacher with 48 hours' notice.",
+  },
+  {
+    id: "f6",
+    question: "What meals are provided for boarders?",
+    answer:
+      "Three balanced meals daily plus an evening snack. Special dietary needs can be accommodated with medical documentation.",
+  },
+  {
+    id: "f7",
+    question: "How are academic reports shared?",
+    answer:
+      "End-of-term report cards are issued physically and uploaded to the parent portal. Mid-term progress updates are sent via SMS.",
+  },
+  {
+    id: "f8",
+    question: "What transport options are available?",
+    answer:
+      "School buses serve Nairobi Town, Lanet, and Njoro routes. Route maps and fees are available from the transport coordinator.",
+  },
+  {
+    id: "f9",
+    question: "How does the admission process work?",
+    answer:
+      "Submit an online application, attend an assessment interview, receive an offer letter, and complete enrollment with required documents and fees.",
+  },
+  {
+    id: "f10",
+    question: "Are scholarships available?",
+    answer:
+      "Yes. Merit scholarships are awarded annually to outstanding KCPE candidates. Financial aid applications are reviewed by the bursar's office.",
+  },
+  {
+    id: "f11",
+    question: "What extracurricular activities are offered?",
+    answer:
+      "Sports, music, drama, debate, scouting, environmental club, robotics, and Christian union among others. See our School Life page for details.",
+  },
+  {
+    id: "f12",
+    question: "How can I contact the principal?",
+    answer:
+      "Email principal@kibaraa.elite.ac.ke or call 0712 345 678 ext. 101. Appointments can be scheduled through the school secretary.",
+  },
 ];
 export const getFaqItems = (): FaqItem[] => [..._faqItems];
-export const setFaqItems = (data: FaqItem[]) => { _faqItems = data; };
+export const setFaqItems = (data: FaqItem[]) => {
+  _faqItems = data;
+};
 
 // Keep old export names for backward compat with parents/page.tsx
 export const PARENT_FAQS = _faqItems;
@@ -355,15 +591,53 @@ export const PARENT_FAQS = _faqItems;
 // ─── Downloads ────────────────────────────────────────────────────────────────
 
 let _downloadItems: DownloadItem[] = [
-  { id: "d1", title: "Parent Handbook 2026", description: "Policies, procedures, and important dates.", fileType: "PDF", size: "2.4 MB" },
-  { id: "d2", title: "Fee Structure 2026", description: "Day and boarding fees by grade level.", fileType: "PDF", size: "890 KB" },
-  { id: "d3", title: "Uniform Price List", description: "Complete uniform and PE kit pricing.", fileType: "PDF", size: "450 KB" },
-  { id: "d4", title: "Medical Form", description: "Health information for new admissions.", fileType: "PDF", size: "320 KB" },
-  { id: "d5", title: "Transport Routes Map", description: "Bus routes and pickup points.", fileType: "PDF", size: "1.1 MB" },
-  { id: "d6", title: "Portal User Guide", description: "Step-by-step ShuleSmart portal instructions.", fileType: "PDF", size: "1.8 MB" },
+  {
+    id: "d1",
+    title: "Parent Handbook 2026",
+    description: "Policies, procedures, and important dates.",
+    fileType: "PDF",
+    size: "2.4 MB",
+  },
+  {
+    id: "d2",
+    title: "Fee Structure 2026",
+    description: "Day and boarding fees by grade level.",
+    fileType: "PDF",
+    size: "890 KB",
+  },
+  {
+    id: "d3",
+    title: "Uniform Price List",
+    description: "Complete uniform and PE kit pricing.",
+    fileType: "PDF",
+    size: "450 KB",
+  },
+  {
+    id: "d4",
+    title: "Medical Form",
+    description: "Health information for new admissions.",
+    fileType: "PDF",
+    size: "320 KB",
+  },
+  {
+    id: "d5",
+    title: "Transport Routes Map",
+    description: "Bus routes and pickup points.",
+    fileType: "PDF",
+    size: "1.1 MB",
+  },
+  {
+    id: "d6",
+    title: "Portal User Guide",
+    description: "Step-by-step ShuleSmart portal instructions.",
+    fileType: "PDF",
+    size: "1.8 MB",
+  },
 ];
 export const getDownloadItems = (): DownloadItem[] => [..._downloadItems];
-export const setDownloadItems = (data: DownloadItem[]) => { _downloadItems = data; };
+export const setDownloadItems = (data: DownloadItem[]) => {
+  _downloadItems = data;
+};
 
 // Keep old export name for backward compat with parents/page.tsx
 export const PARENT_DOWNLOADS = _downloadItems;
@@ -396,8 +670,13 @@ let _feeStructure: FeeStructureData = {
     { grade: "Form 1 – 4", tuition: 85000, activity: 6000, total: 91000 },
   ],
 };
-export const getFeeStructure = (): FeeStructureData => ({ day: [..._feeStructure.day], boarding: [..._feeStructure.boarding] });
-export const setFeeStructure = (data: FeeStructureData) => { _feeStructure = data; };
+export const getFeeStructure = (): FeeStructureData => ({
+  day: [..._feeStructure.day],
+  boarding: [..._feeStructure.boarding],
+});
+export const setFeeStructure = (data: FeeStructureData) => {
+  _feeStructure = data;
+};
 
 // Keep old export name for backward compat with admissions/page.tsx
 export const FEE_STRUCTURE = _feeStructure;
@@ -415,7 +694,9 @@ let _admissionSpaces = [
   { grade: "Form 3", day: 2, boarding: 1 },
 ];
 export const getAdmissionSpaces = () => [..._admissionSpaces];
-export const setAdmissionSpaces = (data: typeof _admissionSpaces) => { _admissionSpaces = data; };
+export const setAdmissionSpaces = (data: typeof _admissionSpaces) => {
+  _admissionSpaces = data;
+};
 
 // Keep old export name for backward compat with admissions/page.tsx
 export const ADMISSION_SPACES = _admissionSpaces;
@@ -429,7 +710,8 @@ let _contactSubmissions: ContactSubmission[] = [
     email: "esther.kamau@gmail.com",
     phone: "0722 111 222",
     subject: "Admission Inquiry",
-    message: "Good morning. I would like to inquire about available spaces for Grade 4 and Form 1 for the 2026 intake. My children are currently at Nairobi Primary and I am considering transferring them to a better school for the upcoming term.",
+    message:
+      "Good morning. I would like to inquire about available spaces for Grade 4 and Form 1 for the 2026 intake. My children are currently at Nairobi Primary and I am considering transferring them to a better school for the upcoming term.",
     submittedAt: "2026-06-20T08:34:00Z",
     status: "unread",
   },
@@ -439,7 +721,8 @@ let _contactSubmissions: ContactSubmission[] = [
     email: "joe.mwangi@outlook.com",
     phone: "0733 445 566",
     subject: "Fee Structure Question",
-    message: "Hello. Could you please send me the detailed fee structure for boarding students in Form 1 for Term 3, 2026? I also want to know if there are sibling discounts available.",
+    message:
+      "Hello. Could you please send me the detailed fee structure for boarding students in Form 1 for Term 3, 2026? I also want to know if there are sibling discounts available.",
     submittedAt: "2026-06-19T14:12:00Z",
     status: "unread",
   },
@@ -449,7 +732,8 @@ let _contactSubmissions: ContactSubmission[] = [
     email: "priscilla.o@yahoo.com",
     phone: "0711 334 455",
     subject: "Term Dates",
-    message: "Please confirm the exact opening and closing dates for Term 3, 2026. We are planning family travel and need to arrange around school days.",
+    message:
+      "Please confirm the exact opening and closing dates for Term 3, 2026. We are planning family travel and need to arrange around school days.",
     submittedAt: "2026-06-18T10:05:00Z",
     status: "read",
   },
@@ -459,7 +743,8 @@ let _contactSubmissions: ContactSubmission[] = [
     email: "samuel.ndungu@safaricom.co.ke",
     phone: "0700 998 877",
     subject: "Boarding Availability",
-    message: "I have a son joining Form 2 next term. Is boarding still available? What is included in the boarding fee and what items should he bring?",
+    message:
+      "I have a son joining Form 2 next term. Is boarding still available? What is included in the boarding fee and what items should he bring?",
     submittedAt: "2026-06-17T16:45:00Z",
     status: "unread",
   },
@@ -469,11 +754,13 @@ let _contactSubmissions: ContactSubmission[] = [
     email: "alice.wangari@gmail.com",
     phone: "0755 123 456",
     subject: "General Inquiry",
-    message: "We are a family relocating from Nairobi to Nairobi. We are looking for a reputable school for our PP2 daughter. Can we schedule a campus visit?",
+    message:
+      "We are a family relocating from Nairobi to Nairobi. We are looking for a reputable school for our PP2 daughter. Can we schedule a campus visit?",
     submittedAt: "2026-06-15T09:20:00Z",
     status: "replied",
     repliedAt: "2026-06-16T11:00:00Z",
-    replyNote: "Welcomed the family and scheduled a campus tour for Saturday 21st June at 10:00 AM.",
+    replyNote:
+      "Welcomed the family and scheduled a campus tour for Saturday 21st June at 10:00 AM.",
   },
   {
     id: "cs-6",
@@ -481,7 +768,8 @@ let _contactSubmissions: ContactSubmission[] = [
     email: "michael.njoroge@ke.ibm.com",
     phone: "0720 876 543",
     subject: "Admission Inquiry",
-    message: "I am interested in enrolling my daughter in the CBC stream for Grade 7. What are the admission requirements and what documents are needed?",
+    message:
+      "I am interested in enrolling my daughter in the CBC stream for Grade 7. What are the admission requirements and what documents are needed?",
     submittedAt: "2026-06-14T13:30:00Z",
     status: "read",
   },
@@ -490,7 +778,8 @@ let _contactSubmissions: ContactSubmission[] = [
     name: "Fatuma Hassan",
     email: "fatuma.h@gmail.com",
     subject: "Transport Routes",
-    message: "Does the school have a bus route that serves the Lanet area? My son would be a day scholar and we need reliable transport.",
+    message:
+      "Does the school have a bus route that serves the Lanet area? My son would be a day scholar and we need reliable transport.",
     submittedAt: "2026-06-12T07:55:00Z",
     status: "replied",
     repliedAt: "2026-06-13T09:00:00Z",
@@ -502,13 +791,16 @@ let _contactSubmissions: ContactSubmission[] = [
     email: "robert.kip@gmail.com",
     phone: "0712 654 321",
     subject: "School Fees Payment",
-    message: "I would like to confirm the M-Pesa Paybill number and the correct account reference to use when paying school fees.",
+    message:
+      "I would like to confirm the M-Pesa Paybill number and the correct account reference to use when paying school fees.",
     submittedAt: "2026-06-10T11:15:00Z",
     status: "archived",
   },
 ];
 export const getContactSubmissions = (): ContactSubmission[] => [..._contactSubmissions];
-export const setContactSubmissions = (data: ContactSubmission[]) => { _contactSubmissions = data; };
+export const setContactSubmissions = (data: ContactSubmission[]) => {
+  _contactSubmissions = data;
+};
 
 // ─── Application Submissions ──────────────────────────────────────────────────
 
@@ -708,7 +1000,7 @@ let _applicationSubmissions: ApplicationSubmission[] = [
     relationship: "Mother",
     prevSchool: "Starehe Boys Centre, Nairobi",
     prevClass: "Form 1",
-    reason: "Transfer due to family financial constraints. Kibaara closer to home.",
+    reason: "Transfer due to family financial constraints. Kibaraa closer to home.",
     submittedAt: "2026-05-30T10:00:00Z",
     status: "enrolled",
     notes: "Fully enrolled. All fees cleared. Admission number GFA-2026-0357.",
@@ -752,5 +1044,9 @@ let _applicationSubmissions: ApplicationSubmission[] = [
     status: "pending",
   },
 ];
-export const getApplicationSubmissions = (): ApplicationSubmission[] => [..._applicationSubmissions];
-export const setApplicationSubmissions = (data: ApplicationSubmission[]) => { _applicationSubmissions = data; };
+export const getApplicationSubmissions = (): ApplicationSubmission[] => [
+  ..._applicationSubmissions,
+];
+export const setApplicationSubmissions = (data: ApplicationSubmission[]) => {
+  _applicationSubmissions = data;
+};

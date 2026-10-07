@@ -73,13 +73,13 @@ const FACILITIES = [
     title: "Boarding Houses",
     desc: "Separate boys' and girls' dormitories with study halls and recreation areas.",
     image: WEBSITE_IMAGES.campusBanner,
-    imageAlt: "Kibaara campus buildings housing boarding facilities",
+    imageAlt: "Kibaraa campus buildings housing boarding facilities",
   },
   {
     title: "Dining Hall",
     desc: "Nutritious meals prepared daily by qualified catering staff.",
     image: WEBSITE_IMAGES.campusBanner,
-    imageAlt: "Kibaara campus facilities including the dining hall",
+    imageAlt: "Kibaraa campus facilities including the dining hall",
   },
 ];
 
@@ -195,7 +195,7 @@ export default function AboutPage() {
       <SectionWrapper id="leadership">
         <SectionHeading
           title="School Leadership"
-          subtitle="Meet the team guiding Kibaara's vision."
+          subtitle="Meet the team guiding Kibaraa's vision."
         />
         <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 3 }}>
           {LEADERS.map((s) => (

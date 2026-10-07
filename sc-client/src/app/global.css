@@ -1,0 +1,72 @@
+/*
+  Report card printing.
+
+  Everything is scoped to `body.printing-report-card`, a class that
+  ReportCardDialog adds only while the print dialog is open. Printing any other
+  page in the app is not affected.
+*/
+
+@page {
+  size: A4;
+  margin: 10mm;
+}
+
+@media print {
+  body.printing-report-card {
+    overflow: visible !important;
+    padding: 0 !important; /* MUI's scroll lock adds padding-right to <body> */
+    background: #fff !important;
+  }
+
+  /* 1. Remove the app behind the dialog. MUI portals the dialog straight into <body>. */
+  body.printing-report-card > *:not(.report-card-dialog) {
+    display: none !important;
+  }
+
+  /* 2. Stop the dialog behaving like a fixed, scrolling window so it can flow across pages. */
+  body.printing-report-card .report-card-dialog,
+  body.printing-report-card .report-card-dialog .MuiDialog-container,
+  body.printing-report-card .report-card-dialog .MuiDialog-paper,
+  body.printing-report-card .report-card-dialog .MuiDialogContent-root {
+    position: static !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: auto !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  /* 3. Hide dialog chrome. */
+  body.printing-report-card .MuiBackdrop-root,
+  body.printing-report-card .no-print {
+    display: none !important;
+  }
+
+  /* 4. The document itself. */
+  body.printing-report-card .report-card-document {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact; /* keep the light grey table header and summary shading */
+  }
+
+  body.printing-report-card .report-card-document .rc-table-scroll {
+    overflow: visible !important;
+  }
+
+  /* Allow the card to run onto a second page, but never split a row or a block. */
+  body.printing-report-card .report-card-document tr,
+  body.printing-report-card .report-card-document .rc-keep-together {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}

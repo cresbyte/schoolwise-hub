@@ -64,8 +64,8 @@ export const school: School = {
   county: "Nairobi",
   subCounty: "Nairobi East",
   phone: "0712345678",
-  email: "info@kibaara.elite.ac.ke",
-  website: "www.kibaara.elite.ac.ke",
+  email: "info@kibaraa.elite.ac.ke",
+  website: "www.kibaraa.elite.ac.ke",
   principalName: "Mr. Daniel Kamau",
   curriculum: ["CBC", "844"],
   mpesaPaybill: "522533",
@@ -78,27 +78,221 @@ export const school: School = {
 };
 
 export const classes: ClassRoom[] = [
-  { id: "cls-1", name: "PP1 A", gradeLevel: "PP1", stream: "A", curriculum: "CBC", classTeacherId: "stf-2", classTeacherName: "Ms. Grace Wanjiku Mwangi", capacity: 30, studentCount: 28, room: "B1", academicYear: 2026 },
-  { id: "cls-2", name: "PP2 A", gradeLevel: "PP2", stream: "A", curriculum: "CBC", classTeacherId: "stf-10", classTeacherName: "Ms. Hannah Cherop Bett", capacity: 32, studentCount: 30, room: "B2", academicYear: 2026 },
-  { id: "cls-3", name: "Grade 4 A", gradeLevel: "Grade 4", stream: "A", curriculum: "CBC", classTeacherId: "stf-7", classTeacherName: "Mr. Peter Maina Gichuru", capacity: 40, studentCount: 35, room: "C1", academicYear: 2026 },
-  { id: "cls-4", name: "Grade 6 A", gradeLevel: "Grade 6", stream: "A", curriculum: "CBC", classTeacherId: "stf-7", classTeacherName: "Mr. Peter Maina Gichuru", capacity: 38, studentCount: 32, room: "C2", academicYear: 2026 },
-  { id: "cls-5", name: "Grade 8 A", gradeLevel: "Grade 8", stream: "A", curriculum: "CBC", classTeacherId: "stf-8", classTeacherName: "Ms. Rose Akinyi Owino", capacity: 35, studentCount: 29, room: "C3", academicYear: 2026 },
-  { id: "cls-6", name: "Form 1 A", gradeLevel: "Form 1", stream: "A", curriculum: "844", classTeacherId: "stf-3", classTeacherName: "Mr. John Mutua Kivuva", capacity: 45, studentCount: 40, room: "D1", academicYear: 2026 },
-  { id: "cls-7", name: "Form 2 A", gradeLevel: "Form 2", stream: "A", curriculum: "844", classTeacherId: "stf-4", classTeacherName: "Ms. Faith Chemutai Kosgei", capacity: 45, studentCount: 38, room: "D2", academicYear: 2026 },
-  { id: "cls-8", name: "Form 4 A", gradeLevel: "Form 4", stream: "A", curriculum: "844", classTeacherId: "stf-5", classTeacherName: "Mr. Samuel Omondi Otieno", capacity: 40, studentCount: 36, room: "D4", academicYear: 2026 },
+  {
+    id: "cls-1",
+    name: "PP1 A",
+    gradeLevel: "PP1",
+    stream: "A",
+    curriculum: "CBC",
+    classTeacherId: "stf-2",
+    classTeacherName: "Ms. Grace Wanjiku Mwangi",
+    capacity: 30,
+    studentCount: 28,
+    room: "B1",
+    academicYear: 2026,
+  },
+  {
+    id: "cls-2",
+    name: "PP2 A",
+    gradeLevel: "PP2",
+    stream: "A",
+    curriculum: "CBC",
+    classTeacherId: "stf-10",
+    classTeacherName: "Ms. Hannah Cherop Bett",
+    capacity: 32,
+    studentCount: 30,
+    room: "B2",
+    academicYear: 2026,
+  },
+  {
+    id: "cls-3",
+    name: "Grade 4 A",
+    gradeLevel: "Grade 4",
+    stream: "A",
+    curriculum: "CBC",
+    classTeacherId: "stf-7",
+    classTeacherName: "Mr. Peter Maina Gichuru",
+    capacity: 40,
+    studentCount: 35,
+    room: "C1",
+    academicYear: 2026,
+  },
+  {
+    id: "cls-4",
+    name: "Grade 6 A",
+    gradeLevel: "Grade 6",
+    stream: "A",
+    curriculum: "CBC",
+    classTeacherId: "stf-7",
+    classTeacherName: "Mr. Peter Maina Gichuru",
+    capacity: 38,
+    studentCount: 32,
+    room: "C2",
+    academicYear: 2026,
+  },
+  {
+    id: "cls-5",
+    name: "Grade 8 A",
+    gradeLevel: "Grade 8",
+    stream: "A",
+    curriculum: "CBC",
+    classTeacherId: "stf-8",
+    classTeacherName: "Ms. Rose Akinyi Owino",
+    capacity: 35,
+    studentCount: 29,
+    room: "C3",
+    academicYear: 2026,
+  },
+  {
+    id: "cls-6",
+    name: "Form 1 A",
+    gradeLevel: "Form 1",
+    stream: "A",
+    curriculum: "844",
+    classTeacherId: "stf-3",
+    classTeacherName: "Mr. John Mutua Kivuva",
+    capacity: 45,
+    studentCount: 40,
+    room: "D1",
+    academicYear: 2026,
+  },
+  {
+    id: "cls-7",
+    name: "Form 2 A",
+    gradeLevel: "Form 2",
+    stream: "A",
+    curriculum: "844",
+    classTeacherId: "stf-4",
+    classTeacherName: "Ms. Faith Chemutai Kosgei",
+    capacity: 45,
+    studentCount: 38,
+    room: "D2",
+    academicYear: 2026,
+  },
+  {
+    id: "cls-8",
+    name: "Form 4 A",
+    gradeLevel: "Form 4",
+    stream: "A",
+    curriculum: "844",
+    classTeacherId: "stf-5",
+    classTeacherName: "Mr. Samuel Omondi Otieno",
+    capacity: 40,
+    studentCount: 36,
+    room: "D4",
+    academicYear: 2026,
+  },
 ];
 
 export const staff: Staff[] = [
-  mkStaff("stf-1", "STF-0001", "Daniel", "Njoroge", "Male", "Principal", 85000, 25000, 15000, "stf-1"),
-  mkStaff("stf-2", "STF-0002", "Grace", "Mwangi", "Female", "PP1 Class Teacher", 35000, 10000, 6000, "cls-1"),
-  mkStaff("stf-3", "STF-0003", "John", "Kivuva", "Male", "Mathematics Teacher", 42000, 12000, 7000, "cls-6"),
-  mkStaff("stf-4", "STF-0004", "Faith", "Kosgei", "Female", "English Teacher", 40000, 11000, 7000, "cls-7"),
-  mkStaff("stf-5", "STF-0005", "Samuel", "Otieno", "Male", "Physics Teacher", 45000, 12000, 8000, "cls-8"),
+  mkStaff(
+    "stf-1",
+    "STF-0001",
+    "Daniel",
+    "Njoroge",
+    "Male",
+    "Principal",
+    85000,
+    25000,
+    15000,
+    "stf-1",
+  ),
+  mkStaff(
+    "stf-2",
+    "STF-0002",
+    "Grace",
+    "Mwangi",
+    "Female",
+    "PP1 Class Teacher",
+    35000,
+    10000,
+    6000,
+    "cls-1",
+  ),
+  mkStaff(
+    "stf-3",
+    "STF-0003",
+    "John",
+    "Kivuva",
+    "Male",
+    "Mathematics Teacher",
+    42000,
+    12000,
+    7000,
+    "cls-6",
+  ),
+  mkStaff(
+    "stf-4",
+    "STF-0004",
+    "Faith",
+    "Kosgei",
+    "Female",
+    "English Teacher",
+    40000,
+    11000,
+    7000,
+    "cls-7",
+  ),
+  mkStaff(
+    "stf-5",
+    "STF-0005",
+    "Samuel",
+    "Otieno",
+    "Male",
+    "Physics Teacher",
+    45000,
+    12000,
+    8000,
+    "cls-8",
+  ),
   mkStaff("stf-6", "STF-0006", "Agnes", "Kariuki", "Female", "Accountant", 38000, 10000, 6000),
-  mkStaff("stf-7", "STF-0007", "Peter", "Gichuru", "Male", "Grade 6 Class Teacher", 36000, 10000, 6000, "cls-4"),
-  mkStaff("stf-8", "STF-0008", "Rose", "Owino", "Female", "Grade 8 Class Teacher", 38000, 10000, 6000, "cls-5"),
-  mkStaff("stf-9", "STF-0009", "Charles", "Githinji", "Male", "Biology Teacher", 41000, 11000, 7000),
-  mkStaff("stf-10", "STF-0010", "Hannah", "Bett", "Female", "PP2 Class Teacher", 33000, 9000, 5000, "cls-2"),
+  mkStaff(
+    "stf-7",
+    "STF-0007",
+    "Peter",
+    "Gichuru",
+    "Male",
+    "Grade 6 Class Teacher",
+    36000,
+    10000,
+    6000,
+    "cls-4",
+  ),
+  mkStaff(
+    "stf-8",
+    "STF-0008",
+    "Rose",
+    "Owino",
+    "Female",
+    "Grade 8 Class Teacher",
+    38000,
+    10000,
+    6000,
+    "cls-5",
+  ),
+  mkStaff(
+    "stf-9",
+    "STF-0009",
+    "Charles",
+    "Githinji",
+    "Male",
+    "Biology Teacher",
+    41000,
+    11000,
+    7000,
+  ),
+  mkStaff(
+    "stf-10",
+    "STF-0010",
+    "Hannah",
+    "Bett",
+    "Female",
+    "PP2 Class Teacher",
+    33000,
+    9000,
+    5000,
+    "cls-2",
+  ),
   mkStaff("stf-11", "STF-0011", "Joseph", "Mutua", "Male", "Deputy Principal", 65000, 20000, 12000),
   mkStaff("stf-12", "STF-0012", "Beatrice", "Ouma", "Female", "CRE Teacher", 39000, 11000, 7000),
 ];
@@ -123,7 +317,7 @@ function mkStaff(
     gender,
     dateOfBirth: `19${randInt(75, 95)}-0${randInt(1, 9)}-1${randInt(0, 9)}`,
     phone: phone(),
-    email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@kibaara.elite.ac.ke`,
+    email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@kibaraa.elite.ac.ke`,
     idNumber: String(randInt(20000000, 39999999)),
     kraPin: `A0${randInt(10000000, 99999999)}X`,
     nssfNumber: String(randInt(1000000, 9999999)),
@@ -152,7 +346,7 @@ export const users: User[] = [
     name: "Mr. Daniel Kamau",
     firstName: "Daniel",
     lastName: "Kamau",
-    email: "principal@kibaara.elite.ac.ke",
+    email: "principal@kibaraa.elite.ac.ke",
     phone: "0712345678",
     role: "admin",
     staffId: "stf-1",
@@ -167,7 +361,7 @@ export const users: User[] = [
     name: "Mr. Joseph Mwangangi Mutua",
     firstName: "Joseph",
     lastName: "Mwangangi",
-    email: "deputy@kibaara.elite.ac.ke",
+    email: "deputy@kibaraa.elite.ac.ke",
     phone: "0711234567",
     role: "headteacher",
     staffId: "stf-11",
@@ -182,7 +376,7 @@ export const users: User[] = [
     name: "Mr. John Mutua Kivuva",
     firstName: "John",
     lastName: "Kivuva",
-    email: "john.kivuva@kibaara.elite.ac.ke",
+    email: "john.kivuva@kibaraa.elite.ac.ke",
     phone: "0722345678",
     role: "teacher",
     staffId: "stf-3",
@@ -197,7 +391,7 @@ export const users: User[] = [
     name: "Ms. Agnes Njoki Kariuki",
     firstName: "Agnes",
     lastName: "Kariuki",
-    email: "agnes.kariuki@kibaara.elite.ac.ke",
+    email: "agnes.kariuki@kibaraa.elite.ac.ke",
     phone: "0733456789",
     role: "accountant",
     staffId: "stf-6",
@@ -221,7 +415,7 @@ export const users: User[] = [
     createdAt: "2024-01-15T00:00:00Z",
     gender: "Male",
     birthDate: "1982-04-18",
-    studentIds: ["std-2"],   // Brian Odhiambo — Form 2 A (844 curriculum)
+    studentIds: ["std-2"], // Brian Odhiambo — Form 2 A (844 curriculum)
   },
   {
     // Demo parent — Mrs. Lucy Kamau (mother of Amina Kamau, Grade 4A)
@@ -237,7 +431,7 @@ export const users: User[] = [
     createdAt: "2024-02-01T00:00:00Z",
     gender: "Female",
     birthDate: "1985-11-03",
-    studentIds: ["std-1"],   // Amina Kamau — Grade 4 A (CBC curriculum)
+    studentIds: ["std-1"], // Amina Kamau — Grade 4 A (CBC curriculum)
   },
 ];
 
@@ -251,11 +445,106 @@ export const credentials: Record<string, { password: string; userId: string }> =
   "0755123456": { password: "parent456", userId: "usr-6" },
 };
 
-const FIRST_NAMES_M = ["Brian", "Dennis", "Francis", "Hassan", "James", "Kelvin", "Martin", "Oliver", "Peter", "Samuel", "Victor", "Daniel", "Eric", "George", "Isaac", "Kevin", "Mark", "Noah", "Allan", "Collins"];
-const FIRST_NAMES_F = ["Amina", "Christine", "Esther", "Grace", "Irene", "Lydia", "Nancy", "Purity", "Rose", "Sharon", "Wendy", "Faith", "Joy", "Mercy", "Naomi", "Pauline", "Stella", "Tabitha", "Vivian", "Winnie"];
-const MIDDLE_NAMES = ["Wanjiru", "Otieno", "Njeri", "Kipchoge", "Adhiambo", "Muthomi", "Wambui", "Musa", "Chebet", "Njoroge", "Waweru", "Muthoni", "Ochieng", "Wairimu", "Kimani", "Akinyi", "Cherono", "Mwende", "Kiprop", "Nyambura"];
-const LAST_NAMES = ["Kamau", "Odhiambo", "Mwangi", "Rotich", "Were", "Njogu", "Ndungu", "Abdi", "Kiptoo", "Muigai", "Thuo", "Kinyua", "Otieno", "Njuguna", "Maina", "Owino", "Korir", "Mutiso", "Wafula", "Cheruiyot"];
-const LOCATIONS = ["Milimani", "Section 58", "Kiamunyi", "London", "Free Area", "Bahati", "Lanet", "Pipeline", "Naka", "Shabab"];
+const FIRST_NAMES_M = [
+  "Brian",
+  "Dennis",
+  "Francis",
+  "Hassan",
+  "James",
+  "Kelvin",
+  "Martin",
+  "Oliver",
+  "Peter",
+  "Samuel",
+  "Victor",
+  "Daniel",
+  "Eric",
+  "George",
+  "Isaac",
+  "Kevin",
+  "Mark",
+  "Noah",
+  "Allan",
+  "Collins",
+];
+const FIRST_NAMES_F = [
+  "Amina",
+  "Christine",
+  "Esther",
+  "Grace",
+  "Irene",
+  "Lydia",
+  "Nancy",
+  "Purity",
+  "Rose",
+  "Sharon",
+  "Wendy",
+  "Faith",
+  "Joy",
+  "Mercy",
+  "Naomi",
+  "Pauline",
+  "Stella",
+  "Tabitha",
+  "Vivian",
+  "Winnie",
+];
+const MIDDLE_NAMES = [
+  "Wanjiru",
+  "Otieno",
+  "Njeri",
+  "Kipchoge",
+  "Adhiambo",
+  "Muthomi",
+  "Wambui",
+  "Musa",
+  "Chebet",
+  "Njoroge",
+  "Waweru",
+  "Muthoni",
+  "Ochieng",
+  "Wairimu",
+  "Kimani",
+  "Akinyi",
+  "Cherono",
+  "Mwende",
+  "Kiprop",
+  "Nyambura",
+];
+const LAST_NAMES = [
+  "Kamau",
+  "Odhiambo",
+  "Mwangi",
+  "Rotich",
+  "Were",
+  "Njogu",
+  "Ndungu",
+  "Abdi",
+  "Kiptoo",
+  "Muigai",
+  "Thuo",
+  "Kinyua",
+  "Otieno",
+  "Njuguna",
+  "Maina",
+  "Owino",
+  "Korir",
+  "Mutiso",
+  "Wafula",
+  "Cheruiyot",
+];
+const LOCATIONS = [
+  "Milimani",
+  "Section 58",
+  "Kiamunyi",
+  "London",
+  "Free Area",
+  "Bahati",
+  "Lanet",
+  "Pipeline",
+  "Naka",
+  "Shabab",
+];
 
 /** Named seed students from the brief, then generated to reach 40. */
 const namedStudents: Array<[string, string, string, string, "Male" | "Female", string]> = [
@@ -290,7 +579,9 @@ function buildStudents(): Student[] {
     const first = gender === "Male" ? pick(FIRST_NAMES_M) : pick(FIRST_NAMES_F);
     const classId = classes[randInt(0, classes.length - 1)].id;
     const adm = `ADM-2026-${String(i).padStart(4, "0")}`;
-    list.push(mkStudent(`std-${i}`, adm, first, pick(MIDDLE_NAMES), pick(LAST_NAMES), gender, classId));
+    list.push(
+      mkStudent(`std-${i}`, adm, first, pick(MIDDLE_NAMES), pick(LAST_NAMES), gender, classId),
+    );
   }
   return list;
 }
@@ -348,9 +639,21 @@ function mkStudent(
 
 function birthDateForGrade(grade: GradeLevel): string {
   const ageMap: Record<string, number> = {
-    PP1: 5, PP2: 6, "Grade 1": 7, "Grade 2": 8, "Grade 3": 9, "Grade 4": 10,
-    "Grade 5": 11, "Grade 6": 12, "Grade 7": 13, "Grade 8": 14, "Grade 9": 15,
-    "Form 1": 14, "Form 2": 15, "Form 3": 16, "Form 4": 17,
+    PP1: 5,
+    PP2: 6,
+    "Grade 1": 7,
+    "Grade 2": 8,
+    "Grade 3": 9,
+    "Grade 4": 10,
+    "Grade 5": 11,
+    "Grade 6": 12,
+    "Grade 7": 13,
+    "Grade 8": 14,
+    "Grade 9": 15,
+    "Form 1": 14,
+    "Form 2": 15,
+    "Form 3": 16,
+    "Form 4": 17,
   };
   const age = ageMap[grade] ?? 12;
   const year = 2026 - age;
@@ -409,9 +712,11 @@ export const classSubjects: ClassSubject[] = (() => {
     // Feature 4A: Deterministic assignments
     if (subName === "Mathematics") return staff.find((s) => s.id === "stf-3")!;
     if (subName === "English") return staff.find((s) => s.id === "stf-4")!;
-    if (subName === "Physics" || subName === "Chemistry") return staff.find((s) => s.id === "stf-5")!;
+    if (subName === "Physics" || subName === "Chemistry")
+      return staff.find((s) => s.id === "stf-5")!;
     if (subName === "Biology") return staff.find((s) => s.id === "stf-9")!;
-    if (subName.includes("C.R.E") || subName.includes("Religious Education")) return staff.find((s) => s.id === "stf-12")!;
+    if (subName.includes("C.R.E") || subName.includes("Religious Education"))
+      return staff.find((s) => s.id === "stf-12")!;
 
     // CBC Class teacher assignments
     const cls = classes.find((c) => c.id === clsId)!;
@@ -441,9 +746,45 @@ export const classSubjects: ClassSubject[] = (() => {
 })();
 
 export const exams: Exam[] = [
-  { id: "exm-1", name: "Term 2 Opener 2026", type: "opener", term: 2, year: 2026, startDate: "2026-05-13", endDate: "2026-05-17", gradeLevel: classes.map((c) => c.gradeLevel), outOf: 100, status: "published", createdBy: "usr-1" },
-  { id: "exm-2", name: "Term 2 Mid-Term 2026", type: "midterm", term: 2, year: 2026, startDate: "2026-06-17", endDate: "2026-06-21", gradeLevel: classes.map((c) => c.gradeLevel), outOf: 100, status: "completed", createdBy: "usr-1" },
-  { id: "exm-3", name: "Term 2 End-Term 2026", type: "endterm", term: 2, year: 2026, startDate: "2026-08-05", endDate: "2026-08-09", gradeLevel: classes.map((c) => c.gradeLevel), outOf: 100, status: "upcoming", createdBy: "usr-1" },
+  {
+    id: "exm-1",
+    name: "Term 2 Opener 2026",
+    type: "opener",
+    term: 2,
+    year: 2026,
+    startDate: "2026-05-13",
+    endDate: "2026-05-17",
+    gradeLevel: classes.map((c) => c.gradeLevel),
+    outOf: 100,
+    status: "published",
+    createdBy: "usr-1",
+  },
+  {
+    id: "exm-2",
+    name: "Term 2 Mid-Term 2026",
+    type: "midterm",
+    term: 2,
+    year: 2026,
+    startDate: "2026-06-17",
+    endDate: "2026-06-21",
+    gradeLevel: classes.map((c) => c.gradeLevel),
+    outOf: 100,
+    status: "completed",
+    createdBy: "usr-1",
+  },
+  {
+    id: "exm-3",
+    name: "Term 2 End-Term 2026",
+    type: "endterm",
+    term: 2,
+    year: 2026,
+    startDate: "2026-08-05",
+    endDate: "2026-08-09",
+    gradeLevel: classes.map((c) => c.gradeLevel),
+    outOf: 100,
+    status: "upcoming",
+    createdBy: "usr-1",
+  },
 ];
 
 export const examMarks: ExamMark[] = (() => {
@@ -483,14 +824,40 @@ export const examMarks: ExamMark[] = (() => {
 })();
 
 export const feeStructures: FeeStructure[] = [
-  mkFee("fs-1", "Day Student (Grade 1-6)", "Grade 4", "day", [["Tuition", 9500], ["Activity Fee", 1500], ["Exam Fee", 1500]]),
-  mkFee("fs-2", "Day Student (Grade 7-9)", "Grade 8", "day", [["Tuition", 12000], ["Activity Fee", 1500], ["Exam Fee", 1500]]),
-  mkFee("fs-3", "Day Student (Form 1-4)", "Form 2", "day", [["Tuition", 15000], ["Activity Fee", 1500], ["Exam Fee", 1500]]),
-  mkFee("fs-4", "Boarding Top-up (All)", "Form 1", "boarding", [["Boarding", 14000], ["Meals", 8000]]),
+  mkFee("fs-1", "Day Student (Grade 1-6)", "Grade 4", "day", [
+    ["Tuition", 9500],
+    ["Activity Fee", 1500],
+    ["Exam Fee", 1500],
+  ]),
+  mkFee("fs-2", "Day Student (Grade 7-9)", "Grade 8", "day", [
+    ["Tuition", 12000],
+    ["Activity Fee", 1500],
+    ["Exam Fee", 1500],
+  ]),
+  mkFee("fs-3", "Day Student (Form 1-4)", "Form 2", "day", [
+    ["Tuition", 15000],
+    ["Activity Fee", 1500],
+    ["Exam Fee", 1500],
+  ]),
+  mkFee("fs-4", "Boarding Top-up (All)", "Form 1", "boarding", [
+    ["Boarding", 14000],
+    ["Meals", 8000],
+  ]),
 ];
 
-function mkFee(id: string, name: string, gradeLevel: GradeLevel, boarding: any, items: [string, number][]): FeeStructure {
-  const feeItems = items.map(([n, a], i) => ({ id: `${id}-i${i}`, name: n, amount: a, isOptional: false }));
+function mkFee(
+  id: string,
+  name: string,
+  gradeLevel: GradeLevel,
+  boarding: any,
+  items: [string, number][],
+): FeeStructure {
+  const feeItems = items.map(([n, a], i) => ({
+    id: `${id}-i${i}`,
+    name: n,
+    amount: a,
+    isOptional: false,
+  }));
   return {
     id,
     name,
@@ -567,7 +934,12 @@ export const payments: FeePayment[] = (() => {
 
 function buildPayroll(month: number, status: "paid" | "draft"): PayrollRecord[] {
   return staff.map((s, i) => {
-    const c = computePayroll(s.basicSalary, s.houseAllowance, s.transportAllowance, s.otherAllowances);
+    const c = computePayroll(
+      s.basicSalary,
+      s.houseAllowance,
+      s.transportAllowance,
+      s.otherAllowances,
+    );
     return {
       id: `pr-${month}-${s.id}`,
       staffId: s.id,
@@ -600,8 +972,14 @@ function buildPayroll(month: number, status: "paid" | "draft"): PayrollRecord[] 
 export const payroll: PayrollRecord[] = [...buildPayroll(5, "paid"), ...buildPayroll(6, "draft")];
 
 const PERIOD_TIMES = [
-  ["08:00", "08:40"], ["08:40", "09:20"], ["09:20", "10:00"], ["10:20", "11:00"],
-  ["11:00", "11:40"], ["11:40", "12:20"], ["14:00", "14:40"], ["14:40", "15:20"],
+  ["08:00", "08:40"],
+  ["08:40", "09:20"],
+  ["09:20", "10:00"],
+  ["10:20", "11:00"],
+  ["11:00", "11:40"],
+  ["11:40", "12:20"],
+  ["14:00", "14:40"],
+  ["14:40", "15:20"],
 ];
 
 function buildTimetable(classId: string): TimetableSlot[] {
@@ -613,7 +991,16 @@ function buildTimetable(classId: string): TimetableSlot[] {
     PERIOD_TIMES.forEach(([start, end], idx) => {
       period++;
       if (idx === 3) {
-        slots.push({ id: `tt-${classId}-${day}-break`, classId, day, periodNumber: period, startTime: "10:00", endTime: "10:20", isBreak: true, breakName: "Morning Break" });
+        slots.push({
+          id: `tt-${classId}-${day}-break`,
+          classId,
+          day,
+          periodNumber: period,
+          startTime: "10:00",
+          endTime: "10:20",
+          isBreak: true,
+          breakName: "Morning Break",
+        });
       }
       const sub = subs[(idx + DAYS_OF_WEEK.indexOf(day)) % subs.length];
       slots.push({
@@ -630,7 +1017,16 @@ function buildTimetable(classId: string): TimetableSlot[] {
         isBreak: false,
       });
       if (idx === 5) {
-        slots.push({ id: `tt-${classId}-${day}-lunch`, classId, day, periodNumber: ++period, startTime: "13:00", endTime: "14:00", isBreak: true, breakName: "Lunch Break" });
+        slots.push({
+          id: `tt-${classId}-${day}-lunch`,
+          classId,
+          day,
+          periodNumber: ++period,
+          startTime: "13:00",
+          endTime: "14:00",
+          isBreak: true,
+          breakName: "Lunch Break",
+        });
       }
     });
   }
@@ -653,7 +1049,7 @@ export const attendance: AttendanceRecord[] = (() => {
     const iso = date.toISOString().slice(0, 10);
     for (const st of allStudents) {
       const r = rand();
-      const status = r > 0.95 ? "absent" : r > 0.90 ? "late" : r > 0.88 ? "excused" : "present";
+      const status = r > 0.95 ? "absent" : r > 0.9 ? "late" : r > 0.88 ? "excused" : "present";
       list.push({
         id: `att-${st.id}-${iso}`,
         studentId: st.id,
@@ -661,7 +1057,12 @@ export const attendance: AttendanceRecord[] = (() => {
         classId: st.classId,
         date: iso,
         status,
-        reason: status === "absent" ? pick(["Sick", "Family emergency", "Travel"]) : status === "excused" ? "School activity" : undefined,
+        reason:
+          status === "absent"
+            ? pick(["Sick", "Family emergency", "Travel"])
+            : status === "excused"
+              ? "School activity"
+              : undefined,
         recordedBy: pick(staff).firstName + " " + pick(staff).lastName,
         recordedAt: iso + "T08:15:00Z",
         parentNotified: status === "absent",
@@ -672,19 +1073,105 @@ export const attendance: AttendanceRecord[] = (() => {
 })();
 
 export const leaveRequests: LeaveRequest[] = [
-  { id: "lv-1", staffId: "stf-4", staffName: "Faith Kosgei", leaveType: "annual", startDate: "2026-06-20", endDate: "2026-06-25", days: 5, reason: "Family function upcountry", status: "approved", appliedOn: "2026-06-01", reviewedBy: "Mr. Daniel Kamau", reviewedOn: "2026-06-03" },
-  { id: "lv-2", staffId: "stf-9", staffName: "Charles Githinji", leaveType: "sick", startDate: "2026-06-12", endDate: "2026-06-14", days: 3, reason: "Medical treatment", status: "pending", appliedOn: "2026-06-10" },
-  { id: "lv-3", staffId: "stf-10", staffName: "Hannah Bett", leaveType: "maternity", startDate: "2026-07-01", endDate: "2026-09-30", days: 90, reason: "Maternity leave", status: "approved", appliedOn: "2026-05-20", reviewedBy: "Mr. Daniel Kamau", reviewedOn: "2026-05-22" },
+  {
+    id: "lv-1",
+    staffId: "stf-4",
+    staffName: "Faith Kosgei",
+    leaveType: "annual",
+    startDate: "2026-06-20",
+    endDate: "2026-06-25",
+    days: 5,
+    reason: "Family function upcountry",
+    status: "approved",
+    appliedOn: "2026-06-01",
+    reviewedBy: "Mr. Daniel Kamau",
+    reviewedOn: "2026-06-03",
+  },
+  {
+    id: "lv-2",
+    staffId: "stf-9",
+    staffName: "Charles Githinji",
+    leaveType: "sick",
+    startDate: "2026-06-12",
+    endDate: "2026-06-14",
+    days: 3,
+    reason: "Medical treatment",
+    status: "pending",
+    appliedOn: "2026-06-10",
+  },
+  {
+    id: "lv-3",
+    staffId: "stf-10",
+    staffName: "Hannah Bett",
+    leaveType: "maternity",
+    startDate: "2026-07-01",
+    endDate: "2026-09-30",
+    days: 90,
+    reason: "Maternity leave",
+    status: "approved",
+    appliedOn: "2026-05-20",
+    reviewedBy: "Mr. Daniel Kamau",
+    reviewedOn: "2026-05-22",
+  },
 ];
 
 export const notifications: AppNotification[] = [
-  { id: "ntf-1", title: "Fee Payment Received", message: "KES 12,500.00 received from Amina Kamau (M-Pesa).", type: "success", read: false, createdAt: "2026-06-10T09:15:00Z" },
-  { id: "ntf-2", title: "Mid-Term Exam", message: "Term 2 Mid-Term exam marking is in progress.", type: "info", read: false, createdAt: "2026-06-09T11:00:00Z" },
-  { id: "ntf-3", title: "Student Absent", message: "Brian Odhiambo (Form 2 A) was marked absent today.", type: "warning", read: false, createdAt: "2026-06-10T08:35:00Z" },
-  { id: "ntf-4", title: "Low Fee Balance Alert", message: "8 students have a fee balance above KES 10,000.", type: "error", read: true, createdAt: "2026-06-08T07:00:00Z" },
-  { id: "ntf-5", title: "Payroll Ready", message: "June 2026 payroll draft is ready for review.", type: "info", read: true, createdAt: "2026-06-07T10:00:00Z" },
-  { id: "ntf-6", title: "Parent Replies", message: "2 parent replies awaiting review.", type: "info", read: false, createdAt: "2026-06-12T08:00:00Z" },
-  { id: "ntf-7", title: "Urgent Message", message: "Urgent message sent to all parents regarding school closure.", type: "success", read: false, createdAt: "2026-06-12T09:00:00Z" },
+  {
+    id: "ntf-1",
+    title: "Fee Payment Received",
+    message: "KES 12,500.00 received from Amina Kamau (M-Pesa).",
+    type: "success",
+    read: false,
+    createdAt: "2026-06-10T09:15:00Z",
+  },
+  {
+    id: "ntf-2",
+    title: "Mid-Term Exam",
+    message: "Term 2 Mid-Term exam marking is in progress.",
+    type: "info",
+    read: false,
+    createdAt: "2026-06-09T11:00:00Z",
+  },
+  {
+    id: "ntf-3",
+    title: "Student Absent",
+    message: "Brian Odhiambo (Form 2 A) was marked absent today.",
+    type: "warning",
+    read: false,
+    createdAt: "2026-06-10T08:35:00Z",
+  },
+  {
+    id: "ntf-4",
+    title: "Low Fee Balance Alert",
+    message: "8 students have a fee balance above KES 10,000.",
+    type: "error",
+    read: true,
+    createdAt: "2026-06-08T07:00:00Z",
+  },
+  {
+    id: "ntf-5",
+    title: "Payroll Ready",
+    message: "June 2026 payroll draft is ready for review.",
+    type: "info",
+    read: true,
+    createdAt: "2026-06-07T10:00:00Z",
+  },
+  {
+    id: "ntf-6",
+    title: "Parent Replies",
+    message: "2 parent replies awaiting review.",
+    type: "info",
+    read: false,
+    createdAt: "2026-06-12T08:00:00Z",
+  },
+  {
+    id: "ntf-7",
+    title: "Urgent Message",
+    message: "Urgent message sent to all parents regarding school closure.",
+    type: "success",
+    read: false,
+    createdAt: "2026-06-12T09:00:00Z",
+  },
 ];
 
 export const schoolMessages: SchoolMessage[] = [
@@ -965,11 +1452,56 @@ export const levyPayments: LevyPayment[] = [
 ];
 
 export const auditLogs: AuditLog[] = [
-  { id: "au-1", userId: "usr-4", userName: "Agnes Kariuki", action: "create", module: "Fees", details: "Recorded payment RCP-2026-00891 of KES 12,500.00", ipAddress: "197.232.45.12", timestamp: "2026-06-10T09:15:00Z" },
-  { id: "au-2", userId: "usr-1", userName: "Daniel Njoroge", action: "update", module: "Settings", details: "Updated current term to Term 2, 2026", ipAddress: "197.232.45.10", timestamp: "2026-06-09T08:00:00Z" },
-  { id: "au-3", userId: "usr-3", userName: "John Kivuva", action: "create", module: "Attendance", details: "Submitted attendance for Form 1 A", ipAddress: "197.232.45.18", timestamp: "2026-06-10T08:30:00Z" },
-  { id: "au-4", userId: "usr-2", userName: "Joseph Mutua", action: "auth", module: "Authentication", details: "User signed in", ipAddress: "197.232.45.11", timestamp: "2026-06-10T07:50:00Z" },
-  { id: "au-5", userId: "usr-1", userName: "Daniel Njoroge", action: "delete", module: "Students", details: "Archived transferred student record", ipAddress: "197.232.45.10", timestamp: "2026-06-05T14:20:00Z" },
+  {
+    id: "au-1",
+    userId: "usr-4",
+    userName: "Agnes Kariuki",
+    action: "create",
+    module: "Fees",
+    details: "Recorded payment RCP-2026-00891 of KES 12,500.00",
+    ipAddress: "197.232.45.12",
+    timestamp: "2026-06-10T09:15:00Z",
+  },
+  {
+    id: "au-2",
+    userId: "usr-1",
+    userName: "Daniel Njoroge",
+    action: "update",
+    module: "Settings",
+    details: "Updated current term to Term 2, 2026",
+    ipAddress: "197.232.45.10",
+    timestamp: "2026-06-09T08:00:00Z",
+  },
+  {
+    id: "au-3",
+    userId: "usr-3",
+    userName: "John Kivuva",
+    action: "create",
+    module: "Attendance",
+    details: "Submitted attendance for Form 1 A",
+    ipAddress: "197.232.45.18",
+    timestamp: "2026-06-10T08:30:00Z",
+  },
+  {
+    id: "au-4",
+    userId: "usr-2",
+    userName: "Joseph Mutua",
+    action: "auth",
+    module: "Authentication",
+    details: "User signed in",
+    ipAddress: "197.232.45.11",
+    timestamp: "2026-06-10T07:50:00Z",
+  },
+  {
+    id: "au-5",
+    userId: "usr-1",
+    userName: "Daniel Njoroge",
+    action: "delete",
+    module: "Students",
+    details: "Archived transferred student record",
+    ipAddress: "197.232.45.10",
+    timestamp: "2026-06-05T14:20:00Z",
+  },
 ];
 export const termEvents: TermEvent[] = [
   {

@@ -1,27 +1,36 @@
 "use client";
 
-/**
- * Student detail page: bio, exams, attendance, fees.
- * @module students/[id]/page
- */
 import { useState } from "react";
-import {Box, Card, CardContent, Typography, Avatar, Chip, Button, Tabs, Tab, Table, TableBody, TableCell, TableHead, TableRow, TableContainer, IconButton, MenuItem, TextField, Divider} from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  Avatar,
+  Chip,
+  Button,
+  Tabs,
+  Tab,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TableContainer,
+  Divider,
+  TextField,
+  MenuItem,
+} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditIcon from "@mui/icons-material/Edit";
 import { useParams, useRouter } from "next/navigation";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { DataState } from "@/components/DataState";
 import { PageGuard } from "@/components/common/PageGuard";
-import { StatusChip } from "@/components/StatusChip";
-import { GradeChip } from "@/components/GradeChip";
-import { CBCRatingChip } from "@/components/CBCRatingChip";
 import { useStudent } from "@/hooks/domain";
 import { useAsync } from "@/hooks/useAsync";
 import { api } from "@/lib/api";
 import { calculateAge, formatDate, formatKES, getInitials } from "@/lib/utils";
-import { useNotification } from "@/context/NotificationContext";
-import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
-
 
 export default function StudentDetailsPage() {
   const params = useParams();
@@ -35,16 +44,6 @@ export default function StudentDetailsPage() {
   );
 }
 
-function Field({ label, value }) {
-  return (
-    <Box>
-      <Typography variant="caption" color="text.secondary">{label}</Typography>
-      <Typography variant="body2" sx={{ fontWeight: 600 }}>{value ?? "—"}</Typography>
-    </Box>
-  );
-}
-
-/** Student detail body. */
 function StudentDetail({ id }) {
   const router = useRouter();
   const { data, loading, error, refetch } = useStudent(id);
@@ -54,39 +53,59 @@ function StudentDetail({ id }) {
     <DataState loading={loading} error={error} data={data} onRetry={refetch}>
       {(s) => (
         <>
-          <Button startIcon={<ArrowBackIcon />} onClick={() => router.push("/students")} sx={{ mb: 2 }}>
+          <Button
+            startIcon={<ArrowBackIcon />}
+            onClick={() => router.push("/students")}
+            sx={{ mb: 2 }}
+          >
             Back to Students
           </Button>
           <Card sx={{ mb: 2 }}>
             <CardContent>
               <Box sx={{ display: "flex", gap: 3, alignItems: "center", flexWrap: "wrap" }}>
-                <Box sx={{ position: "relative" }}>
-                  <Avatar
-                    src={s.photo || s.avatarUrl}
-                    variant="rounded"
-                    sx={{ width: 100, height: 125, fontSize: 32, bgcolor: "primary.main" }}
-                  >
-                    {getInitials(`${s.firstName} ${s.lastName}`)}
-                  </Avatar>
-                </Box>
+                <Avatar
+                  src={s.photo}
+                  variant="rounded"
+                  sx={{ width: 100, height: 125, fontSize: 32, bgcolor: "primary.main" }}
+                >
+                  {getInitials(`${s.firstName} ${s.lastName}`)}
+                </Avatar>
                 <Box sx={{ flex: 1, minWidth: 220 }}>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap" }}>
-                    <Typography variant="h5">{s.firstName} {s.otherName} {s.lastName}</Typography>
+                    <Typography variant="h5">
+                      {s.firstName} {s.otherName} {s.lastName}
+                    </Typography>
                     <Chip size="small" label={s.admissionNumber} sx={{ fontFamily: "monospace" }} />
-                    <StatusChip status={s.status} />
-                    <Chip size="small" color="secondary" label={s.boardingStatus === "day" ? "Day Scholar" : "Boarder"} />
+                    <Chip
+                      size="small"
+                      label={s.status}
+                      color={s.status === "active" ? "success" : "default"}
+                    />
                   </Box>
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                    {s.className} · {s.gender} · DOB {formatDate(s.dateOfBirth)} ({calculateAge(s.dateOfBirth)} yrs) · NEMIS {s.nemisNumber}
+                    {s.className} · {s.gender} · DOB {formatDate(s.dateOfBirth)} (
+                    {calculateAge(s.dateOfBirth)} yrs)
                   </Typography>
                 </Box>
-                <Button variant="outlined" startIcon={<EditIcon />} onClick={() => router.push(`/students/${s.id}/edit`)}>Edit</Button>
+                <Button
+                  variant="outlined"
+                  startIcon={<EditIcon />}
+                  onClick={() => router.push(`/students/${s.id}/edit`)}
+                >
+                  Edit
+                </Button>
               </Box>
             </CardContent>
           </Card>
 
           <Card>
-            <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="scrollable" scrollButtons="auto" sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <Tabs
+              value={tab}
+              onChange={(_, v) => setTab(v)}
+              variant="scrollable"
+              scrollButtons="auto"
+              sx={{ borderBottom: 1, borderColor: "divider" }}
+            >
               <Tab label="Personal Info" />
               <Tab label="Exam Results" />
               <Tab label="Attendance" />
@@ -94,7 +113,7 @@ function StudentDetail({ id }) {
             </Tabs>
             <CardContent>
               {tab === 0 && <PersonalTab s={s} />}
-              {tab === 1 && <ResultsTab studentId={s.id} curriculum={s.curriculum} />}
+              {tab === 1 && <ResultsTab studentId={s.id} />}
               {tab === 2 && <AttendanceTab studentId={s.id} />}
               {tab === 3 && <FeeTab studentId={s.id} />}
             </CardContent>
@@ -107,13 +126,19 @@ function StudentDetail({ id }) {
 
 function PersonalTab({ s }) {
   const parents = s.parents ?? [];
-  const father = parents.find((p) => p.relationship === "father");
-  const mother = parents.find((p) => p.relationship === "mother");
-
   return (
     <Box>
-      <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1.5 }}>Bio Data</Typography>
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(4, 1fr)" }, gap: 2, mb: 3 }}>
+      <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1.5 }}>
+        Bio Data
+      </Typography>
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(4, 1fr)" },
+          gap: 2,
+          mb: 3,
+        }}
+      >
         <Field label="First Name" value={s.firstName} />
         <Field label="Last Name" value={s.lastName} />
         <Field label="Other Name" value={s.otherName} />
@@ -124,44 +149,81 @@ function PersonalTab({ s }) {
         <Field label="Admission Date" value={formatDate(s.admissionDate)} />
       </Box>
       <Divider sx={{ my: 2 }} />
-      <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1.5 }}>Parent / Guardian</Typography>
+      <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1.5 }}>
+        Parents
+      </Typography>
       {parents.length === 0 ? (
-        <Typography variant="body2" color="text.secondary">No parents on record.</Typography>
+        <Typography variant="body2" color="text.secondary">
+          No parents on record.
+        </Typography>
       ) : (
         <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 2 }}>
-          {[father, mother].map((p, idx) => {
-            const label = idx === 0 ? "FATHER" : "MOTHER";
-            if (!p) return (
-              <Card key={label} variant="outlined" sx={{ p: 2 }}>
-                <Typography variant="caption" color="primary" sx={{ fontWeight: 700 }}>{label}</Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>No record</Typography>
-              </Card>
-            );
-            return (
-              <Card key={p.id} variant="outlined" sx={{ p: 2 }}>
-                <Typography variant="caption" color="primary" sx={{ fontWeight: 700 }}>{label}</Typography>
-                <Field label="Name" value={p.name} />
-                <Field label="Phone" value={p.phone} />
-                <Field label="Email" value={p.email} />
-              </Card>
-            );
-          })}
+          {parents.map((p) => (
+            <Card key={p.id} variant="outlined" sx={{ p: 2 }}>
+              <Typography variant="caption" color="primary" sx={{ fontWeight: 700 }}>
+                {p.relationship.toUpperCase()}
+              </Typography>
+              <Field label="Name" value={p.name} />
+              <Field label="Phone" value={p.phone} />
+              <Field label="Email" value={p.email} />
+            </Card>
+          ))}
         </Box>
       )}
     </Box>
   );
 }
 
-function ResultsTab({ studentId, curriculum }) {
-  const [examId, setExamId] = useState("exm-2");
-  const exams = useAsync(() => api.getExams(), []);
-  const rc = useAsync(() => api.getStudentReportCard(studentId, examId), [studentId, examId]);
+function ResultsTab({ studentId }) {
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [term, setTerm] = useState(1);
+
+  const {
+    data: card,
+    loading,
+    error,
+    refetch,
+  } = useAsync(
+    () => api.exams.getStudentReportCard(studentId, year, term),
+    [studentId, year, term],
+  );
+
   return (
     <Box>
-      <TextField select size="small" label="Exam" value={examId} onChange={(e) => setExamId(e.target.value)} sx={{ width: 240, mb: 2 }}>
-        {(exams.data ?? []).filter((e) => e.status !== "upcoming").map((e) => <MenuItem key={e.id} value={e.id}>{e.name}</MenuItem>)}
-      </TextField>
-      <DataState loading={rc.loading} error={rc.error} data={rc.data} onRetry={rc.refetch}>
+      <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
+        <TextField
+          select
+          size="small"
+          label="Year"
+          value={year}
+          onChange={(e) => setYear(Number(e.target.value))}
+          sx={{ width: 120 }}
+        >
+          <MenuItem value={2026}>2026</MenuItem>
+          <MenuItem value={2025}>2025</MenuItem>
+        </TextField>
+        <TextField
+          select
+          size="small"
+          label="Term"
+          value={term}
+          onChange={(e) => setTerm(Number(e.target.value))}
+          sx={{ width: 120 }}
+        >
+          <MenuItem value={1}>Term 1</MenuItem>
+          <MenuItem value={2}>Term 2</MenuItem>
+          <MenuItem value={3}>Term 3</MenuItem>
+        </TextField>
+      </Box>
+
+      <DataState
+        loading={loading}
+        error={error}
+        data={card}
+        onRetry={refetch}
+        isEmpty={(d) => !d || !d.subjects || d.subjects.length === 0}
+        emptyMessage="No results for this term"
+      >
         {(r) => (
           <>
             <Table size="small">
@@ -170,25 +232,44 @@ function ResultsTab({ studentId, curriculum }) {
                   <TableCell>Subject</TableCell>
                   <TableCell align="right">Marks</TableCell>
                   <TableCell>Grade</TableCell>
-                  {curriculum === "CBC" && <TableCell>CBC Rating</TableCell>}
+                  <TableCell>Points</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {r.subjects.map((sub) => (
-                  <TableRow key={sub.subjectName}>
-                    <TableCell>{sub.subjectName}</TableCell>
-                    <TableCell align="right">{sub.marks} / {sub.outOf}</TableCell>
-                    <TableCell><GradeChip grade={sub.grade} /></TableCell>
-                    {curriculum === "CBC" && <TableCell><CBCRatingChip rating={sub.cbcRating} /></TableCell>}
+                  <TableRow key={sub.subject_name}>
+                    <TableCell>{sub.subject_name}</TableCell>
+                    <TableCell align="right">
+                      {sub.marks_obtained} / {sub.total_marks}
+                    </TableCell>
+                    <TableCell>
+                      <Chip size="small" label={sub.grade} />
+                    </TableCell>
+                    <TableCell>{sub.points}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
             <Box sx={{ display: "flex", gap: 3, mt: 2, flexWrap: "wrap" }}>
-              <Field label="Total" value={r.totalMarks} />
-              <Field label="Average" value={`${r.average}%`} />
-              <Field label="Position" value={`${r.position} / ${r.classSize}`} />
+              <Field
+                label="Total"
+                value={`${r.summary.total_marks_obtained} / ${r.summary.total_marks_possible}`}
+              />
+              <Field label="Average" value={`${r.summary.overall_percentage}%`} />
+              <Field
+                label="Position"
+                value={`${r.summary.position_in_class} / ${r.summary.total_students_in_class}`}
+              />
+              <Field label="Mean Grade" value={r.summary.mean_grade} />
             </Box>
+            {r.teacher_comment && (
+              <Box sx={{ mt: 3, p: 2, bgcolor: "action.hover", borderRadius: 1 }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>
+                  Class Teacher's Comment
+                </Typography>
+                <Typography variant="body2">{r.teacher_comment}</Typography>
+              </Box>
+            )}
           </>
         )}
       </DataState>
@@ -197,26 +278,59 @@ function ResultsTab({ studentId, curriculum }) {
 }
 
 function AttendanceTab({ studentId }) {
-  const [term, setTerm] = useState(2);
   const [year, setYear] = useState(2026);
-  // Simulation: using the date ranges for the current term
-  const att = useAsync(() => api.getStudentAttendance(studentId, "2026-05-01", "2026-08-31"), [studentId, term, year]);
+  const [term, setTerm] = useState(2);
+
+  // Calculate date range for the term (simplified)
+  const dateFrom = term === 1 ? "2026-01-01" : term === 2 ? "2026-05-01" : "2026-09-01";
+  const dateTo = term === 1 ? "2026-04-30" : term === 2 ? "2026-08-31" : "2026-12-31";
+
+  const {
+    data: records,
+    loading,
+    error,
+    refetch,
+  } = useAsync(
+    () => api.getStudentAttendance(studentId, dateFrom, dateTo),
+    [studentId, dateFrom, dateTo],
+  );
 
   return (
     <Box>
-      <Box sx={{ display: "flex", gap: 2, mb: 3, flexWrap: "wrap", alignItems: "center" }}>
-        <TextField select size="small" label="Year" value={year} onChange={(e) => setYear(Number(e.target.value))} sx={{ width: 120 }}>
+      <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
+        <TextField
+          select
+          size="small"
+          label="Year"
+          value={year}
+          onChange={(e) => setYear(Number(e.target.value))}
+          sx={{ width: 120 }}
+        >
           <MenuItem value={2026}>2026</MenuItem>
           <MenuItem value={2025}>2025</MenuItem>
         </TextField>
-        <TextField select size="small" label="Term" value={term} onChange={(e) => setTerm(Number(e.target.value))} sx={{ width: 120 }}>
+        <TextField
+          select
+          size="small"
+          label="Term"
+          value={term}
+          onChange={(e) => setTerm(Number(e.target.value))}
+          sx={{ width: 120 }}
+        >
           <MenuItem value={1}>Term 1</MenuItem>
           <MenuItem value={2}>Term 2</MenuItem>
           <MenuItem value={3}>Term 3</MenuItem>
         </TextField>
       </Box>
 
-      <DataState loading={att.loading} error={att.error} data={att.data} onRetry={att.refetch} isEmpty={(d) => d.length === 0} emptyMessage="No attendance records for this period">
+      <DataState
+        loading={loading}
+        error={error}
+        data={records || []}
+        onRetry={refetch}
+        isEmpty={(d) => d.length === 0}
+        emptyMessage="No attendance records for this period"
+      >
         {(records) => {
           const stats = {
             present: records.filter((r) => r.status === "present").length,
@@ -225,7 +339,9 @@ function AttendanceTab({ studentId }) {
             excused: records.filter((r) => r.status === "excused").length,
             total: records.length,
           };
-          const pct = stats.total ? Math.round(((stats.present + stats.late) / stats.total) * 100) : 0;
+          const pct = stats.total
+            ? Math.round(((stats.present + stats.late) / stats.total) * 100)
+            : 0;
 
           return (
             <>
@@ -237,22 +353,56 @@ function AttendanceTab({ studentId }) {
                       <TableCell align="center">Absent</TableCell>
                       <TableCell align="center">Late</TableCell>
                       <TableCell align="center">Excused</TableCell>
-                      <TableCell align="center" sx={{ bgcolor: "primary.main", color: "white" }}>Overall %</TableCell>
+                      <TableCell align="center" sx={{ bgcolor: "primary.main", color: "white" }}>
+                        Overall %
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     <TableRow>
-                      <TableCell align="center" sx={{ fontWeight: 800, fontSize: 18, color: "success.main" }}>{stats.present}</TableCell>
-                      <TableCell align="center" sx={{ fontWeight: 800, fontSize: 18, color: "error.main" }}>{stats.absent}</TableCell>
-                      <TableCell align="center" sx={{ fontWeight: 800, fontSize: 18, color: "warning.main" }}>{stats.late}</TableCell>
-                      <TableCell align="center" sx={{ fontWeight: 800, fontSize: 18, color: "info.main" }}>{stats.excused}</TableCell>
-                      <TableCell align="center" sx={{ fontWeight: 800, fontSize: 18, bgcolor: "primary.main", color: "white" }}>{pct}%</TableCell>
+                      <TableCell
+                        align="center"
+                        sx={{ fontWeight: 800, fontSize: 18, color: "success.main" }}
+                      >
+                        {stats.present}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        sx={{ fontWeight: 800, fontSize: 18, color: "error.main" }}
+                      >
+                        {stats.absent}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        sx={{ fontWeight: 800, fontSize: 18, color: "warning.main" }}
+                      >
+                        {stats.late}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        sx={{ fontWeight: 800, fontSize: 18, color: "info.main" }}
+                      >
+                        {stats.excused}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        sx={{
+                          fontWeight: 800,
+                          fontSize: 18,
+                          bgcolor: "primary.main",
+                          color: "white",
+                        }}
+                      >
+                        {pct}%
+                      </TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>
               </TableContainer>
 
-              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700 }}>Daily Logs</Typography>
+              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700 }}>
+                Daily Logs
+              </Typography>
               <TableContainer sx={{ border: 1, borderColor: "divider", borderRadius: 1 }}>
                 <Table size="small">
                   <TableHead sx={{ bgcolor: "action.hover" }}>
@@ -260,28 +410,30 @@ function AttendanceTab({ studentId }) {
                       <TableCell>Date</TableCell>
                       <TableCell>Day</TableCell>
                       <TableCell>Status</TableCell>
-                      <TableCell>Recorded By</TableCell>
-                      <TableCell>Reason / Remark</TableCell>
+                      <TableCell>Remarks</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {records.map((r) => (
                       <TableRow key={r.id}>
                         <TableCell sx={{ fontWeight: 600 }}>{formatDate(r.date)}</TableCell>
-                        <TableCell>{new Date(r.date).toLocaleDateString('en-US', { weekday: 'long' })}</TableCell>
+                        <TableCell>
+                          {new Date(r.date).toLocaleDateString("en-US", { weekday: "long" })}
+                        </TableCell>
                         <TableCell>
                           <Chip
                             size="small"
                             label={r.status.toUpperCase()}
-                            sx={{
-                              fontWeight: 700, fontSize: 10,
-                              color: r.status === "present" ? "success.main" : r.status === "absent" ? "error.main" : "warning.main",
-                              bgcolor: r.status === "present" ? "success.main" + "19" : r.status === "absent" ? "error.main" + "19" : "warning.main" + "19"
-                            }}
+                            color={
+                              r.status === "present"
+                                ? "success"
+                                : r.status === "absent"
+                                  ? "error"
+                                  : "warning"
+                            }
                           />
                         </TableCell>
-                        <TableCell>{r.recordedBy}</TableCell>
-                        <TableCell>{r.reason ?? "—"}</TableCell>
+                        <TableCell>{r.remarks || "—"}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -296,17 +448,21 @@ function AttendanceTab({ studentId }) {
 }
 
 function FeeTab({ studentId }) {
-  const inv = useAsync(() => api.getStudentInvoice(studentId), [studentId]);
-  const pays = useAsync(() => api.getPayments({ studentId }), [studentId]);
-  const levies = useAsync(() => api.getStudentLevies(studentId), [studentId]);
+  const {
+    data: invoice,
+    loading: invLoading,
+    error: invError,
+    refetch: invRefetch,
+  } = useAsync(() => api.getStudentInvoice(studentId), [studentId]);
 
-  const [payLevyOpen, setPayLevyOpen] = useState(false);
-  const [selectedLevy, setSelectedLevy] = useState(null);
-
-  const { showNotification } = useNotification();
+  const {
+    data: payments,
+    loading: paysLoading,
+    refetch: paysRefetch,
+  } = useAsync(() => api.getPayments({ student: studentId }), [studentId]);
 
   return (
-    <DataState loading={inv.loading} error={inv.error} data={inv.data} onRetry={inv.refetch}>
+    <DataState loading={invLoading} error={invError} data={invoice} onRetry={invRefetch}>
       {(i) => (
         <>
           <Box
@@ -319,23 +475,23 @@ function FeeTab({ studentId }) {
           >
             <Card variant="outlined" sx={{ p: 2 }}>
               <Typography variant="caption" color="text.secondary">
-                Total Invoiced (All Time)
+                Total Invoiced
               </Typography>
               <Typography variant="h6" sx={{ fontWeight: 800 }}>
-                {formatKES((i.totalCharged ?? 0) + 45000)}
+                {formatKES(i.totalCharged || 0)}
               </Typography>
             </Card>
             <Card variant="outlined" sx={{ p: 2 }}>
               <Typography variant="caption" color="text.secondary">
-                Total Paid (All Time)
+                Total Paid
               </Typography>
               <Typography variant="h6" sx={{ fontWeight: 800 }}>
-                {formatKES((i.totalPaid ?? 0) + 40000)}
+                {formatKES(i.totalPaid || 0)}
               </Typography>
             </Card>
             <Card
               variant="outlined"
-              sx={{ p: 2, bgcolor: (i.balance ?? 0) > 0 ? "#C6282808" : "transparent" }}
+              sx={{ p: 2, bgcolor: (i.balance || 0) > 0 ? "#C6282808" : "transparent" }}
             >
               <Typography variant="caption" color="text.secondary">
                 Current Balance
@@ -344,16 +500,16 @@ function FeeTab({ studentId }) {
                 variant="h6"
                 sx={{
                   fontWeight: 800,
-                  color: (i.balance ?? 0) > 0 ? "error.main" : "success.main",
+                  color: (i.balance || 0) > 0 ? "error.main" : "success.main",
                 }}
               >
-                {formatKES(i.balance ?? 0)}
+                {formatKES(i.balance || 0)}
               </Typography>
             </Card>
           </Box>
 
           <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700 }}>
-            Current Term Invoice: {i.invoiceNumber}
+            Current Invoice Items
           </Typography>
           <TableContainer sx={{ border: 1, borderColor: "divider", borderRadius: 1, mb: 4 }}>
             <Table size="small">
@@ -364,144 +520,24 @@ function FeeTab({ studentId }) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {i.items.map((it) => (
-                  <TableRow key={it.name}>
+                {(i.items || []).map((it, idx) => (
+                  <TableRow key={idx}>
                     <TableCell>{it.name}</TableCell>
                     <TableCell align="right">{formatKES(it.amount)}</TableCell>
                   </TableRow>
                 ))}
-                <TableRow sx={{ bgcolor: "action.hover" }}>
-                  <TableCell sx={{ fontWeight: 700 }}>Total Term Charge</TableCell>
-                  <TableCell align="right" sx={{ fontWeight: 700 }}>
-                    {formatKES(i.totalCharged)}
-                  </TableCell>
-                </TableRow>
               </TableBody>
             </Table>
           </TableContainer>
 
-          <Typography variant="subtitle2" sx={{ mt: 4, mb: 1, fontWeight: 700 }}>
-            Special Levies & Ad-hoc Charges
-          </Typography>
-          <DataState
-            loading={levies.loading}
-            error={levies.error}
-            data={levies.data}
-            isEmpty={(d) => d.length === 0}
-            emptyMessage="No special levies for this student"
-          >
-            {(studentLevies) => (
-              <TableContainer sx={{ border: 1, borderColor: "divider", borderRadius: 1, mb: 4 }}>
-                <Table size="small">
-                  <TableHead sx={{ bgcolor: "action.hover" }}>
-                    <TableRow>
-                      <TableCell>Title</TableCell>
-                      <TableCell>Category</TableCell>
-                      <TableCell align="right">Amount</TableCell>
-                      <TableCell>Due Date</TableCell>
-                      <TableCell>Status</TableCell>
-                      <TableCell align="right">Action</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {studentLevies.map((sl) => (
-                      <TableRow key={sl.levy.id}>
-                        <TableCell>{sl.levy.title}</TableCell>
-                        <TableCell>
-                          <Chip label={sl.levy.category} size="small" />
-                        </TableCell>
-                        <TableCell align="right">{formatKES(sl.levy.amount)}</TableCell>
-                        <TableCell>{formatDate(sl.levy.dueDate)}</TableCell>
-                        <TableCell>
-                          <Chip
-                            label={sl.paid ? "PAID" : "UNPAID"}
-                            size="small"
-                            color={sl.paid ? "success" : "warning"}
-                          />
-                        </TableCell>
-                        <TableCell align="right">
-                          {!sl.paid && (
-                            <Button
-                              size="small"
-                              onClick={() => {
-                                setSelectedLevy(sl.levy);
-                                setPayLevyOpen(true);
-                              }}
-                            >
-                              Pay
-                            </Button>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            )}
-          </DataState>
-
-          {selectedLevy && (
-            <Dialog
-              open={payLevyOpen}
-              onClose={() => setPayLevyOpen(false)}
-              fullWidth
-              maxWidth="xs"
-            >
-              <DialogTitle>Record Levy Payment</DialogTitle>
-              <DialogContent>
-                <Typography variant="body2" sx={{ mb: 2 }}>
-                  Recording payment of <strong>{formatKES(selectedLevy.amount)}</strong> for{" "}
-                  <strong>{selectedLevy.title}</strong>.
-                </Typography>
-                <TextField
-                  select
-                  fullWidth
-                  label="Method"
-                  size="small"
-                  defaultValue="cash"
-                  sx={{ mt: 1 }}
-                >
-                  <MenuItem value="cash">Cash</MenuItem>
-                  <MenuItem value="mpesa">M-Pesa</MenuItem>
-                  <MenuItem value="bank">Bank Transfer</MenuItem>
-                </TextField>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={() => setPayLevyOpen(false)}>Cancel</Button>
-                <Button
-                  variant="contained"
-                  onClick={async () => {
-                    if (!selectedLevy) return;
-                    await api.recordLevyPayment({
-                      levyId: selectedLevy.id,
-                      levyTitle: selectedLevy.title,
-                      studentId: studentId,
-                      studentName: "Student",
-                      amount: selectedLevy.amount,
-                      paidAt: new Date().toISOString(),
-                      paymentMethod: "cash",
-                      recordedBy: "Admin",
-                    });
-                    showNotification("Payment recorded", "success");
-                    setPayLevyOpen(false);
-                    levies.refetch();
-                  }}
-                >
-                  Confirm Payment
-                </Button>
-              </DialogActions>
-            </Dialog>
-          )}
-
           <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700 }}>
-            Full Statement of Account (All Periods)
+            Payment History
           </Typography>
           <DataState
-            loading={pays.loading}
-            error={pays.error}
-            data={pays.data}
+            loading={paysLoading}
+            data={payments || []}
             isEmpty={(d) => d.length === 0}
-            emptyMessage="No transactions found"
+            emptyMessage="No payments recorded"
           >
             {(payments) => (
               <TableContainer sx={{ border: 1, borderColor: "divider", borderRadius: 1 }}>
@@ -509,40 +545,19 @@ function FeeTab({ studentId }) {
                   <TableHead sx={{ bgcolor: "action.hover" }}>
                     <TableRow>
                       <TableCell>Date</TableCell>
-                      <TableCell>Description</TableCell>
-                      <TableCell>Reference / Receipt</TableCell>
-                      <TableCell align="right">Charge</TableCell>
-                      <TableCell align="right">Payment</TableCell>
+                      <TableCell>Method</TableCell>
+                      <TableCell>Reference</TableCell>
+                      <TableCell align="right">Amount</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {/* Simulated historical row */}
-                    <TableRow sx={{ bgcolor: "rgba(0,0,0,0.02)" }}>
-                      <TableCell>05/01/2026</TableCell>
-                      <TableCell>
-                        <em>Opening Balance (from 2025)</em>
-                      </TableCell>
-                      <TableCell>B/F</TableCell>
-                      <TableCell align="right">{formatKES(5000)}</TableCell>
-                      <TableCell align="right">—</TableCell>
-                    </TableRow>
-                    {/* Current term charges as one entry for brevity in summary */}
-                    <TableRow>
-                      <TableCell>{formatDate(i.issuedDate)}</TableCell>
-                      <TableCell>Term 2 2026 Invoice</TableCell>
-                      <TableCell>{i.invoiceNumber}</TableCell>
-                      <TableCell align="right">{formatKES(i.totalCharged)}</TableCell>
-                      <TableCell align="right">—</TableCell>
-                    </TableRow>
-                    {/* All payments */}
                     {payments.map((p) => (
                       <TableRow key={p.id}>
-                        <TableCell>{formatDate(p.paymentDate)}</TableCell>
-                        <TableCell>Fee Payment — {p.paymentMethod}</TableCell>
+                        <TableCell>{formatDate(p.date)}</TableCell>
+                        <TableCell>{p.method}</TableCell>
                         <TableCell sx={{ fontFamily: "monospace", fontSize: 12 }}>
-                          {p.receiptNumber}
+                          {p.reference || "—"}
                         </TableCell>
-                        <TableCell align="right">—</TableCell>
                         <TableCell align="right" sx={{ fontWeight: 700, color: "success.main" }}>
                           {formatKES(p.amount)}
                         </TableCell>
@@ -556,5 +571,18 @@ function FeeTab({ studentId }) {
         </>
       )}
     </DataState>
+  );
+}
+
+function Field({ label, value }) {
+  return (
+    <Box>
+      <Typography variant="caption" color="text.secondary">
+        {label}
+      </Typography>
+      <Typography variant="body2" sx={{ fontWeight: 600 }}>
+        {value || "—"}
+      </Typography>
+    </Box>
   );
 }

@@ -33,7 +33,7 @@ export function HighlightGrid({ items }) {
         <SectionHeading
           id="highlights-heading"
           overline="Our Strengths"
-          title="Why Choose Kibaara?"
+          title="Why Choose Kibaraa?"
           subtitle="We offer a holistic education that develops every learner's potential."
         />
 

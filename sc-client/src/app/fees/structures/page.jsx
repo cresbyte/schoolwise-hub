@@ -2,19 +2,50 @@
 
 import { useState } from "react";
 import {
-  Box, Button, Card, Dialog, DialogTitle, DialogContent, DialogActions,
-  TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Typography, Stack, Select, MenuItem, FormControl, InputLabel, Checkbox,
-  FormControlLabel, Chip, IconButton, Snackbar, Alert, Radio, RadioGroup,
-  FormLabel, Menu, ListItemIcon, ListItemText, Divider, DialogContentText,
+  Box,
+  Button,
+  Card,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+  Stack,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Checkbox,
+  FormControlLabel,
+  Chip,
+  IconButton,
+  Snackbar,
+  Alert,
+  Radio,
+  RadioGroup,
+  FormLabel,
+  Menu,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  DialogContentText,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import HistoryIcon from "@mui/icons-material/History";
 import PrintIcon from "@mui/icons-material/Print";
 import DeleteIcon from "@mui/icons-material/Delete";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useRouter } from "next/navigation";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PageHeader } from "@/components/PageHeader";
@@ -23,18 +54,9 @@ import { PageGuard } from "@/components/common/PageGuard";
 import { RoleGuard } from "@/components/RoleGuard";
 import { useAsync } from "@/hooks/useAsync";
 import { api } from "@/lib/api";
-import { formatKES } from "@/lib/utils";
 
 const TERMS = [1, 2, 3];
 const YEARS = ["2024", "2025", "2026", "2027"];
-
-/*
- * Action hierarchy (one primary action per area):
- *  - Page header:      year + status on the left, one "More" menu (Print, Copy to next year)
- *  - Fee table card:   "Edit fees" is primary, "History" is a quiet text button
- *  - Charges card:     "Add charge" is primary, per-row actions live in one "..." menu
- *  - No structure yet: a single call to action in the empty state, not duplicated in the header
- */
 
 export default function FeeStructuresPage() {
   return (
@@ -52,22 +74,24 @@ function FeeSetupContent() {
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
 
   const { data, loading, error, refetch } = useAsync(async () => {
-    const [grades, structure, charges, history, students] = await Promise.all([
-      api.getGrades(),
-      api.getFeeStructure({ year: Number(year) }),
-      api.getAdditionalCharges({ year: Number(year) }),
-      api.getChangeHistory({ year: Number(year) }),
-      api.getStudents(),
+    const [grades, structure, levies, history, students] = await Promise.all([
+      api.getClasses(),
+      api.getFeeStructure(Number(year)),
+      api.getLevies(Number(year)),
+      api.getChangeHistory(Number(year)),
+      api.getStudents({ status: "active" }),
     ]);
-    return { grades, structure, charges, history, students };
+    return { grades, structure, levies, history, students };
   }, [year]);
 
   const grades = data?.grades ?? [];
   const structure = data?.structure ?? { status: "None", items: {} };
-  const charges = data?.charges ?? [];
+  const levies = data?.levies ?? [];
   const history = data?.history ?? [];
-  const students = data?.students ?? [];
-  const hasStructure = !!structure.items && Object.keys(structure.items).length > 0;
+  const students = Array.isArray(data?.students) ? data.students : data?.students?.results || [];
+
+  const hasStructure = structure.status !== "None";
+  const isActive = structure.status === "Active";
   const nextYear = String(Number(year) + 1);
   const canCopyForward = hasStructure && YEARS.includes(nextYear);
 
@@ -76,7 +100,7 @@ function FeeSetupContent() {
   const initialize = async () => {
     try {
       await api.createFeeStructure({ year: Number(year), copyFromYear: null });
-      notify(`${year} fee structure created`);
+      notify(`${year} fee structure created. You can now edit the amounts.`);
       refetch();
     } catch (e) {
       notify(e.message || "Could not create the fee structure", "error");
@@ -93,6 +117,36 @@ function FeeSetupContent() {
     }
   };
 
+  const refreshStructure = async () => {
+    try {
+      const result = await api.refreshFeeStructure(Number(year));
+      if (result.added === 0) {
+        notify("All classes are already in the structure", "info");
+      } else {
+        notify(`${result.added} new fee rows added for new classes`);
+      }
+      refetch();
+    } catch (e) {
+      notify(e.message || "Could not refresh the structure", "error");
+    }
+  };
+
+  // NEW: Activate the fee structure
+  const activateStructure = async () => {
+    if (!window.confirm("Activate this fee structure? This will allow invoice generation.")) return;
+    try {
+      await api.updateFeeStructure(Number(year), {
+        changes: [],
+        reason: "Activated for invoice generation",
+        status: "Active"
+      });
+      notify("Fee structure activated successfully");
+      refetch();
+    } catch (e) {
+      notify(e.message || "Could not activate the structure", "error");
+    }
+  };
+
   return (
     <>
       <PageHeader
@@ -103,15 +157,50 @@ function FeeSetupContent() {
             <FormControl size="small" sx={{ minWidth: 130 }}>
               <InputLabel>Academic year</InputLabel>
               <Select value={year} label="Academic year" onChange={(e) => setYear(e.target.value)}>
-                {YEARS.map((y) => <MenuItem key={y} value={y}>{y}</MenuItem>)}
+                {YEARS.map((y) => (
+                  <MenuItem key={y} value={y}>
+                    {y}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
-            <StatusChip status={structure.status} />
+
+            {hasStructure ? (
+              <StatusChip status={structure.status} />
+            ) : (
+              <Chip label="Not Set" color="error" size="small" variant="outlined" />
+            )}
+
+            {/* CREATE BUTTON - Only show if no structure exists */}
+            <RoleGuard permission="finance.*">
+              {!hasStructure && (
+                <Button variant="contained" startIcon={<AddIcon />} onClick={initialize}>
+                  Create {year} Structure
+                </Button>
+              )}
+            </RoleGuard>
+
+            {/* ACTIVATE BUTTON - Only show if structure exists but is not Active */}
+            <RoleGuard permission="finance.*">
+              {hasStructure && !isActive && (
+                <Button
+                  variant="contained"
+                  color="success"
+                  startIcon={<CheckCircleIcon />}
+                  onClick={activateStructure}
+                >
+                  Activate Structure
+                </Button>
+              )}
+            </RoleGuard>
+
             <PageMenu
               onPrint={() => router.push(`/fees/structures/print?year=${year}`)}
               onCopy={canCopyForward ? copyToNextYear : null}
+              onRefresh={hasStructure ? refreshStructure : null}
               nextYear={nextYear}
               printDisabled={!hasStructure}
+              refreshDisabled={!hasStructure}
             />
           </Stack>
         }
@@ -123,7 +212,7 @@ function FeeSetupContent() {
         data={data}
         onRetry={refetch}
         isEmpty={(d) => !d.grades || d.grades.length === 0}
-        emptyMessage="No grades found. Add grades first."
+        emptyMessage="No classes found. Please add classes first before setting up fees."
       >
         {() => (
           <Stack spacing={3}>
@@ -133,29 +222,32 @@ function FeeSetupContent() {
                 grades={grades}
                 structure={structure}
                 history={history}
-                onSaved={() => { notify("Fee structure updated"); refetch(); }}
+                onSaved={() => {
+                  notify("Fee structure updated");
+                  refetch();
+                }}
                 onError={(msg) => notify(msg, "error")}
               />
             ) : (
               <Card sx={{ p: 6, textAlign: "center" }}>
-                <Typography variant="h6" gutterBottom>No fees set for {year}</Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                  Create the {year} structure, then enter the fee for each grade and term.
+                <Typography variant="h6" gutterBottom>
+                  No fees set for {year}
                 </Typography>
-                <RoleGuard permission="finance.*">
-                  <Button variant="contained" startIcon={<AddIcon />} onClick={initialize}>
-                    Create {year} fee structure
-                  </Button>
-                </RoleGuard>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                  Select a year above and click "Create Structure" to begin.
+                </Typography>
               </Card>
             )}
 
             <AdditionalChargesSection
               year={Number(year)}
-              charges={charges}
+              levies={levies}
               grades={grades}
               students={students}
-              onSaved={(msg) => { notify(msg); refetch(); }}
+              onSaved={(msg) => {
+                notify(msg);
+                refetch();
+              }}
               onError={(msg) => notify(msg, "error")}
             />
           </Stack>
@@ -167,7 +259,11 @@ function FeeSetupContent() {
         autoHideDuration={4000}
         onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
       >
-        <Alert severity={snackbar.severity} variant="filled" onClose={() => setSnackbar((s) => ({ ...s, open: false }))}>
+        <Alert
+          severity={snackbar.severity}
+          variant="filled"
+          onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+        >
           {snackbar.message}
         </Alert>
       </Snackbar>
@@ -184,7 +280,7 @@ function StatusChip({ status }) {
   return <Chip label={label} color={color} size="small" variant="outlined" />;
 }
 
-function PageMenu({ onPrint, onCopy, nextYear, printDisabled }) {
+function PageMenu({ onPrint, onCopy, onRefresh, nextYear, printDisabled, refreshDisabled }) {
   const [anchor, setAnchor] = useState(null);
   const close = () => setAnchor(null);
   return (
@@ -193,14 +289,41 @@ function PageMenu({ onPrint, onCopy, nextYear, printDisabled }) {
         <MoreVertIcon />
       </IconButton>
       <Menu anchorEl={anchor} open={!!anchor} onClose={close}>
-        <MenuItem disabled={printDisabled} onClick={() => { close(); onPrint(); }}>
-          <ListItemIcon><PrintIcon fontSize="small" /></ListItemIcon>
+        <MenuItem
+          disabled={printDisabled}
+          onClick={() => {
+            close();
+            onPrint();
+          }}
+        >
+          <ListItemIcon>
+            <PrintIcon fontSize="small" />
+          </ListItemIcon>
           <ListItemText>Print fee structure</ListItemText>
+        </MenuItem>
+        <MenuItem
+          disabled={refreshDisabled}
+          onClick={() => {
+            close();
+            onRefresh();
+          }}
+        >
+          <ListItemIcon>
+            <RefreshIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Sync new classes</ListItemText>
         </MenuItem>
         {onCopy && (
           <RoleGuard permission="finance.*">
-            <MenuItem onClick={() => { close(); onCopy(); }}>
-              <ListItemIcon><ContentCopyIcon fontSize="small" /></ListItemIcon>
+            <MenuItem
+              onClick={() => {
+                close();
+                onCopy();
+              }}
+            >
+              <ListItemIcon>
+                <ContentCopyIcon fontSize="small" />
+              </ListItemIcon>
               <ListItemText>Copy to {nextYear}</ListItemText>
             </MenuItem>
           </RoleGuard>
@@ -212,10 +335,21 @@ function PageMenu({ onPrint, onCopy, nextYear, printDisabled }) {
 
 function CardHeader({ title, description, actions }) {
   return (
-    <Box sx={{ p: 2.5, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 2, flexWrap: "wrap" }}>
+    <Box
+      sx={{
+        p: 2.5,
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        gap: 2,
+        flexWrap: "wrap",
+      }}
+    >
       <Box>
         <Typography variant="h6">{title}</Typography>
-        <Typography variant="body2" color="text.secondary">{description}</Typography>
+        <Typography variant="body2" color="text.secondary">
+          {description}
+        </Typography>
       </Box>
       {actions}
     </Box>
@@ -230,7 +364,8 @@ function TuitionStructure({ year, grades, structure, history, onSaved, onError }
   const [saving, setSaving] = useState(false);
 
   const amountOf = (source, gradeId, term) => source[`${gradeId}_${term}`] || 0;
-  const annualTotal = (source, gradeId) => TERMS.reduce((sum, t) => sum + amountOf(source, gradeId, t), 0);
+  const annualTotal = (source, gradeId) =>
+    TERMS.reduce((sum, t) => sum + amountOf(source, gradeId, t), 0);
 
   const openEdit = () => {
     setEditForm({ ...structure.items });
@@ -243,15 +378,16 @@ function TuitionStructure({ year, grades, structure, history, onSaved, onError }
   };
 
   const changes = grades.flatMap((g) =>
-    TERMS.filter((t) => amountOf(structure.items, g.id, t) !== amountOf(editForm, g.id, t))
-      .map((t) => ({ gradeId: g.id, term: t, amount: amountOf(editForm, g.id, t) }))
+    TERMS.filter((t) => amountOf(structure.items, g.id, t) !== amountOf(editForm, g.id, t)).map(
+      (t) => ({ gradeId: g.id, term: t, amount: amountOf(editForm, g.id, t) }),
+    ),
   );
   const reasonMissing = changes.length > 0 && !reason.trim();
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      await api.updateFeeStructure({ year, changes, reason: reason.trim() });
+      await api.updateFeeStructure(year, { changes, reason: reason.trim() });
       setEditOpen(false);
       onSaved();
     } catch (e) {
@@ -291,7 +427,11 @@ function TuitionStructure({ year, grades, structure, history, onSaved, onError }
             <TableHead>
               <TableRow>
                 <TableCell>Grade</TableCell>
-                {TERMS.map((t) => <TableCell key={t} align="right">Term {t}</TableCell>)}
+                {TERMS.map((t) => (
+                  <TableCell key={t} align="right">
+                    Term {t}
+                  </TableCell>
+                ))}
                 <TableCell align="right">Annual total</TableCell>
               </TableRow>
             </TableHead>
@@ -300,7 +440,9 @@ function TuitionStructure({ year, grades, structure, history, onSaved, onError }
                 <TableRow key={g.id} hover>
                   <TableCell sx={{ fontWeight: 500 }}>{g.name}</TableCell>
                   {TERMS.map((t) => (
-                    <TableCell key={t} align="right">{formatKES(amountOf(structure.items, g.id, t))}</TableCell>
+                    <TableCell key={t} align="right">
+                      {formatKES(amountOf(structure.items, g.id, t))}
+                    </TableCell>
                   ))}
                   <TableCell align="right" sx={{ fontWeight: 700 }}>
                     {formatKES(annualTotal(structure.items, g.id))}
@@ -323,7 +465,11 @@ function TuitionStructure({ year, grades, structure, history, onSaved, onError }
               <TableHead>
                 <TableRow>
                   <TableCell>Grade</TableCell>
-                  {TERMS.map((t) => <TableCell key={t} align="right">Term {t}</TableCell>)}
+                  {TERMS.map((t) => (
+                    <TableCell key={t} align="right">
+                      Term {t}
+                    </TableCell>
+                  ))}
                   <TableCell align="right">Annual total</TableCell>
                 </TableRow>
               </TableHead>
@@ -332,7 +478,8 @@ function TuitionStructure({ year, grades, structure, history, onSaved, onError }
                   <TableRow key={g.id}>
                     <TableCell>{g.name}</TableCell>
                     {TERMS.map((t) => {
-                      const changed = amountOf(structure.items, g.id, t) !== amountOf(editForm, g.id, t);
+                      const changed =
+                        amountOf(structure.items, g.id, t) !== amountOf(editForm, g.id, t);
                       return (
                         <TableCell key={t} align="right">
                           <TextField
@@ -343,7 +490,11 @@ function TuitionStructure({ year, grades, structure, history, onSaved, onError }
                             color={changed ? "warning" : "primary"}
                             focused={changed}
                             sx={{ width: 110 }}
-                            inputProps={{ min: 0, "aria-label": `${g.name} term ${t}`, style: { textAlign: "right" } }}
+                            inputProps={{
+                              min: 0,
+                              "aria-label": `${g.name} term ${t}`,
+                              style: { textAlign: "right" },
+                            }}
                           />
                         </TableCell>
                       );
@@ -376,9 +527,13 @@ function TuitionStructure({ year, grades, structure, history, onSaved, onError }
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
           <Typography variant="body2" color="text.secondary" sx={{ mr: "auto" }}>
-            {changes.length === 0 ? "No changes yet" : `${changes.length} fee${changes.length > 1 ? "s" : ""} changed`}
+            {changes.length === 0
+              ? "No changes yet"
+              : `${changes.length} fee${changes.length > 1 ? "s" : ""} changed`}
           </Typography>
-          <Button color="inherit" onClick={() => setEditOpen(false)} disabled={saving}>Cancel</Button>
+          <Button color="inherit" onClick={() => setEditOpen(false)} disabled={saving}>
+            Cancel
+          </Button>
           <Button
             variant="contained"
             onClick={handleSave}
@@ -389,23 +544,32 @@ function TuitionStructure({ year, grades, structure, history, onSaved, onError }
         </DialogActions>
       </Dialog>
 
-      <HistoryDialog open={historyOpen} onClose={() => setHistoryOpen(false)} history={history} grades={grades} />
+      <HistoryDialog
+        open={historyOpen}
+        onClose={() => setHistoryOpen(false)}
+        history={history}
+        grades={grades}
+      />
     </>
   );
 }
 
-function AdditionalChargesSection({ year, charges, grades, students, onSaved, onError }) {
+function AdditionalChargesSection({ year, levies, grades, students, onSaved, onError }) {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingCharge, setEditingCharge] = useState(null);
-  const [menu, setMenu] = useState({ anchor: null, charge: null });
+  const [editingLevy, setEditingLevy] = useState(null);
+  const [menu, setMenu] = useState({ anchor: null, levy: null });
   const [removing, setRemoving] = useState(null);
 
-  const gradeNames = (ids) => ids.map((id) => grades.find((g) => g.id === id)?.name).filter(Boolean).join(", ");
-  const closeMenu = () => setMenu({ anchor: null, charge: null });
+  const gradeNames = (ids) =>
+    ids
+      .map((id) => grades.find((g) => g.id === id)?.name)
+      .filter(Boolean)
+      .join(", ");
+  const closeMenu = () => setMenu({ anchor: null, levy: null });
 
   const confirmRemove = async () => {
     try {
-      await api.removeAdditionalCharge(removing.id);
+      await api.deleteLevy(removing.id);
       onSaved(`"${removing.name}" removed`);
     } catch (e) {
       onError(e.message || "Could not remove the charge");
@@ -425,7 +589,10 @@ function AdditionalChargesSection({ year, charges, grades, students, onSaved, on
               <Button
                 variant="contained"
                 startIcon={<AddIcon />}
-                onClick={() => { setEditingCharge(null); setDialogOpen(true); }}
+                onClick={() => {
+                  setEditingLevy(null);
+                  setDialogOpen(true);
+                }}
               >
                 Add charge
               </Button>
@@ -433,7 +600,7 @@ function AdditionalChargesSection({ year, charges, grades, students, onSaved, on
           }
         />
         <Divider />
-        {charges.length === 0 ? (
+        {levies.length === 0 ? (
           <Box sx={{ p: 5, textAlign: "center" }}>
             <Typography variant="body2" color="text.secondary">
               No additional charges for {year}. Use “Add charge” to create one.
@@ -453,17 +620,20 @@ function AdditionalChargesSection({ year, charges, grades, students, onSaved, on
                 </TableRow>
               </TableHead>
               <TableBody>
-                {charges.map((c) => (
+                {levies.map((c) => (
                   <TableRow key={c.id} hover sx={{ opacity: c.status === "Removed" ? 0.5 : 1 }}>
                     <TableCell sx={{ fontWeight: 500 }}>
                       {c.name}
-                      {c.isOptional && <Chip size="small" variant="outlined" label="Optional" sx={{ ml: 1 }} />}
+                      {c.isOptional && (
+                        <Chip size="small" variant="outlined" label="Optional" sx={{ ml: 1 }} />
+                      )}
                     </TableCell>
                     <TableCell>Term {c.term}</TableCell>
                     <TableCell>
-                      {c.appliesTo === "school" && "Whole school"}
+                      {c.appliesTo === "all" && "Whole school"}
                       {c.appliesTo === "grades" && gradeNames(c.targetGrades)}
-                      {c.appliesTo === "students" && `${c.targetStudents.length} selected students`}
+                      {c.appliesTo === "students" &&
+                        `${c.targetStudents?.length || 0} selected students`}
                     </TableCell>
                     <TableCell align="right">{formatKES(c.amount)}</TableCell>
                     <TableCell>
@@ -480,7 +650,7 @@ function AdditionalChargesSection({ year, charges, grades, students, onSaved, on
                           <IconButton
                             size="small"
                             aria-label={`Actions for ${c.name}`}
-                            onClick={(e) => setMenu({ anchor: e.currentTarget, charge: c })}
+                            onClick={(e) => setMenu({ anchor: e.currentTarget, levy: c })}
                           >
                             <MoreVertIcon fontSize="small" />
                           </IconButton>
@@ -496,12 +666,28 @@ function AdditionalChargesSection({ year, charges, grades, students, onSaved, on
       </Card>
 
       <Menu anchorEl={menu.anchor} open={!!menu.anchor} onClose={closeMenu}>
-        <MenuItem onClick={() => { setEditingCharge(menu.charge); setDialogOpen(true); closeMenu(); }}>
-          <ListItemIcon><EditIcon fontSize="small" /></ListItemIcon>
+        <MenuItem
+          onClick={() => {
+            setEditingLevy(menu.levy);
+            setDialogOpen(true);
+            closeMenu();
+          }}
+        >
+          <ListItemIcon>
+            <EditIcon fontSize="small" />
+          </ListItemIcon>
           <ListItemText>Edit</ListItemText>
         </MenuItem>
-        <MenuItem sx={{ color: "error.main" }} onClick={() => { setRemoving(menu.charge); closeMenu(); }}>
-          <ListItemIcon><DeleteIcon fontSize="small" color="error" /></ListItemIcon>
+        <MenuItem
+          sx={{ color: "error.main" }}
+          onClick={() => {
+            setRemoving(menu.levy);
+            closeMenu();
+          }}
+        >
+          <ListItemIcon>
+            <DeleteIcon fontSize="small" color="error" />
+          </ListItemIcon>
           <ListItemText>Remove</ListItemText>
         </MenuItem>
       </Menu>
@@ -514,8 +700,12 @@ function AdditionalChargesSection({ year, charges, grades, students, onSaved, on
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button color="inherit" onClick={() => setRemoving(null)}>Cancel</Button>
-          <Button color="error" variant="contained" onClick={confirmRemove}>Remove charge</Button>
+          <Button color="inherit" onClick={() => setRemoving(null)}>
+            Cancel
+          </Button>
+          <Button color="error" variant="contained" onClick={confirmRemove}>
+            Remove charge
+          </Button>
         </DialogActions>
       </Dialog>
 
@@ -523,11 +713,14 @@ function AdditionalChargesSection({ year, charges, grades, students, onSaved, on
         <ChargeDialog
           open={dialogOpen}
           onClose={() => setDialogOpen(false)}
-          charge={editingCharge}
+          levy={editingLevy}
           year={year}
           grades={grades}
           students={students}
-          onSaved={() => { setDialogOpen(false); onSaved("Charge saved"); }}
+          onSaved={() => {
+            setDialogOpen(false);
+            onSaved("Charge saved");
+          }}
           onError={onError}
         />
       )}
@@ -535,17 +728,17 @@ function AdditionalChargesSection({ year, charges, grades, students, onSaved, on
   );
 }
 
-function ChargeDialog({ open, onClose, charge, year, grades, students, onSaved, onError }) {
-  const isEdit = !!charge;
+function ChargeDialog({ open, onClose, levy, year, grades, students, onSaved, onError }) {
+  const isEdit = !!levy;
   const [form, setForm] = useState({
-    id: charge?.id || null,
-    name: charge?.name || "",
-    amount: charge?.amount || "",
-    term: charge?.term || 1,
-    appliesTo: charge?.appliesTo || "school",
-    targetGrades: charge?.targetGrades || [],
-    targetStudents: charge?.targetStudents || [],
-    isOptional: charge?.isOptional || false,
+    id: levy?.id || null,
+    name: levy?.name || "",
+    amount: levy?.amount || "",
+    term: levy?.term || 1,
+    appliesTo: levy?.appliesTo || "all",
+    targetGrades: levy?.targetGrades || [],
+    targetStudents: levy?.targetStudents || [],
+    isOptional: levy?.isOptional || false,
   });
   const [saving, setSaving] = useState(false);
 
@@ -561,13 +754,31 @@ function ChargeDialog({ open, onClose, charge, year, grades, students, onSaved, 
 
   const handleSave = async () => {
     if (!form.name.trim()) return onError("Enter a name for the charge");
-    if (!form.amount || Number(form.amount) <= 0) return onError("Enter an amount greater than zero");
-    if (form.appliesTo === "grades" && form.targetGrades.length === 0) return onError("Select at least one grade");
-    if (form.appliesTo === "students" && form.targetStudents.length === 0) return onError("Select at least one student");
+    if (!form.amount || Number(form.amount) <= 0)
+      return onError("Enter an amount greater than zero");
+    if (form.appliesTo === "grades" && form.targetGrades.length === 0)
+      return onError("Select at least one grade");
+    if (form.appliesTo === "students" && form.targetStudents.length === 0)
+      return onError("Select at least one student");
 
     setSaving(true);
     try {
-      await api.saveAdditionalCharge({ ...form, name: form.name.trim(), amount: Number(form.amount), year });
+      const payload = {
+        name: form.name.trim(),
+        amount: Number(form.amount),
+        year,
+        term: form.term,
+        appliesTo: form.appliesTo,
+        targetGrades: form.targetGrades,
+        targetStudents: form.targetStudents,
+        isOptional: form.isOptional,
+      };
+
+      if (form.id) {
+        await api.updateLevy(form.id, payload);
+      } else {
+        await api.createLevy(payload);
+      }
       onSaved();
     } catch (e) {
       onError(e.message || "Could not save the charge");
@@ -592,8 +803,16 @@ function ChargeDialog({ open, onClose, charge, year, grades, students, onSaved, 
           <Stack direction="row" spacing={2}>
             <FormControl sx={{ minWidth: 130 }}>
               <InputLabel>Term</InputLabel>
-              <Select value={form.term} label="Term" onChange={(e) => handleChange("term", Number(e.target.value))}>
-                {TERMS.map((t) => <MenuItem key={t} value={t}>Term {t}</MenuItem>)}
+              <Select
+                value={form.term}
+                label="Term"
+                onChange={(e) => handleChange("term", Number(e.target.value))}
+              >
+                {TERMS.map((t) => (
+                  <MenuItem key={t} value={t}>
+                    Term {t}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
             <TextField
@@ -608,8 +827,12 @@ function ChargeDialog({ open, onClose, charge, year, grades, students, onSaved, 
 
           <FormControl component="fieldset">
             <FormLabel component="legend">Applies to</FormLabel>
-            <RadioGroup row value={form.appliesTo} onChange={(e) => handleAppliesTo(e.target.value)}>
-              <FormControlLabel value="school" control={<Radio />} label="Whole school" />
+            <RadioGroup
+              row
+              value={form.appliesTo}
+              onChange={(e) => handleAppliesTo(e.target.value)}
+            >
+              <FormControlLabel value="all" control={<Radio />} label="Whole school" />
               <FormControlLabel value="grades" control={<Radio />} label="Specific grades" />
               <FormControlLabel value="students" control={<Radio />} label="Selected students" />
             </RadioGroup>
@@ -623,7 +846,9 @@ function ChargeDialog({ open, onClose, charge, year, grades, students, onSaved, 
                 value={form.targetGrades}
                 label="Grades"
                 onChange={(e) => handleChange("targetGrades", e.target.value)}
-                renderValue={(selected) => selected.map((id) => grades.find((g) => g.id === id)?.name).join(", ")}
+                renderValue={(selected) =>
+                  selected.map((id) => grades.find((g) => g.id === id)?.name).join(", ")
+                }
               >
                 {grades.map((g) => (
                   <MenuItem key={g.id} value={g.id}>
@@ -648,7 +873,7 @@ function ChargeDialog({ open, onClose, charge, year, grades, students, onSaved, 
                 {students.map((s) => (
                   <MenuItem key={s.id} value={s.id}>
                     <Checkbox checked={form.targetStudents.includes(s.id)} />
-                    {s.name} ({grades.find((g) => g.id === s.gradeId)?.name})
+                    {s.name}
                   </MenuItem>
                 ))}
               </Select>
@@ -657,14 +882,19 @@ function ChargeDialog({ open, onClose, charge, year, grades, students, onSaved, 
 
           <FormControlLabel
             control={
-              <Checkbox checked={form.isOptional} onChange={(e) => handleChange("isOptional", e.target.checked)} />
+              <Checkbox
+                checked={form.isOptional}
+                onChange={(e) => handleChange("isOptional", e.target.checked)}
+              />
             }
             label="Optional: only charge students who opt in"
           />
         </Stack>
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button color="inherit" onClick={onClose} disabled={saving}>Cancel</Button>
+        <Button color="inherit" onClick={onClose} disabled={saving}>
+          Cancel
+        </Button>
         <Button variant="contained" onClick={handleSave} disabled={saving}>
           {saving ? "Saving…" : isEdit ? "Save changes" : "Add charge"}
         </Button>
@@ -681,12 +911,19 @@ function HistoryDialog({ open, onClose, history, grades }) {
       <DialogTitle>Change history</DialogTitle>
       <DialogContent dividers>
         {history.length === 0 ? (
-          <Typography variant="body2" color="text.secondary">No changes recorded yet.</Typography>
+          <Typography variant="body2" color="text.secondary">
+            No changes recorded yet.
+          </Typography>
         ) : (
           <Stack divider={<Divider flexItem />} spacing={2}>
             {history.map((h) => (
               <Box key={h.id}>
-                <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={2}>
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="flex-start"
+                  spacing={2}
+                >
                   <Box>
                     <Typography variant="body2" sx={{ fontWeight: 600 }}>
                       {gradeName(h.gradeId)}, Term {h.term}
@@ -714,4 +951,12 @@ function HistoryDialog({ open, onClose, history, grades }) {
       </DialogActions>
     </Dialog>
   );
+}
+
+function formatKES(amount) {
+  return new Intl.NumberFormat("en-KE", {
+    style: "currency",
+    currency: "KES",
+    minimumFractionDigits: 0,
+  }).format(amount || 0);
 }

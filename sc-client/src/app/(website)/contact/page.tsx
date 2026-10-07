@@ -25,7 +25,7 @@ export default function ContactPage() {
       role: "Principal's Office",
       name: SCHOOL.principal,
       phone: SCHOOL.phone,
-      email: "principal@kibaara.elite.ac.ke",
+      email: "principal@kibaraa.elite.ac.ke",
     },
     {
       role: "Admissions",
@@ -37,13 +37,13 @@ export default function ContactPage() {
       role: "Accounts & Fees",
       name: "Ms. Agnes Kariuki",
       phone: "0733 456 789",
-      email: "accounts@kibaara.elite.ac.ke",
+      email: "accounts@kibaraa.elite.ac.ke",
     },
     {
       role: "Boarding Office",
       name: "Mr. Joseph Mutua",
       phone: "0711 234 567",
-      email: "deputy@kibaara.elite.ac.ke",
+      email: "deputy@kibaraa.elite.ac.ke",
     },
   ];
   return (

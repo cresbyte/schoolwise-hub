@@ -16,6 +16,17 @@ function createEmptyParent() {
   return { name: "", phone: "", email: "", match: null, linkedId: null };
 }
 
+
+export const studentSchema = z.object({
+  firstName: z.string().min(2, "Required"),
+  lastName: z.string().min(2, "Required"),
+  dateOfBirth: z.string().min(1, "Required"),
+  homeLocation: z.string().min(2, "Required"),
+  classId: z.string().min(1, "Select a class"),
+  admissionNumber: z.string().min(1, "Required"),
+  admissionDate: z.string().min(1, "Required"),
+});
+
 export function createEmptyForm() {
   return {
     photo: "", // "" = no photo, a web address = existing photo, a File = newly chosen photo

@@ -96,7 +96,7 @@ export default function OurStaffPage() {
             subtitle="We're always looking for passionate educators and support staff."
           />
           <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-            Send your CV and cover letter to careers@kibaara.elite.ac.ke or visit our Contact page
+            Send your CV and cover letter to careers@kibaraa.elite.ac.ke or visit our Contact page
             for more information.
           </Typography>
           <Button LinkComponent={Link} href="/contact" variant="contained">

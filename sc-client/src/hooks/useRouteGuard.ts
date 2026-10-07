@@ -2,7 +2,7 @@
  * Route-level access guard hook.
  * Redirects users to the correct home screen if they try to access
  * a route they don't have permission for.
- * 
+ *
  * JWT-ready: when Django auth is integrated, replace the user object source
  * in AuthContext — this hook's logic does not need to change.
  */
@@ -15,7 +15,7 @@ import { ROLE_HOME } from "@/lib/constants";
 const PORTAL_ONLY_ROLES = ["parent"] as const;
 const DASHBOARD_BLOCKED_PATHS = [
   "/students", "/staff", "/classes", "/attendance",
-  "/exams", "/report-cards", "/timetable", "/term-planner",
+  "/exams", "/reports", "/timetable", "/term-planner",
   "/fees", "/payroll", "/reports", "/messages",
   "/settings", "/subjects", "/website-cms",
 ];

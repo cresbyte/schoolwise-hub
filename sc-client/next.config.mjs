@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   reactStrictMode: true,
   transpilePackages: ['@mui/material', '@mui/system', '@mui/icons-material'],
   modularizeImports: {

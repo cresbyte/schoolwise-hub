@@ -1,385 +1,538 @@
 "use client";
 
-/**
- * Advanced Weekly Attendance Matrix — backed by the real Django API.
- * @module attendance/page
- */
-import { useEffect, useState, useMemo } from "react";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Chip from "@mui/material/Chip";
-import MenuItem from "@mui/material/MenuItem";
-import TextField from "@mui/material/TextField";
-import Alert from "@mui/material/Alert";
-import Typography from "@mui/material/Typography";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import Stack from "@mui/material/Stack";
-import Divider from "@mui/material/Divider";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CancelIcon from "@mui/icons-material/Cancel";
-import TimerIcon from "@mui/icons-material/Timer";
-import InfoIcon from "@mui/icons-material/Info";
-import SaveIcon from "@mui/icons-material/Save";
-import FlashOnIcon from "@mui/icons-material/FlashOn";
-import PeopleIcon from "@mui/icons-material/People";
-
+import { DataState } from "@/components/DataState";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PageHeader } from "@/components/PageHeader";
-import { PageGuard } from "@/components/common/PageGuard";
-import { ClassSelect } from "@/components/ClassSelect";
-import { DataState } from "@/components/DataState";
-import { useAsync } from "@/hooks/useAsync";
-import { useNotification } from "@/context/NotificationContext";
 import { useAuth } from "@/context/AuthContext";
+import { useNotification } from "@/context/NotificationContext";
+import { useAsync } from "@/hooks/useAsync";
 import { api } from "@/lib/api";
-import { getWeeksInRange, getDaysInWeek } from "@/lib/utils";
+import CancelIcon from "@mui/icons-material/Cancel";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+import LockIcon from "@mui/icons-material/Lock";
+import SaveIcon from "@mui/icons-material/Save";
+import ScheduleIcon from "@mui/icons-material/Schedule";
+import {
+  Box,
+  Button,
+  Card,
+  Chip,
+  Divider,
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Tooltip,
+  Typography,
+  useMediaQuery
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import { useEffect, useMemo, useState } from "react";
 
-/** Status display config */
-const STATUS_CONFIG = {
-  present: { icon: <CheckCircleIcon fontSize="small" />, color: "#2E7D32", bg: "#E8F5E9", label: "Present",  shortcut: "P" },
-  absent:  { icon: <CancelIcon    fontSize="small" />, color: "#C62828", bg: "#FFEBEE", label: "Absent",   shortcut: "A" },
-  late:    { icon: <TimerIcon     fontSize="small" />, color: "#EF6C00", bg: "#FFF3E0", label: "Late",     shortcut: "L" },
-  excused: { icon: <InfoIcon      fontSize="small" />, color: "#1565C0", bg: "#E3F2FD", label: "Excused",  shortcut: "E" },
-};
+const STATUS_OPTIONS = [
+  { value: "present", label: "Present", color: "success", icon: CheckCircleIcon },
+  { value: "absent", label: "Absent", color: "error", icon: CancelIcon },
+  { value: "late", label: "Late", color: "warning", icon: ScheduleIcon },
+  { value: "excused", label: "Excused", color: "info", icon: EventAvailableIcon },
+];
 
-const STATUS_CYCLE = ["present", "absent", "late", "excused"];
-
-// Term date range — ideally fetched from /api/school/settings
-const TERM_START = new Date("2026-04-28");
-const TERM_END   = new Date("2026-08-15");
-
-export default function AttendancePage() {
-  return (
-    <DashboardLayout>
-      <PageGuard permission="attendance.write">
-        <PageHeader
-          title="Attendance Register"
-          subtitle="Weekly  view — click a cell to cycle status"
-        />
-        <AttendanceMatrix />
-      </PageGuard>
-    </DashboardLayout>
-  );
+function getMonday(date) {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  return new Date(d.setDate(diff));
 }
 
-function AttendanceMatrix() {
-  const { user } = useAuth();
+function formatDate(date) {
+  return date.toISOString().split("T")[0];
+}
+
+function getWeekDates(monday) {
+  return Array.from({ length: 5 }, (_, i) => {
+    const d = new Date(monday);
+    d.setDate(d.getDate() + i);
+    return d;
+  });
+}
+
+function isFuture(date) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d > today;
+}
+
+function isToday(date) {
+  const today = new Date();
+  const d = new Date(date);
+  return today.toDateString() === d.toDateString();
+}
+
+export default function AttendanceEntryPage() {
   const { showNotification } = useNotification();
-  const [classId, setClassId] = useState("");
-  const [selectedWeekIdx, setSelectedWeekIdx] = useState(0);
+  const { user } = useAuth();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
+  const [selectedClassId, setSelectedClassId] = useState("");
+  const [weekStart, setWeekStart] = useState(getMonday(new Date()));
+  const [records, setRecords] = useState({}); // "studentId_date" -> status (null = not marked)
   const [saving, setSaving] = useState(false);
 
-  // Auto-select class for class teachers
-  const staffData = useAsync(
-    () => (user?.staffId ? api.getStaffById(user.staffId) : Promise.resolve(null)),
-    [user?.staffId]
-  );
-  useEffect(() => {
-    if (user?.role === "class_teacher" && staffData.data?.classId) {
-      setClassId(staffData.data.classId);
+  const { data: classes } = useAsync(() => api.getClasses(), []);
+  const classList = classes || [];
+
+  // Filter classes based on role
+  const myClasses = useMemo(() => {
+    if (!user) return [];
+    if (["admin", "headteacher", "deputy"].includes(user.role)) {
+      return classList;
     }
-  }, [user?.role, staffData.data]);
+    return classList.filter((c) => {
+      const teacherId = c.classTeacherId || c.class_teacher_id || c.class_teacher;
+      return String(teacherId) === String(user.id);
+    });
+  }, [classList, user]);
 
-  // Build term weeks
-  const weeks = useMemo(() => getWeeksInRange(TERM_START, TERM_END), []);
-  const currentWeek = weeks[selectedWeekIdx] ?? weeks[0];
-  const days = useMemo(() => getDaysInWeek(currentWeek?.start), [currentWeek]);
+  const weekDates = useMemo(() => getWeekDates(weekStart), [weekStart]);
+  const weekEnd = weekDates[4];
 
-  // Fetch students in selected class
-  const students = useAsync(
-    () => (classId ? api.getStudents({ classId, status: "active" }) : Promise.resolve([])),
-    [classId]
+  // Fetch existing attendance
+  const {
+    data: existingRecords,
+    loading,
+    refetch,
+  } = useAsync(
+    () =>
+      selectedClassId
+        ? api.getAttendance(selectedClassId, formatDate(weekStart), formatDate(weekEnd))
+        : Promise.resolve([]),
+    [selectedClassId, formatDate(weekStart), formatDate(weekEnd)],
   );
 
-  // Fetch existing attendance for the selected week
-  const existingAtt = useAsync(
-    () => {
-      if (!classId || !days.length) return Promise.resolve([]);
-      const from = days[0].toISOString().slice(0, 10);
-      const to   = days[days.length - 1].toISOString().slice(0, 10);
-      return api.getAttendance(classId, from, to);
-    },
-    [classId, days]
+  const { data: students, loading: studentsLoading } = useAsync(
+    () => (selectedClassId ? api.getStudentsByClass(selectedClassId) : Promise.resolve([])),
+    [selectedClassId],
   );
 
-  // Grid: { [studentId]: { [dateIso]: status } }
-  const [grid, setGrid] = useState({});
+  const studentList = Array.isArray(students) ? students : students?.results || [];
 
-  // Initialise / refresh grid when data changes
+  // Initialize records — ONLY from existing data, NO default "present"
   useEffect(() => {
-    if (!students.data || !existingAtt.data) return;
-    const attMap = {};
-    for (const rec of (existingAtt.data ?? [])) {
-      if (!attMap[rec.student]) attMap[rec.student] = {};
-      attMap[rec.student][rec.date] = rec.status;
-    }
+    if (studentList.length === 0) return;
+
+    const existingMap = {};
+    (existingRecords || []).forEach((r) => {
+      const studentId = r.student || r.studentId || r.student_id;
+      const date = r.date;
+      existingMap[`${studentId}_${date}`] = r.status;
+    });
+
     const initial = {};
-    for (const s of students.data) {
-      initial[s.id] = {};
-      for (const d of days) {
-        const iso = d.toISOString().slice(0, 10);
-        initial[s.id][iso] = attMap[s.id]?.[iso] ?? "present";
-      }
-    }
-    setGrid(initial);
-  }, [students.data, existingAtt.data, days]);
-
-  // Summary stats for the week
-  const weekStats = useMemo(() => {
-    const counts = { present: 0, absent: 0, late: 0, excused: 0, total: 0 };
-    for (const studentStatuses of Object.values(grid)) {
-      for (const s of Object.values(studentStatuses)) {
-        counts[s] = (counts[s] ?? 0) + 1;
-        counts.total++;
-      }
-    }
-    return counts;
-  }, [grid]);
-
-  const toggleStatus = (studentId, dateIso) => {
-    setGrid(prev => {
-      const curr = prev[studentId]?.[dateIso] ?? "present";
-      const next = STATUS_CYCLE[(STATUS_CYCLE.indexOf(curr) + 1) % STATUS_CYCLE.length];
-      return { ...prev, [studentId]: { ...prev[studentId], [dateIso]: next } };
-    });
-  };
-
-  const markAllDay = (dateIso, status) => {
-    setGrid(prev => {
-      const updated = { ...prev };
-      Object.keys(updated).forEach(sid => {
-        updated[sid] = { ...updated[sid], [dateIso]: status };
+    studentList.forEach((s) => {
+      weekDates.forEach((d) => {
+        const key = `${s.id}_${formatDate(d)}`;
+        // Only pre-fill if there's an existing record; otherwise leave null (empty)
+        initial[key] = existingMap[key] || null;
       });
-      return updated;
     });
+    setRecords(initial);
+  }, [studentList, existingRecords, weekDates]);
+
+  const handleStatusChange = (studentId, date, status) => {
+    const key = `${studentId}_${formatDate(date)}`;
+    setRecords((prev) => ({ ...prev, [key]: status }));
   };
 
   const handleSave = async () => {
+    if (!selectedClassId) return showNotification("Select a class first", "error");
+
     setSaving(true);
     try {
-      const records = [];
-      for (const s of (students.data ?? [])) {
-        for (const d of days) {
-          const iso = d.toISOString().slice(0, 10);
-          records.push({
-            student: s.id,
-            date: iso,
-            status: grid[s.id]?.[iso] ?? "present",
-          });
-        }
+      const payload = [];
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      studentList.forEach((s) => {
+        weekDates.forEach((d) => {
+          // Skip future dates entirely
+          const dCopy = new Date(d);
+          dCopy.setHours(0, 0, 0, 0);
+          if (dCopy > today) return;
+
+          const key = `${s.id}_${formatDate(d)}`;
+          const status = records[key];
+          // Only send records that have been explicitly marked
+          if (status) {
+            payload.push({
+              student: s.id,
+              date: formatDate(d),
+              status: status,
+              remarks: "",
+            });
+          }
+        });
+      });
+
+      if (payload.length === 0) {
+        showNotification("No attendance marked to save", "info");
+        setSaving(false);
+        return;
       }
-      await api.saveAttendanceBulk(records);
-      showNotification(`Attendance saved — ${records.length} records updated`, "success");
-      existingAtt.refetch();
-    } catch (err) {
-      showNotification(err.message || "Failed to save attendance", "error");
+
+      const result = await api.saveAttendanceBulk(payload);
+      const savedCount = result.saved || payload.length;
+      const errorCount = result.errors?.length || 0;
+
+      if (errorCount > 0) {
+        showNotification(`Saved ${savedCount}, ${errorCount} errors`, "warning");
+      } else {
+        showNotification(`Attendance saved (${savedCount} records)`, "success");
+      }
+      refetch();
+    } catch (e) {
+      showNotification(e.message || "Failed to save attendance", "error");
     } finally {
       setSaving(false);
     }
   };
 
-  const isWeekend = d => d.getDay() === 0 || d.getDay() === 6;
+  const navigateWeek = (direction) => {
+    const newWeek = new Date(weekStart);
+    newWeek.setDate(newWeek.getDate() + direction * 7);
+    // Don't allow navigating to future weeks
+    const todayMonday = getMonday(new Date());
+    if (newWeek > todayMonday) {
+      showNotification("Cannot view future weeks", "info");
+      return;
+    }
+    setWeekStart(newWeek);
+  };
+
+  // Stats — only count explicitly marked records
+  const weekStats = useMemo(() => {
+    const counts = { present: 0, absent: 0, late: 0, excused: 0, unmarked: 0 };
+    Object.entries(records).forEach(([key, status]) => {
+      // Only count past/today dates
+      const dateStr = key.split("_").slice(1).join("_");
+      const d = new Date(dateStr);
+      d.setHours(0, 0, 0, 0);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (d > today) return;
+
+      if (status && counts[status] !== undefined) {
+        counts[status]++;
+      } else if (!status) {
+        counts.unmarked++;
+      }
+    });
+    return counts;
+  }, [records]);
+
+  const getStudentName = (s) => {
+    const firstName = s.firstName || s.first_name || "";
+    const lastName = s.lastName || s.last_name || "";
+    return `${firstName} ${lastName}`.trim() || s.studentName || "Unknown";
+  };
+
+  const getAdmissionNumber = (s) => {
+    return s.admissionNumber || s.admission_number || s.admNo || "N/A";
+  };
+
+  const selectedClass = classList.find((c) => c.id === selectedClassId);
+
+  // Count how many editable cells have been marked
+  const markedCount = Object.entries(records).filter(([key, status]) => {
+    if (!status) return false;
+    const dateStr = key.split("_").slice(1).join("_");
+    const d = new Date(dateStr);
+    d.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return d <= today;
+  }).length;
 
   return (
-    <Box>
-      {/* Controls */}
-      <Card sx={{ mb: 2 }}>
-        <CardContent sx={{ display: "flex", gap: 2, flexWrap: "wrap", alignItems: "center", justifyContent: "space-between" }}>
-          <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", alignItems: "center" }}>
-            <ClassSelect
-              value={classId}
-              onChange={setClassId}
-              allOption={false}
-              label="Select Class"
-              disabled={user?.role === "class_teacher"}
-            />
-            <TextField
-              select size="small" label="Select Week"
-              value={selectedWeekIdx}
-              onChange={e => setSelectedWeekIdx(Number(e.target.value))}
-              sx={{ minWidth: 260 }}
+    <DashboardLayout>
+      <PageHeader title="Attendance Entry" subtitle="Mark daily attendance for your classes" />
+
+      {/* Filters */}
+      <Card sx={{ p: 2, mb: 2 }}>
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={2}
+          alignItems="center"
+          flexWrap="wrap"
+        >
+          <FormControl size="small" sx={{ minWidth: 200 }}>
+            <InputLabel>Class</InputLabel>
+            <Select
+              value={selectedClassId}
+              label="Class"
+              onChange={(e) => setSelectedClassId(e.target.value)}
             >
-              {weeks.map((w, i) => (
-                <MenuItem key={i} value={i}>Week {i + 1}: {w.label}</MenuItem>
-              ))}
-            </TextField>
-          </Box>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Alert severity="info" icon={<InfoIcon fontSize="small" />} sx={{ py: 0, "& .MuiAlert-message": { py: 0.5 } }}>
-              Parents are auto-notified of absences
-            </Alert>
-            <Button
-              variant="contained" startIcon={<SaveIcon />}
-              onClick={handleSave}
-              disabled={!classId || saving || students.loading}
+              {myClasses.length === 0 ? (
+                <MenuItem disabled>You are not assigned as a class teacher</MenuItem>
+              ) : (
+                myClasses.map((c) => (
+                  <MenuItem key={c.id} value={c.id}>
+                    {c.name}
+                  </MenuItem>
+                ))
+              )}
+            </Select>
+          </FormControl>
+
+          <Divider orientation="vertical" flexItem sx={{ display: { xs: "none", sm: "block" } }} />
+
+          {/* Week Navigation */}
+          <Stack direction="row" spacing={1} alignItems="center">
+            <IconButton onClick={() => navigateWeek(-1)} size="small">
+              <ChevronLeftIcon />
+            </IconButton>
+            <Typography
+              variant="body1"
+              fontWeight={600}
+              sx={{ minWidth: 200, textAlign: "center" }}
             >
-              {saving ? "Saving…" : "Save All Changes"}
-            </Button>
-          </Box>
-        </CardContent>
+              {weekStart.toLocaleDateString("en-KE", { day: "numeric", month: "short" })} -{" "}
+              {weekEnd.toLocaleDateString("en-KE", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              })}
+            </Typography>
+            <IconButton onClick={() => navigateWeek(1)} size="small">
+              <ChevronRightIcon />
+            </IconButton>
+          </Stack>
+        </Stack>
       </Card>
 
-      {/* Week Stats Bar */}
-      {classId && !students.loading && Object.keys(grid).length > 0 && (
-        <Card sx={{ mb: 2 }}>
-          <CardContent sx={{ py: "12px !important" }}>
-            <Stack direction="row" spacing={1} flexWrap="wrap" alignItems="center">
-              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mr: 1 }}>
-                <PeopleIcon fontSize="small" sx={{ color: "text.secondary" }} />
-                <Typography variant="body2" color="text.secondary" fontWeight={600}>
-                  Week Summary:
-                </Typography>
-              </Box>
-              {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
-                <Chip
-                  key={key}
-                  icon={<Box sx={{ color: cfg.color, display: "flex", pl: 0.5 }}>{cfg.icon}</Box>}
-                  label={`${cfg.label}: ${weekStats[key] ?? 0}`}
-                  size="small"
-                  sx={{ bgcolor: cfg.bg, color: cfg.color, fontWeight: 700, "& .MuiChip-icon": { color: cfg.color } }}
-                />
-              ))}
-              <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
-              <Typography variant="body2" color="text.secondary">
-                Total entries: {weekStats.total}
-              </Typography>
-            </Stack>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Table or empty state */}
-      {!classId ? (
-        <Card sx={{ p: 6, textAlign: "center", bgcolor: "action.hover" }}>
-          <PeopleIcon sx={{ fontSize: 48, color: "text.disabled", mb: 1 }} />
-          <Typography variant="h6" color="text.secondary" gutterBottom>
-            No Class Selected
-          </Typography>
+      {!selectedClassId ? (
+        <Card sx={{ p: 6, textAlign: "center" }}>
           <Typography color="text.secondary">
-            Select a class above to start recording attendance.
+            {myClasses.length === 0
+              ? "You are not assigned as a class teacher for any class."
+              : "Select a class above to begin marking attendance"}
           </Typography>
         </Card>
       ) : (
-        <DataState
-          loading={students.loading || existingAtt.loading}
-          error={students.error || existingAtt.error}
-          data={students.data}
-          onRetry={() => { students.refetch(); existingAtt.refetch(); }}
-          emptyMessage="No active students found in this class."
-        >
-          {(studentList) =>
-            studentList.length === 0 ? (
-              <Card sx={{ p: 6, textAlign: "center", bgcolor: "action.hover" }}>
-                <Typography color="text.secondary">No active students found in this class.</Typography>
-              </Card>
-            ) : (
-              <TableContainer component={Card} sx={{ border: 1, borderColor: "divider", overflowX: "auto" }}>
-                <Table size="small" sx={{ minWidth: 600 }}>
-                  <TableHead>
-                    <TableRow sx={{ bgcolor: "action.hover" }}>
-                      <TableCell sx={{ minWidth: 200, fontWeight: 800, borderRight: 1, borderColor: "divider", position: "sticky", left: 0, bgcolor: "background.paper", zIndex: 1 }}>
-                        Student
-                      </TableCell>
-                      {days.map((d, i) => {
-                        const iso     = d.toISOString().slice(0, 10);
-                        const weekend = isWeekend(d);
-                        return (
-                          <TableCell key={i} align="center" sx={{ borderRight: 1, borderColor: "divider", p: 1, minWidth: 80, bgcolor: weekend ? "rgba(0,0,0,0.03)" : "inherit", opacity: weekend ? 0.5 : 1 }}>
-                            <Typography variant="caption" sx={{ fontWeight: 700, display: "block", textTransform: "uppercase", letterSpacing: 0.5 }}>
-                              {d.toLocaleDateString("en-US", { weekday: "short" })}
-                            </Typography>
-                            <Typography variant="body2" sx={{ fontWeight: 800 }}>{d.getDate()}</Typography>
-                            {!weekend && (
-                              <Box sx={{ mt: 0.5 }}>
-                                <Tooltip title={`Mark all ${iso} as Present`} placement="top">
-                                  <IconButton size="small" onClick={() => markAllDay(iso, "present")} sx={{ p: 0.25 }}>
-                                    <FlashOnIcon fontSize="small" sx={{ color: "success.main", fontSize: 14 }} />
-                                  </IconButton>
-                                </Tooltip>
-                              </Box>
-                            )}
+        <>
+          {/* Stats */}
+          <Card sx={{ p: 2, mb: 2 }}>
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={2}
+              alignItems="center"
+              flexWrap="wrap"
+            >
+              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                Week summary:
+              </Typography>
+              {STATUS_OPTIONS.map((opt) => (
+                <Chip
+                  key={opt.value}
+                  label={`${opt.label}: ${weekStats[opt.value] || 0}`}
+                  color={opt.color}
+                  size="small"
+                  variant="outlined"
+                />
+              ))}
+              <Chip
+                label={`Unmarked: ${weekStats.unmarked}`}
+                color="default"
+                size="small"
+                variant="outlined"
+              />
+            </Stack>
+          </Card>
+
+          {/* Weekly Attendance Grid */}
+          <Card>
+            <DataState
+              loading={loading || studentsLoading}
+              data={studentList}
+              isEmpty={(d) => !d || d.length === 0}
+              emptyMessage="No students in this class"
+            >
+              {() => (
+                <>
+                  <TableContainer sx={{ overflowX: "auto" }}>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow sx={{ bgcolor: "action.hover" }}>
+                          <TableCell
+                            sx={{
+                              fontWeight: 700,
+                              position: "sticky",
+                              left: 0,
+                              bgcolor: "background.paper",
+                              zIndex: 2,
+                              minWidth: 150,
+                            }}
+                          >
+                            Student
                           </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {studentList.map((s, rowIdx) => (
-                      <TableRow key={s.id} hover sx={{ "&:nth-of-type(even)": { bgcolor: "action.hover" } }}>
-                        <TableCell sx={{ fontWeight: 600, borderRight: 1, borderColor: "divider", position: "sticky", left: 0, bgcolor: rowIdx % 2 === 0 ? "background.paper" : "action.hover", zIndex: 1 }}>
-                          <Typography variant="body2" sx={{ fontWeight: 700 }}>{s.firstName} {s.lastName}</Typography>
-                          <Typography variant="caption" color="text.secondary">{s.admissionNumber}</Typography>
-                        </TableCell>
-                        {days.map((d, i) => {
-                          const iso    = d.toISOString().slice(0, 10);
-                          const status = grid[s.id]?.[iso] ?? "present";
-                          const cfg    = STATUS_CONFIG[status];
-                          const weekend = isWeekend(d);
-                          return (
+                          {weekDates.map((d, i) => {
+                            const future = isFuture(d);
+                            const today = isToday(d);
+                            return (
+                              <TableCell
+                                key={i}
+                                align="center"
+                                sx={{
+                                  fontWeight: 700,
+                                  minWidth: isMobile ? 80 : 120,
+                                  bgcolor: today
+                                    ? "action.selected"
+                                    : future
+                                      ? "action.disabledBackground"
+                                      : "background.paper",
+                                  opacity: future ? 0.5 : 1,
+                                }}
+                              >
+                                <Typography variant="caption" display="block">
+                                  {d.toLocaleDateString("en-KE", { weekday: "short" })}
+                                </Typography>
+                                <Typography variant="body2">
+                                  {d.toLocaleDateString("en-KE", {
+                                    day: "numeric",
+                                    month: "short",
+                                  })}
+                                </Typography>
+                                {future && (
+                                  <LockIcon sx={{ fontSize: 14, color: "text.disabled" }} />
+                                )}
+                              </TableCell>
+                            );
+                          })}
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {studentList.map((s) => (
+                          <TableRow key={s.id} hover>
                             <TableCell
-                              key={i}
-                              align="center"
-                              onClick={() => !weekend && toggleStatus(s.id, iso)}
                               sx={{
-                                cursor: weekend ? "default" : "pointer",
-                                borderRight: 1,
-                                borderColor: "divider",
-                                bgcolor: weekend ? "rgba(0,0,0,0.03)" : (status === "present" ? "transparent" : cfg.bg),
-                                transition: "background 0.15s",
-                                opacity: weekend ? 0.4 : 1,
-                                "&:hover": !weekend ? { bgcolor: "action.selected", transform: "scale(1.05)" } : {},
-                                userSelect: "none",
+                                position: "sticky",
+                                left: 0,
+                                bgcolor: "background.paper",
+                                zIndex: 1,
                               }}
                             >
-                              {!weekend && (
-                                <Tooltip title={`${cfg.label} — click to change`} placement="top">
-                                  <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                                    <Box sx={{ color: cfg.color }}>{cfg.icon}</Box>
-                                    <Typography variant="caption" sx={{ fontWeight: 900, fontSize: 9, color: cfg.color, letterSpacing: 0.5 }}>
-                                      {cfg.shortcut}
-                                    </Typography>
-                                  </Box>
-                                </Tooltip>
-                              )}
+                              <Typography variant="body2" fontWeight={600}>
+                                {getStudentName(s)}
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                {getAdmissionNumber(s)}
+                              </Typography>
                             </TableCell>
-                          );
-                        })}
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            )
-          }
-        </DataState>
-      )}
+                            {weekDates.map((d, i) => {
+                              const key = `${s.id}_${formatDate(d)}`;
+                              const currentStatus = records[key];
+                              const future = isFuture(d);
 
-      {/* Legend */}
-      <Card sx={{ mt: 2, p: 2 }}>
-        <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 700 }}>Legend & Keyboard Hints</Typography>
-        <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap", alignItems: "center" }}>
-          {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
-            <Box key={key} sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
-              <Box sx={{ color: cfg.color, display: "flex" }}>{cfg.icon}</Box>
-              <Typography variant="body2">{cfg.label}</Typography>
-              <Chip label={cfg.shortcut} size="small" sx={{ height: 18, fontSize: 10, fontWeight: 700 }} />
-            </Box>
-          ))}
-          <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, ml: "auto" }}>
-            <FlashOnIcon fontSize="small" sx={{ color: "success.main" }} />
-            <Typography variant="body2" color="text.secondary">= Bulk mark day as Present</Typography>
-          </Box>
-        </Box>
-      </Card>
-    </Box>
+                              return (
+                                <TableCell
+                                  key={i}
+                                  align="center"
+                                  sx={{
+                                    bgcolor: future ? "action.disabledBackground" : "transparent",
+                                    opacity: future ? 0.5 : 1,
+                                  }}
+                                >
+                                  {future ? (
+                                    <Typography variant="caption" color="text.disabled">
+                                      —
+                                    </Typography>
+                                  ) : (
+                                    <Stack
+                                      direction={isMobile ? "column" : "row"}
+                                      spacing={0.3}
+                                      justifyContent="center"
+                                    >
+                                      {STATUS_OPTIONS.map((opt) => (
+                                        <Tooltip key={opt.value} title={opt.label}>
+                                          <IconButton
+                                            size="small"
+                                            color={
+                                              currentStatus === opt.value ? opt.color : "default"
+                                            }
+                                            onClick={() => handleStatusChange(s.id, d, opt.value)}
+                                            sx={{
+                                              border: 1,
+                                              borderColor:
+                                                currentStatus === opt.value
+                                                  ? `${opt.color}.main`
+                                                  : "divider",
+                                              bgcolor:
+                                                currentStatus === opt.value
+                                                  ? `${opt.color}.lighter`
+                                                  : "transparent",
+                                              padding: "4px",
+                                            }}
+                                          >
+                                            <opt.icon sx={{ fontSize: isMobile ? 16 : 20 }} />
+                                          </IconButton>
+                                        </Tooltip>
+                                      ))}
+                                    </Stack>
+                                  )}
+                                </TableCell>
+                              );
+                            })}
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+
+                  {/* Sticky Save Button */}
+                  <Box
+                    sx={{
+                      p: 2,
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      borderTop: 1,
+                      borderColor: "divider",
+                      bgcolor: "background.paper",
+                      position: { xs: "sticky", md: "static" },
+                      bottom: 0,
+                      zIndex: 10,
+                    }}
+                  >
+                    <Typography variant="body2" color="text.secondary">
+                      {selectedClass?.name} • {markedCount} records marked
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      startIcon={<SaveIcon />}
+                      onClick={handleSave}
+                      disabled={saving || markedCount === 0}
+                    >
+                      {saving ? "Saving..." : "Save Attendance"}
+                    </Button>
+                  </Box>
+                </>
+              )}
+            </DataState>
+          </Card>
+        </>
+      )}
+    </DashboardLayout>
   );
 }

@@ -127,7 +127,7 @@ export function MissionBand({ image }) {
                 }}
               >
                 We nurture intellectual curiosity, moral integrity, and leadership qualities —
-                ensuring every student leaves Kibaara ready to make a meaningful contribution to
+                ensuring every student leaves Kibaraa ready to make a meaningful contribution to
                 society.
               </Typography>
 

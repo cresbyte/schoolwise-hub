@@ -258,7 +258,7 @@ export function WebsiteNavbar() {
               />
               <Typography
                 component={Link}
-                href="/parent-portal"
+                href="/login"
                 sx={{
                   fontSize: 12,
                   color: "rgba(255,255,255,0.82)",
@@ -271,7 +271,7 @@ export function WebsiteNavbar() {
               </Typography>
               <Typography
                 component={Link}
-                href="/staff-portal"
+                href="/login"
                 sx={{
                   fontSize: 12,
                   color: "rgba(255,255,255,0.82)",
@@ -696,7 +696,7 @@ export function WebsiteNavbar() {
           <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
             <Box
               component={Link}
-              href="/parent-portal"
+              href="/login"
               sx={{
                 flex: 1,
                 display: "block",
@@ -716,7 +716,7 @@ export function WebsiteNavbar() {
             </Box>
             <Box
               component={Link}
-              href="/staff-portal"
+              href="/login"
               sx={{
                 flex: 1,
                 display: "block",

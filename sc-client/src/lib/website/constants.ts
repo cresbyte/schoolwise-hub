@@ -6,7 +6,7 @@
 /** School identity and contact details for the public website. */
 export const SCHOOL = {
   name: "Kabraas Elites Academy",
-  shortName: "Kibaara",
+  shortName: "Kibaraa",
   location: "Nairobi County, Kenya",
   motto: "Excellence Through Knowledge",
   tagline: "Nurturing Tomorrow's Leaders Today",
@@ -15,8 +15,8 @@ export const SCHOOL = {
   phone: "0712 345 678",
   phoneRaw: "254712345678",
   whatsapp: "254712345678",
-  email: "info@kibaara.elite.ac.ke",
-  admissionsEmail: "admissions@kibaara.elite.ac.ke",
+  email: "info@kibaraa.elite.ac.ke",
+  admissionsEmail: "admissions@kibaraa.elite.ac.ke",
   address: "Milimani Road, Nairobi Town",
   postal: "P.O. Box 1245-20100, Nairobi",
   county: "Nairobi",

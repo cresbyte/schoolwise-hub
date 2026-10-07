@@ -65,7 +65,7 @@ export function PortalLayout({ children }: { children: ReactNode }) {
 
   const handleLogout = async () => {
     await logout();
-    router.push("/parent-portal");
+    router.push("/login");
   };
 
   return (

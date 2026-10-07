@@ -21,7 +21,7 @@ const SECTIONS = [
     items: ["Football", "Basketball", "Athletics", "Swimming", "Rugby", "Volleyball"],
     desc: "Our sports programme competes at county and national levels. Inter-house competitions foster teamwork and school spirit.",
     image: WEBSITE_IMAGES.sports,
-    imageAlt: "Kibaara students competing in inter-house athletics and sports day events",
+    imageAlt: "Kibaraa students competing in inter-house athletics and sports day events",
   },
   {
     id: "clubs",
@@ -120,7 +120,7 @@ export default function SchoolLifePage() {
               <ImagePlaceholder
                 src={WEBSITE_IMAGES.campusBanner}
                 aspectRatio="4/3"
-                alt="Kibaara boarding wing and campus accommodation facilities"
+                alt="Kibaraa boarding wing and campus accommodation facilities"
               />
               <Box>
                 <Typography variant="h5" sx={{ fontFamily: HEADING_FONT, fontWeight: 700, mb: 2 }}>

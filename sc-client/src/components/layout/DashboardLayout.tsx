@@ -108,7 +108,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
   }, [pathname]);
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) router.push("/staff-portal");
+    if (!isLoading && !isAuthenticated) router.push("/login");
   }, [isLoading, isAuthenticated, router]);
 
   if (isLoading || !isAuthenticated || !user) {
@@ -123,7 +123,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
 
   const handleLogout = async () => {
     await logout();
-    router.push("/staff-portal");
+    router.push("/login");
   };
 
   const toggleGroup = (heading: string) => {

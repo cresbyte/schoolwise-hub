@@ -8,6 +8,7 @@ export type Curriculum = "CBC";
 export type Gender = "Male" | "Female";
 export type TermNumber = 1 | 2 | 3;
 export type GradeLevel =
+  | "Play Group"
   | "PP1"
   | "PP2"
   | "Grade 1"
