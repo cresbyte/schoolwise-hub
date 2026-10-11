@@ -823,7 +823,9 @@ class CollectionsByDayView(APIView):
     def get(self, request):
         df = request.query_params.get("from")
         dt = request.query_params.get("to")
-        qs = Payment.objects.filter(status=Payment.Status.SUCCESS)
+        # Fee collections strictly measure incoming payments (amount > 0).
+        # Negative payment records are accounting refund credits, not negative fee collections.
+        qs = Payment.objects.filter(status=Payment.Status.SUCCESS, amount__gt=0)
         if df:
             qs = qs.filter(paid_on__gte=df)
         if dt:

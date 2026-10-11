@@ -26,12 +26,33 @@ const shortDate = (s) =>
   new Date(`${s}T00:00`).toLocaleDateString("en-KE", { day: "numeric", month: "short" });
 const compact = (v) => new Intl.NumberFormat("en", { notation: "compact" }).format(v);
 
+function buildDailyCollections(dailyData, rangeDays) {
+  const map = new Map();
+  (dailyData || []).forEach((d) => {
+    const amt = Math.max(0, Number(d.amount || 0));
+    map.set(d.date, amt);
+  });
+
+  const list = [];
+  const now = new Date();
+  for (let i = rangeDays - 1; i >= 0; i--) {
+    const d = new Date(now.getTime() - i * 86400000);
+    const dateStr = d.toLocaleDateString("en-CA");
+    list.push({
+      date: dateStr,
+      amount: map.get(dateStr) || 0,
+    });
+  }
+  return list;
+}
+
 export default function AccountantDashboardPage() {
   const router = useRouter();
   const theme = useTheme();
   const [yearId, setYearId] = useState("");
   const [termId, setTermId] = useState("");
   const [range, setRange] = useState(30);
+  const [chartType, setChartType] = useState("bar");
 
   const { data, loading, error } = useAsync(async () => {
     const [years, terms] = await Promise.all([
@@ -86,10 +107,10 @@ export default function AccountantDashboardPage() {
   const rateColor = rate >= 0.8 ? "success" : rate >= 0.5 ? "warning" : "error";
 
   // Chart data
-  const days = daily.slice(-range);
+  const days = buildDailyCollections(daily, range);
   const todayTotal = daily
     .filter((d) => d.date === ymd(new Date()))
-    .reduce((s, d) => s + Number(d.amount || 0), 0);
+    .reduce((s, d) => s + Math.max(0, Number(d.amount || 0)), 0);
 
   const byMethod = {};
   payments
@@ -225,29 +246,67 @@ export default function AccountantDashboardPage() {
                 {formatKES(todayTotal)}
               </Typography>
             </Box>
-            <ToggleButtonGroup
-              size="small"
-              exclusive
-              value={range}
-              onChange={(_, v) => v && setRange(v)}
-            >
-              <ToggleButton value={7}>7 days</ToggleButton>
-              <ToggleButton value={30}>30 days</ToggleButton>
-            </ToggleButtonGroup>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <ToggleButtonGroup
+                size="small"
+                exclusive
+                value={chartType}
+                onChange={(_, v) => v && setChartType(v)}
+              >
+                <ToggleButton value="bar" sx={{ px: 1.5, py: 0.25, fontSize: "0.75rem" }}>
+                  Bar
+                </ToggleButton>
+                <ToggleButton value="line" sx={{ px: 1.5, py: 0.25, fontSize: "0.75rem" }}>
+                  Line
+                </ToggleButton>
+              </ToggleButtonGroup>
+              <ToggleButtonGroup
+                size="small"
+                exclusive
+                value={range}
+                onChange={(_, v) => v && setRange(v)}
+              >
+                <ToggleButton value={7} sx={{ px: 1.5, py: 0.25, fontSize: "0.75rem" }}>
+                  7 days
+                </ToggleButton>
+                <ToggleButton value={30} sx={{ px: 1.5, py: 0.25, fontSize: "0.75rem" }}>
+                  30 days
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </Stack>
           </Stack>
-          {days.length === 0 ? (
+          {days.every((d) => d.amount === 0) ? (
             <EmptyText>No collections in this period.</EmptyText>
+          ) : chartType === "bar" ? (
+            <BarChart
+              height={280}
+              margin={{ left: 56, right: 16, top: 16, bottom: 28 }}
+              xAxis={[
+                {
+                  scaleType: "band",
+                  data: days.map((d) => shortDate(d.date)),
+                },
+              ]}
+              yAxis={[{ valueFormatter: compact, min: 0 }]}
+              series={[
+                {
+                  data: days.map((d) => d.amount),
+                  color: theme.palette.primary.main,
+                  valueFormatter: (v) => formatKES(v),
+                },
+              ]}
+            />
           ) : (
             <LineChart
               height={280}
               margin={{ left: 56, right: 16, top: 16, bottom: 28 }}
               xAxis={[{ scaleType: "point", data: days.map((d) => shortDate(d.date)) }]}
-              yAxis={[{ valueFormatter: compact }]}
+              yAxis={[{ valueFormatter: compact, min: 0 }]}
               series={[
                 {
-                  data: days.map((d) => Number(d.amount || 0)),
-                  area: true,
-                  showMark: false,
+                  data: days.map((d) => d.amount),
+                  curve: "linear",
+                  showMark: range === 7,
                   color: theme.palette.primary.main,
                   valueFormatter: (v) => formatKES(v),
                 },
