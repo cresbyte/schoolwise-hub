@@ -14,7 +14,8 @@ import PersonIcon from "@mui/icons-material/Person";
 import ContactMailIcon from "@mui/icons-material/ContactMail";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import EventIcon from "@mui/icons-material/Event";
-import { KAB } from "@/theme/websiteTheme";
+import { BRAND } from "@/theme/websiteTheme";
+
 import { staggerContainer, staggerItem, viewportOnce } from "@/lib/motion";
 
 const TILES = [
@@ -88,11 +89,7 @@ export function QuickLinks() {
           }}
         >
           {TILES.map((tile, i) => (
-            <Box
-              key={tile.href}
-              component={motion.div}
-              variants={staggerItem}
-            >
+            <Box key={tile.href} component={motion.div} variants={staggerItem}>
               <Box
                 component={Link}
                 href={tile.href}

@@ -10,39 +10,104 @@
  *   requiresClassTeacher  (optional) only show to class teachers
  */
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
-import ArticleIcon from "@mui/icons-material/Article";
+import AssessmentIcon from "@mui/icons-material/Assessment";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import BadgeIcon from "@mui/icons-material/Badge";
-import BeachAccessIcon from "@mui/icons-material/BeachAccess";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import ClassIcon from "@mui/icons-material/Class";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import DescriptionIcon from "@mui/icons-material/Description";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
-import FormatQuoteIcon from "@mui/icons-material/FormatQuote";
-import GradingIcon from "@mui/icons-material/Report";
+import EventNoteIcon from "@mui/icons-material/EventNote";
 import GroupWorkIcon from "@mui/icons-material/GroupWork";
-import HomeIcon from "@mui/icons-material/Home";
-import InfoIcon from "@mui/icons-material/Info";
-import LanguageIcon from "@mui/icons-material/Language";
-import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
-import MailIcon from "@mui/icons-material/Mail";
+import LayersIcon from "@mui/icons-material/Layers";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
-import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
 import MessageIcon from "@mui/icons-material/Message";
+import PaymentsIcon from "@mui/icons-material/Payments";
 import PeopleIcon from "@mui/icons-material/People";
-import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
+import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import GradingIcon from "@mui/icons-material/Report";
 import ScheduleIcon from "@mui/icons-material/Schedule";
-import SchoolIcon from "@mui/icons-material/School";
-import SettingsIcon from "@mui/icons-material/Settings";
-import WarningIcon from "@mui/icons-material/Warning";
+import TodayIcon from "@mui/icons-material/Today";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import AccessAlarmIcon from "@mui/icons-material/AccessAlarm";
+import { EscalatorWarning } from "@mui/icons-material";
 
 export const NAV_GROUPS = [
   {
     heading: "Overview",
     items: [
       { label: "Dashboard", to: "/dashboard", icon: DashboardIcon, permission: "reports.view" },
+      {
+        label: "Current Period",
+        to: "/school/current-period",
+        icon: TodayIcon,
+        permission: "school.view",
+      },
+      {
+        label: "Academic Years",
+        to: "/school/academic-years",
+        icon: CalendarMonthIcon,
+        permission: "school.view",
+      },
+      {
+        label: "Terms",
+        to: "/school/terms",
+        icon: EventNoteIcon,
+        permission: "school.view",
+      },
+      {
+        label: "Grade Levels",
+        to: "/school/grade-levels",
+        icon: LayersIcon,
+        permission: "school.view",
+      },
+      {
+        label: "School Calendar",
+        to: "/school/calendar",
+        icon: CalendarMonthIcon,
+        permission: "school.view",
+      },
+    ],
+  },
+
+  {
+    heading: "Teaching",
+    items: [
+      {
+        label: "Classes",
+        to: "/settings/classes",
+        icon: ClassIcon,
+        permission: "settings.view",
+      },
+      {
+        label: "Subjects",
+        to: "/settings/subjects",
+        icon: MenuBookIcon,
+        permission: "settings.view",
+      },
+      {
+        label: "Teacher Assignments",
+        to: "/settings/assignments",
+        icon: PeopleAltIcon,
+        permission: "settings.view",
+      },
+      {
+        label: "Timetable",
+        to: "/timetable/grid",
+        icon: ScheduleIcon,
+        permission: "timetable.view",
+      },
+      {
+        label: "Time Schedule",
+        to: "/timetable/schedule",
+        icon: AccessAlarmIcon,
+        permission: "schedule.view",
+      },
     ],
   },
   {
@@ -63,15 +128,34 @@ export const NAV_GROUPS = [
         hiddenRoles: ["teacher", "class_teacher"],
       },
       {
-        label: "Attendance",
-        to: "/attendance",
+        label: "Year-end Promotion",
+        to: "/students/promotion",
+        icon: PlayArrowIcon, // or TrendingUp, Upgrade, etc.
+        permission: "settings.view",
+      },
+
+      {
+        label: "Take Attendance",
+        to: "/attendance/take",
         icon: EventAvailableIcon,
         permission: "attendance.write",
+      },
+      {
+        label: "Attendance Report",
+        to: "/attendance/report",
+        icon: AssessmentIcon,
+        permission: "attendance.view",
+      },
+      {
+        label: "At-risk Students",
+        to: "/attendance/at-risk",
+        icon: WarningAmberIcon,
+        permission: "attendance.view",
       },
     ],
   },
   {
-    heading: "Finance",
+    heading: "Fees",
     items: [
       {
         label: "Fee Structures",
@@ -79,40 +163,43 @@ export const NAV_GROUPS = [
         icon: AccountBalanceWalletIcon,
         permission: "fees.view",
       },
-      { label: "Invoices", to: "/finance/invoices", icon: ReceiptIcon, permission: "fees.view" },
       {
-        label: "Special Levies",
-        to: "/fees/levies",
-        icon: ReceiptLongIcon,
+        label: "Invoices",
+        to: "/fees/invoices",
+        icon: ReceiptIcon,
         permission: "fees.view",
       },
       {
-        label: "Outstanding Fees",
+        label: "Payments",
+        to: "/fees/payments",
+        icon: PaymentsIcon,
+        permission: "fees.view",
+      },
+      {
+        label: "Outstanding",
         to: "/fees/outstanding",
-        icon: WarningIcon,
+        icon: WarningAmberIcon,
+        permission: "fees.view",
+      },
+      {
+        label: "One-off Charges",
+        to: "/fees/charges",
+        icon: ReceiptLongIcon,
         permission: "fees.view",
       },
     ],
   },
+
   {
     heading: "Academics",
     items: [
       { label: "Examinations", to: "/exams", icon: AssignmentIcon, permission: "exams.create" },
-      { label: "My Grading", to: "/staff/grading", icon: GradingIcon, permission: "exams.marks" },
+      { label: "My Grading", to: "/exams/grading", icon: GradingIcon, permission: "exams.marks" },
       {
         label: "Class Comments",
         to: "/exams/comments",
         icon: DescriptionIcon,
         permission: "exams.marks",
-        requiresClassTeacher: true,
-      },
-      { label: "Report Cards", to: "/reports", icon: DescriptionIcon, permission: "exams.view" },
-      { label: "Timetable", to: "/timetable", icon: ScheduleIcon, permission: "timetable.view" },
-      {
-        label: "Term Planner",
-        to: "/term-planner",
-        icon: CalendarMonthIcon,
-        permission: "classes.view",
       },
     ],
   },
@@ -120,38 +207,22 @@ export const NAV_GROUPS = [
     heading: "Communication",
     items: [{ label: "Messages", to: "/messages", icon: MessageIcon, permission: "messages.view" }],
   },
-  {
-    heading: "Staff",
-    items: [
-      { label: "All Staff", to: "/staff", icon: BadgeIcon, permission: "staff.view", exact: true },
-      {
-        label: "Leave Management",
-        to: "/staff/leave",
-        icon: BeachAccessIcon,
-        permission: "staff.view",
-      },
-    ],
-  },
+
   {
     heading: "Settings",
     items: [
       {
-        label: "Classes",
-        to: "/settings/classes",
-        icon: MeetingRoomIcon,
-        permission: "settings.view",
+        label: "All Staff",
+        to: "/users/staff",
+        icon: BadgeIcon,
+        permission: "staff.view",
+        exact: true,
       },
       {
-        label: "Subjects",
-        to: "/settings/subjects",
-        icon: LibraryBooksIcon,
-        permission: "settings.view",
-      },
-      {
-        label: "School Settings",
-        to: "/settings",
-        icon: SettingsIcon,
-        permission: "settings.view",
+        label: "All Parents",
+        to: "/users/parents",
+        icon: EscalatorWarning,
+        permission: "parents.view",
         exact: true,
       },
       {
@@ -159,60 +230,6 @@ export const NAV_GROUPS = [
         to: "/settings/users",
         icon: ManageAccountsIcon,
         permission: "settings.view",
-      },
-    ],
-  },
-  {
-    heading: "Website",
-    items: [
-      {
-        label: "Overview",
-        to: "/website-cms",
-        icon: LanguageIcon,
-        permission: "settings.view",
-        exact: true,
-      },
-      {
-        label: "News & Events",
-        to: "/website-cms/news",
-        icon: ArticleIcon,
-        permission: "settings.view",
-      },
-      {
-        label: "Gallery",
-        to: "/website-cms/gallery",
-        icon: PhotoLibraryIcon,
-        permission: "settings.view",
-      },
-      {
-        label: "Applications",
-        to: "/website-cms/applications",
-        icon: SchoolIcon,
-        permission: "settings.view",
-      },
-      {
-        label: "Contact Messages",
-        to: "/website-cms/contacts",
-        icon: MailIcon,
-        permission: "settings.view",
-      },
-      {
-        label: "Testimonials",
-        to: "/website-cms/testimonials",
-        icon: FormatQuoteIcon,
-        permission: "settings.edit",
-      },
-      {
-        label: "Homepage Content",
-        to: "/website-cms/homepage",
-        icon: HomeIcon,
-        permission: "settings.edit",
-      },
-      {
-        label: "School Info",
-        to: "/website-cms/school-info",
-        icon: InfoIcon,
-        permission: "settings.edit",
       },
     ],
   },

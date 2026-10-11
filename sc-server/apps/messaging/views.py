@@ -2,8 +2,8 @@ from rest_framework import viewsets, permissions, filters, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
-from apps.accounts.permissions import IsStaff, IsStaffOrParent
-from apps.accounts.models import UserRole
+from core.permissions import IsStaff, IsStaffOrParent
+from core.models import UserRole
 from .models import SchoolMessage, ParentReply, MessageRead
 from .serializers import SchoolMessageSerializer, ParentReplySerializer
 
@@ -31,7 +31,7 @@ class SchoolMessageViewSet(viewsets.ModelViewSet):
         if user.role == UserRole.PARENT:
             # Parents see messages scoped to school, their children's grades/classes,
             # or messages targeted individually at their children.
-            from apps.students.models import Student
+            from core.models import Student
             children = Student.objects.filter(guardians=user)
             grade_levels = list(children.values_list("grade_level", flat=True).distinct())
             class_ids = list(children.values_list("class_room_id", flat=True).distinct())
@@ -55,7 +55,7 @@ class SchoolMessageViewSet(viewsets.ModelViewSet):
         if student_id:
             # Return messages relevant to this specific student
             if user.role == UserRole.PARENT:
-                from apps.students.models import Student
+                from core.models import Student
                 try:
                     student = Student.objects.get(id=student_id, guardians=user)
                     queryset = SchoolMessage.objects.filter(
@@ -70,7 +70,7 @@ class SchoolMessageViewSet(viewsets.ModelViewSet):
                     queryset = SchoolMessage.objects.none()
             # Staff can filter by student too
             else:
-                from apps.students.models import Student
+                from core.models import Student
                 try:
                     student = Student.objects.get(id=student_id)
                     queryset = SchoolMessage.objects.filter(
@@ -116,7 +116,7 @@ class ParentReplyViewSet(viewsets.ModelViewSet):
         queryset = super().get_queryset()
         user = self.request.user
         if user.role == UserRole.PARENT:
-            from apps.students.models import Student
+            from core.models import Student
             children = Student.objects.filter(guardians=user)
             queryset = queryset.filter(student__in=children)
         return queryset

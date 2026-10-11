@@ -203,10 +203,10 @@ export const ROLE_HOME: Record<UserRole, string> = {
   headteacher: "/dashboard",
   deputy: "/dashboard",
   hod: "/dashboard",
-  class_teacher: "/dashboard",
-  teacher: "/dashboard",
-  staff: "/dashboard",
-  accountant: "/fees/collection",
+  class_teacher: "/staff-portal",
+  teacher: "/staff-portal",
+  staff: "/staff-portal",
+  accountant: "/accounts/fees",
   parent: "/portal",
 };
 

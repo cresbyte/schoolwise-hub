@@ -17,7 +17,7 @@ const DASHBOARD_BLOCKED_PATHS = [
   "/students", "/staff", "/classes", "/attendance",
   "/exams", "/reports", "/timetable", "/term-planner",
   "/fees", "/payroll", "/reports", "/messages",
-  "/settings", "/subjects", "/website-cms",
+  "/settings", "/subjects", "/website-cms", "/accounts", "/staff-portal",
 ];
 
 export function useRouteGuard() {
@@ -29,14 +29,19 @@ export function useRouteGuard() {
 
     // Not logged in → go to login
     if (!isAuthenticated || !user) {
-      router.replace("/parent-portal");
+      router.replace("/login");
       return;
     }
 
     const path = window.location.pathname;
 
-    // Parent trying to access any dashboard route → redirect to portal
+    // Parent trying to access any staff/admin/accounts route → redirect to portal
     if (PORTAL_ONLY_ROLES.includes(user.role as any)) {
+      const statementMatch = path.match(/\/students\/([^/]+)\/statement/);
+      if (statementMatch) {
+        router.replace(`/portal/fees?child=${statementMatch[1]}&statement=1`);
+        return;
+      }
       const isDashboardRoute = DASHBOARD_BLOCKED_PATHS.some(p => path.startsWith(p));
       if (isDashboardRoute) {
         router.replace("/portal");

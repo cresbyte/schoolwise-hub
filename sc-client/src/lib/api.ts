@@ -106,7 +106,6 @@ export const api = {
   createStaff: (data: any) => request("/staff/", { method: "POST", body: JSON.stringify(data) }),
   resetStaffPassword: (id: string) => request(`/staff/${id}/reset-password/`, { method: "POST" }),
 
-  
   // ============================================================
   // Students
   // ============================================================
@@ -232,6 +231,13 @@ export const api = {
     request("/academics/classes/", { method: "POST", body: JSON.stringify(data) }),
   updateClass: (id: string, data: any) =>
     request(`/academics/classes/${id}/`, { method: "PATCH", body: JSON.stringify(data) }),
+  setupAcademicYear: (year: number, terms: any[]) =>
+    request("/academics/terms/setup_year/", {
+      // Changed: hyphen → underscore
+      method: "POST",
+      body: JSON.stringify({ year, terms }),
+    }),
+  refreshCurrentTerm: () => request("/academics/terms/refresh_current/", { method: "POST" }),
 
   // ============================================================
   // Academics - Subjects
@@ -314,11 +320,6 @@ export const api = {
     request(`/academics/terms/${id}/`, { method: "PATCH", body: JSON.stringify(data) }),
   deleteAcademicTerm: (id: string | number) =>
     request(`/academics/terms/${id}/`, { method: "DELETE" }),
-  setupAcademicYear: (year: number, terms: any[]) =>
-    request("/academics/terms/setup-year/", {
-      method: "POST",
-      body: JSON.stringify({ year, terms }),
-    }),
 
   // ============================================================
   // Academics - Term Planner (events)
@@ -552,10 +553,23 @@ export const api = {
     // Report cards
     getStudentReportCardsList: (studentId: string) =>
       request(`/exams/students/${studentId}/report-cards/`),
+    // Results of ONE exam for a class
+    getExamClassResults: (examId: string | number, classId: string | number) =>
+      request(`/exams/report-cards/class/?class_room=${classId}&exam=${examId}`),
+    // Consolidated term results for a class
     getClassReportCards: (classId: string, year: number, term: number) =>
       request(`/exams/report-cards/class/?class_room=${classId}&year=${year}&term=${term}`),
-    getStudentReportCard: (studentId: string, year: number, term: number) =>
-      request(`/exams/students/${studentId}/report-card/?year=${year}&term=${term}`),
+    // Pass examId to get that exam only; omit it for the consolidated term report card
+    getStudentReportCard: (
+      studentId: string,
+      year: number,
+      term: number,
+      examId?: string | number,
+    ) =>
+      request(
+        `/exams/students/${studentId}/report-card/?year=${year}&term=${term}` +
+          (examId ? `&exam=${examId}` : ""),
+      ),
 
     // Teacher comments
     getStudentComment: (studentId: string, year: number, term: number) =>

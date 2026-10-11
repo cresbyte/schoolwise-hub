@@ -14,7 +14,7 @@ import TwitterIcon from "@mui/icons-material/Twitter";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import { Logo } from "@/components/common/Logo";
-import { KAB } from "@/theme/websiteTheme";
+import { BRAND } from "@/theme/websiteTheme";
 import { getSchoolInfo } from "@/lib/website/constants";
 
 // ─── Footer link columns ──────────────────────────────────────────────────────
@@ -69,7 +69,7 @@ function FooterHeading({ children }: { children: React.ReactNode }) {
         sx={{
           width: 32,
           height: 2,
-          bgcolor: KAB.primary,
+          bgcolor: BRAND.primary,
           mb: 2.5,
         }}
       />
@@ -110,7 +110,7 @@ export function WebsiteFooter() {
   return (
     <Box component="footer">
       {/* ── Top band: contact info pills ───────────────────────────────── */}
-      <Box sx={{ bgcolor: KAB.primary, py: 4 }}>
+      <Box sx={{ bgcolor: BRAND.primary, py: 4 }}>
         <Container maxWidth="xl">
           <Grid container spacing={3}>
             {[
@@ -204,7 +204,7 @@ export function WebsiteFooter() {
       </Box>
 
       {/* ── Main link columns ──────────────────────────────────────────── */}
-      <Box sx={{ bgcolor: KAB.dark, py: { xs: 6, md: 8 } }}>
+      <Box sx={{ bgcolor: BRAND.dark, py: { xs: 6, md: 8 } }}>
         <Container maxWidth="xl">
           <Grid container spacing={{ xs: 5, md: 6 }}>
             {/* Column 1 — Branding & about text */}
@@ -282,8 +282,8 @@ export function WebsiteFooter() {
                         textDecoration: "none",
                         transition: "all 0.2s",
                         "&:hover": {
-                          bgcolor: KAB.primary,
-                          borderColor: KAB.primary,
+                          bgcolor: BRAND.primary,
+                          borderColor: BRAND.primary,
                           color: "#fff",
                         },
                       }}
@@ -364,15 +364,15 @@ export function WebsiteFooter() {
                         fontFamily: "'Outfit', sans-serif",
                         outline: "none",
                         "::placeholder": { color: "rgba(255,255,255,0.35)" },
-                        "&:focus": { borderColor: KAB.secondary },
+                        "&:focus": { borderColor: BRAND.secondary },
                       }}
                     />
                     <Box
                       component="button"
                       type="submit"
                       sx={{
-                        bgcolor: KAB.primary,
-                        border: `1px solid ${KAB.primary}`,
+                        bgcolor: BRAND.primary,
+                        border: `1px solid ${BRAND.primary}`,
                         color: "#fff",
                         px: 2,
                         fontFamily: "'Outfit', sans-serif",
@@ -380,7 +380,7 @@ export function WebsiteFooter() {
                         fontSize: 12,
                         cursor: "pointer",
                         transition: "background 0.2s",
-                        "&:hover": { bgcolor: KAB.primaryDark },
+                        "&:hover": { bgcolor: BRAND.primaryDark },
                       }}
                     >
                       Go

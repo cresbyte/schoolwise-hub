@@ -4,9 +4,9 @@
  */
 "use client";
 import { useEffect, useRef, useState } from "react";
-import {Box,Container,Typography,Grid} from "@mui/material";
+import { Box, Container, Typography, Grid } from "@mui/material";
 import { motion, useInView } from "framer-motion";
-import { KAB } from "@/theme/websiteTheme";
+import { BRAND } from "@/theme/websiteTheme";
 
 function useCountUp(target, decimals = 0, active) {
   const [value, setValue] = useState(0);
@@ -94,7 +94,7 @@ export function StatsBand({ stats }) {
       <Container maxWidth="xl">
         <Grid container spacing={2}>
           {stats.map((stat, index) => (
-            <Grid size={{xs:6, md:3}} key={index}>
+            <Grid size={{ xs: 6, md: 3 }} key={index}>
               <StatItem stat={stat} />
             </Grid>
           ))}

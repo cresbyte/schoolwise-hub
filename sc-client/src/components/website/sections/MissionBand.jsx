@@ -10,7 +10,8 @@ import Typography from "@mui/material/Typography";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ImagePlaceholder } from "@/components/website/ImagePlaceholder";
-import { KAB } from "@/theme/websiteTheme";
+import { BRAND } from "@/theme/websiteTheme";
+
 import { fadeInUp, slideInLeft, slideInRight, viewportOnce } from "@/lib/motion";
 
 /** Split vision/mission section with image and text. */

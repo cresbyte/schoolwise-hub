@@ -7,7 +7,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Box, Container, Typography } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { KAB } from "@/theme/websiteTheme";
+import { BRAND } from "@/theme/websiteTheme";
 
 /** Full-bleed hero carousel with fade cross-dissolve transitions. */
 export function Hero({ slides }) {

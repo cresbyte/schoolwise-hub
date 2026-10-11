@@ -5,15 +5,13 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/auth/", include("apps.accounts.urls")),
-    path("api/school/", include("apps.school.urls")),
-    path("api/academics/", include("apps.academics.urls")),
-    path("api/students/", include("apps.students.urls")),
-    path("api/staff/", include("apps.staff.urls")),
-    path("api/attendance/", include("apps.attendance.urls")),
-    path("api/academics/", include("apps.exams.urls")),
-    path("api/fees/", include("apps.fees.urls")),
+    path("api/", include("core.urls")),
+    path("api/academics/", include("academics.urls")),
+    path("api/attendance/", include("attendance.urls")),
+    path("api/exams/", include("exams.urls")),
     path("api/messaging/", include("apps.messaging.urls")),
+    path("api/fees/", include("fees.urls")),
+    path("api/school/", include("school.urls")),
 ]
 
 if settings.DEBUG:

@@ -36,18 +36,16 @@ INSTALLED_APPS = [
     "corsheaders",
     "django_filters",
     # Local apps
-    "apps.accounts",
-    "apps.school",
-    "apps.students",
-    "apps.staff",
-    "apps.academics",
-    "apps.exams",
-    "apps.attendance",
-    "apps.fees",
+    "core",
+    "academics",
+    "exams",
+    "attendance",
     "apps.payroll",
     "apps.messaging",
     "apps.notifications",
     "apps.website",
+    "fees",
+    "school",
 ]
 
 MIDDLEWARE = [
@@ -81,7 +79,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
-AUTH_USER_MODEL = "accounts.User"
+AUTH_USER_MODEL = "core.User"
+
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
@@ -100,6 +99,11 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
+    "DEFAULT_THROTTLE_RATES": {
+        "login": "10/min",
+        "password_reset": "10/hour",
+        "password_reset_confirm": "20/hour",
+    },
 }
 
 SIMPLE_JWT = {
@@ -110,7 +114,7 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",
-    "TOKEN_OBTAIN_SERIALIZER": "apps.accounts.serializers.CustomTokenObtainPairSerializer",
+    "TOKEN_OBTAIN_SERIALIZER": "core.serializers.CustomTokenObtainPairSerializer",
 }
 
 # Database settings
@@ -149,12 +153,28 @@ USE_I18N = True
 USE_TZ = True
 
 # Email Configuration
-EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.gmail.com")
-EMAIL_PORT = int(os.environ.get("EMAIL_PORT", 587))
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
-EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True").lower() == "true"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.zoho.com")
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "peter@cresbyte.com")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "n_Hxqv8k")
+EMAIL_TIMEOUT = 10
+
+# Zoho rejects mail where "from" differs from the logged-in address
+DEFAULT_FROM_EMAIL = f"Shule Smart <{EMAIL_HOST_USER}>"
+SERVER_EMAIL = EMAIL_HOST_USER
 
 # Reverse Proxy / SSL configuration
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
+# ── M-Pesa Daraja ──────────────────────────────────────────────────────────
+MPESA_BASE_URL = "https://sandbox.safaricom.co.ke"
+MPESA_CONSUMER_KEY = "AYbVQZbEGbPOhmRbnRsOhsTl30Y8xYM3TVuJQuh6E3AaJrE1"
+MPESA_CONSUMER_SECRET = (
+    "D5qB6Lx6xUFtKmzzFl0DA8wUxX4x24AdGLZWOlG0lDoIX7hrxbgD0PRWSGU0Xuxe"
+)
+MPESA_SHORTCODE = "174379"
+MPESA_PASSKEY = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
+MPESA_CALLBACK_URL = "https://33df-102-0-28-188.ngrok-free.app/api/fees/mpesa/callback/"
+# ────────────────────────────────────────────────────────────────────────────

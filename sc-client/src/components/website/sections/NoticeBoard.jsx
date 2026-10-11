@@ -13,7 +13,8 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import DownloadIcon from "@mui/icons-material/Download";
 import { SectionHeading } from "@/components/website/SectionHeading";
-import { KAB } from "@/theme/websiteTheme";
+import { BRAND } from "@/theme/websiteTheme";
+
 import { fadeInUp, viewportOnce } from "@/lib/motion";
 
 /** Events + downloads noticeboard section. */
@@ -25,11 +26,7 @@ export function NoticeBoard({ events, downloads }) {
       aria-labelledby="notice-heading"
     >
       <Container maxWidth="xl">
-        <SectionHeading
-          id="notice-heading"
-          overline="Stay Updated"
-          title="Notices & Resources"
-        />
+        <SectionHeading id="notice-heading" overline="Stay Updated" title="Notices & Resources" />
 
         <Box
           sx={{

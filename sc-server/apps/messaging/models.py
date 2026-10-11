@@ -29,7 +29,7 @@ class SchoolMessage(models.Model):
     
     target_grade = models.CharField(max_length=20, blank=True, null=True)
     target_class = models.ForeignKey("academics.ClassRoom", on_delete=models.SET_NULL, null=True, blank=True)
-    student = models.ForeignKey("students.Student", on_delete=models.SET_NULL, null=True, blank=True, related_name="school_messages")
+    student = models.ForeignKey("core.Student", on_delete=models.SET_NULL, null=True, blank=True, related_name="school_messages")
     
     recipient_type = models.CharField(max_length=50, default="all_parents")
     channel = models.CharField(max_length=50, default="announcement")
@@ -55,7 +55,7 @@ class MessageRead(models.Model):
 
 class ParentReply(models.Model):
     message = models.ForeignKey(SchoolMessage, on_delete=models.CASCADE, related_name="replies")
-    student = models.ForeignKey("students.Student", on_delete=models.CASCADE, related_name="parent_replies")
+    student = models.ForeignKey("core.Student", on_delete=models.CASCADE, related_name="parent_replies")
     parent_name = models.CharField(max_length=200)
     body = models.TextField()
     sent_at = models.DateTimeField(auto_now_add=True)

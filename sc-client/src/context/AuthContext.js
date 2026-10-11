@@ -1,17 +1,40 @@
 import { jwtDecode } from "jwt-decode";
-import { createContext, useContext, useEffect, useRef, useState, useCallback, useMemo } from 'react';
-import api from '../services/axios';
+import { createContext, useContext, useEffect, useRef, useState, useCallback, useMemo } from "react";
+import api from "../services/axios";
 import { PERMISSIONS } from "@/lib/constants";
+import { getValidAccessToken, refreshAccessToken, isSessionOver } from "@/lib/authTokens";
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {
-        throw new Error('useAuth must be used within an AuthProvider');
+        throw new Error("useAuth must be used within an AuthProvider");
     }
     return context;
 };
+
+const REFRESH_BEFORE_EXPIRY_MS = 60 * 1000; // refresh 1 minute before expiry
+const RETRY_DELAY_MS = 30 * 1000; // retry after a network error
+const MAX_TIMEOUT_MS = 2 ** 31 - 1; // setTimeout upper limit
+
+// Build the user object from a decoded JWT
+const mapTokenToUser = (decoded) => ({
+    id: decoded.user_id,
+    name: decoded.name,
+    firstName: decoded.firstName || "",
+    lastName: decoded.lastName || "",
+    gender: decoded.gender || "",
+    birthDate: decoded.birthDate || "",
+    phone: decoded.phone,
+    role: decoded.role,
+    photo: decoded.photo,
+    staffId: decoded.staffId,
+    studentIds: decoded.studentIds || [],
+    classTeacherOf: decoded.classTeacherOf || [],
+    subjectsTaught: decoded.subjectsTaught || [],
+    email: decoded.email || "",
+});
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -19,268 +42,259 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const refreshTimeoutRef = useRef(null);
 
-    const logout = useCallback(() => {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        setUser(null);
-        setIsAuthenticated(false);
+    const clearRefreshTimer = useCallback(() => {
         if (refreshTimeoutRef.current) {
             clearTimeout(refreshTimeoutRef.current);
+            refreshTimeoutRef.current = null;
         }
     }, []);
 
-    // Function to proactively refresh the token
-    const scheduleTokenRefresh = useCallback((token) => {
-        if (refreshTimeoutRef.current) {
-            clearTimeout(refreshTimeoutRef.current);
-        }
+    const logout = useCallback(() => {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        clearRefreshTimer();
+        setUser(null);
+        setIsAuthenticated(false);
+    }, [clearRefreshTimer]);
 
-        try {
-            const decoded = jwtDecode(token);
-            const expiryTime = decoded.exp * 1000;
-            const currentTime = Date.now();
+    // Proactively refresh the token shortly before it expires.
+    // Uses the same shared refreshAccessToken() as the axios interceptor, so
+    // concurrent refreshes are de-duplicated and the refresh token is never
+    // reused by two requests at once.
+    const scheduleTokenRefresh = useCallback(
+        (token, delayOverride) => {
+            clearRefreshTimer();
 
-            // Refresh 1 minute before expiry
-            const refreshTime = expiryTime - currentTime - (60 * 1000);
-
-            if (refreshTime > 0) {
-                refreshTimeoutRef.current = setTimeout(async () => {
-                    const refreshToken = localStorage.getItem('refreshToken');
-                    if (refreshToken) {
-                        try {
-                            const rawBaseURL = process.env.NEXT_PUBLIC_API_URL;
-                            const baseURL = rawBaseURL.endsWith("/") ? rawBaseURL : `${rawBaseURL}/`;
-                            const response = await fetch(`${baseURL}auth/refresh/`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ refresh: refreshToken })
-                            });
-                            if (!response.ok) throw new Error('Refresh failed');
-                            const data = await response.json();
-
-                            localStorage.setItem('accessToken', data.access);
-                            if (data.refresh) localStorage.setItem('refreshToken', data.refresh);
-
-                            window.dispatchEvent(
-                              new CustomEvent("tokenRefreshed", {
-                                detail: { access: data.access },
-                              })
-                            );
-                        } catch (error) {
-                            console.error("Proactive token refresh failed:", error);
-                            logout();
-                        }
-                    }
-                }, refreshTime);
+            let delay;
+            if (typeof delayOverride === "number") {
+                delay = delayOverride;
+            } else {
+                try {
+                    const decoded = jwtDecode(token);
+                    delay = decoded.exp * 1000 - Date.now() - REFRESH_BEFORE_EXPIRY_MS;
+                } catch (error) {
+                    console.error("Error scheduling refresh:", error);
+                    return;
+                }
             }
-        } catch (error) {
-            console.error("Error scheduling refresh:", error);
-        }
-    }, [logout]);
+            delay = Math.min(Math.max(delay, 0), MAX_TIMEOUT_MS);
 
-    // Function to refresh user state from current token
-    const refreshUser = useCallback(async () => {
-        let token = localStorage.getItem('accessToken');
-        if (token) {
-            try {
-                let decoded = jwtDecode(token);
-                // Check if token is expired
-                if (decoded.exp * 1000 < Date.now()) {
-                    const refreshToken = localStorage.getItem('refreshToken');
-                    if (refreshToken) {
-                        try {
-                            const rawBaseURL = process.env.NEXT_PUBLIC_API_URL;
-                            const baseURL = rawBaseURL.endsWith("/") ? rawBaseURL : `${rawBaseURL}/`;
-                            const response = await fetch(`${baseURL}auth/refresh/`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ refresh: refreshToken })
-                            });
-                            if (!response.ok) throw new Error('Refresh failed');
-                            const data = await response.json();
-
-                            token = data.access;
-                            localStorage.setItem('accessToken', token);
-                            if (data.refresh) localStorage.setItem('refreshToken', data.refresh);
-
-                            decoded = jwtDecode(token);
-                        } catch (err) {
-                            console.error("Failed to silently refresh expired token:", err);
-                            logout();
-                            return;
-                        }
-                    } else {
+            refreshTimeoutRef.current = setTimeout(async () => {
+                try {
+                    const access = await refreshAccessToken();
+                    // Listener below updates user state and schedules the next refresh
+                    window.dispatchEvent(new CustomEvent("tokenRefreshed", { detail: { access } }));
+                } catch (error) {
+                    console.error("Proactive token refresh failed:", error);
+                    if (isSessionOver(error)) {
                         logout();
-                        return;
+                    } else {
+                        // Network error or server hiccup: keep the session and try again
+                        scheduleTokenRefresh(token, RETRY_DELAY_MS);
                     }
                 }
+            }, delay);
+        },
+        [clearRefreshTimer, logout]
+    );
 
-                setIsAuthenticated(true);
-                // Map full user profile from token
-                setUser({
-                    id: decoded.user_id,
-                    name: decoded.name,
-                    firstName: decoded.firstName || "",
-                    lastName: decoded.lastName || "",
-                    gender: decoded.gender || "",
-                    birthDate: decoded.birthDate || "",
-                    phone: decoded.phone,
-                    role: decoded.role,
-                    photo: decoded.photo,
-                    staffId: decoded.staffId,
-                    studentIds: decoded.studentIds || [],
-                    classTeacherOf: decoded.classTeacherOf || [],
-                    subjectsTaught: decoded.subjectsTaught || [],
-                    email: decoded.email || "",
-                });
-                // Schedule next refresh
-                scheduleTokenRefresh(token);
-            } catch (error) {
-                console.error("Invalid token:", error);
+    // Rebuild user state from the current (valid) token
+    const refreshUser = useCallback(async () => {
+        if (!localStorage.getItem("accessToken")) return;
+
+        try {
+            // Refreshes first if the token is expired or about to expire
+            const token = await getValidAccessToken();
+            if (!token) {
+                logout();
+                return;
+            }
+
+            const decoded = jwtDecode(token);
+            setUser(mapTokenToUser(decoded));
+            setIsAuthenticated(true);
+            scheduleTokenRefresh(token);
+        } catch (error) {
+            console.error("Failed to restore session:", error);
+            // Only end the session when it is truly over (invalid or rejected token).
+            // A network error keeps the tokens so the next attempt can succeed.
+            if (isSessionOver(error) || error?.name === "InvalidTokenError") {
                 logout();
             }
         }
     }, [logout, scheduleTokenRefresh]);
 
     useEffect(() => {
+        let cancelled = false;
+
         const initializeAuth = async () => {
-            const token = localStorage.getItem('accessToken');
-            if (token) {
-                refreshUser();
+            try {
+                await refreshUser();
+            } finally {
+                if (!cancelled) setLoading(false);
             }
-            setLoading(false);
         };
 
         initializeAuth();
 
         const handleTokenRefresh = () => {
-            console.log("Token refreshed, updating user state");
             refreshUser();
         };
 
         const handleAuthLogout = () => {
-            console.log("Auth logout event received");
             logout();
         };
 
-        window.addEventListener('tokenRefreshed', handleTokenRefresh);
-        window.addEventListener('authLogout', handleAuthLogout);
+        window.addEventListener("tokenRefreshed", handleTokenRefresh);
+        window.addEventListener("authLogout", handleAuthLogout);
 
         return () => {
-            window.removeEventListener('tokenRefreshed', handleTokenRefresh);
-            window.removeEventListener('authLogout', handleAuthLogout);
-            if (refreshTimeoutRef.current) {
-                clearTimeout(refreshTimeoutRef.current);
-            }
+            cancelled = true;
+            window.removeEventListener("tokenRefreshed", handleTokenRefresh);
+            window.removeEventListener("authLogout", handleAuthLogout);
+            clearRefreshTimer();
         };
-    }, [refreshUser]);
+    }, [refreshUser, logout, clearRefreshTimer]);
 
-    const login = async (phone, password) => {
+    const login = useCallback(
+        async (phone, password) => {
+            try {
+                const response = await api.post("auth/login/", { phone, password });
+                const { access, refresh, user: userData } = response.data;
+
+                localStorage.setItem("accessToken", access);
+                localStorage.setItem("refreshToken", refresh);
+
+                // Use the same user shape as refreshUser so state is consistent
+                let nextUser = userData;
+                try {
+                    nextUser = mapTokenToUser(jwtDecode(access));
+                } catch {
+                    // fall back to the user object returned by the API
+                }
+
+                setUser(nextUser);
+                setIsAuthenticated(true);
+                scheduleTokenRefresh(access);
+
+                return { success: true, user: nextUser };
+            } catch (error) {
+                return {
+                    success: false,
+                    error: error.response?.data?.detail || "Login failed",
+                };
+            }
+        },
+        [scheduleTokenRefresh]
+    );
+
+    const register = useCallback(async (userData) => {
         try {
-            const response = await api.post('auth/login/', { phone, password });
-            const { access, refresh, user: userData } = response.data;
-
-            localStorage.setItem('accessToken', access);
-            localStorage.setItem('refreshToken', refresh);
-
-            setUser(userData);
-            setIsAuthenticated(true);
-            scheduleTokenRefresh(access);
-
-            return { success: true, user: userData };
-        } catch (error) {
-            return {
-                success: false,
-                error: error.response?.data?.detail || 'Login failed'
-            };
-        }
-    };
-
-    const register = async (userData) => {
-        try {
-            await api.post('auth/register/', userData);
+            await api.post("auth/register/", userData);
             return { success: true };
         } catch (error) {
-            return { success: false, error: error.response?.data || 'Registration failed' };
+            return { success: false, error: error.response?.data || "Registration failed" };
         }
-    };
+    }, []);
 
-    const resetPassword = async (email) => {
+    const requestPasswordReset = useCallback(async (phone) => {
         try {
-            await api.post('auth/password-reset/', { email });
+            await api.post("auth/password-reset/request/", { phone });
             return { success: true };
         } catch (error) {
-            return { success: false, error: error.response?.data?.detail || 'Request failed' };
+            return { success: false, error: error.response?.data?.detail || "Request failed. Try again." };
         }
-    };
+    }, []);
 
-    const confirmPasswordReset = async (uid, token, new_password) => {
+    const confirmPasswordReset = useCallback(async (phone, code, new_password) => {
         try {
-            await api.post('auth/password-reset-confirm/', { uid, token, new_password });
+            await api.post("auth/password-reset/confirm/", { phone, code, new_password });
             return { success: true };
         } catch (error) {
-            return { success: false, error: error.response?.data?.detail || 'Reset failed' };
+            return { success: false, error: error.response?.data?.detail || "Reset failed. Try again." };
         }
-    };
+    }, []);
 
-    const updateProfile = async (userData) => {
+    const updateProfile = useCallback(async (userData) => {
         try {
-            const res = await api.patch('auth/me/', userData);
+            const res = await api.patch("auth/me/", userData);
             const updatedUser = res.data;
-            setUser(prev => ({ ...prev, ...updatedUser }));
+            setUser((prev) => ({ ...prev, ...updatedUser }));
             return { success: true, data: updatedUser };
         } catch (error) {
-            return { success: false, error: error.response?.data || 'Update failed' };
+            return { success: false, error: error.response?.data || "Update failed" };
         }
-    };
+    }, []);
 
-    const changePassword = async (passwordData) => {
+    const changePassword = useCallback(async (passwordData) => {
         try {
-            await api.post('auth/change-password/', passwordData);
+            await api.post("auth/change-password/", passwordData);
             return { success: true };
         } catch (error) {
-            return { success: false, error: error.response?.data || 'Change password failed' };
+            return { success: false, error: error.response?.data || "Change password failed" };
         }
-    };
+    }, []);
 
-
-
-    const hasPermission = useCallback((permission) => {
-        if (!user) return false;
-        const perms = PERMISSIONS[user.role];
-        if (!perms) return false;
-        if (perms.includes("*")) return true;
-        if (perms.includes(permission)) return true;
-        const [module] = permission.split(".");
-        return perms.includes(`${module}.*`);
-    }, [user]);
+    const hasPermission = useCallback(
+        (permission) => {
+            if (!user || typeof permission !== "string") return false;
+            const perms = PERMISSIONS[user.role];
+            if (!perms) return false;
+            if (perms.includes("*")) return true;
+            if (perms.includes(permission)) return true;
+            const [module] = permission.split(".");
+            return perms.includes(`${module}.*`);
+        },
+        [user]
+    );
 
     const hasRole = useCallback((role) => user?.role === role, [user]);
 
     const hasAnyRole = useCallback((roles) => !!user && roles.includes(user.role), [user]);
 
-    const isClassTeacher = useCallback((classId) => {
-        if (!user || !user.classTeacherOf || user.classTeacherOf.length === 0) return false;
-        if (classId) return user.classTeacherOf.includes(classId);
-        return true;
-    }, [user]);
+    const isClassTeacher = useCallback(
+        (classId) => {
+            if (!user || !user.classTeacherOf || user.classTeacherOf.length === 0) return false;
+            if (classId) return user.classTeacherOf.includes(classId);
+            return true;
+        },
+        [user]
+    );
 
-    const value = useMemo(() => ({
-        user,
-        isAuthenticated,
-        isLoading: loading,
-        login,
-        register,
-        logout,
-        resetPassword,
-        confirmPasswordReset,
-        updateProfile,
-        changePassword,
-        hasPermission,
-        hasRole,
-        hasAnyRole,
-        isClassTeacher
-    }), [user, isAuthenticated, loading, logout, hasPermission, hasRole, hasAnyRole, isClassTeacher]);
+    const value = useMemo(
+        () => ({
+            user,
+            isAuthenticated,
+            isLoading: loading,
+            login,
+            register,
+            logout,
+            requestPasswordReset,
+            confirmPasswordReset,
+            updateProfile,
+            changePassword,
+            hasPermission,
+            hasRole,
+            hasAnyRole,
+            isClassTeacher,
+        }),
+        [
+            user,
+            isAuthenticated,
+            loading,
+            login,
+            register,
+            logout,
+            requestPasswordReset,
+            confirmPasswordReset,
+            updateProfile,
+            changePassword,
+            hasPermission,
+            hasRole,
+            hasAnyRole,
+            isClassTeacher,
+        ]
+    );
 
     return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
 };

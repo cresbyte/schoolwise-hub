@@ -21,6 +21,7 @@
     "@mui/icons-material": "^9.1.0",
     "@mui/material": "^9.1.0",
     "@mui/material-nextjs": "^9.1.1",
+    "@mui/x-charts": "^9.15.0",
     "@mui/x-date-pickers": "^9.4.0",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",

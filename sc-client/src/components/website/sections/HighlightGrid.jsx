@@ -8,7 +8,8 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import { motion } from "framer-motion";
 import { SectionHeading } from "@/components/website/SectionHeading";
-import { KAB } from "@/theme/websiteTheme";
+import { BRAND } from "@/theme/websiteTheme";
+
 import { staggerContainer, staggerItem, viewportOnce } from "@/lib/motion";
 
 // Map icon names to Material Symbols / emoji fallbacks

@@ -1,5 +1,7 @@
 from django.db import models
 
+from django.conf import settings
+
 class Payroll(models.Model):
     STATUS_CHOICES = (
         ("draft", "Draft"),
@@ -7,7 +9,7 @@ class Payroll(models.Model):
         ("paid", "Paid"),
     )
 
-    staff = models.ForeignKey("staff.Staff", on_delete=models.CASCADE, related_name="payroll_records")
+    staff = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="payroll_records")
     month = models.IntegerField()
     year = models.IntegerField()
     
@@ -22,4 +24,4 @@ class Payroll(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.staff.user.name} - {self.month}/{self.year}"
+        return f"{self.staff.name} - {self.month}/{self.year}"

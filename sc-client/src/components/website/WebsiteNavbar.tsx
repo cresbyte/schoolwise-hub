@@ -34,7 +34,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "@/components/common/Logo";
 import { getSchoolInfo } from "@/lib/website/constants";
-import { KAB } from "@/theme/websiteTheme";
+import { BRAND } from "@/theme/websiteTheme";
 
 // ─── Nav Config ──────────────────────────────────────────────────────────────
 

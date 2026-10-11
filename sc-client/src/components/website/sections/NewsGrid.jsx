@@ -11,7 +11,8 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { SectionHeading } from "@/components/website/SectionHeading";
 import { ImagePlaceholder } from "@/components/website/ImagePlaceholder";
-import { KAB } from "@/theme/websiteTheme";
+import { BRAND } from "@/theme/websiteTheme";
+
 import { fadeInUp, staggerContainer, staggerItem, viewportOnce } from "@/lib/motion";
 
 const CATEGORY_COLORS = {
