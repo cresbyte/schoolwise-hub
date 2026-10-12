@@ -180,7 +180,7 @@ export function WebsiteNavbar() {
       <Box
         component="header"
         sx={{
-          bgcolor: KAB.primaryDark,
+          bgcolor: BRAND.primaryDark,
           color: "rgba(255,255,255,0.82)",
           fontSize: 13,
           display: { xs: "none", md: "block" },
@@ -292,7 +292,7 @@ export function WebsiteNavbar() {
                 href="/admissions/apply"
                 sx={{
                   fontSize: 12,
-                  color: KAB.secondaryLight,
+                  color: BRAND.secondaryLight,
                   textDecoration: "none",
                   fontWeight: 600,
                   "&:hover": { color: "#fff" },
@@ -313,7 +313,7 @@ export function WebsiteNavbar() {
           position: "sticky",
           top: 0,
           zIndex: 1100,
-          bgcolor: "#ffffff" /* Changed from KAB.primary to white */,
+          bgcolor: "#ffffff" /* Changed from BRAND.primary to white */,
           boxShadow: scrolled ? "0 2px 12px rgba(0,0,0,0.05)" : "none",
           transition: "box-shadow 0.3s ease, padding 0.3s ease",
         }}
@@ -387,19 +387,19 @@ export function WebsiteNavbar() {
                       px: 1.5,
                       py: 1,
                       color: isActive(group.href ?? "/___")
-                        ? KAB.secondaryLight
+                        ? BRAND.secondaryLight
                         : "#000000" /* Changed from #fff to black */,
                       fontFamily: "'Outfit', sans-serif",
                       fontWeight: 500,
                       fontSize: 14,
                       textDecoration: "none",
                       borderBottom: isActive(group.href ?? "/___")
-                        ? `2px solid ${KAB.secondaryLight}`
+                        ? `2px solid ${BRAND.secondaryLight}`
                         : "2px solid transparent",
                       transition: "color 0.2s, border-color 0.2s",
                       "&:hover": {
-                        color: KAB.secondaryLight,
-                        borderBottomColor: KAB.secondaryLight,
+                        color: BRAND.secondaryLight,
+                        borderBottomColor: BRAND.secondaryLight,
                       },
                     }}
                   >
@@ -427,7 +427,7 @@ export function WebsiteNavbar() {
                         bgcolor: "#fff",
                         boxShadow: "0 8px 32px rgba(0,0,0,0.18)",
                         minWidth: group.columns.length > 2 ? 480 : 320,
-                        borderTop: `3px solid ${KAB.primary}`,
+                        borderTop: `3px solid ${BRAND.primary}`,
                         zIndex: 10,
                         display: "flex",
                         gap: 0,
@@ -442,7 +442,7 @@ export function WebsiteNavbar() {
                             p: 2.5,
                             borderRight:
                               ci < group.columns.length - 1
-                                ? `1px solid ${KAB.borderLight}`
+                                ? `1px solid ${BRAND.borderLight}`
                                 : "none",
                           }}
                         >
@@ -454,7 +454,7 @@ export function WebsiteNavbar() {
                                 fontSize: 11,
                                 letterSpacing: "0.1em",
                                 textTransform: "uppercase",
-                                color: KAB.primary,
+                                color: BRAND.primary,
                                 mb: 1.5,
                               }}
                             >
@@ -469,19 +469,19 @@ export function WebsiteNavbar() {
                               sx={{
                                 display: "block",
                                 py: "6px",
-                                color: KAB.textPrimary,
+                                color: BRAND.textPrimary,
                                 fontFamily: "'Outfit', sans-serif",
                                 fontSize: 13,
                                 textDecoration: "none",
                                 fontWeight: isActive(link.href) ? 600 : 400,
                                 borderLeft: isActive(link.href)
-                                  ? `3px solid ${KAB.primary}`
+                                  ? `3px solid ${BRAND.primary}`
                                   : "3px solid transparent",
                                 pl: 1.5,
                                 transition: "color 0.15s, border-color 0.15s",
                                 "&:hover": {
-                                  color: KAB.primary,
-                                  borderLeftColor: KAB.primary,
+                                  color: BRAND.primary,
+                                  borderLeftColor: BRAND.primary,
                                 },
                               }}
                             >
@@ -504,19 +504,19 @@ export function WebsiteNavbar() {
                     px: 1.5,
                     py: 1,
                     color: isActive(link.href)
-                      ? KAB.secondaryLight
+                      ? BRAND.secondaryLight
                       : "#000000" /* Changed from #fff to black */,
                     fontFamily: "'Outfit', sans-serif",
                     fontWeight: 500,
                     fontSize: 14,
                     textDecoration: "none",
                     borderBottom: isActive(link.href)
-                      ? `2px solid ${KAB.secondaryLight}`
+                      ? `2px solid ${BRAND.secondaryLight}`
                       : "2px solid transparent",
                     transition: "color 0.2s, border-color 0.2s",
                     "&:hover": {
-                      color: KAB.secondaryLight,
-                      borderBottomColor: KAB.secondaryLight,
+                      color: BRAND.secondaryLight,
+                      borderBottomColor: BRAND.secondaryLight,
                     },
                   }}
                 >
@@ -556,7 +556,7 @@ export function WebsiteNavbar() {
         {/* Drawer header */}
         <Box
           sx={{
-            bgcolor: KAB.primary,
+            bgcolor: BRAND.primary,
             px: 2,
             py: 1.5,
             display: "flex",
@@ -586,7 +586,7 @@ export function WebsiteNavbar() {
               disableGutters
               elevation={0}
               sx={{
-                borderBottom: `1px solid ${KAB.borderLight}`,
+                borderBottom: `1px solid ${BRAND.borderLight}`,
                 "&:before": { display: "none" },
               }}
             >
@@ -596,7 +596,7 @@ export function WebsiteNavbar() {
                     fontFamily: "'Outfit', sans-serif",
                     fontWeight: 600,
                     fontSize: 14,
-                    color: KAB.textPrimary,
+                    color: BRAND.textPrimary,
                   }}
                 >
                   {group.label}
@@ -614,8 +614,8 @@ export function WebsiteNavbar() {
                         pl: 3,
                         py: "7px",
                         "&.Mui-selected": {
-                          bgcolor: `${KAB.primary}12`,
-                          color: KAB.primary,
+                          bgcolor: `${BRAND.primary}12`,
+                          color: BRAND.primary,
                         },
                       }}
                     >
@@ -650,7 +650,7 @@ export function WebsiteNavbar() {
               sx={{
                 px: 3,
                 py: "10px",
-                borderBottom: `1px solid ${KAB.borderLight}`,
+                borderBottom: `1px solid ${BRAND.borderLight}`,
               }}
             >
               <ListItemText
@@ -673,14 +673,14 @@ export function WebsiteNavbar() {
         </Box>
 
         {/* Drawer footer */}
-        <Box sx={{ p: 2, borderTop: `1px solid ${KAB.border}` }}>
+        <Box sx={{ p: 2, borderTop: `1px solid ${BRAND.border}` }}>
           <Box
             component={Link}
             href="/admissions/apply"
             sx={{
               display: "block",
               textAlign: "center",
-              bgcolor: KAB.primary,
+              bgcolor: BRAND.primary,
               color: "#fff",
               py: 1.25,
               fontFamily: "'Outfit', sans-serif",
@@ -688,7 +688,7 @@ export function WebsiteNavbar() {
               fontSize: 14,
               textDecoration: "none",
               mb: 1,
-              "&:hover": { bgcolor: KAB.primaryDark },
+              "&:hover": { bgcolor: BRAND.primaryDark },
             }}
           >
             Apply Now

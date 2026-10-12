@@ -43,7 +43,7 @@ export function MissionBand({ image }) {
                   right: -12,
                   width: 80,
                   height: 80,
-                  bgcolor: KAB.secondary,
+                  bgcolor: BRAND.secondary,
                   zIndex: -1,
                 }}
               />
@@ -54,7 +54,7 @@ export function MissionBand({ image }) {
                   left: -12,
                   width: 80,
                   height: 80,
-                  border: `4px solid ${KAB.primary}`,
+                  border: `4px solid ${BRAND.primary}`,
                   zIndex: -1,
                 }}
               />
@@ -71,7 +71,7 @@ export function MissionBand({ image }) {
               viewport={viewportOnce}
             >
               <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
-                <Box sx={{ width: 32, height: 2, bgcolor: KAB.primary }} />
+                <Box sx={{ width: 32, height: 2, bgcolor: BRAND.primary }} />
                 <Typography
                   sx={{
                     fontFamily: "'Outfit', sans-serif",
@@ -79,7 +79,7 @@ export function MissionBand({ image }) {
                     fontWeight: 700,
                     letterSpacing: "0.12em",
                     textTransform: "uppercase",
-                    color: KAB.primary,
+                    color: BRAND.primary,
                   }}
                 >
                   Principal's Message
@@ -92,13 +92,13 @@ export function MissionBand({ image }) {
                   fontFamily: "'Outfit', sans-serif",
                   fontWeight: 800,
                   fontSize: { xs: "1.5rem", md: "2rem" },
-                  color: KAB.textPrimary,
+                  color: BRAND.textPrimary,
                   lineHeight: 1.25,
                   mb: 3,
                 }}
               >
                 Excellence Through{" "}
-                <Box component="span" sx={{ color: KAB.primary }}>
+                <Box component="span" sx={{ color: BRAND.primary }}>
                   Knowledge
                 </Box>
               </Typography>
@@ -107,7 +107,7 @@ export function MissionBand({ image }) {
                 sx={{
                   fontFamily: "'Outfit', sans-serif",
                   fontSize: 14,
-                  color: KAB.textSecondary,
+                  color: BRAND.textSecondary,
                   lineHeight: 1.85,
                   mb: 2.5,
                 }}
@@ -122,7 +122,7 @@ export function MissionBand({ image }) {
                 sx={{
                   fontFamily: "'Outfit', sans-serif",
                   fontSize: 14,
-                  color: KAB.textSecondary,
+                  color: BRAND.textSecondary,
                   lineHeight: 1.85,
                   mb: 3.5,
                 }}
@@ -148,8 +148,8 @@ export function MissionBand({ image }) {
                     <Box
                       sx={{
                         p: 2,
-                        borderLeft: `3px solid ${KAB.secondary}`,
-                        bgcolor: KAB.bgMuted,
+                        borderLeft: `3px solid ${BRAND.secondary}`,
+                        bgcolor: BRAND.bgMuted,
                         height: "100%",
                       }}
                     >
@@ -158,7 +158,7 @@ export function MissionBand({ image }) {
                           fontFamily: "'Outfit', sans-serif",
                           fontWeight: 700,
                           fontSize: 12,
-                          color: KAB.primary,
+                          color: BRAND.primary,
                           letterSpacing: "0.06em",
                           textTransform: "uppercase",
                           mb: 0.75,
@@ -170,7 +170,7 @@ export function MissionBand({ image }) {
                         sx={{
                           fontFamily: "'Outfit', sans-serif",
                           fontSize: 12,
-                          color: KAB.textSecondary,
+                          color: BRAND.textSecondary,
                           lineHeight: 1.6,
                         }}
                       >
@@ -186,7 +186,7 @@ export function MissionBand({ image }) {
                 href="/about"
                 sx={{
                   display: "inline-block",
-                  bgcolor: KAB.primary,
+                  bgcolor: BRAND.primary,
                   color: "#fff",
                   px: 3.5,
                   py: 1.5,
@@ -195,7 +195,7 @@ export function MissionBand({ image }) {
                   fontSize: 14,
                   textDecoration: "none",
                   transition: "background 0.2s, transform 0.2s",
-                  "&:hover": { bgcolor: KAB.primaryDark, transform: "translateY(-2px)" },
+                  "&:hover": { bgcolor: BRAND.primaryDark, transform: "translateY(-2px)" },
                 }}
               >
                 Learn More About Us

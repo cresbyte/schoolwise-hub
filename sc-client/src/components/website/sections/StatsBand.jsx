@@ -66,7 +66,7 @@ function StatItem({ stat }) {
       >
         {displayed}
         {stat.suffix && (
-          <Box component="span" sx={{ color: KAB.secondaryLight, fontSize: "0.6em" }}>
+          <Box component="span" sx={{ color: BRAND.secondaryLight, fontSize: "0.6em" }}>
             {stat.suffix}
           </Box>
         )}
@@ -90,7 +90,7 @@ function StatItem({ stat }) {
 /** Animated statistics strip. */
 export function StatsBand({ stats }) {
   return (
-    <Box sx={{ bgcolor: KAB.primary, py: { xs: 5, md: 6 } }}>
+    <Box sx={{ bgcolor: BRAND.primary, py: { xs: 5, md: 6 } }}>
       <Container maxWidth="xl">
         <Grid container spacing={2}>
           {stats.map((stat, index) => (

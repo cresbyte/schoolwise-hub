@@ -24,14 +24,14 @@ const TILES = [
     sub: "Start your application online",
     href: "/admissions/apply",
     icon: <HowToRegIcon sx={{ fontSize: 32 }} />,
-    color: KAB.primary,
+    color: BRAND.primary,
   },
   {
     label: "Parent Portal",
     sub: "View fees, marks & attendance",
     href: "/parent-portal",
     icon: <PersonIcon sx={{ fontSize: 32 }} />,
-    color: KAB.secondary,
+    color: BRAND.secondary,
   },
   {
     label: "Academic Calendar",
@@ -45,14 +45,14 @@ const TILES = [
     sub: "CBC, 8-4-4 and beyond",
     href: "/academics",
     icon: <SchoolIcon sx={{ fontSize: 32 }} />,
-    color: KAB.primary,
+    color: BRAND.primary,
   },
   {
     label: "Library & Resources",
     sub: "Downloads, handbooks & forms",
     href: "/admissions#resources",
     icon: <MenuBookIcon sx={{ fontSize: 32 }} />,
-    color: KAB.secondary,
+    color: BRAND.secondary,
   },
   {
     label: "Contact Us",
@@ -103,9 +103,9 @@ export function QuickLinks() {
                   p: 3,
                   height: "100%",
                   minHeight: 160,
-                  border: `1px solid ${KAB.borderLight}`,
-                  borderLeft: i % 3 !== 0 ? "none" : `1px solid ${KAB.borderLight}`,
-                  borderTop: i >= 3 ? "none" : `1px solid ${KAB.borderLight}`,
+                  border: `1px solid ${BRAND.borderLight}`,
+                  borderLeft: i % 3 !== 0 ? "none" : `1px solid ${BRAND.borderLight}`,
+                  borderTop: i >= 3 ? "none" : `1px solid ${BRAND.borderLight}`,
                   color: tile.color,
                   bgcolor: "#fff",
                   transition: "all 0.25s",
@@ -118,8 +118,8 @@ export function QuickLinks() {
                     boxShadow: "0 8px 24px rgba(0,0,0,0.14)",
                   },
                   "@media (min-width: 900px)": {
-                    borderLeft: i !== 0 ? "none" : `1px solid ${KAB.borderLight}`,
-                    borderTop: `1px solid ${KAB.borderLight}`,
+                    borderLeft: i !== 0 ? "none" : `1px solid ${BRAND.borderLight}`,
+                    borderTop: `1px solid ${BRAND.borderLight}`,
                   },
                 }}
               >

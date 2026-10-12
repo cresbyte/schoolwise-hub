@@ -16,8 +16,8 @@ import { BRAND } from "@/theme/websiteTheme";
 import { fadeInUp, staggerContainer, staggerItem, viewportOnce } from "@/lib/motion";
 
 const CATEGORY_COLORS = {
-  News: KAB.primary,
-  Events: KAB.secondary,
+  News: BRAND.primary,
+  Events: BRAND.secondary,
   Achievements: "#C8922A",
   Announcements: "#555",
 };
@@ -27,7 +27,7 @@ function CategoryBadge({ category }) {
     <Box
       sx={{
         display: "inline-block",
-        bgcolor: CATEGORY_COLORS[category] ?? KAB.primary,
+        bgcolor: CATEGORY_COLORS[category] ?? BRAND.primary,
         color: "#fff",
         fontSize: 10,
         fontFamily: "'Outfit', sans-serif",
@@ -78,11 +78,11 @@ export function NewsGrid({ articles, limit = 6 }) {
               fontFamily: "'Outfit', sans-serif",
               fontWeight: 600,
               fontSize: 13,
-              color: KAB.primary,
+              color: BRAND.primary,
               textDecoration: "none",
-              borderBottom: `1px solid ${KAB.primary}`,
+              borderBottom: `1px solid ${BRAND.primary}`,
               pb: "2px",
-              "&:hover": { color: KAB.primaryDark },
+              "&:hover": { color: BRAND.primaryDark },
             }}
           >
             View All News →
@@ -112,7 +112,7 @@ export function NewsGrid({ articles, limit = 6 }) {
                     sx={{
                       p: 0,
                       pt: 2.5,
-                      borderTop: `3px solid ${KAB.primary}`,
+                      borderTop: `3px solid ${BRAND.primary}`,
                       mt: 0,
                     }}
                   >
@@ -122,7 +122,7 @@ export function NewsGrid({ articles, limit = 6 }) {
                         sx={{
                           fontFamily: "'Outfit', sans-serif",
                           fontSize: 12,
-                          color: KAB.textMuted,
+                          color: BRAND.textMuted,
                         }}
                       >
                         {featured.date} · {featured.readMinutes} min read
@@ -133,10 +133,10 @@ export function NewsGrid({ articles, limit = 6 }) {
                         fontFamily: "'Outfit', sans-serif",
                         fontWeight: 700,
                         fontSize: { xs: 18, md: 22 },
-                        color: KAB.textPrimary,
+                        color: BRAND.textPrimary,
                         lineHeight: 1.35,
                         mb: 1.5,
-                        "&:hover": { color: KAB.primary },
+                        "&:hover": { color: BRAND.primary },
                         transition: "color 0.2s",
                       }}
                     >
@@ -146,7 +146,7 @@ export function NewsGrid({ articles, limit = 6 }) {
                       sx={{
                         fontFamily: "'Outfit', sans-serif",
                         fontSize: 14,
-                        color: KAB.textSecondary,
+                        color: BRAND.textSecondary,
                         lineHeight: 1.7,
                       }}
                     >
@@ -176,9 +176,9 @@ export function NewsGrid({ articles, limit = 6 }) {
                         display: "flex",
                         gap: 2,
                         py: 2,
-                        borderBottom: `1px solid ${KAB.borderLight}`,
+                        borderBottom: `1px solid ${BRAND.borderLight}`,
                         transition: "background 0.15s",
-                        "&:hover": { bgcolor: KAB.bgMuted },
+                        "&:hover": { bgcolor: BRAND.bgMuted },
                         px: 1.5,
                       }}
                     >
@@ -194,7 +194,7 @@ export function NewsGrid({ articles, limit = 6 }) {
                             fontFamily: "'Outfit', sans-serif",
                             fontWeight: 600,
                             fontSize: 13,
-                            color: KAB.textPrimary,
+                            color: BRAND.textPrimary,
                             lineHeight: 1.4,
                             display: "-webkit-box",
                             WebkitLineClamp: 2,
@@ -208,7 +208,7 @@ export function NewsGrid({ articles, limit = 6 }) {
                           sx={{
                             fontFamily: "'Outfit', sans-serif",
                             fontSize: 11,
-                            color: KAB.textMuted,
+                            color: BRAND.textMuted,
                             mt: 0.5,
                           }}
                         >

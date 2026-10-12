@@ -70,7 +70,7 @@ export function Hero({ slides }) {
           top: 0,
           bottom: 0,
           width: 5,
-          bgcolor: KAB.primary,
+          bgcolor: BRAND.primary,
         }}
       /> */}
 
@@ -103,7 +103,7 @@ export function Hero({ slides }) {
                   mb: 2,
                 }}
               >
-                <Box sx={{ width: 24, height: 2, bgcolor: KAB.secondary }} />
+                <Box sx={{ width: 24, height: 2, bgcolor: BRAND.secondary }} />
                 <Typography
                   sx={{
                     fontFamily: "'Outfit', sans-serif",
@@ -111,7 +111,7 @@ export function Hero({ slides }) {
                     fontWeight: 700,
                     letterSpacing: "0.15em",
                     textTransform: "uppercase",
-                    color: KAB.secondaryLight,
+                    color: BRAND.secondaryLight,
                   }}
                 >
                   Kabraas Elites Academy
@@ -152,7 +152,7 @@ export function Hero({ slides }) {
                   href={slide.cta.href}
                   sx={{
                     display: "inline-block",
-                    bgcolor: KAB.primary,
+                    bgcolor: BRAND.primary,
                     color: "#fff",
                     px: 3.5,
                     py: 1.5,
@@ -162,7 +162,7 @@ export function Hero({ slides }) {
                     textDecoration: "none",
                     letterSpacing: "0.03em",
                     transition: "background 0.2s, transform 0.2s",
-                    "&:hover": { bgcolor: KAB.primaryDark, transform: "translateY(-2px)" },
+                    "&:hover": { bgcolor: BRAND.primaryDark, transform: "translateY(-2px)" },
                   }}
                 >
                   {slide.cta.label}
@@ -213,10 +213,10 @@ export function Hero({ slides }) {
             sx={{
               flex: 1,
               height: 4,
-              bgcolor: i === current ? KAB.primary : "rgba(255,255,255,0.25)",
+              bgcolor: i === current ? BRAND.primary : "rgba(255,255,255,0.25)",
               cursor: "pointer",
               transition: "background 0.3s",
-              "&:hover": { bgcolor: i === current ? KAB.primary : "rgba(255,255,255,0.5)" },
+              "&:hover": { bgcolor: i === current ? BRAND.primary : "rgba(255,255,255,0.5)" },
             }}
           />
         ))}

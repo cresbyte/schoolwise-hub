@@ -27,7 +27,7 @@ export function HighlightGrid({ items }) {
   return (
     <Box
       component="section"
-      sx={{ bgcolor: KAB.bgMuted, py: { xs: 8, md: 10 } }}
+      sx={{ bgcolor: BRAND.bgMuted, py: { xs: 8, md: 10 } }}
       aria-labelledby="highlights-heading"
     >
       <Container maxWidth="xl">
@@ -62,8 +62,8 @@ export function HighlightGrid({ items }) {
               sx={{
                 bgcolor: "#fff",
                 p: 3.5,
-                border: `1px solid ${KAB.borderLight}`,
-                borderTop: `3px solid ${idx % 2 === 0 ? KAB.primary : KAB.secondary}`,
+                border: `1px solid ${BRAND.borderLight}`,
+                borderTop: `3px solid ${idx % 2 === 0 ? BRAND.primary : BRAND.secondary}`,
                 transition: "box-shadow 0.25s, transform 0.25s",
                 "&:hover": {
                   boxShadow: "0 8px 24px rgba(0,0,0,0.10)",
@@ -75,7 +75,7 @@ export function HighlightGrid({ items }) {
                 sx={{
                   width: 48,
                   height: 48,
-                  bgcolor: idx % 2 === 0 ? `${KAB.primary}14` : `${KAB.secondary}18`,
+                  bgcolor: idx % 2 === 0 ? `${BRAND.primary}14` : `${BRAND.secondary}18`,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -90,7 +90,7 @@ export function HighlightGrid({ items }) {
                   fontFamily: "'Outfit', sans-serif",
                   fontWeight: 700,
                   fontSize: 15,
-                  color: KAB.textPrimary,
+                  color: BRAND.textPrimary,
                   mb: 1,
                 }}
               >
@@ -100,7 +100,7 @@ export function HighlightGrid({ items }) {
                 sx={{
                   fontFamily: "'Outfit', sans-serif",
                   fontSize: 13,
-                  color: KAB.textSecondary,
+                  color: BRAND.textSecondary,
                   lineHeight: 1.7,
                 }}
               >

@@ -59,7 +59,6 @@ function FooterHeading({ children }: { children: React.ReactNode }) {
           fontSize: 13,
           letterSpacing: "0.1em",
           textTransform: "uppercase",
-          color: "#fff",
           mb: 0.75,
         }}
       >
@@ -84,14 +83,13 @@ function FooterLink({ href, children }: { href: string; children: React.ReactNod
       href={href}
       sx={{
         display: "block",
-        color: "rgba(255,255,255,0.65)",
+
         fontFamily: "'Outfit', sans-serif",
         fontSize: 13,
         textDecoration: "none",
         mb: 1,
         transition: "color 0.2s, padding-left 0.2s",
         "&:hover": {
-          color: "#fff",
           pl: 1,
         },
       }}
@@ -110,7 +108,7 @@ export function WebsiteFooter() {
   return (
     <Box component="footer">
       {/* ── Top band: contact info pills ───────────────────────────────── */}
-      <Box sx={{ bgcolor: BRAND.primary, py: 4 }}>
+      <Box sx={{ py: 4 }}>
         <Container maxWidth="xl">
           <Grid container spacing={3}>
             {[
@@ -143,7 +141,6 @@ export function WebsiteFooter() {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      color: "#fff",
                       flexShrink: 0,
                     }}
                   >
@@ -157,7 +154,7 @@ export function WebsiteFooter() {
                         fontWeight: 700,
                         letterSpacing: "0.08em",
                         textTransform: "uppercase",
-                        color: "rgba(255,255,255,0.55)",
+
                         mb: 0.25,
                       }}
                     >
@@ -171,7 +168,7 @@ export function WebsiteFooter() {
                           fontFamily: "'Outfit', sans-serif",
                           fontSize: 14,
                           fontWeight: 500,
-                          color: "#fff",
+
                           textDecoration: "none",
                           "&:hover": { textDecoration: "underline" },
                         }}
@@ -184,17 +181,12 @@ export function WebsiteFooter() {
                           fontFamily: "'Outfit', sans-serif",
                           fontSize: 14,
                           fontWeight: 500,
-                          color: "#fff",
                         }}
                       >
                         {value}
                       </Typography>
                     )}
-                    {sub && (
-                      <Typography sx={{ color: "rgba(255,255,255,0.55)", fontSize: 12, mt: 0.25 }}>
-                        {sub}
-                      </Typography>
-                    )}
+                    {sub && <Typography sx={{ fontSize: 12, mt: 0.25 }}>{sub}</Typography>}
                   </Box>
                 </Box>
               </Grid>
@@ -204,7 +196,7 @@ export function WebsiteFooter() {
       </Box>
 
       {/* ── Main link columns ──────────────────────────────────────────── */}
-      <Box sx={{ bgcolor: BRAND.dark, py: { xs: 6, md: 8 } }}>
+      <Box sx={{ py: { xs: 6, md: 8 } }}>
         <Container maxWidth="xl">
           <Grid container spacing={{ xs: 5, md: 6 }}>
             {/* Column 1 — Branding & about text */}
@@ -227,7 +219,7 @@ export function WebsiteFooter() {
                       sx={{
                         fontWeight: 700,
                         fontSize: 16,
-                        color: "#fff",
+
                         lineHeight: 1.1,
                       }}
                     >
@@ -248,7 +240,7 @@ export function WebsiteFooter() {
                 <Typography
                   sx={{
                     fontFamily: "'Outfit', sans-serif",
-                    color: "rgba(255,255,255,0.6)",
+
                     fontSize: 13,
                     lineHeight: 1.8,
                     mb: 3,
@@ -278,13 +270,12 @@ export function WebsiteFooter() {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        color: "rgba(255,255,255,0.6)",
+
                         textDecoration: "none",
                         transition: "all 0.2s",
                         "&:hover": {
                           bgcolor: BRAND.primary,
                           borderColor: BRAND.primary,
-                          color: "#fff",
                         },
                       }}
                     >
@@ -337,7 +328,7 @@ export function WebsiteFooter() {
                       fontWeight: 700,
                       letterSpacing: "0.08em",
                       textTransform: "uppercase",
-                      color: "rgba(255,255,255,0.55)",
+
                       mb: 1.5,
                     }}
                   >
@@ -354,10 +345,10 @@ export function WebsiteFooter() {
                       placeholder="Your email address"
                       sx={{
                         flex: 1,
-                        bgcolor: "rgba(255,255,255,0.08)",
+                        bgcolor: "gray",
                         border: "1px solid rgba(255,255,255,0.2)",
                         borderRight: "none",
-                        color: "#fff",
+
                         px: 1.5,
                         py: 1,
                         fontSize: 12,
@@ -373,7 +364,7 @@ export function WebsiteFooter() {
                       sx={{
                         bgcolor: BRAND.primary,
                         border: `1px solid ${BRAND.primary}`,
-                        color: "#fff",
+
                         px: 2,
                         fontFamily: "'Outfit', sans-serif",
                         fontWeight: 600,

@@ -22,7 +22,7 @@ export function NoticeBoard({ events, downloads }) {
   return (
     <Box
       component="section"
-      sx={{ bgcolor: KAB.bgMuted, py: { xs: 8, md: 10 } }}
+      sx={{ bgcolor: BRAND.bgMuted, py: { xs: 8, md: 10 } }}
       aria-labelledby="notice-heading"
     >
       <Container maxWidth="xl">
@@ -50,7 +50,7 @@ export function NoticeBoard({ events, downloads }) {
                 justifyContent: "space-between",
                 mb: 2,
                 pb: 1.5,
-                borderBottom: `2px solid ${KAB.primary}`,
+                borderBottom: `2px solid ${BRAND.primary}`,
               }}
             >
               <Typography
@@ -58,7 +58,7 @@ export function NoticeBoard({ events, downloads }) {
                   fontFamily: "'Outfit', sans-serif",
                   fontWeight: 700,
                   fontSize: 16,
-                  color: KAB.textPrimary,
+                  color: BRAND.textPrimary,
                 }}
               >
                 Upcoming Events
@@ -70,7 +70,7 @@ export function NoticeBoard({ events, downloads }) {
                   fontFamily: "'Outfit', sans-serif",
                   fontSize: 12,
                   fontWeight: 600,
-                  color: KAB.primary,
+                  color: BRAND.primary,
                   textDecoration: "none",
                   "&:hover": { textDecoration: "underline" },
                 }}
@@ -90,8 +90,8 @@ export function NoticeBoard({ events, downloads }) {
                     mb: 2,
                     p: 2,
                     bgcolor: "#fff",
-                    border: `1px solid ${KAB.borderLight}`,
-                    borderLeft: `3px solid ${KAB.primary}`,
+                    border: `1px solid ${BRAND.borderLight}`,
+                    borderLeft: `3px solid ${BRAND.primary}`,
                     transition: "box-shadow 0.2s",
                     "&:hover": { boxShadow: "0 4px 16px rgba(0,0,0,0.08)" },
                   }}
@@ -101,7 +101,7 @@ export function NoticeBoard({ events, downloads }) {
                     sx={{
                       width: 52,
                       flexShrink: 0,
-                      bgcolor: KAB.primary,
+                      bgcolor: BRAND.primary,
                       color: "#fff",
                       display: "flex",
                       flexDirection: "column",
@@ -139,7 +139,7 @@ export function NoticeBoard({ events, downloads }) {
                         fontFamily: "'Outfit', sans-serif",
                         fontWeight: 600,
                         fontSize: 14,
-                        color: KAB.textPrimary,
+                        color: BRAND.textPrimary,
                         mb: 0.5,
                       }}
                     >
@@ -147,14 +147,14 @@ export function NoticeBoard({ events, downloads }) {
                     </Typography>
                     <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
                       <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                        <AccessTimeIcon sx={{ fontSize: 12, color: KAB.textMuted }} />
-                        <Typography sx={{ fontSize: 12, color: KAB.textSecondary }}>
+                        <AccessTimeIcon sx={{ fontSize: 12, color: BRAND.textMuted }} />
+                        <Typography sx={{ fontSize: 12, color: BRAND.textSecondary }}>
                           {evt.time}
                         </Typography>
                       </Box>
                       <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                        <LocationOnIcon sx={{ fontSize: 12, color: KAB.textMuted }} />
-                        <Typography sx={{ fontSize: 12, color: KAB.textSecondary }}>
+                        <LocationOnIcon sx={{ fontSize: 12, color: BRAND.textMuted }} />
+                        <Typography sx={{ fontSize: 12, color: BRAND.textSecondary }}>
                           {evt.location}
                         </Typography>
                       </Box>
@@ -180,7 +180,7 @@ export function NoticeBoard({ events, downloads }) {
                 justifyContent: "space-between",
                 mb: 2,
                 pb: 1.5,
-                borderBottom: `2px solid ${KAB.secondary}`,
+                borderBottom: `2px solid ${BRAND.secondary}`,
               }}
             >
               <Typography
@@ -188,7 +188,7 @@ export function NoticeBoard({ events, downloads }) {
                   fontFamily: "'Outfit', sans-serif",
                   fontWeight: 700,
                   fontSize: 16,
-                  color: KAB.textPrimary,
+                  color: BRAND.textPrimary,
                 }}
               >
                 Downloads
@@ -207,11 +207,11 @@ export function NoticeBoard({ events, downloads }) {
                   p: 1.75,
                   mb: 1.5,
                   bgcolor: "#fff",
-                  border: `1px solid ${KAB.borderLight}`,
+                  border: `1px solid ${BRAND.borderLight}`,
                   textDecoration: "none",
                   transition: "border-color 0.2s, box-shadow 0.2s",
                   "&:hover": {
-                    borderColor: KAB.secondary,
+                    borderColor: BRAND.secondary,
                     boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
                   },
                 }}
@@ -220,8 +220,8 @@ export function NoticeBoard({ events, downloads }) {
                   sx={{
                     width: 36,
                     height: 36,
-                    bgcolor: `${KAB.secondary}18`,
-                    color: KAB.secondary,
+                    bgcolor: `${BRAND.secondary}18`,
+                    color: BRAND.secondary,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -236,7 +236,7 @@ export function NoticeBoard({ events, downloads }) {
                       fontFamily: "'Outfit', sans-serif",
                       fontWeight: 600,
                       fontSize: 13,
-                      color: KAB.textPrimary,
+                      color: BRAND.textPrimary,
                       whiteSpace: "nowrap",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
@@ -244,7 +244,7 @@ export function NoticeBoard({ events, downloads }) {
                   >
                     {item.title}
                   </Typography>
-                  <Typography sx={{ fontSize: 11, color: KAB.textMuted }}>
+                  <Typography sx={{ fontSize: 11, color: BRAND.textMuted }}>
                     {item.fileType} · {item.size}
                   </Typography>
                 </Box>
