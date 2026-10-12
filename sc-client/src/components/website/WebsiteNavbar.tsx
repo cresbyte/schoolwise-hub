@@ -209,9 +209,8 @@ export function WebsiteNavbar() {
                   href="#"
                   component="a"
                   sx={{
-                    color: "rgba(255,255,255,0.7)",
                     p: "4px",
-                    "&:hover": { color: "#fff", bgcolor: "transparent" },
+                    "&:hover": {  bgcolor: "transparent" },
                   }}
                 >
                   {icon}
@@ -230,7 +229,7 @@ export function WebsiteNavbar() {
                     fontSize: 12,
                     color: "inherit",
                     textDecoration: "none",
-                    "&:hover": { color: "#fff" },
+                    
                   }}
                 >
                   {school.phone}
@@ -245,7 +244,7 @@ export function WebsiteNavbar() {
                     fontSize: 12,
                     color: "inherit",
                     textDecoration: "none",
-                    "&:hover": { color: "#fff" },
+                    
                   }}
                 >
                   {school.email}
@@ -261,10 +260,9 @@ export function WebsiteNavbar() {
                 href="/login"
                 sx={{
                   fontSize: 12,
-                  color: "rgba(255,255,255,0.82)",
                   textDecoration: "none",
                   fontWeight: 500,
-                  "&:hover": { color: "#fff" },
+                  
                 }}
               >
                 Parent Portal
@@ -274,10 +272,9 @@ export function WebsiteNavbar() {
                 href="/login"
                 sx={{
                   fontSize: 12,
-                  color: "rgba(255,255,255,0.82)",
                   textDecoration: "none",
                   fontWeight: 500,
-                  "&:hover": { color: "#fff" },
+                  
                 }}
               >
                 Staff Portal
@@ -295,7 +292,7 @@ export function WebsiteNavbar() {
                   color: BRAND.secondaryLight,
                   textDecoration: "none",
                   fontWeight: 600,
-                  "&:hover": { color: "#fff" },
+                  
                 }}
               >
                 Apply Now →
@@ -566,7 +563,7 @@ export function WebsiteNavbar() {
         >
           <Typography
             sx={{
-              color: "#fff",
+
               fontFamily: "'Outfit', sans-serif",
               fontWeight: 700,
               fontSize: 15,
@@ -681,14 +678,13 @@ export function WebsiteNavbar() {
               display: "block",
               textAlign: "center",
               bgcolor: BRAND.primary,
-              color: "#fff",
+
               py: 1.25,
               fontFamily: "'Outfit', sans-serif",
               fontWeight: 700,
               fontSize: 14,
               textDecoration: "none",
               mb: 1,
-              "&:hover": { bgcolor: BRAND.primaryDark },
             }}
           >
             Apply Now
@@ -702,7 +698,7 @@ export function WebsiteNavbar() {
                 display: "block",
                 textAlign: "center",
                 border: `1px solid #008264`,
-                color: "#005a46",
+
                 py: 1.25,
                 fontFamily: "'Outfit', sans-serif",
                 fontWeight: 600,
@@ -722,7 +718,7 @@ export function WebsiteNavbar() {
                 display: "block",
                 textAlign: "center",
                 border: `1px solid #1a3a7a`,
-                color: "#1a3a7a",
+
                 py: 1.25,
                 fontFamily: "'Outfit', sans-serif",
                 fontWeight: 600,
